@@ -1,0 +1,2978 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="만화뷰어">
+<meta name="application-name" content="만화뷰어">
+<meta name="theme-color" content="#000000">
+<meta name="format-detection" content="telephone=no">
+<title>만화뷰어</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" sizes="180x180">
+<link rel="icon" type="image/png" href="icons/icon-192.png" sizes="192x192">
+<link rel="icon" type="image/png" href="icons/icon-512.png" sizes="512x512">
+<style>
+:root {
+  --bg: #000;
+  --surface: #141414;
+  --surface2: #1c1c1c;
+  --elev: rgba(22,22,22,.94);
+  --border: #2c2c2c;
+  --text: #f3f3f3;
+  --muted: #9a9a9a;
+  --accent: #7db0ff;
+  --danger: #ff6b6b;
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-l: env(safe-area-inset-left, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
+  --bar-h: 52px;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  margin: 0; padding: 0; width: 100%; height: 100%;
+  background: var(--bg); color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", system-ui, sans-serif;
+  overflow: hidden; position: fixed; inset: 0;
+  overscroll-behavior: none; touch-action: manipulation;
+  user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+}
+button, input { font: inherit; color: inherit; }
+button {
+  background: none; border: 0; padding: 0; margin: 0; cursor: pointer;
+  appearance: none; -webkit-appearance: none;
+}
+.hidden { display: none !important; }
+#app, .screen { position: fixed; inset: 0; overflow: hidden; }
+.screen { background: var(--bg); display: flex; flex-direction: column; }
+
+/* ===== Top bar ===== */
+.topbar {
+  flex: 0 0 auto;
+  padding: var(--safe-t) var(--safe-r) 0 var(--safe-l);
+  background: var(--elev);
+  border-bottom: 1px solid var(--border);
+  z-index: 5;
+}
+.topbar-inner {
+  height: var(--bar-h);
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 8px;
+}
+.titles { flex: 1; min-width: 0; }
+.titles h1 {
+  margin: 0; font-size: 17px; font-weight: 650; letter-spacing: -0.02em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.crumb {
+  font-size: 11px; color: var(--muted); white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; min-height: 14px;
+}
+.crumb button {
+  color: var(--accent); font-size: 11px; padding: 0 2px;
+}
+.crumb span { color: var(--muted); padding: 0 3px; }
+.icon-btn, .text-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 40px; height: 40px; border-radius: 10px;
+  color: var(--text);
+}
+.icon-btn:active, .text-btn:active { background: #ffffff14; }
+.icon-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.text-btn { padding: 0 10px; font-size: 15px; color: var(--accent); font-weight: 600; }
+.text-btn.danger { color: var(--danger); }
+
+/* ===== Explorer ===== */
+.scroll {
+  flex: 1; overflow: auto; -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain; touch-action: pan-y;
+  padding-bottom: calc(16px + var(--safe-b));
+}
+.empty {
+  max-width: 420px; margin: 12vh auto 0; padding: 0 28px 40px;
+  text-align: center; color: var(--muted);
+}
+.empty h2 { margin: 0 0 8px; color: var(--text); font-size: 22px; font-weight: 700; }
+.empty p { margin: 0 0 12px; font-size: 14px; line-height: 1.55; }
+.empty .hint { font-size: 12px; line-height: 1.6; color: #777; text-align: left; }
+.empty .actions { display: flex; flex-direction: column; gap: 10px; margin: 22px 0 28px; }
+.btn-primary, .btn-secondary {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  height: 48px; border-radius: 14px; font-weight: 650; font-size: 16px;
+}
+.btn-primary { background: var(--accent); color: #0b1220; }
+.btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+.btn-primary:active { filter: brightness(.92); }
+.btn-secondary:active { background: #262626; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+  gap: 14px 10px;
+  padding: 14px 14px 24px;
+}
+@media (min-width: 768px) {
+  .grid { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 16px 12px; padding: 18px 20px; }
+}
+@media (min-width: 1200px) {
+  .grid { grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); }
+}
+.card {
+  position: relative; display: flex; flex-direction: column; gap: 6px;
+  cursor: pointer; border: 0; background: none; text-align: left; width: 100%;
+  color: inherit; padding: 0; min-width: 0;
+}
+.thumb {
+  position: relative; width: 100%; aspect-ratio: 1;
+  border-radius: 12px; overflow: hidden;
+  background: var(--surface2); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+}
+.thumb img, .thumb video, .thumb canvas {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.thumb .ico { width: 42%; height: 42%; opacity: .9; }
+.thumb .badge {
+  position: absolute; left: 6px; bottom: 6px;
+  background: rgba(0,0,0,.72); color: #fff;
+  font-size: 10px; font-weight: 650; padding: 2px 6px; border-radius: 6px;
+  letter-spacing: .02em;
+}
+.thumb .add-pl {
+  position: absolute; top: 4px; right: 4px;
+  width: 28px; height: 28px; border-radius: 8px;
+  background: rgba(0,0,0,.62); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; line-height: 1; font-weight: 600;
+}
+.thumb .add-pl:active { background: var(--accent); color: #0b1220; }
+.thumb .add-pl.on { background: var(--accent); color: #0b1220; }
+.card .name {
+  font-size: 12px; line-height: 1.3; color: var(--text);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; word-break: break-all; min-height: 32px;
+}
+.card:active .thumb { filter: brightness(.85); }
+.kind-dir .thumb, .kind-zip .thumb { background: #1a2230; }
+.kind-video .thumb { background: #161616; }
+
+/* ===== Reader ===== */
+#screen-reader { background: #000; }
+#stage {
+  position: absolute; inset: 0; overflow: hidden; background: #000;
+  touch-action: none; z-index: 1;
+}
+#strip {
+  display: flex; width: 300%; height: 100%;
+  will-change: transform;
+}
+#strip .view {
+  flex: 0 0 33.3333%; width: 33.3333%; height: 100%;
+  display: flex; position: relative;
+}
+#strip .view.single { justify-content: center; align-items: center; }
+#strip .slot {
+  height: 100%; display: flex; align-items: center; overflow: hidden;
+}
+#strip .view.single .slot { width: 100%; height: 100%; justify-content: center; }
+#strip .view.spread .slot { width: 50%; }
+#strip .view.spread .slot.spine-end { justify-content: flex-end; } /* left page toward spine */
+#strip .view.spread .slot.spine-start { justify-content: flex-start; }
+#strip .slot img {
+  max-width: 100%; max-height: 100%; width: auto; height: auto;
+  object-fit: contain; pointer-events: none; display: block;
+}
+#strip .view.single .slot img, #strip .view.spread .slot img { height: 100%; width: auto; max-width: 100%; }
+#zoomLayer {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  transform-origin: 0 0;
+}
+#readerChrome, #videoChrome {
+  position: absolute; inset: 0; z-index: 6; pointer-events: none;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+#readerChrome .topbar, #readerChrome .bottombar,
+#videoChrome .topbar, #videoChrome .bottombar { pointer-events: auto; }
+#readerChrome.dim, #videoChrome.dim { opacity: 0; visibility: hidden; transition: opacity .2s, visibility .2s; }
+#readerChrome, #videoChrome { transition: opacity .2s, visibility .2s; }
+.bottombar {
+  background: linear-gradient(to top, rgba(0,0,0,.86), rgba(0,0,0,.55) 70%, transparent);
+  padding: 8px 16px calc(10px + var(--safe-b));
+  border: 0;
+}
+.page-row, .seek-row {
+  display: flex; align-items: center; gap: 10px;
+}
+.page-row input[type=range], .seek-row input[type=range] { flex: 1; }
+#pageCounter, #timeLabel {
+  font-size: 13px; font-variant-numeric: tabular-nums; color: #ddd;
+  min-width: 72px; text-align: right; white-space: nowrap;
+}
+input[type=range] {
+  -webkit-appearance: none; appearance: none; height: 24px; background: transparent; width: 100%;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  height: 4px; background: #ffffff33; border-radius: 4px;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; margin-top: -6px; box-shadow: 0 0 0 2px #0006;
+}
+.reader-tools {
+  display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end;
+  padding: 6px 12px 0;
+}
+.chip {
+  height: 30px; padding: 0 10px; border-radius: 8px;
+  background: #ffffff16; border: 1px solid #ffffff22;
+  font-size: 12px; font-weight: 600; color: #eee;
+}
+.chip.on { background: var(--accent); color: #0b1220; border-color: transparent; }
+
+/* ===== Video ===== */
+#screen-video { background: #000; }
+#videoEl {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: contain; background: #000; z-index: 1;
+}
+.v-controls {
+  display: flex; align-items: center; justify-content: center; gap: 18px;
+  padding: 6px 0 10px;
+}
+.v-btn {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: #ffffff18; display: flex; align-items: center; justify-content: center;
+}
+.v-btn.lg { width: 64px; height: 64px; background: #ffffff22; }
+.v-btn svg { width: 26px; height: 26px; fill: #fff; stroke: none; }
+.v-btn.lg svg { width: 34px; height: 34px; }
+.v-meta { text-align: center; font-size: 13px; color: #ccc; padding: 0 12px 4px; }
+.v-meta .v-title { color: #fff; font-weight: 650; font-size: 15px; margin-bottom: 2px; }
+
+/* ===== Playlist ===== */
+.pl-list { list-style: none; margin: 0; padding: 8px 12px calc(24px + var(--safe-b)); }
+.pl-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px; border-radius: 12px; background: var(--surface);
+  margin-bottom: 8px; border: 1px solid var(--border);
+}
+.pl-item.missing { opacity: .55; }
+.pl-item .pl-thumb {
+  width: 72px; height: 48px; border-radius: 8px; background: #222;
+  object-fit: cover; flex: 0 0 72px;
+}
+.pl-item .pl-info { flex: 1; min-width: 0; }
+.pl-item .pl-info .n { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pl-item .pl-info .p { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pl-ops { display: flex; gap: 2px; }
+.pl-ops button { width: 34px; height: 34px; border-radius: 8px; color: var(--text); }
+.pl-ops button:active { background: #ffffff14; }
+.pl-empty { text-align: center; color: var(--muted); padding: 40px 20px; font-size: 14px; line-height: 1.6; }
+.footer-actions {
+  display: flex; gap: 8px; padding: 10px 14px calc(12px + var(--safe-b));
+  border-top: 1px solid var(--border); background: var(--elev);
+}
+
+/* ===== Sheet / modal / toast ===== */
+.overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.55);
+  z-index: 40; display: flex; align-items: flex-end; justify-content: center;
+}
+.sheet {
+  width: 100%; max-width: 520px;
+  background: #1a1a1a; border-radius: 18px 18px 0 0;
+  padding: 10px 12px calc(16px + var(--safe-b));
+  border-top: 1px solid var(--border);
+}
+.sheet h3 { margin: 6px 12px 10px; font-size: 15px; }
+.sheet-item {
+  display: flex; width: 100%; align-items: center; gap: 10px;
+  padding: 14px 12px; border-radius: 12px; text-align: left; font-size: 16px;
+}
+.sheet-item:active { background: #ffffff12; }
+.sheet-item.danger { color: var(--danger); }
+.sheet-cancel { text-align: center; color: var(--muted); margin-top: 4px; }
+.settings-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px; gap: 10px; border-bottom: 1px solid var(--border);
+}
+.settings-row:last-child { border-bottom: 0; }
+.settings-row label { font-size: 14px; }
+.seg { display: flex; background: #000; border-radius: 10px; padding: 3px; gap: 3px; }
+.seg button { height: 30px; padding: 0 10px; border-radius: 8px; font-size: 12px; font-weight: 650; color: #bbb; }
+.seg button.on { background: var(--accent); color: #0b1220; }
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(24px + var(--safe-b));
+  transform: translateX(-50%);
+  background: rgba(20,20,20,.94); color: #fff;
+  padding: 10px 16px; border-radius: 12px; font-size: 14px;
+  z-index: 60; max-width: 90%; text-align: center;
+  border: 1px solid var(--border); pointer-events: none;
+}
+.loading {
+  position: fixed; inset: 0; background: rgba(0,0,0,.55);
+  z-index: 50; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 12px;
+  font-size: 14px; color: #ddd;
+}
+.sw-status {
+  position: fixed; left: 12px; right: 12px;
+  bottom: calc(12px + var(--safe-b));
+  z-index: 45;
+  background: rgba(18,18,22,.94);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  color: #ddd;
+  font-size: 13px;
+  box-shadow: 0 8px 24px #0008;
+  pointer-events: none;
+}
+.sw-status .sw-row { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.sw-status .sw-msg { flex: 1; min-width: 0; }
+.sw-status .sw-pct { color: var(--accent); font-variant-numeric: tabular-nums; font-weight: 650; }
+.sw-bar { height: 4px; background: #ffffff18; border-radius: 4px; margin-top: 8px; overflow: hidden; }
+.sw-bar-fill { height: 100%; width: 0; background: var(--accent); border-radius: 4px; transition: width .15s linear; }
+.sw-status.ready { pointer-events: none; }
+.sw-status.ready .sw-pct { color: #8fd18f; }
+
+.spinner {
+  width: 32px; height: 32px; border: 3px solid #fff3; border-top-color: #fff;
+  border-radius: 50%; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+
+.thumb img { opacity: 0; }
+.thumb img.ready, .thumb img { animation: fadein .22s ease forwards; }
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+.card { transition: transform .16s ease; }
+.card:active { transform: scale(.97); }
+.help-box {
+  max-width: 560px; margin: 4px auto 28px; padding: 16px 18px;
+  background: #161616; border: 1px solid var(--border);
+  border-radius: 14px; text-align: left; color: var(--muted);
+  font-size: 13px; line-height: 1.65;
+}
+.help-box h3 { margin: 12px 0 6px; color: var(--text); font-size: 14px; }
+.help-box h3:first-child { margin-top: 0; }
+.help-box ol, .help-box ul { margin: 0 0 8px; padding-left: 1.25em; }
+.help-box li { margin: 0 0 6px; }
+.help-box .warn { color: #e0b85a; }
+#folderEmpty { display: none; text-align: center; color: var(--muted); padding: 48px 16px; font-size: 14px; line-height: 1.6; }
+#folderEmpty.show { display: block; }
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<input id="filePick" type="file" multiple hidden
+  accept=".zip,.ZIP,.cbz,.CBZ,.rar,.RAR,.cbr,.CBR,.7z,.cb7,.tar,.tgz,.tbz,.txz,.gz,.bz2,.xz,image/*,video/*,.jpg,.jpeg,.JPG,.JPEG,.png,.PNG,.webp,.WEBP,.gif,.GIF,.bmp,.BMP,.avif,.AVIF,.heic,.HEIC,.heif,.tif,.tiff,.TIFF,.ico,.mp4,.MP4,.mov,.MOV,.m4v,.webm,.mkv,.avi,.wmv,.flv,.mpeg,.mpg,.3gp,.ts">
+<input id="filePickAll" type="file" multiple hidden>
+<input id="dirPick" type="file" multiple webkitdirectory directory hidden>
+<input id="enginePick" type="file" multiple hidden>
+
+<div id="app">
+  <section id="screen-explorer" class="screen" data-screen="explorer">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <button type="button" id="btnExBack" class="icon-btn hidden" aria-label="뒤로">
+          <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <div class="titles">
+          <div id="crumb" class="crumb"></div>
+          <h1 id="exTitle">만화뷰어</h1>
+        </div>
+        <button type="button" id="btnPlaylist" class="icon-btn" aria-label="재생목록">
+          <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/><path d="M16 16l5 3-5 3v-6z" fill="currentColor" stroke="none"/></svg>
+        </button>
+        <button type="button" id="btnHelp" class="icon-btn" aria-label="사용 방법">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7.5v.5"/></svg>
+        </button>
+        <button type="button" id="btnAddMenu" class="icon-btn" aria-label="추가">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+      </div>
+    </header>
+    <div id="exScroll" class="scroll">
+      <div id="emptyState" class="empty">
+        <h2>만화뷰어</h2>
+        <p>폴더나 압축파일, 이미지, 영상을 열어 탐색기처럼 보고, 만화책처럼 넘기거나 영상을 재생하세요.</p>
+        <div class="actions">
+          <button type="button" id="btnOpenDir" class="btn-primary">폴더 열기</button>
+          <button type="button" id="btnOpenFiles" class="btn-secondary">파일 또는 압축파일 열기</button>
+          <button type="button" id="btnOpenAny" class="btn-secondary">모든 형식 열기 (iOS 호환)</button>
+        </div>
+        <div class="help-box" id="homeHelp">
+          <h3>홈 화면에 앱으로 설치하기</h3>
+          <ol>
+            <li>Safari로 이 사이트를 엽니다. (파일 앱의 로컬 HTML은 Safari에서 열리지 않으므로, 이 웹 주소를 사용하세요.)</li>
+            <li>처음 한 번 열면 코덱·압축 엔진이 자동으로 내려받아집니다. 아래 표시가 <b>오프라인 준비 완료</b>가 되면 이후에는 인터넷 없이 사용할 수 있습니다.</li>
+            <li>Safari 공유 버튼 → <b>홈 화면에 추가</b>를 누르면 독립 앱처럼 실행됩니다.</li>
+            <li><b>파일 또는 압축파일 열기</b>로 만화 ZIP·CBZ·7Z·RAR이나 영상을 선택하세요.</li>
+          </ol>
+          <h3 class="warn">알아두면 좋은 제한</h3>
+          <ul>
+            <li>iOS Safari는 폴더 선택이 안 될 수 있습니다. 파일을 여러 장 고르거나 ZIP/7Z/RAR으로 묶어 여세요.</li>
+            <li>암호화된 압축, 일부 최신 RAR/ZIP64는 열리지 않을 수 있습니다.</li>
+            <li>재생목록의 파일 권한은 기기가 기억하지 못합니다. 다음에 볼 때는 폴더나 압축을 다시 열면 자동으로 다시 연결됩니다.</li>
+            <li>매우 깊은 중첩 압축(9단계 이상)이나 비정상적으로 큰 항목은 메모리 보호를 위해 열지 않습니다.</li>
+          </ul>
+        </div>
+      </div>
+      <div id="folderEmpty">이 폴더가 비어 있습니다.</div>
+      <div id="grid" class="grid hidden"></div>
+    </div>
+  </section>
+
+  <section id="screen-reader" class="screen hidden" data-screen="reader">
+    <div id="stage">
+      <div id="strip">
+        <div class="view" id="viewPrev"></div>
+        <div class="view" id="viewCur"></div>
+        <div class="view" id="viewNext"></div>
+      </div>
+    </div>
+    <div id="readerChrome">
+      <header class="topbar">
+        <div class="topbar-inner">
+          <button type="button" id="btnReaderBack" class="icon-btn" aria-label="뒤로">
+            <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <div class="titles">
+            <div class="crumb" id="readerCrumb">이미지</div>
+            <h1 id="readerTitle">뷰어</h1>
+          </div>
+          <button type="button" id="btnReaderSettings" class="text-btn">보기</button>
+        </div>
+      </header>
+      <div class="bottombar">
+        <div class="page-row">
+          <input id="pageSlider" type="range" min="1" max="1" value="1">
+          <div id="pageCounter">1 / 1</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-video" class="screen hidden" data-screen="video">
+    <video id="videoEl" playsinline webkit-playsinline preload="auto"></video>
+    <div id="videoChrome">
+      <header class="topbar">
+        <div class="topbar-inner">
+          <button type="button" id="btnVideoBack" class="icon-btn" aria-label="뒤로">
+            <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <div class="titles">
+            <div class="crumb" id="videoCrumb">영상</div>
+            <h1 id="videoTitle">영상</h1>
+          </div>
+          <button type="button" id="btnVideoFs" class="text-btn">전체화면</button>
+        </div>
+      </header>
+      <div class="bottombar">
+        <div class="v-meta">
+          <div class="v-title" id="videoName"></div>
+          <div id="videoQueueLabel"></div>
+        </div>
+        <div class="seek-row">
+          <input id="seekBar" type="range" min="0" max="0" step="0.05" value="0">
+          <div id="timeLabel">0:00 / 0:00</div>
+        </div>
+        <div class="v-controls">
+          <button type="button" id="btnSkipBack" class="v-btn" aria-label="10초 뒤로" style="font-weight:700;font-size:11px;color:#fff">−10</button>
+          <button type="button" id="btnSkipFwd" class="v-btn" aria-label="10초 앞으로" style="font-weight:700;font-size:11px;color:#fff">+10</button>
+          <button type="button" id="btnPrevVid" class="v-btn" aria-label="이전 영상">
+            <svg viewBox="0 0 24 24"><path d="M6 6v12h2V6H6zm3.5 6l8.5 6V6l-8.5 6z"/></svg>
+          </button>
+          <button type="button" id="btnPlay" class="v-btn lg" aria-label="재생">
+            <svg id="icoPlay" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <svg id="icoPause" class="hidden" viewBox="0 0 24 24"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>
+          </button>
+          <button type="button" id="btnNextVid" class="v-btn" aria-label="다음 영상">
+            <svg viewBox="0 0 24 24"><path d="M16 6v12h2V6h-2zM6 18V6l8.5 6L6 18z"/></svg>
+          </button>
+          <button type="button" id="btnSpeed" class="v-btn" aria-label="배속" style="font-weight:700;font-size:12px;color:#fff">1×</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-playlist" class="screen hidden" data-screen="playlist">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <button type="button" id="btnPlBack" class="icon-btn" aria-label="뒤로">
+          <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <div class="titles"><div class="crumb">라이브러리</div><h1>재생목록</h1></div>
+        <button type="button" id="btnPlClear" class="text-btn danger">비우기</button>
+      </div>
+    </header>
+    <div class="scroll">
+      <div id="plEmpty" class="pl-empty">재생목록이 비어 있습니다.<br>영상 오른쪽 위의 + 버튼을 누르거나, 길게 눌러 추가하세요.</div>
+      <ul id="plList" class="pl-list hidden"></ul>
+    </div>
+    <div class="footer-actions">
+      <button type="button" id="btnPlPlay" class="btn-primary" style="flex:1">재생목록 재생</button>
+    </div>
+  </section>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+<div id="swStatus" class="sw-status hidden" role="status" aria-live="polite">
+  <div class="sw-row"><div class="sw-msg" id="swStatusText">엔진을 준비하는 중…</div><div class="sw-pct" id="swStatusPct"></div></div>
+  <div class="sw-bar"><div class="sw-bar-fill" id="swBar"></div></div>
+</div>
+<div id="loading" class="loading hidden"><div class="spinner"></div><div id="loadingText">불러오는 중…</div></div>
+<div id="overlay" class="overlay hidden"></div>
+
+<script>
+"use strict";
+
+/* ========== helpers ========== */
+const $ = (id) => document.getElementById(id);
+const IMAGE_EXT = new Set(["jpg","jpeg","jfif","png","webp","gif","bmp","avif","heic","heif","tif","tiff","ico"]);
+const VIDEO_EXT = new Set(["mp4","mov","m4v","webm","mkv","avi","wmv","flv","mpeg","mpg","3gp","ts","mts","m2ts","asf","ogv","ogg","vob","m2v","f4v"]);
+const ZIP_EXT = new Set(["zip","cbz"]);
+const ARCHIVE_EXT = new Set(["zip","cbz","rar","cbr","7z","cb7","tar","tgz","tbz","tbz2","txz","gz","bz2","xz"]);
+const NATIVE_IMAGE_EXT = new Set(["jpg","jpeg","jfif","png","webp","gif","bmp","avif","heic","heif","ico"]);
+const NATIVE_VIDEO_EXT = new Set(["mp4","mov","m4v","webm","ogg","ogv"]);
+const MAX_ARCHIVE_DEPTH = 8;
+const MAX_ARCHIVE_BYTES = 1024 * 1024 * 1024;
+const MAX_ENTRY_BYTES = 256 * 1024 * 1024;
+const MAX_ARCHIVE_ENTRIES = 20000;
+
+function extOf(name) {
+  const i = String(name).lastIndexOf(".");
+  return i < 0 ? "" : name.slice(i + 1).toLowerCase();
+}
+function baseName(path) {
+  const p = String(path).replace(/\\/g, "/");
+  const i = p.lastIndexOf("/");
+  return i < 0 ? p : p.slice(i + 1);
+}
+function dirName(path) {
+  const p = String(path).replace(/\\/g, "/").replace(/\/+$/, "");
+  const i = p.lastIndexOf("/");
+  return i < 0 ? "" : p.slice(0, i);
+}
+function lowerName(name) {
+  return String(name || "").toLowerCase().replace(/\\/g, "/");
+}
+function archiveKind(name) {
+  const n = lowerName(name);
+  const base = n.split("/").pop() || n;
+  if (base.endsWith(".tar.gz") || base.endsWith(".tgz")) return "tar";
+  if (base.endsWith(".tar.bz2") || base.endsWith(".tbz2") || base.endsWith(".tbz")) return "tar";
+  if (base.endsWith(".tar.xz") || base.endsWith(".txz")) return "tar";
+  const e = extOf(base);
+  if (e === "zip" || e === "cbz") return "zip";
+  if (e === "rar" || e === "cbr") return "rar";
+  if (e === "7z" || e === "cb7") return "7z";
+  if (e === "tar") return "tar";
+  if (e === "gz" || e === "bz2" || e === "xz") return "tar";
+  return "";
+}
+function isArchiveName(name) { return !!archiveKind(name); }
+function archiveLabel(name) {
+  const k = archiveKind(name);
+  return ({ zip: "ZIP", rar: "RAR", "7z": "7Z", tar: "TAR" })[k] || "보관";
+}
+function isNativeImage(name) { return NATIVE_IMAGE_EXT.has(extOf(name)); }
+function isNativeVideo(name) { return NATIVE_VIDEO_EXT.has(extOf(name)); }
+function mimeFromName(name) {
+  switch (extOf(name)) {
+    case "jpg": case "jpeg": case "jfif": return "image/jpeg";
+    case "png": return "image/png";
+    case "webp": return "image/webp";
+    case "gif": return "image/gif";
+    case "bmp": return "image/bmp";
+    case "avif": return "image/avif";
+    case "heic": case "heif": return "image/heic";
+    case "tif": case "tiff": return "image/tiff";
+    case "ico": return "image/x-icon";
+    case "mp4": case "m4v": return "video/mp4";
+    case "mov": return "video/quicktime";
+    case "webm": return "video/webm";
+    case "mkv": return "video/x-matroska";
+    case "avi": return "video/x-msvideo";
+    case "wmv": case "asf": return "video/x-ms-wmv";
+    case "ogg": case "ogv": return "video/ogg";
+    case "zip": case "cbz": return "application/zip";
+    case "rar": case "cbr": return "application/vnd.rar";
+    case "7z": case "cb7": return "application/x-7z-compressed";
+    default: return "application/octet-stream";
+  }
+}
+function kindFromName(name) {
+  if (isArchiveName(name)) return "zip";
+  const e = extOf(name);
+  if (IMAGE_EXT.has(e)) return "image";
+  if (VIDEO_EXT.has(e)) return "video";
+  return "other";
+}
+
+function naturalCompare(a, b) {
+  return String(a).localeCompare(String(b), "ko", { numeric: true, sensitivity: "base" });
+}
+function sortNodes(a, b) {
+  const rank = (n) => (n.kind === "dir" || n.kind === "zip" ? 0 : 1);
+  const r = rank(a) - rank(b);
+  if (r) return r;
+  return naturalCompare(a.name, b.name);
+}
+function shouldSkipPath(path) {
+  const p = path.replace(/\\/g, "/");
+  if (!p || p.endsWith("/")) return true;
+  const parts = p.split("/");
+  if (parts.some((s) => s === "__MACOSX" || s === ".DS_Store" || s === "Thumbs.db" || s.startsWith("._"))) return true;
+  const base = parts[parts.length - 1];
+  if (base.startsWith(".") || base === "Thumbs.db") return true;
+  return false;
+}
+function uid() { return "n" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); }
+function fmtTime(s) {
+  if (!isFinite(s) || s < 0) s = 0;
+  s = Math.floor(s);
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  const two = (n) => String(n).padStart(2, "0");
+  return h ? `${h}:${two(m)}:${two(sec)}` : `${m}:${two(sec)}`;
+}
+function fileKey(name, size, lastModified) {
+  return `${name}|${size}|${lastModified || 0}`;
+}
+
+let toastTimer = 0;
+function toast(msg, ms) {
+  const el = $("toast");
+  el.textContent = msg;
+  el.classList.remove("hidden");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.add("hidden"), ms || 2200);
+}
+function showLoading(text) {
+  $("loadingText").textContent = text || "불러오는 중…";
+  $("loading").classList.remove("hidden");
+}
+function hideLoading() { $("loading").classList.add("hidden"); }
+
+/* ========== CP949 ========== */
+const CP949_B64 = "1Np5kA1n4PD7YQZBEARBLDPOGVvQZ459X4IgCIIgiD32fY89CIIgCGLf6X3f99N79wRBEARBEARBQjjv779r7r311q373/tU9T9d9emq59vVS9XzFAYzwSJgUbAk+DZYCiwNlgHfA6uDNcBsMAesBcbBXLA2WAesC9YD64MNwTwwCTYGM94YTcCmYDOwJdgKbAO2BduBHcCOYCfwQ7Az2AXsCn4EdgO7gx+DvcDe4CdgH7Av2A/sX8APAAeCg8DB4BBwKDgMHA5+AY4AR4KjwNHgGHAsOA78EhwPTgAngpPAyeAUcCo4A5wJzgbngPPBheBX4CJwMbgEXA6uBr8B14MbwI3gJnAzuAXcCm4Dt4M/gDvAneAucA94ADwIHgIPg0fAo+BJEAJhEANxkABJkAJpkAF5UAYVUAV10ABToAXaoAt6oA+GYATmgz+Bp8DT4BnwZ/Ac+At4AbwIXgJ/BS+DV8Cr4HXwBngTvAXeAe+B98EH4GPwb/A5+A/4L/gCfAm+BtNgIagwlAkVgYpBb0HFoRJQSag09A5UDioPvQtVgCpClaDKUBWoKlQNqg7VgLKhHKgWFIPiUC5UG6oD1YPqQw2hRhAAJaA8KAm92a4p1AxqAbWEWkFtoLZQO6g91AHqCHWCukAfQd2hHtDHUE+oF9Qb6gP1hfpB/aEB0MACfhA0GBoCfQ4NhYZBw6EvoJHQaGgMNBYaB30JjYcmQBOhKdBUaDo0A5oLzYPmQwugxdBSaAX0NbQSWgWthtZC66D10AZoI7QJ2gxtgb6HtkLboO3QD9AOaCe0C9oD7YX2QfuhA9BB6DB0BDoKHYOOQyegkxAIQRAMIRAKYRAOERAJURANsRAH8ZAAiZAEyZAC6ZABpSALsiEX8iAfCqAQiqB86DT0M3QWOgedh36BLkAXoUvQZegKdBW6Bl2HbkA3oVvQbegP6A50F7oH/Qndhx5AD6G/oEfQY+gJ9Df0FHoGPYdeQC+hV9BrqDCcCWfBReCicDG4BPw2XBouA78Dl4XLweXhCnBFuBL8HlwZrgJXhd+H32xXDa4O14BrwtlwDlwLjsFxOBeuDdeB68L14PrwB3ADuCHcCM6Dk3ATuCncAm4Fty7g28Bt4XZwR/hDuCv8EdwN7gH3hvvAfeF+cH94IPwZPAgeDA+Bh8Ej4VHwaHgsPA6eAE+EJ8NT4KnwdHgGPBOeBc+G58Bz4QXwYngJvBReBi+HV8Cr4NXwN/AaeC28Dl4Pb4A3wt/Bm+DN8Bb4e3grvA3eDv8A74B3wrvgH+Hd8B54L7wP3g8fgA/Ch+DD8BH4KHwMPg6fgE/CIAzBMIzAKIzBOEzAJEzBNMzALMzBPCzACqzBOmzAKdiCbdiBXdiDfTiCT8Nn4J/hs/A5+Dx8Eb4EX4avwFfh3+Br8HX4Bvw7fBO+Bd+G78B34T/hB/BD+C/4EfwYfgI/hZ/Bz+F/4RfwS/gV/BpOwxlIIaQwkolkIUWQN9sVRYojJZCSyNtIaaQMUhYph5RH3kUqIBWRSsh7SGWkClIVeR+phlRHaiA1kWwkB6lVwMeQOJKL1EbqIHWRekh9pCHSCEkgSaQJ0hRphjRHWiAtkVZIW6Q98iHSGemCdEW6Iz2Qj5GeSC+kN9IH6Yv0Qz5F+iMDkIHIZ8ggZDAyBBmGDEe+QEYgI5FRyFhkHPIlMh6ZgExEJiGTkSnIVGQaMh2ZgcxEZiGzkTnIXGQesgBZiHyFLEIWI0uQZchyZAWyElmFrEbWIGuRdci3yHpkA7IR2YxsQb5HtiHbkR+QHchOZBeyG9mD7EX2IfuRA8hB5BByGDmCHEWOIceRE8hJBEQgBEYQBEUwBEcIhEQohEYYhEcEREJkREE0REcMxERSiIV4SIDkIz8hp5DTyBnkLHIOOY/8glxALiKXkMvIFeQq8htyrUC768gN5HfkJnILuY3cRe4hfyL3kQfIQ+Qx8gR5ijxDniP/Ii+Ql8h/yCvkNZJGCqOZ6Ju+CFoULYa+hRZHS6Al0VJoabQMWhYth5ZHK6AV0Uroe2hltApaFa2O1kBrotloDloLjaFxNBetjdZF66H10Q/QBmhDtBEKoAk0D02ijdEmaFO0GdocbYG2RFuhrdE2aFu0Hdoe7YB2RDuhXdCuaDe0B9oT7Y1+gvZB+6ID0M/QwegQ9HN0GDoc/QIdgY5ER6Gj0THoWHQc+iU6Hp2ATkQnoZPRKehUdBo6HZ2BzkRnobPROehcdB46H12ALkQXo0vQZehydAW6El2Frka/Qdega9F16Ab0O3QzugX9Ht2KbkO3o7vQ3ege9CB6CD2MHkGPoidQFMVRGmVQDuVRAZVQGVVQFdVQHTVQC/VQHw3QEI3QfPR0gXZn0LPoOfQ8egG9iF5Cf0Uvo1fQq+g19Dp6A/0dvYXeRv9A76B30Xvon+h99AH6EP2rgH+EPkafoH+jT9Fn6HP0H/Rf9AX6Ev0PfYW+RtNoBlYIK4xlYllYEawoVgwrgZXCSmNlsLLYu1gFrCJWCauCVcdqYDWxbCwHy8VqY3Wxelh9rAHWEGuEAVgCy8OSWFOsJdYKa421wdpi7bCOWCesM9YF64p1w7pjPbCPsZ5YL6w31hfrhw3ABmKDsMHYEGwoNgwbjo3ARmKjsNHYGGwsNg77EhuPTcAmYpOwydgUbCo2DZuOzcBmYrOw2dgcbC62AFuILcIWY0uwZdgK7GtsJbYKW42txb7FNmAbse+wTdhWbBu2HduB7cR2YbuxPdhebB+2HzuAHcQOYYexI9hR7Dh2AjuJgRiEwRiCoRiG4RiBkRiF0RiDsdib7TiMxwRMxCRMxhRMxTRMxwzMxFKYhdmYg7mYh/lYiEVYPnYKO42dwc4W8Oew89gv2AXsInYJu4L9hl3DrmM3sN+xm9gt7DZ2F7uH3cceYA+xR9hj7An2N/YUe4Y9x/7BXmD/Ya+xNJaBF8IL45l4UbwYXhwvgZfCS+Nl8Hfwsng5vDxeEX8Pr4JXxd/Hq+HV8Rp4Np6D18JjeBzPxWvjdfC6eD28Pv4B3gBviDfCATyB5+FJvAneFG+GN8db4C3xVngbvC3eDm+Pd8A74p3wD/HOeBe8K/4R3g3vjvfAP8Z74r3w3vgneB+8L94P/xTvjw/AB+KD8MH4EHwoPgwfjo/AR+Kj8NH4GHwsPg6fgE/EJ+GT8Sn4VHwaPh2fgc/E5+Bz8Xn4fHwBvhBfhC/Gl+BL8WX4cnwFvgpfjX+Dr8XX4d/i6/EN+JvtNuKb8S34Vnwbvh3fhf+I78b34HvxA/gh/Ch+DD+On8QhHMYRHMNxnMApnMaZAp7FOZzHBVzEJVzGFVzFNVzHDdzEU7iF27iH+3iIR3g+fgo/g/+Mn8XP4efxi/iv+BX8Kv4bfg2/gd/G7+B38b/wR/hj/Bn+H/4Kf40XJjKJIkRRohhRnChBlCTeJkoRpYkyRDmiIlGJeI+oTFQhqhLViOpEDaImkU3kELWIGBEnconaRB2iLlGPqE98QDQgGhKNCIBIEHlEkmhMNCGaEs2I5kQLoiXRimhNtCHaEu2I9kQHoiPRifiQ6Ex0IboSHxHdiO5ED+JjoifRi+hNfEL0IfoS/YiBxCBiMDGU+IIYQYwkRhFjiS+JCcQkYjIxlZhBzCRmE3OIucR8YgGxkPiKWEQsJpYQy4lVxGriG2INsZZYR6wn3my3gdhIbCI2E1uIrcQ2YjvxA7GD2EnsIn4kdhN7iL3EAeIgcYg4TBwhjhLHiRPESQIq4GECIVACI3CCIEiCImiCIViCI3hCIERCImRCIVRCI3TCICzCJlzCI0IinzhFnCbOEOeIX4iLxK/EFeIqcY24TtwgbhK3iNvEHeIucY/4k7hPPCAeEn8Rj4jHxBPib+Ip8Yx4TvxD/Eu8IF4Sr4jXRJrIIAuRhclMMossQhYli5FvkcXJEmRJ8m2yFFmaLEOWJcuR5cl3yQpkRbISWZmsQlYlq5HVyRpkNplD1iJjZJzMJWuT9cgPyAZkQ7IRCZAJMo9Mkk3IpmQzsjnZgmxJtiJbk23ItmQ7sj3ZgexIdiI/JDuTXciu5EdkN7I72YP8mOxJ9iJ7k33JfmR/cgA5kBxEDiaHkJ+TQ8lh5HByJDmaHEu+2W4c+SU5npxATiQnk1PIqeQ0cjo5g5xJziJnk3PIueQ8cj65gFxIfkUuIheTS8hl5PICfgX5NbmSXEWuJteQa8l15LfkenIDuZH8jtxEbia3kN+TW8lt5HbyB3IHuZPcRf5I7iH3kvvI/eQB8iB5mDxCHiWPkyfIkyREwiRCoiRG4iRBkiRNsiRPCqRISqRMKqRG6qRBpkiLtEmX9EifDMiQjMh88hR5mjxD/kyeI8+Tv5AXyIvkJfIKeZW8Rl4nb5K3yT/IO+Rd8h75gPyLfEw+If8mn5LPyOfkv+QL8iX5H/mKfE2myQyqEFWYyqSyqCJUUaoY9RZVnCpBlaTepkpRpaky1DtUWaocVZ6qSFWiKlNVqGpUdaoGVZPKpnKoWlQuVZ/6gGpANaQaUXlUkmpCNaWaUS2ollQrqjXVhmpLtaM6Ul2oN9t1pT6iulHdqV5Ub6oP1ZfqR/WnBlADqc+oQdRgagg1jBpJjaJGU2OosdQ46ktqPDWhgJ9ITaImU1OoqdQ0ajo1g5pJzaJmU3OoudQ8aj61gFpIfUUtohZTS6il1DJqObWC+ppaSa2iVlPfUGuotdQ66ltqPbWB2kh9R22iNlNbqO+prdQ2ajv1A7WD2knton6kdlN7qL3UAeogdZg6Qh2ljlMgBVEwhVA4RVMMxVIcxVMypVAapVMGlaIsyqYcyqU8yqci6jR1hvqZOkudo85TF6iL1CXqV+oydYW6Sv1GXaOuUzeo36mb1C3qNvUHdYe6S92j7lMPqIfUX9Qj6jH1hPqbeko9o55T/1D/Ui+ol9R/1CvqNZWmMuhCdGE6k86ii9BF6WL0W3RxugRdkn6bLkWXpsvQ5ejydAW6Il2JrkxXoavS79PV6DfbVadr0DXpbDqHrkXH6Fy6Nl2HrkvXo+vTDeiGdCMaoBN0Hp2km9BN6WZ0c7oF3bKAb0W3ptvQbel2dHu6A92R7kR/SHemu9Bd6W50d7oH/THdk+5F96Y/ofvQfel+9Kd0f3oAPZD+jB5ED6aH0J/TQ+lh9HD6C3oEPZIeRY+hx9Lj6PH0BHoiPYmeTE+hp9LT6On0DHomPYueTc+h59Lz6Pn0Anoh/RW9iF5ML6GX0svo5fQK+mt6Jb2KXk1/Q6+h19Lr6G/p9fQGeiP9Hb2J3kxvob+nt9Lb6O30D/QOeie9i95D76X30wfog/Rh+gh9lD5GH6dP0BAN0wiN0jhN0CRN0TTN0CzN0Twt0CIt0TKt0Cqt0Tpt0Cadoi3aph3apT3apwM6pCM6n/6JPkWfps/QZ+lz9Hn6F/oCfZG+RP9KXy7Q7gp9lf6NvkZfp2/Qv9M36Vv0bfoP+g59l75H/0nfpx/QD+lH9GP6Cf2UfkY/p/+lXxTwL+n/6Ff0azpNF2YymSymKFOMeYspzpRgSjJvM6WY0kwZ5h2mLFOOKc+8y1RgKjKVmPeYykwVpirzPlONqc7UYGoy2UwOU4uJMXEml6nN1GPqMw2YhkyCyWOSTGOmCdOUaca0ZFozbZi2TDumPdOB6ch0YjozXZiuTDemO9OD6cn0YnoznzB9mL5MP2YAM5D5jBnEDGaGMJ8zQ5lhzHBmBDOSGcWMYcYy45jxzARmIjOJmcxMYaYyM5hZzBxmLjOPmc8sYBYyi5klzDJmObOCWcmsYlYz3zBrmLXMOmYDs4X5ntnK7GR2MbuZPcxeZj9zgDnIHGIOM0eYo8wJBmYQBmUwBmcIhmYYhmN4RmBERmJkRmFURmPebKczBmMyKcZiHMZjfCZgQiZi8pmfmFPMaeYM8zNzljnHnGd+YS4wF5lLzK/M5QL+CnOV+Y25xlxnbjC/MzeZW8xt5g/mDnOXucc8YB4yj5jHzBPmKfOMec78w/zLvGBeMq+Zwmwmm8UWYYuyJdiSbCm2NFuGLcuWY8uz77IV2IpsJbYK+z5bna3B1mSz2Ry2FpvL1mbrsvXY+mwDtiHbiAXYBJvHJtmmbEu2FduabcO2ZduxHdiObCe2M9uF7cp+xHZju7M92I/Znmwvtjf7CduX/ZTtzw5gB7KfsYPYwewQdhg7nB3BjmRHsWPYsew49kt2PDuBnchOYaexM9iZ7Cx2NjuHncvOZxewC9lF7GJ2CbuUXcYuZ1ewX7Mr2VXsavYbdg27ll3HfstuYDey37Gb2M3sFvZ7diu7jd3O/sDuYHeyu9gf2d3sHnYv+2a7fex+9gB7kD3EHmaPsEfZ4+wJ9iQLshALswiLsThLsBRLswzLsTwrsCIrFfAyq7A6a7IWa7MO67Ie67MhG7H57Cn2NHuGPcueY8+zv7AX2IvsJfZX9gr7G3udvcH+zt5kb7G32bvsPfY++4B9yD5iH7NP2L/Zp+wz9jn7gv2Pfc2m2QyuEFeYy+SKcEW5YtxbXHGuBFeSe5srxZXmynDvcGW5clx57l2uAleRq8RV5qpwVbn3uWpcda4Gl83lcLW4GBfncrnaXB2uLlePq899wDXgGnKNOIBLcHlckmvMNeGacs245lwLriXXimvLteM6cB25TlxnrgvXlfuI68Z153pwPble3CdcX64f9ynXnxvADeQGc0O4odwwbjg3ghvJjeJGc2O4sdw4bgI3iZvCTeWmcdO5GdxMbg43l5vPLeAWcou4N9st5pZwS7ll3HJuBbeK+4Zbx33LbeS+4zZxm7kt3PfcVm4bt537gdvB7eR2cT9yu7k9Bfxebh+3nzvAHeQOcYe5I9xR7hh3nDvBneRgDuEwDucIjuJojuFYjuN4TuBkTuV0zuBMLsVZnM15nM+F3BnuZ+4sd447z13kfuWucr9x17lb3G3uDneXu8fd5x5wD7m/uEfcY+4J94x7yf3HveJec2muMJ/JZ/FF+KJ8Mb44X4Ivyb/Nl+JL82X4d/iyfDm+PP8uX5GvxL/HV+ar8FX59/lqfHW+Bl+Tz+Zz+Fp8jI/zuXxtvg5fl6/H1+c/4BvwDflGPMAn+Dw+yTfmm/BN+WZ8S74V34Zvy7fjO/Cd+A/5znwXvivfnf+Y781/wvfh+/ID+IH8IH4wP4Qfyg/jh/Nf8CP4kfwofiw/gZ/IT+In81P4qfyb7WbwM/nZ/Bx+Lj+fX8Av5L/iF/GL+SX8Un4Zv5xfxX/Dr+HX8uv49fwGfiP/Hb+J31zAb+G/57fy2/jt/A/8Dn4nv4v/kd/N7+H38vv4/fwB/iB/iD/MH+GP8id4iId5hMd4gid5iqd5hud5kZd5hVd5jdd5g0/xFm/zLu/xPh/wIR/x+fxP/Cn+NH+G/5k/y5/jz/MX+Uv8r/xl/gp/lf+Nv8Zf52/wv/M3+Vv8bf4P/g5/l7/H/8nf5x/wD/m/+Ef8Y/4J/zf/lH/GP+f/4f/lX/Av+Vf8az7NFxIKC5lCEaGoUEx4SygulBBKCm8LpYV3hHJCeeFdoYJQUagkVBaqCFWFakJ1oYaQLeQItYSYEBdyhdpCHaGe8IHQQGgoNBIAISHkCUmhmdBCaCm0E9oLHYSOQiehi/CR0F3oIXws9BL6CH2FN9v1E/oLA4SBwiBhsDBE+FwYKgwThgtfCCOF0cIYYawwTvhSGC9MECYKk4UpwlRhmjC9gJ8hzBRmCbOFOcJcYZ4wX1ggLBS+EhYJi4UlwlJhmbBcWCF8LawUVgmrhTXCWmGdsF7YIGwUNgmbhS3C98JWYZuwXfhB2CHsFHYJPwq7hT3CXmGfsF84IBwUDgtHhKPCceGEcFKABFhABFTABFwgBEqgBVbgBF4QBFGQBFlQBE3QBUNICZZgC67gCb4QCKEQCfnCKeG08LNwVjgnnBd+ES4IF4VLwq/CZeGKcFX4TbgmXBduCL8LN4Vbwm3hD+GOcFe4J/wp3BceCA+Fv4RHwmPhifC38FR4JjwXXggvhVfCa6GQmClmiUXEomIxsYRYWnxHLCeWFyuLVcSaYraYI9YSc8U6Yj2xvviB2FBsJOaJSbGJWGDtRGwmthBbiq3E1mIbsa3YTuwodhG7ih+J3cUeYi+xt9hH7Cv2Ez8V+4sDxIHiZ+KgAn6wOET8XBwmDhe/EEeII8VR4mhxjDhWHCd+KY4XJ4gTxUniZHGKOFWcJk4XZ4gzxVnibHGOOFecJ84XF4gLxa/EReJicYm4VFwmLhdXiKvE1eIaca24XtwofiduEjeLW8Rt4g/iLvFHcbe4R9wrHhAPiofFI+Jx8YR4UgRFSIRFRMRFWmREVuREXhREWVRETdRFQ0yJlmiLjuiKnuiLgRiJp8Uz4s/iOfG8eEG8KF4SL4tXxKvib+I18bp4Q/xdvCneEm+Lf4h3xLviPfFP8b74QHwo/iU+Eh+LT8Tn4r/iC/Gl+Ep8LabFDKmQVFjKlIpKb0klpJLS21IpqbRURiorlZPKSxWkilIl6T2pslRFqiq9L1WTCvzfSzWkmlK2lCPVkuJSrlRbqiPVlepJ9aUGUkOpkQRICSlPSkqNpSZSU6mZ1FxqUcC3lFpJraU2UlupndRB6ih1kj6UOktdpK5Sd6mH1FPqJfWW+kh9pX7Sp1J/aYA0UBosDZE+l4ZKw6Th0hfSCGmkNEoaI42VxknjpQnSRGmSNFmaIk2VpknTpRnSTGmWNFuaI82V5knzpQXSQukraZG0WFoiLZdWSCulVdI66VtpvbRB2ihtlr6XtknbpR+kXdJuaY+0V9on7ZcOSAelw9IR6ah0TDounZBOSqAESbCESJiES4RESpRES4zESbwkSKIkSbKkSKqkSbpkSKaUkizJlhzJlTzJlwIplCIpX/pJOiWdls5I56Tz0gXponRJuixdka5Kv0nXpOvSDel36aZ0S7ot/SHdle5Jf0r3pQfSQ+lRgXaPpSfSU+mZ9Fz6V3ohvZT+k15Jr6W0VEguLGfJReVi8ltycbmEXFIuLZeRy8rl5PLym76CXFGuJL8nV5aryFXl6nJNOVvOkWvJMTku58q15TpyXbmeXF/+QG4gN5QbyYCckPPkpNxYbiI3lZvJzeUWcku5ldxabiO3ldvJ7eUOcke5k9xF7ip3k7vLPeSecm/5E7mP3FfuJw+QP5M/l4fKw+Th8kh5lDxGHiuPk8fLE+VJ8mR5ijxVniHPkefK8+T58gJ5sbxEXiYvl1fIK+VV8mr5G3mNvFZeJ2+QN8tb5O/lrfI2ebu8U94l/yjvlvfIe+V98n75gHxQPiQflo/IR+Xj8gn5pAzKkAzLiIzKmIzLhEzKlEzLjMzKnMzLgizKkizLiqzKmqzLhmzKKdmSbdmRXdmTfTmQQzmS8+XT8pkC7c7K5+QL8kX5kvyrfFm+Il+Vr8nX5VvybfkP+Y58V74n35cfyA/lv+RH8mP5ify3/LSAfyY/l/+R/5VfyC/l/+RX8ms5LWcohZVMJUspohRViikllJLK20oppbRSRnlHKauUU8or7yoVlIpKJaWKUl2podRUspUcpZYSU+JKrlJbqaPUVeop9ZUPlAZKQ6WRAigJJU9JKo2VJkpTpZnSXGmhtFRaKa2VNkpbpZ3SUemkdFa6KF2Vbkp3pYfysdJT6aX0Vvoq/ZRPlQHKQOUzZZAyWBmifK4MVYYpw5UvlBHKSGWUMloZo4xVxilfKuOVCcpEZZIyWZmiTFWmKdOVGcpMZZYyW5mjzFXmKfOVBcpC5StlkbJYWaIsVZYpy5UVytfKSmWVslr5RlmjrFXWKd8q65UNykblO2WTslnZomxVtinblR+UHcpOZZfyo7JbebPdHmWvsk/ZrxxQDiqHlMPKEeWockw5rpxQTiqgAimwgiiYgiuEQiqUQiuMwhbwnMIrgiIqkiIriqIqmqIrhmIqlmIrjuIqnuIrkZKvnFJOK2eUs8o55bzyi3JBuahcUi4rV5TflOvKDeV35aZyS7mt/KHcUe4q95Q/lfvKA+Wh8pfySHmsPFH+Vp4qz5Tnyj/Kv8oL5aXyn/JKea2klQy1kFpYzVSz1CJqUbWY+pZaXC2hllTfVkuppdUy6jtqWbWcWl59V62gVlQrqe+pldUqalX1fbWaWl2todZUs9UctZYaU+NqrlpbraPWVeup9dUP1AZqQ7WRCqgJNU9Nqo3VJmpTtZnaXG2htlRbqW3Utmo7tb3aQe2odlI/VDurXdSu6kdqN7W72kP9WO2p9lJ7q5+ofdV+6qdqf3WAOlAdpA5Wh6hvthuqDlOHqyPUkeoodbQ6Rh2rjlMnqBPVSepkdYo6VZ2mTldnqDPVWepsdY46V52nzi/gF6gL1a/URepidYm6VF2mLldXqF+rK9VV6mr1G3WNulZdp36rrlc3qBvVzeoWdau6Td2u7lB3qrvUH9Xd6h51r3pAPaQeUY+qx9Tj6gn1pAqrmIqrjMqqnMqrgiqrumqopmqptuqpvhqqkZqvnlJPq2fUn9Wz6jn1vHpRvaJeVX9Tr6nX1RvqLfW2eke9q95T76sP1IfqX+oj9bH6RH2m/qO+UF+q/6mv1NdqWi2kFdYytSJaUa2YVlwroZXU3tZKaaW1MlpZrZxWXntXq6hV0t7TKmtVtKpatpajxbU6Wl2tnlZfa6jlaUmtsdZEa6a11FppbbS2Wjutg9ZR66R9qHXWumhdte5aL6239onWR+ur9dMGaAO1Ans8tMHaEG2oNkwbrn2hjdBGaqO0sdoEbaI2SZusTdGmatO1GdpMbbY2R5urzdcWaAsL+K+0RdpibYm2VFumLddWaF9rq7TV2jfaGm2ttk7bqG3SNmtbtK3adu0HbYe2U9ul7dH2aQe0g9oh7Yh2VDuhndQgDdYQDdNwjdBIjdJojdFYjdN4TdBETdYUTdU0TdcMLaVZmq25mqf5WqhFWr72k3ZKO62d0c5q57QL2kXtkvardlm7ol3VrmnXtRvaTe2Wdlu7o93V7ml/ave1B9pD7bH2t/ZUe6Y91/7R/tVeaC+111paK6QX1jP1InpRvZj+ll5cL6GX1Evr7+jl9PL6u3oFvaJeSa+iV9Wr6dX1bD1Hr6XH9Lieq9fW6+kf6A11QE/qTfSmejO9ud5Cb6m30lvrbfS2eju9vd5B76h30j/UO+tvtuuid9W76d31HvrHek+9l95b76v30/vrA/SB+iB9sD5E/1wfqg/Th+sj9JH6KH20PraAH6d/qY/XJ+gT9Sn6VH26PkOfqc/W5+hz9Xn6fH2BvlBfrC/Vl+sr9K/1lfoqfbW+Vl+nf6uv1zfoG/VN+mZ9i/69vlXfpm/Xd+g79R/1PfpefZ++Xz+gH9SP6Ef14/oJ/aQO64iO6piO64RO66zO64Iu6pIu64qu6pqu64Zu6ind0m3d0V3d03090EM90vP1n/RT+mn9jP6zflY/p5/Xf9Ev6Bf1S/oV/ap+Tb+u39Rv6bf1P/Q7+l39gf6X/lh/ov+tP9Wf6y/0V/prPa0XMgobmUaWUcQoahQzShgljdJGGeMdo6xRzqhoVDIqG1WMqkY1o7pRw6hpZBs5Ri0j16ht1DPqGx8YDYyGRiMDMBJGnvFmu6TR2GhiNDWaGc2NFkZLo5XR2mhjtDXaGe2NDkZHo5PxodHF6Gp8ZHQzuhs9jI+NngV8L6O38YnRx+hr9DM+NfobA4yBxmfGIGOwMcT43BhqDDOGG18YI4yRxihjtDHGGGuMMyYYE43JxhRjqjHdmGnMMmYbc4y5xgJjobHYWGIsNZYZy40VxkpjlbHaWGOsNdYZ640NxkbjO2OTsdnYYnxvbDW2GduNH4wdxk5jl/GjsdvYY+w19hn7jQPGQeOQcdg4Yhw1jhnHjRPGSQM0IAM2EAM1MAM3CIM0KIM2GIM1OIM3BEM0JEM2FEMzdMMwTCNlWIZtOIZreIZvBEZoREa+8ZNxyjhtnDF+Ns4a54zzxkXjknHZuGJcM24Yvxs3jVvGbeOucc/403hgPDT+Mh4Zj40nxjPjufGv8cJ4afxnvDJeF2iXNjLMQmZhM9PMMouYRc1iZnGzhFnSfNssZZY2y5hlzXJmefNds4JZ0axkvmdWNquYb/qq5vtmNbO6WcOsaWabOWYtM27mmrXNOmZds55Z32xgNjQbmQkzz0yaTcymZjOzudnCbGm2Mtua7cz2Zgezo9nJ/NDsbHYxu5rdzO5mD/Njs6fZy+xtfmL2Mfua/cxPzf7mAHOg+Zk5yBxsDjE/N4eaw8zh5hfmCHOkOcoca44zx5sTzInmZHOKOdWcZk43Z5gzzTnmXHOeucBcaH5lLjIXm0vMZeZyc4X5tbnSXGWuNr8x15hrzXXmt+Z6c4O50fzO3GRuNreYW81t5nbzB3OHudPcZe4295h7zX3mfvOAedA8ZB42j5hHzWPmcfOEedIETciETcRETczETcIkTcqkTcbkTN4UTMmUTcVUTc3UTcM0zVSBdpZpm47pmp7pm4EZmpGZb/5knjJPm2fMn82z5jnzvPmLecG8aF4yfzUvm1fMqwX8b+Y187p5w/zdvGneMm+bf5h3zXvmn+Z984H50HxsPjGfms/M5+a/5kvzP/OV+dosnMpMZaWKpIqmiqXeShVPlUiVTJVKlU6VSZVNlUuVT1VIVUxVSr2XqpyqkqqaqpaqnqqRqpnKTuWkaqViqXgqN1U7VS9VP9Ug1TDVKJVI5aWSqcapJqmmqWaplqnWqbapdqn2qQ6pjqlOqS6prqkeqd6pT1J9Un1TA1KDU0NSn6eGp0amRqXGpMamxqXGpyakJqYmpSanpqSmpmak5qTmpual5qcWpBamFqeWpJallqdWpFamVqW+Sa1JrU2tS21IfZfanNqS+j61LbUjtTO1K7U7tSe1N7U/dSB1MHUodTh1JHU0dSx1InUyBaagFJxCUmgKS+EpIkWn3mzHpPiUklJTWkpPGSk/FabyU6dTZ1JnU+dS51MXUhdTl1K/pi6nrqSupq6nfk/dSt0u4P9I3UndTd1LPUw9Sj1OPUk9Tf2T+jf1IvUyVdjKtLKs4lYJq6RVyiptlbHKWuWs8ta7VgWrolXJqmJVs6pbNayaVraVY9Wycq3aVl2rnlXfamQlrDyrqdXcamm1ttpYba12Vkerk9XZ6mJ1tbpZ3a0e1sdWT6uX1dvqaw2wBlqfWYOswdYQa5g13BphjbRGWaOtMdZYa5z1pTXemmBNtCZbU6xp1gxrpjXLmm3NseZaC6yF1iJrsbXEWmYtt1ZYX1srrVXWamut9a21wdpofWdtsjZbW6xt1nZrh7XT2mXttvZYe6191n7rgHXQOmIds05YJy3QgizYQizcIizKoi3GEizRkizZUizdMi3Lsi3Hci3P8q3IerNdvnXKOm2dsc5a56zz1i/WBeuidcm6Yl21rls3rN+tm9Yt67Z117pn3bceWA+tR9bjAv6J9bf11HpmPbdeWC+t/6zXVtrKsAvZhe1Mu6hdzC5ul7BL2qXs0nYZ+x27rF3OLm9XtN+zq9hV7fftanZ1u4adY9ey43auXduua9ez69sf2A3shnYjO89ubDe1m9st7JZ2K7ut3c7uYHe0O9md7S52V/sju5vdw+5lf2IPsgfbQ+yh9jB7uD3CHmmPskfbY+yx9jh7vD3BnmRPtqfYU+1p9nR7hj3TnmPPtefbC+yF9hJ7qb3MXm6vstfZ39rr7Y32ZnuLvdXeYe+yf7R323vsvfYB+6h9zD5un7BP2rCN2JiN24RN2bTN2KzN2bwt2LKt24Zt2inbsm3bs307tPPtU/Zp+4z9s33WPmefty/YF+1L9q92gXUn+6r9m33Nvm7fsG/at+zb9h37rn3Pvm8/sB/af9mP7Mf2E/tv+6n9zH5u/2P/a78o4F/a/9mv7Nd22i7sZDpFnKJOMae4U9J52ynllHbKOOWcd51KzntOZaeKU9Wp7tRwsp0cp5YTd3Kd2k4dp65Tz6nvNHQAJ89JOo2dJk5Tp5nTwmnptHLaOG2ddk4Hp6PTyfnQ6ex0cbo63Z0eTi+nt/OJ08fp6/Rz+jsDnIHOZ84gZ7AzxPncGeoMc4Y7XzgjnJHOKGe0M8YZ64xzvnTGOxOcic4kZ7IzxZnqzHBmOrOdOc5cZ76z0PnKWeQsdpY4y52vnW+cNc5aZ4Oz0fnO2eRsdrY4W51tznbnB2eHs9PZ5fzo7HH2OQecg84h57BzxDnqHHdOOCcd0IEc2EEc1MEc3CEc0qEc2mEc1uEc3hEc2VEc1dGcAmuGjuGkHMuxHdfxHN8JncjJd35yTjmnnTPOOecX56JzyfnVuexcca46150bzs0C/pZz2/nDuePcde45fzr3nQfOQ+cv55Hz2Hni/O08c547/zj/Oi+cl85rJ+0Ucgu7mW4x9y23uFvCLemWdjOAQkBhgMmI18yteSwjE4AyKtSM57ROt855r2blmu/XrFbzXaAC8BZQHCgBlATeBkoBpYEywDtAWQDLOJ/xPOOLnNE5Y3Kq5zTOQTPyaiZrZmbXz/4tfS19M90xt31uzZzDOeVqFc4pljMip2/O0YxWNYvmFsn14/nxKG7Hrfj++L44EcfjUlyMb87+LntT9pbs77PLAxNyJuZUyWmTUy2nSU79nA9y3sopmbMqZ3XO8pwVOfVy6ubUzqmTcz39jlvOLe++61ZwK7qV3MpuFbeq+75bza3u1nBrutlujlvLjblxN9et7dZx67r13Prum+0auA3dRi7gJtw8N+k2cZu6zdzmbgu3pdvKbe22cdu67dz2bge3o9vJ/dDt7HZxuxbwH7nd3O5uD/djt6fby+3t9nX7uf3dAe5Ad5A72B3ifu4OdYe5w92R7mh3jDvWHed+6Y53J7gT3cnuFHeqezr75+yMnMwcMmPY/zw6vxS+XPhi4QuF2YxLhfdnKBk/FW6YUzanTM6hjOLZQE0trsaZOB0fnftF7ojcMbnjckfl7shx4gfjP8VPxTfHD8UPx4/Fj8aPxI/Hv8wtk1s69/3c6rl0Rs2a2TW3Zm/P3pG9LfuH7Mm543Mn5E7KXZL3fl7FbDuZk60nf0lmZ4M1C2xu//8wprsz3JnubHeOO9ed5853F7gL3UXuYneJu9Rd5i53V7hfuyvdVe5qd627zl3vbnA3Fmi3yd3sbnG/d7e629zt7k73R3ePu9fd5+53D7gH3UPuYfeIe9Q95h53T7gnXdCFXLiAR1zUxVzcJVzSpVzaZVzW5VzeFVzRlVzZVVzdNdyUa7mu67uBG7qRm++edn92z7u/uJfcQunC6cx0VrpIumi6WPqtdPF0iXTJ9NvpUunS6TLpd9Jl0+XS5dPvpiukK6Yrpd9LV05XSVdNv5+ulq6erpGumc5O56RrpWPpeDo3XTtdJ103XS9dP/1BukG6YbpRGkgn0nnpZLpxukm6abpZunm6RbplulX6VrpNum26Xbp9ukO6Y7pT+sN053SXdNf0R+lu6e7pHumP0z3TvdK905+k+6T7pvulP033Tw9ID0x/lh6UHpwekv48PTR9I33Fvepec2+4N91b7h/uHfeue8994D52n7h/u0/dZ+5z94X70n3lvnbTbiGvsJfpZXkF9nB7Rb1iXgmvtFfGe8cr65XzynsVvIpeJa+yV8Wr6r3vVfOqezW8ml62l+PV8mJevIDP9Wp7dbx6Xn3vA6+B19Br5AFewsvzkl5jr4nX1GvmNfdaeC29Vl5rr43X1mvntfc6eB29Tt6HXmevi5dI5CWSicaJJommiWaJ5okWiZaJVonWiTaJtol2ifaJDomOiU6JDxOdE10SXRMfJboluid6JD5O9Ez0SvROfJLok+ib6Jf4NNE/MSAxMPFZYlBicGJI4vPE0MSwxPDEF4kRiZGJUYnRiTGJsYlxiS8T4xMTEhMTkxKTE1MSUxPTEtMTMxIzE7MSsxNzEnMT8xLzEwsSCxNfJRYlFieWJJYmliWWJ1Ykvk6sTKxKrE58k1iTWJtYl/g2sT6xIdHV+8jr5nX3eni9vN5eH6+v18/r7w3wBnqfeYO8wd4Qb5g30hvljfbGeGO9cd54b0KBdhO9Sd5kb4o31ZvmTfdmeDO9Wd5sb44315vnzfcWeAu9r7zF3hJvqbfMW+6t8FZ6qwr41d433hpvrbfO+9Zb723wNnrfeZu8zd4W73tvq7fN2+7t8HZ6u7wfvd3eHm+vt8/b7x3wDnqHvMPeEe+oNy17evaM7JnZs7JnZ8/Jnps9L3t+9v919S+yR2SPzB6VPTp7TPbY7HHZX2aPzy743G/K3Jy5JfP7zK2Z2zK3Z/6QuSNzZ+auzB8zd2fuydybuS9zf+bBzEOZhzOPZB7NPJZ5PPP//t7AMvFMIpPMpDLpTCaTzeQy+UwhU8yUMuVMJVPN1DKNTDMzlWll2plOplvAH/OOeye8kx7oQR7sIR7qYR7uER7pUR7tMR7rcR7vCZ7sKZ7m6Z7hpQq0szzbczzX8zzfi7yfvNPez95Z75x33rvoXfJ+9S57V7yr3jXvunfD+9276d3ybhfwf3h3vLvePe++98B76P3lPfIee0+8p94z77n3j/ev98J76f3nvfJee2kvwy/kF/Yz/Sy/iF/UL+YX90v4GfHC8bfj78Tfi78bfz/+QTwWbxxvHS8Uz4yXiZePV41XiteKJ+P1463iPeI1443ideLN4u3i1eJAPB5vHu8YLxcvG68SrxyvGK8QLx0vFa8erxHPjufEc+O143Xj9eIN4g3jiXhevEm8abxFvGW8TbxtvH28Q7xT/MN453iXeNf4R/Fu8e7xjP8fo6T/tl/KL+2X8cv65fzyfgW/ol/Jr+xX8av67/vV/Op+DT/Hr+XH/Lif69f26/h1/Td9Pb++/4HfwG/oN/IBP+Hn+Um/sd/Eb+o385v7LfyWfiu/td/Gb+u389v7Hf1O/ocFfGe/i9/V7+738Hv6vfzefh+/r9/P/9Tv7w/wB/qD/SH+5/4wf7j/hT/CH+mP8sf4Y/1x/pf+eH+CP9Gf5G9NbktuT5bP/iFpJg8mDyUPJ48kdyR3Jnclf0zuTu5J7k3uS+5PHkh6yfXJDcmNyfzkN8k1SSd5NHksiSaxJJ4kkmSSStJJJskmueTS5LLk8uSK5NdJPikkxaSUlJNK8rvkpuTm5Jbk98ncbDWpJdcm1yW/TZ5LppJQEk4iyUvJ48kTyZNJMHk5+VPyTNJIuslfk1byf99+sj/Fn+pP86f7M/yZ/ix/tj/Hn+sv8Bf6X/mL/MX+En+pv8xf7q/wv/ZX+qv81f43Bdqt8df66/xv/fX+Bn+j/52/yd/sb/G/97f62/zt/g/+Dn+nv8vf7e/x9/r7/P3+Af9gAX/IP+wf8Y/6x/zj/gn/pA/6kA/7iI/6mI/7hE/6lE/7jM/5vC/4oi/5sq/4qq/5um/4pm9l/JRxIiO3UEZG3v8c7Qp1KPRLRt9CfMaVjLGFuv/PmS/yRuSNzBuVNzpvTN7YvHF5X+aNz5uQNzFvUt7kvCl5U/Om5U3Pm5E3M29W3uy8OXlz8+blzc9bkLcw76fYqdjp2JnYz7GzsXOx87FfYhdiF2OXYr/GLseuxK7Gfotdi12P3Yj9HrsZuxW7Hfsjdif2RWxEbGRsVGx0bExsbGxc7MvY+NiE2MTYpNjk2JSYlNEv+9NsMUPOGJL9efbQ7GHZKd/ybd/xXd/zfT/wQz/y8/2f/FP+af+Mf9Y/55/3f/Ev+Bf9S/6v/mX/in+1QLvf/Gv+df+Gf9O/5f/h3/Xv+X/69/0H/kP/L/+R/9h/4v/tP/Wf+c/9f/x//Rf+S/+/Av6V/9pP+xlBoaBwkBlkBUWCokGx4K2geFAiKBmUDsoEZYNyQfmgQlAxqBS8F1QOqgRVg+pBjaBmUCuIBbcyyhb6K6N2oUShZKHmhdoX6ljon4x+ha5mvM4YV6hHoW6F/ueW5BXOy8zLyiuSVzSvWN5becXzSuSVzHs7r1Re6bwyee/klc0rl1c+7928CnkV8yrlvZdXOa9KXtW8H2O7Y3tie2P7YvtjB2IHY4dih2NHYkdjx2LHYydiJ2NgDIrBMSSGxrAYHiNiZIyKzYrNjs2JzY3Ni82PLYgtjH0VWxRbHFsSWxpbFlse4zLwDCJjVs0lNZfVXF5zRc2va8aD3KBeUD9oEDQKEkFekAwaB02CpkGzoGXQLmgfdAg6Bp2CLkHXoFvQPegR9Ax6BW+26x18EvQJ+gb9ggHB4GBI8HkwNBgWDA9GBCODUcGYYFwwPpgQTAwmBZODKcHUYHowo4CfGcwK5gRzg3nB/GBBsDD4KlgULA6WBEuDZcHyYEXwdbAyWBWsDr4J1gRrg3XBt8H6YEOwMfgu2BRsDrYEHYCOQCfgQ6Az0AXoCnwEdAO6Az2Aj4GeQC+gN/AJ0AfoC/QDPgX6AwOAgcBnwCBgMDAE+BwYCgwDhgNfACOAkcAoYDQwBhgLjAO+BMYDE4CJwCRgMjAFmApMA6YDM4CZwCxgNjAHmAvMA+YDC4CFwFfAImAxsARYCiwDlgMrgK+BlcAqYDXwDbAGWAusA74F1gMbgI3Ad8AmYDOwBfh/f+d8H2wNtgXbg53BrmB3sCfYG+wPDgQHg0PB4eBIcDQ4EcABEqABFuABEdABE3AF2vGBEEiBHCiBGmiBHhiBFTiBF/hBEIRBFOQHp4LTwZngbHAuOB/8ElwILhbwl4Jfg8vBleBq8FtwLbge3AhuBreC28EfwZ3gbnAvuB88CB4Gj4LHwZPg7+Bp8Cx4HvwT/Bu8CF4G/wWvgv3AAeAgcAg4DBwBjgLHgOPACeAkAAIQAAMIgAIYgAMEQAIUQAMMwAIcwAMCIAISIAMKoAIaoAMGYAIpwAJswAFcwAN8IABCIALygZ+AU8Bp4AzwM3AWOAecB34BLgAXgUvAr8Bl4ApwFfgNuAZcB24AvwM3gVvAbeAP4A5wF7gH/AncBx4AD4G/gEfAY+AJ8DfwFHj2/7gDr4N0kBEWDjPDrLBIWDQsFpYIS4alwtJhmbBsWC4sH74bVggrhpXCKuH7YfWwRlgzfNNnhzlhrTAe5oa1w7phvbB+2CBsGDYKgTAR5oXJsHHYJGwaNgubhy3DVmHrsE3YtoBvF7YPO4Qdw07hh2HnsEvYNfwo7BZ2D3uEH4c9w15h7/CTsE/YN+wXfhr2DweEA8PPwkHh4HBIODQcFg4P38kqm1Uuq3zWu1kVsgplVcyqlPVeVuWsKllVs97PqpZVPatGVs2s7KycrFpZsax4Vm5W7aw6WXWz6mXVz/ogq0FWw6xGWf/77yGQlcjKy0pmNc5qktUnq2lWs6zmWS2yWma1ymqd1SarbVa7rPZZHbI6ZnXK+jCrc1aXrK5ZH2V1y+qe1SPr46yeWb2yev9vrj8iHBmOCseEY8Nx4Zfh+HBCODGcEk4LZ4Qzw1nh7HBOODecHy4IF4ZfhYvCxeGScGmBdsvC5eGK8OtwZbgqXB2uCdeG68Jvw/XhhnBj+F24Kdwcbgm3hdvDHeHOcFe4O9wT7i3g94X7wwPhwfBIeCw8EZ4MwRAK4RAJsRAPiZAMqZAOmZANuZAPhVAMpVAOlVANtVAPjTAVZvwfPKzQDp3QDb3QD8MwCvPDU+Hp8Ez4c3g2PBeeD38JL4QXw0vhr+Hl8Ep4NfwtvFZgvtfDG+Hv4c3wVng7vBPeDe+F98MH4cPwUfg4fBL+HT4Nn4XPwxfhf+HrMB1mRIWiwtGbPjMqEhWNikXFoxJRyahUVDoqE70TlY3KReWjClHFqFL0XlQlqhq9H1WLqkc1opyoVhSPcqPaUd2oXlQ/+j+5/QdRg6hh1CjKixpHTaNmUfOoRdQyahW1jtpEbaN2UfuoQ9Qx6hR9GHWOukRdo4+ibgXm2z3qEX0c9Yx6Rb2jT6I+Ud+oX/Rp1D8aEA2MBkdDoqHRsGhkNCoaHY2JxkbjognRpAJ+SjQ1mhZNj2ZEM6M50dxofrQgWhgtihZHS6Kl0bJoebQiWhV9E62N1kXfRuujDdHGaHO0JdoabYu2Rzv+j26/M9oV/RjtjvZEe6MD0ZHoaHQsOh6diE5GcIREaIRFeEREZERFdMREbMRFfIH5CpEYSZEcKZEa6ZERmVEqsiI7ciI38iI/CqIwiqL86KfoVHQ6OhP9HJ0t4M9F56NfogvRxehS9Gt0OboSXY1+i65F16Mb0a3odnQnuhvdjx5ED6O/okfR4+hJ9Cx6Eb2M/oteRa+jdJQBFgKzwGLgW2BxsAT4DlgWLAeWB98FK4AVwUpgZbAKWBV8H6wG1gRj4AdgA7ARCIAJsDnYAmwNtgd7gD3BT8HPwM/BaeB0cBY4F5wHLgCXgsvAFeDX4EpwFbgGXAuuA78FvwO/B38Ed4N7wX3gfvAYeBw8AYIgAqIgC3KgAIqgBGqgCTpgAJ4Fz4O/gdfA38Hb4B/gXfBP8CH4F/gIfAI+BZ+B/4GvwAwoCyoKFc7PzC+SXzS/WH7x/BL5JfPfzi+VXzq/TH65/HfzK+ZXyn8vv3J+lfyq+dXyq+fXyM/Oz8mvlf9mu3h+bn7t/Dr5dfPr5dfPb5ifl5/Mb5zfJL9pfrP8Fvkt81vlt85vk982v11++/wO+R3/Fzt3FdXGFjB8v15qp+5+6nYqp+7ujWEJCTGIAMETPBAcggULUijVUwWClQSCBEhCIDA+U5dTP3XvVL/vuXt6+169rPXu+//Nb82a2bNnzwb2AHt/6/cB+4EDwEHgEHAYOAIcBY4BFIAK0AA6wAAcARfAFWABbgAbcAe4AA/gAwJACHgAYkAKeAM+gAwYWT6qfHT52PIp5TPK55QvKV9evqJ8bfm68o3lW8v3lu8rP1B+qJxW7lTOLBeUe5TLyn3LA8qDy+XlivKQ8sjyqHJleUx5bHlceUp5anl6uaa8pLy0/Gx5fXlruam8o7yzHCyHypHyW+X3yh+Wfykny7+X/yrvV9G/wqFiWMWIilEVEypWVayuWFuxoWJjxeaKnRW7KvZU7KvYX3G44mjFsQpKBa3CqcKlglPhXsGr4FcIKkQV0gqvCllFQEVYhS/gB/gDQUAwoABCgFAgHIgAIoEoQAlEAzFALBAHxAMJQBKQDKQAqYAaSAMyfrPLBLIADZAN5AC5QB6QD2iBAqAQKAKKgeNACVAKnADKgJPAaeAMcBY4B/wDnAcu/tZfAi4DV4ByoAKoBKqAaqAGqAXqgKtAPaAHDEAD0AgYgSagGWgBWgET0Aa0A2bAAliBTsAGdAHdQHhFZEVUhbIioSKxIr3CWNFU0VzRWtFRYa/oqQAqwAqo4lrF9YpbFU8rnle8rPhQ8aXie8XQSofKUZVjKpdXrqhcVbmmcm3l1sptlTsqd1XurtxTebDyUCWtklPpXulZKaoMr1RVJlSmVGoqsyvzK0sq9ZWGSmNla6W1srPSVtld2VPZW4lW3qp8Wvms8k3l28oPlV8q++n66wbpRurG6CboZuhm6hbr9ur26Q7qDuuO6ig6R52TzlnnqmPp7EAP0AsAAAhAAAwgAApgAA4QwDXgOnADuAncAm4Dd4C7wL/AA+AR8Bh4Ajz7ze4/4DnwAngJvAJeA++AD8An4DPwBSCBr8A34AfwE/gF9AcHgAPBweAQcCjoAA4Dh4O/rSeBI8FR4B/gaHAMOA4cD04AJ4KTwMngVHAaOB2cAc4EZ4GzwTngXPBPcB44H1wALgQXgYvBJeBScBm4HHTXRemUOpUuQZeuy9Bl6bJ1hboiXbGuRFemO6k7pTutu6C7qLusu6Ir11XoKnVVuhpdra5Op9cZdR06s86q69TZdKAO0qG6a7p7ukc6h6phVSOqRlaNqRpXNb5qStXUqulVM6pmVs2rml+1oGpx1fKqtVXrqjZUbazaVLWzalfV3qqDVbQqepVTlXMVs4pTxa8KqwqviqpSVcVVpVSlVqVVZVTlVOVW5VUVVpVUXaiyV4FVaNWtqttVf4ErwVXganAN+De4HtwAbgI3g1vAbeB2cAe4E9wF7gb3gPvBg+Bh8Ah4FDwGUkDqb3Z0kAE6gs6gC+gKskA3kA1yQHeQC/JAASgEPUBPUASKQQkoBb1Ab9AH9AP9f+sDwSAwGFSAIWAoGAaGgxFgJBgNxoAqMA6MBxPARDAJTAZTwFRQDaaB6WAGmAlmgRowG8wBc8E88G7V06pnVS+q3lSRVd+qflQNqh5c7VA9onpk9YTqidWTq6dWz6leW721mlnNqeZXS6u9quXViuqo6oTqxOrUak11dnVedWF1UXVx9cnqU9Vnqs9V/1N9qfpKta66trqz2lZtrwar4epr1derb1bfrv63+mH1o+rH1U+rn1e/qH5Z/ar6dfX76g/VH6s/V3+pJqu/Vn+r/lXdr6Z/zaAah5oxNWNrxtdMqJlYM6PGqca5xqWGWcOu4dRwa3g1njWimnxQCxaAhWARWAweB0vAUvAEWAaeBE+Bp8Ez4D/gefAieAm8DJaDFWAlqAOrwOrf7GrAq6AebAAbQSPYBDaDLWAb2A6aQQtoBbvAbtAO9oC9IADCIA4S4DXwOnjjt/4meAe8C94H/wUfgI/Ax+AT8Cn4DPwPfA6+At+B78EP4EfwE/gZJMGv4DfwO/gD/An+AvtB/aEB0EBoECSp8arxqfGrCagJrJHXhNWoamJr4msSahJr0ms0NXk1J2tO1VyouVLTUWOu6azprrHX9NaANWgNVkPUXK+5WXO75l7Nw5qnNd9rxtROqZ1RO6d2ce2S2mW1a2tptfRap1pmLb9WUOtRK6qV1apqU2pLa8/WXqi9UltXW19rqG2t7ajtrAVrsdpbtbdr79U+qH1Y+7j2Re3L2te1b2u/1E6om1g3pW563Yy6+XUL6hbVLa5bUre0blXd6rq1dRvrBkNDoKGQAzQMGg6NgEZCf0CjoTHQWGgcNB6aAE2EJkGToSnQVGgaNB2aAc2EZkGzof9tNweaC/0JzYPmQwughdAiaDG0BFoKLYOWQyugv6CV0Brob2gdtB7aAG2CtkBboW3Q9t/6HdBuaD90ADoIHYIOQ0cgCkSF6BADcoScIRfIFWJCLMgNYkNciA8JIQ/IExJBYkgCeUHekA/kC+2s21W3p25v3b66I3VH647V0eqc6jh17nW8On6doO5k3am6s3UX6i7VXa7T1VXV1dTV1tXVNdYZ65rqWus66ux1PXVAHVgH1V2re1E35urYqxOuTrm64Oryq2uvHrzqeVV6teRq6dWTV89evXz1ytWqq+jVN1c/XP1ytV99//rB9Yvrl9Qvr19Zv6p+Y/2m+i31e+sP1h+td6p3rufXe9ZL6wPqA+uD6xX1UfXKelV9Qn16fUZ9Vr2mPrs+p15bX1DvB/lDAVAgFAQFQ3JIAYVAoVAYFA5FQJGQEoqGYiAVFAvFQfFQIpQEJUOpkPo3uzQoHcqAMqEsSANlQzlQLpQH5UNaqAAqhIqgYug4VAKVQiegMug0dAY6B/0Dnf+tvwhdgi5DV6ByqAKqhKqhWugqVA/pIQPUCDVBzVALZILaoHaoAzJDFsgKdUI2qAvqhuxQD9QLAVBhfVF9Sf3J+gv1F+sv11+pL6+vra+r19db6231L+pf1r+p/1D/vf5H/a/6fvr++qF6B/0w/Uj9GP0U/VT9dP1M/Xz9Av1i/XL9Wv06/Qb9Rv0m/U79Xj1d76jn6N31fL2nXqb31fvrA/Vh+ih9hv6CXqev1ev1rXqTvl1v1tv1oB7V39bf1d/XP9U/07/Qv9F/0ZP6b/of+kGGKYY5hq2GbYadhr2GowaqgW5gGlgGjoFvkBq8DCAEQTCEQCiEQThEQNehG9BN6BZ0G7oD3YXuQfehf6EH0EPoEfQYegI9hZ5B//1m9xx6Ab2EXkGvoTfQW+gd9B76CH2CPkMk9BX6Bn2HfkA/oV9QP7g/PAAeCA+CB8ND4P/dO8DD4RHwSHgU/Ac8Gh4Lj4PHwxPgifAkeDI8BZ4KT4OnwzPgmfAseDY8B54L/wnPg+fDC+CF8CJ4MbwE9jH4GuQGhSHMEGVIMCQakg2pBrUhw5BpuGIoN+gMtQajocnQYjAZOg02g93QawAMoAEywIZrhuuGm4bbhjuG+4YHhoeGR4anhheGD4aPhs+GLwbS8NXQr6F/g0PDxIaNDZsatjbsbNjdcLDhUMORhmMNlAbHBqcG5wZmA6fBs0HUIGmQNng1BDQENsgbwhriGxIaEhuSG9IbLjRcbLjccKVB11DdoG8wNDQ2NDV0NHQ2XGu43vC9YSm8DP4LXgmvhtfAf8Pr4PXwBngjvAneDG+Bt8M74d3wHngvvA/eDx+AD8GH4SPw0d/sjsEUmArTYDrMgB1hJ9gZdoFdYSbMgt1gNuwOc2EezIcFsBD2gEWwGJbA0t96L9gb9oFlsC/sB/vDAXAgHAQHw3JYAYfAoXAYHA5HwJFwFKyEo+EYOA6OhxPhJDgZToXVcBqcDvdrHNQ4qnF049jGKY0zGuc0Lmlc1ri2cV3j+saNjVsatzZua9zeuLdxX+OBxkONxxqpjbRGp0Zmo6DRo1HWmNKY3qhpPNt4ofFKY21jfWNrY0djZyPYiDR+aSQbvzf+auxnHGB0MA4zjjCONI4yjjaONU4wTjROMk42TjFON84wzjTOMs42zjcuMC4yLjGuMK4yrjauNW407jTuMu4x7jXuMx4yHjUeM9KM7sYEY6IxxZhmTDdmGvOM+cYCYwacCWfBOXAunAdr4QK4EC6Ci+HjcCl8Ai6DT8Gn4TPwOfgf+Dx8Ab4IX4Ivw+W/2VXAlbAOroZr4Fq4Dr4K18MNcCPcBDfDJrgd7oDNsAW2wl2wHe6Be2EABmHotx6GERiDcZiAr8M34JvwbfgOfBe+B9+H/4UfwI/hJ/BT+Bn8H/wcfgG/hF/Br+F38Hv4I/wJ/gyT8Fe4yFhsPGk8ZTxrPG+8YNQZq4w1xlpjndFobDK2GjuMPUbACBohI2a8Zrxl/GD8aPxk/GL8bhzUNLhpaNOwpjFNE5rmNy1v2tl0sOlQ09EmWhOzidXk2SRtUjXFNiU0JTelNKU2qZs0TdlNuU35TUVNxU0lTWebdE36JrQJa7rWdKvpWdObpg9NX5r6NQ9sHtw8snlU85jmCc0zmmc2z27e27yv+WDz0WZKs1Ozc7NrM6vZrZndzG8WNHs2f4O/wz/gn/AveAAyCBmCDEUckGHIcGQEMhoZi4xDxiMTkcnIFGQqMg2ZjsxC/kTmIb+dsYgsRBYhS5FlyArkL2QlshpZg/yNrEXWIeuRDchmZDuyA9mJ7EJ2I3uQ/cgB5CBy6Lf+MHIEOYocQygIFaEhdISBOCJOiDPigrgiTISFuCFshIO4I1yEh/ARASJEPBBPRISIEQkiRbwQabN3c0BzYHNws7xZ0RzZHNWsbFY1JzSnN2c0ZzVrmrObC5uLmi80g81QM9pMNF9rvtf8oPlh86PmF839WxxahrVMaZnaMr1lRsvMlp0tu1r2thxsobXQW5xb8lp0LeYWe0tPC9iCttxqudtyv2VrK72V2cpp5bdKW71aNa3ZrXmtha0nW0+1nmk913qltby1slXXWtNa21rXerXV2NrU2tLa2mpqNbd2ttpa7a1g67XW6603W2+13m592OqN+CAyxBfxQ/yRACQQCUKCETmiQEKQUCQMCUcikEgkGolBYpE4JB5JRJKQ5N/sUpBURI2kIZlIDpKL5CH5iBYpQIqR40gpcgIpQ04hp5EzyFnkHPIPch65hFxBKn7rKxEdUoVUIzVIHXIVqUcMSAPSiDQhzUgL0oqYkDakHbEgVqQL6UbsSA/SiwAIhMAIgqAIhuDIo9anrS9aP7R+bP3cSrb2Mw0yOZjGmCaaZphmmmaZZpvmmOaZ5psWmhaZlptWmFaaVplWm9abNpo2mbaadpoOmg6ZjpiOmo6ZnEzOJqaJY/I0iUwSk9TkZQowyU1hpkRTuinDlGnSmPJMWlOJqdRUZjplOme6YLpoumLSmZpMHaZOk92EmgjTNdM900PTU9Mb01vTe9N30w9Tv7ZBbSPbRrWNbhvbNqVtatuMttltc9oWty1pW9a2oo1AriM3kJvILeQ2cge5i9xD/kUeIo+Qx8gT5CnyDPkPeY68Ql4jb5F3yHvkI/IJ+fyb3ReERL4i35CfSD90ADoQHYQORoegQ9Fh6HB0BDoSHYX+gY5Gx6Bj0XHoeHQCOhGdhP7vfjI6BZ2KTkOnozPQWehsdA46F/0TnYfORxegC9FF6GJ0CboUXYYuR1egf6Er0VXoanQN+je6Fl2Hrkc3oCvbVretaVvbdrCN1kZvc2pjtvHbRG2yNt+2gDZ5W1Sbsi2mLbYtpS21TdNW2Ha8rbTtbNu5tgttV9rK22rb6trq2wxtt9put91re9D2sO1524u2l22v2962fWr70ka2fWv73tav3aF9WPvI9lHt49sntE9sn9I+o31++4L2xe1L2ve1S9u92mXtAe1B7WHt4e1R7cr2hPaU9vT21vZr7dfbb7Xfbb/X/m/70/Zn7S/bP7R/bP/S7tAxpmN+x/KOVR0b0U3oZnQLuhXdhm5Hd6C70N3oHnQfuh89gB5ED6GH0SPoUfQYSkGpKA2lowzU8Tc7J9QZdUFdUSbKQt1QNuqOclEeKkCFqAcqQsWoBJWiXqg36oPKUD80AA1Eg37rg1E5qkBD0FA0Ao1ElWg0GovGowloIpqEJqNqNB3NRLNQDZqN5qC5aD6qRQvQQrQILUaPoyVoKbq2Y2vHto6DHZ4dog5ph6xD3qHoCO9QdeR1lHToO4wdzzredLzt+NDxpeNrx6+Ofub+5pHmMeYJ5hnmxeYl5uXmVeaN5k3mLeZt5r3mfeaD5kPmw+aj5mNmitnR7GR2NruamWaW2d3MNfPNArOnWWoOMAeag81ys8IcZVaaVeYEc7I53ZxhzjJnm/PNBeZCc4n5pPmiudZcZ9abDeZGs9HcZG42d5jNZovZau4028xdZru513wCLUNPoqfQ0+gZ9Cx6Dv0HPY9eQC+hl9EraDlagVaiOrQKrUZr0Fq0Dr2K1qP63+wMaAPaiBrRJrQZbUFbURPahrajHagZtaBWtBO1oV1oN9qD9qIACqEwiqDYbz2OEug19Dp6A72J3kbvoPfQ++i/6AP0IfoIfYw+QZ+h/6HP0ZfoK/Q1+hZ9h75HP6Af0U/oZ5REv6LfUdAMmVHzNfM9833zA/Mj8wvzS/Mr8xvzB/Mn82fzd/MP80/zL3M/S3/LYMsQy1CLg2WkZYxlimWqZbplhmW+ZYFlsWW5ZYXlL8sqy9+WtZZ1lg2WTZYtlp2WXZa9loMWmoVucbQ4WZwtHIu7hW+RWfwtgZYwS7glyqKypFhSLWmWDEueJd9SaCmxnLWcs5y3XLToLFWWWoveYrA0WFotJku7xWyxW3osoAW13LLcttyz3Lc8tfxEf6H9sP7YAGwgNhgbgg3FhmHDsRHYKOwPbDQ2BhuLjcPGY5OwKdhUbBo2HZuBzcR+O08Bm43NweZif2LzsPnYAmwhtghbjC3BlmLLsOXYCuwvbCW2CluNrcH+xtZi67D12Ibf+o3YJmwztgXbju3AdmG7sT3YPmw/dgA7iB3CDmNHMApGwxiYI+aEOWMumCvmhrExd4yL8TABJsQ8sGeWF5Y3li8W0vLDMsg62OpgHWmdYJ1onWydap1jnWudb11sXWVdbf3bus66wbrVus2607rXeth61HrMSrXSrQyro9XJ6mx1sbpamVaOlW+VWn2scqvCGmaNsiqt0dZ4a4I10ZpsTbGmWtXWTKvGmm3Ns2qtBdZCa7H1pPWU9Yz1rPWc9R/rFWu5VWettRqtTdYWa6vVZO202qx2a68VtF6z3rY+tD61vrD26+zfOajToXN4pycmxiSYNybD/DB/LAALxIKwYCwEC8XCsQgsElNi0VgMpsJisTgsHkvC1Fjab3bpWAaWiWVh2VgOlovlYfmYFivACrEirBg7jpVgpdgJrAw7iZ3CTmNnsLPYP9j53/oL2EXsEnYZu4KVYxVYJabDqrBqrAarxeqwq1g9pscMWAPWiBmxJqwZa8FaMRPWhrVjHZgZs2BWbEzn2M7xnRM7J3XO6JzZOadzfufyzhWdKztXd27s3Nq5s/Ng56HOo53HOp06AzoDO+WdYZ0RnarO2M74zsTOpM7kzrTO9M6MzrzO0s6yzlOdFzqNnU2dHZ2dnfZOtBPrJDqvd97rvN/5sPNj5/fOH539bINsg21DbCNto2yjbWNtU2zLbWttNBvd5mRj2vg2gc3DJrMF2OS2KFuKLdWWbtPYCm1FtuO2UlurzWTrsFltnbYuG2iDbIitC+vGerBeDMAgDMFQDMNwjMBuYLewO9hd7B52H/sXe4A9xp5gz7D/sOfYS+zVb3avsTfYW+wd9h77hH3BvmLfsO/YD+wn9gsbgA/EB+ND8KH4MHw4PgIfiY/C/8BH4+Pw/91PwifjU/Cp+DR8Oj4Tn4XPxufif+Lz8AX4QnwRvhhfgi/Fl+HL8b/wlfgqfDW+Bv8bX4uvw9fjG/DN+BYcs+G267Ybtlu227Z7tn9tD21PbC9sL22vbW9sb21fbKTtu61fl0PXsK4RXSO7RnVN6JrStaTraNexLlqXUxeny72L18XvEnRJu5RdCV2FXcaupq7Wro4ue1dPF9AFdSFd17qud93retH1ocuhe0z3hO4p3XO653bv6j7Yfaj7aDetm9nN6nbv9uwO6w7vLunWd6PdD7ufdD/rHmkfZR9jn2CfYZ9pn2v/077Ivti+xL7c/pd9lX2jfZN9i30bvh3fge/Cd+N78L34fvwAfhg/ilNwKk7DGbgj7oK74izcDWfj7jgX5+F8XPCbnRD3wD1xES7Gpbg37oPLcF/cD/fHg/BgXIGH4KF4GB6OR+CReBSuxKPxGFz1Wx+Lx+EJeBKejKfgqbgaT8Mz8Sw8G8/Bc/F8XIsX4IV4EV6MH8dL8BP4Sfw0fgY/i5/D/8HP4xfxS/hW+zb7dvte+z77QftRu5Pd2e5qZ9pZdr7d0y62S+0BdoW90F5kL7GftF+wX7Rftl+xl9tr7XV2vd1o77Cb7Va7zQ7aUftD+wv7G3v/HoeeYT0je8b0TOmZ2jO9Z2bP/J7FPct7NvVwevg9nj2yHt8e/57AnrCelJ68nvyewp6SnrM953rO91zs0fV09Nh7wJ6nPS963vR86SF7vvX86BnU69A7sndC79TeOb1ze+f3Lu5d1bu69+/edb2X8XK8Aq/Eq/BqvAavxevwq3g9rscbcCPehDfjLXgrbsLb8HbcgltxG96Fd/9m14P34gAO4jCO4BiO49fwG/hN/BZ+G7+D38Xv4//iD/BH+GP8Cf4M/w9/jr/AX/7Wv8Jf42/xd/h7/AP+Cf+Mf8FJ/Cv+Df+J/8L7EwOIgcRgYggxlHAghhHDiRHESGIU8QcxmhhDjCPGExMIZi+rl9PL6+X3CnqlvV69Pr2+vfJeRW9Yb1RvQm9ib3Jvaq+mN7s3r7ew92Tvqd4zvWd7z/Ve6S3vNfU+7H3U+7T3ee+L3g+9H3s/937pJXv7Af2BQYADMAYYC4wHJgIzgDnAfGA5sAJYCawCVgMbASfAGWACHMATEAESwAsIAAIBORAGqIBEIB04BVwAdEAHcA+4DzwEngJvgLfAe+Aj8B3oBw4Cx4JTwBXgWnAduBHcCk4kJhGTiWnEdGImMYuYTcwl/iTmEfOJBcRCYhGxlFhO/EWsJFYRq4k1xN/EemIDsYn47ewhYguxjdhO7CB2EruI3cQeYh+xnzhIHCaOEEeJYwSFoBIMwpFwJtwINsEh3Anubz2PEBKehJiQEFLCm/AhfAk/wp8IJIKIYEJBhBChRBgRTkQQkUQ0EUOoiDginkggEokkIplQE2nEXnAfeAA8BNJAJ5AJ8kEZ6AsGgHIwClSCseBZ8Bx4AbwC1oJ1YD1oAFtBE9gBdoI2EAQhEAFREANvgbfBe+BD8AX4EnwNvgHfgl/AUdAqaDW0FtoIbYZ2QrugPdBeaB90FDoG0SAniAO5QzxIAEkhGRQFJUAp0EnoFHQWugDpoCqoBqqDGiAj1Apdgz5AX6Ch8DB4DLwcXgGvgtfCW+Ft8A54F3wQ5sAZRCaRRWQTOUQukUfkE1qigCgmSogTRBlxkjhFnCbOEP8377PwhFVwLJwAp8AaOBvOh0vgk/BZ+ApcBethA2yEW+BWuA3uhG1wN4zC1+Bb8EP4EfwGfgt/gL/A/ZD+yEBkMDISGYX8gYxBJiCTkBnITGQ2MgeZiyxAFiNLkOXIKmQjsgnZgmxFtiF7kX1IFKJEVEgCko5kIFmIBslGCpEipAQ5iVxALiKXkXKkFtEjRqQDMSOdiA0BkWvIfeQB8gJ5ibxBPiDfkR/IL6Q/2q+PDwd0JroT3YtyUD7qifqi/mgYGo5GoTGoCo1DU9BUNA3NQPPQi6gdBVEUvYXeRZ+iL9A36Bf0G/oDHYQ5YCOxCdhEbDK2FduG7cT2YkexYxgVo2NMjIVxMD4mwqSYF+aD+WJyTIGFYVFYApaIJWMpWCqmwc5hnZgNs2MgBmPXsOvYTew29hB7hD3FXmAfsI/YZ4zE+uH98UG4Az4GH4uPxyfgE/EZ+By8r9vPx1fgG/FN+FZ8J74PP4gfwo/gx3A67oQ740ycg0twLzwAD8TleDyeiKfjGbgGz8NL8TL8FH4Bv4LrcAPeiHfgZrwTt+MQjuIEfh2/hz/En+Jv8I/4d/wH3o8YRIwlphBTiRnEHGIxsYRYRqwg1hLriI3EVmIvcYA4RNAIOuFEuBCuBJNgEXxCQHgQIsKLkBEBhJyIIpRELJFCpBLphIYoJIqI40Qp0e//jf83/g/HNmow9QCNpJ1kvHZUOD1yGuZicrvKThZfldRLXkuO+vzPcTxbI27GDYp3TUlJWa/uTAcyvmU+zsKKtjDkjoOcvPmeAqMPEDwttiEVTj2TH08dzmhmhrEes4K44VyroNVjv+SFJEZa4E8JGRH6Mcwh4lfE3KhSlV9cYNxzdW6+D6XU+bN4rd+ZsJcR7IQxqZTkCwXXGBTXpcyj7rMFzYK5QqEIkuz1nu43RVGjeBCiC92srNTQ8xh5+WV93X6e4xXOGsVN1c6cwnw2w4F5i3WKM9m9nruZd5gXKuDJIhRJintRwcoqZXqMU+zcuOzEXanT077nHNMeKOmmfKaMoL2lU5kbBNsFUsEm0X9eY/3PKZJC8JDkyHNx3Qn9yPO5afkq59Nsumt/sibKEFOXvZjW6LiP89QdFvp53PB84jnH70oAO/x2xqzMAaRSsy/nS0405RNFRPvp/pU7RODqFRjrlHQgU5G7rJhLyaYFSHZKh9EzGDmM09593d4YOiYHPXGZsZL/Lusg7aLgpUeX51Zpgnerf0rsqdQ87WCmMuhK0CBFuNI3+qIqLVWe5qGhl6YKI2RO/jTl5ph56ij6YUFp5NQ015z03CsUhDqL1kwbQjcxehgxjgGu8cxibjYvRHBF0OspE/mLG8UfxAXSZN/EgLcBZfJz8i75dYUs7EXY3YhPEfuUucqJqh2q6bHaeHHaxKyJmvu5Aws3FroVPz3eRnV03sykszzY+zl6/jjhbqlO2tftn0ov+R1VhIX0hm2L+BblEx0V7aA+pd6RnqntKH3o+MzxsFOg01cXiOXJ3sK5zP0s3CDaJwoSnRRXSkxeTbLvCk1IdOiOiLyYgapTqqzYx3E/4t7EmxJXp9SmnFMPJEuy/sq1aiWF14rHl710Oi56J86S7ozYkM4vfePi6TrWfYi4Stoj/em3WH4i5eFxqWwQeaH4OFVGD6SXMZzYj9xpfF/+W+F5jy2i68EREWeSTqdnFayh3Gc7CEskt+R93R4KR+KT1dXqpxkUzZHc/YUI96nXr8SXmsHkSXoh+wXbQ/BVut3naMBK+TX5qUhajDm+NfVy+q38xUV/Mdz5L4QDNGrqIfpcx+vMB9x74o2+xQFtQXgwLfKtip0ndjzu4RPjQlHRDjPvMJfyF/3PVjuvXcez2FOUVSpe1lkKRLvidMV5JPuk+xP3pSKKaK70iPf9oMyQ16FcJRlzMpaSeDdpYBYlq0szsMi5+PLxKZR9FHeKlfKWGkr/yejr9jsdHzg+csx0muCicD3tamUnu4Pc74JrQrpIL3km6fai+Vh8XvjslpX6hQUQQdrggfKW0GehIRExymGq77GD44bH3Y0Tpvyd9j29NXOspkrjmXM1By7aV/yshCgtKRvhupPTFX+y4HJB7YnpToURZ2Oup/Rk3tf0Yx7kFHqURVSwx/PCIyoiMuOuZC6kbWR8YYQ6Ori+FwZ5DPdp990Qes7RNViaGJKJ5W+WtHsH+Puq7ZlHioaQoeIwn9r0vm6/9fhQ8rnjClcKy+Lxzeu/4H1hDRHmiJ9RioSs1OCMdZoL+d8YB1wPKPiR9vhZOQ4k0/sI/QgjmTFbeE2q8CrSmmlnGQ8Z7YKzok3SX17R8iORhrjn8dWpm9KgrENFw8guSgEL9hwrzvReK48Nbwq/GBedEpPCSx1OLswdQe1yXMAPFAbJpinFykKKkH4rtFLVn/oHNYSuot9ylrpscf3q+t11AusAK5fVwdZw/nB/6x7NtfNUQkL0QNTX7WdJZku4km5ph5Tnvdlnnkwpi5NZfQuDF8qXyuPkZ+RhihhFbNjrsF3hB8IPhkeE50f2UzYoU2KGqFao0lVT1NS0g+mhGXNz5+f+W0gv+qN4dLGoOOdElzKEOszpldBJCmVfdt5MH0GOJGe4PRaMIgHhL+Ef5GhyDDmWHEeOJ89oJpATyUnkZHIK+VM9lZxGTidnkFrxTNIlcBY5m3ygnUNSPSI8XB3nklkSvlew35/kBsU8cj65gOzr9qOUC8lFZFBKl8sUt8XkEnIpuYxcTu6hrCAl9IOsN5Ixqr/IYJacW+zZFf6RJ+N3CiM9nrAJ9iXGSlLOWsIbx19FribXkCz53+Rach25ntxAbiShok3kZnILuZXcRm4nd5A7yV3kbnIP2e6/l9xHtsRWZ73l7ycPkOLYg+QhcgfnMHmEPEoeIykklaSRdPKZ2wJ1pGSMkkE6kk6kM+lCupI/VEySRW7lPJLtcGzwm8ZaH9/X7TdRrlL2Uyucp7hamS68etFjkcq7zueY38vQ1xGzou4ou5NyUtZks3MbPZv9I4L1CieNi/Mx1wYB6mkV3/dl+/n6G/zfKPaommJ3JcanWtVuabNzc2X//2ta5OhMd80Y5wFMJlPIHSo84XlPGqLAo2qSn554QElx9XNdxBrFqeKs5yby1grve9YEf41NS9Gnq7U3TySy63k1/HG0foxVjEmu65iuzD84fM4nTpr7P9wcnpE/1iPVY7Lnnj4/xySlbd7XfOf6oX4P/X8G3goJD60K3xIxKOFi6sv09xkHMwdqJmgcNT80x3JDtLcKYJ8hAcyg00HSYI/QlvCHkcejVWkXmVa+WPRD1CxOl80KtAW6pY8v9KXERtymXKH30DHGSKfzgkAJTXpXOss3yt+oqAl9FPFB5ZGQmMOhF4g4klzJNYU1IjjejdyfPlmzotCf0xpbHLdL468ZlVPAK3VneXcGRoYcinyYOChtUfaq4mTnTwI26RWSGNPX7XckNSR/ScnScMjpvtcD7gQLlNsS3Env7LdFXDKOonAc5DPOZ3vA9KAVSbNOHGWcyaK5P/JcLprk89x/T1RJdE+iZ2pTqk14LXZ2Shd3ssTb93vQYLm/PC75jiaJOsr9JG94Qj39pIdIUUEZQvOi2+ix0rHeFVFVUU+i/ONg9fQsIPsqdQP9I2O30wuun2C70Cy64f3Tf2n4rcR5KeX5wmLv4oITvSeOMyziUJ+ZAcvChVm7CzSCfsJ5onn+fd3+UGCq/IPSX/UqYWHWPM3h3Cb6ZMYZxkjfzoC2FBs3TlTh0+a/PUoR/JCynkq68MgGToP7DH518IrI4pjemP2qWZq1OZ+0BwumFArK0qjn/SvCa7PrtXcYfDLFs8MT8eb6TwkYE/QkpL9qSBIn6XXG4Kw1Bf7Hv5YqTqSHxYSfVNriB+XGnMg9gavvMgfxFkkWBQByflS0ai59cYAwqCusLf1G+of0z9okyg3aKzbOLRL1Bu4OKQ89rPqe0NftozSLjmeUXWPuchNyxnvf8B3tvyVkpXJD9KzEjakPc49oUxmw6L2k1muXb4nf6IBhcr6cpZgf4hO2PI1b6Ev/Sxim1VKX0aa6/+erVy7NSuPtFUyWCsgkLcxIU92i2+lcrxkRzcq38QrtDeoSRqHjaKc/nEWc83yK5IJU5hsb9CVoiDxeLiT/VciiwmP0ManxQMr9FHs2mP2v1nZ8plO0PxhYKP+aeCnzjNa1pOxEgaTb92/509hJBcvD+rp9d8ScyJwoL09v+TuFMexp2JUip+ONJ+6wnblz/EtiL8enaIZSjjkucYPdKTyhYJuHl/i7+JffMn+PgBOhyxPGJ25JGZ+1r2hLyQxng3CZ5LJsWLx3akTBKUoC6xrvOm+6pFrpFJMTtyy+KX5WVpGm29XAynED2YvExZJEKeDjGaiIqU9/kB6r2XfcIVadflS7s/jcCR57vGx68LuQuyEjEy7Rc1OP0fPpNoZNmicbFDontEX5QiksqDth9uvr9mMTz9FHOSmd/hCXihd5lfm1hGSHTo5vSyhL9souzPlQEpdSQc2h32VYWNu4zoIwz3DPCjEomevd43PThxckCNol3xh6M3Syyhg3OL5f2uK09PTFEo1MEvQqRBy6P+JiaYxPjuxP1kJJUYK/Yy6ziHWXC3isFQdLNvstCyYiiLjFudcZz90rBN2C4UKr8LLnPRHLS+zT7TM38HOwu2J/9Ky4AfHeiWfULemLCgSlF5jXToyl/cHY4kR1Tu7z71YhsuHKEUquSp2kyn+t/cXIl3kFBTsVu23nHHE/yqvgLZVclXp4bfXb6zcsNDgqMyY58Y+0z1mCgg8n6jlX+aMElwVU0TfRd9FY2WtZWbAt+L4yL9/CnpE8Js2d4ebYIxztWe25VrLRu0vWGnxCnheZHzU9Wh27Pi4h8XkWqTUVraUeduxxvOloFy737CfKFrV7vZIx/V8GOyn+DHkY8j0EDPsWtjx8v3J53L1kNGtc4evCdgYqPOc534/e55+1USHdGVXZwpxXxXuOz6Nl0A67XmAt5hzghvJ2CLeLDCKTaJg4TVLi1eZnDpurvKRSxS6Lq4k7lZCetFQ9Oe0fzRqtpmwU7T3VgyRdC3m3hDke/pI9flMD20PsqhuqDykfU6am3ktfknUs21u7khpAnc4FJH9KlSHRIXuPC7jDvb0C0UBvhSe5K3pP4rPEW4VjqNTIgJhz+ffpQ7h10u0yiuymrDKoI3JgPCbbLP9GS2GYmNc8C7zPy11C+rr9+bDJSf/mbyoQkVzH/jx12oWsyiy1ZgHjXOihEoeyqZQBNAWdzQnlzhJvFndIzNKagP4Ks8IWfjtiUdacIofi29S5zNXMT2w/schnrG+En9L/YfAyxbP4WynjUzlpE7JGUzHaGEeOYy77Im+UJCs8PHZl/ITEoalJqZuytmSdKxpXslwSQvlCPcTqz3nNecOReMDSHwGnA5fJl0W/SBiQ/KcGznlfMopyjfKamkhzYfgzFjppnO65LmOJ3fq6vRtbwbazS7hiMkQYKjov8vM957c+aGHkjqj1MbRYemxx7M64oriL8QPVJ9Mfp39Ll2c0ZDzV3Mqeod2rvV70pGSy4xDGEie5Sw3TieXH+sU7K/ATjhFHy6YFWkJSo+5ETVdeiTOlv9FKSDZ1Mi+G1yZc4j5CckMaFbYnWlY6kVJEm+i41JHuGM8SuiVzq/lqwSFhuFAjSpac90J9cB/C55qPXiYl18m/KsaFZYdh4dfC46O6lfdjzqn6uv322LbYd/HTkp+mGNSytMb0qdncgpuFW8quuCxly3jpohrvSh+O71v/iQHuQeXB59OR9C2F2YINMqaqf/ExShrlOAWjbKZupcZQ71J/0d45fnEc4vzA+abLc6aQNdbtOfsrexDnvfsybhFvJl/qUSKqFH2SfJOUSyN9imSEbJ7fsIB9wQPCtofvDOeHm8KfRU5WBimTVKPiMuOhBGvS3RSamquemXYrXZxRnnVJ873wblHpicMML3KCxLvPr6UV0pYyAjkeImdZV/A8RamiILIkISx7VUEoJcezwYcbeDFxGMWHPCR5JZ3sVxY3JdEn5bNHrP+4nMrC4ZR6GkCbTd/vfMl5sstO9lTOPc5Grpp7ktvGfc+nSwXeTL9tQTuDWoO+hIjCqyLRmPcpH1KD1YL0O+kzCrjMJvmPdKuzjBRE/KkMigsKmq1YoPAlp0YmMr8xje5Z3KtcDc+ZnyOM8TgmyhZfF38RT5K+k6qCuHK/SD8lrgzq82sKj1Tj4ioTY1Jz1TM1D3N6Tswpm8jyZa3g3uJPEAeLNRKazOzL838fejHMktCdvSz3OqWLdpCe4DyCfYZ9QBgt6hat8VMG9pfvlSfLW+SykEvhN5TO0RdiImJrYjfFTUt6kaxQP8gI02TnLMg7VlRxXOpI5zh5dciW+C7zGxl3PHFL6gr1JfV/WkmZgGEQV/too38mj8qIz3fXzhSl+r4K9CN7XRHWFfYi/lf+GOFsMU+8JJgMvhnSP1QW2dftXVRBKlHsSXVO9iTKv4wgn8m+gyM2Ra5S+pO69BeOK13ozDr2aM5Yzr/uO4XxHhM8V4hrpEZZim+l3+yAswFw4EJFliJTMTVkbOS9yGVRc5SblMsTfROHJq1Vj9IINHWa+pxPBRuKCaqMw5Nk+5ZFpUdPSpuUMVvjw/7hPsqzNYGjuV+YHJzGLuZHS+74zlb/o+6vGVm4gRFA0gMyw7S5ASlE9isq4fjD+YZLnOsPZptbCvsyp5WzgNtf0OfX74VHhCkeMzzXi8JEm7zVPmtlU31X+z8JfBYUFjxUXi1fGCIIbQ13jfgvwhCVpbyiFESfiFkSuzpek3Aj4b9EbYpOrUnbmLVbE6+RZWtzDDlp2vPaC1pc26/AoVBbhBRPO446RjOnsgLYLWzI182/LHCu3CBPVP2Iv++ezLvE281/IRon9fdy9E71Wef73vdB8M+QK6HHIico58XOiNsZ/yHBI1Go7lAnZ8/KHVJYWzRS6JjyJkuUM9R9kXtft/dy58lLY6XJmP9PIRyzPjUodRaFSXlCu8044BgjHCr2ih6cwtVmUKc6rnfpZp1128ihcI5xBnDH8vbwm0QrxbvFzZIPkhnB/4ZuDjfH5CX0JGhTxWov9X21c3pE+gdXlD2a589/KRzlpfXh+CUEwpHOycy0n5l3C38WbqTGUu9TI53muOnZWwU6kVT8PfBvBTf8byUl9kFsYfylxN7EgcnD1Zczj2cFkuas1ayz7MfsVP4z9ghOOy9W1tftg8i3viMCpikq4z6pWym7HIPJ69rRshOUDiqDznVe4PaUM1bICmqKuxT/M4mVMlO9Q2vWji8aVupeOpxZw2ly38u9z58ouO8xwHuB34Bsp1xK4ZiS0LJUtp4zzIMqPijdGmrSZhQ4FZYdPyXqn9adacxf53yRg7vXcQvER0M+xFvzEaZR2Bu0uPQN5S/WaP4WcbzPk/CFpbmOrU7trpPcpwtwcaVvRlh0XKF2b0GCY5RQ61HtOzz6SOyxwr5u/837aExl6bQTPMoW2lX6DBbJ/+Sxymtz0HqVnOzNXs1TkCHkIOWjOP+ExoRHiRmZoaQ/NYwMJx8y97BZ/BseU0S+okJxBHnYa573CN/+AbJAWDEqpCY8ICKSVMdEkXtTlWRuWmu2UhtNDi8a5HqKZxT19+8X8k/4CXV5kdtxWdkg+lVBtjDD2xK7h7aKKeYNC+yn/qqOYk9K+krdSq912cu66EH6XnL39Uqip1BY1BhSRcaScay4Pj/HjCd5Pu6yBLJOPik8kRwaty9uU/yOLPesJHJKUTKZQqaS/1DU5F3XcN54cRqZTl5WhEf7p2WQQzTs4nMui5hfWLPdatmZ5CduFqkhaR5bPLLJbV7JshZZpm+u70ffCf455N2A9YGswFyyPRALzCOpYf5h+aQi8oFSS66MLiCPpdzNLCSLyGKSnXOc/FRSQpaSJ8hEfqJvGVkVeJI8RVbllzueJs+QZ0lEco7M/J9DluUhcXBcX7f/h2zMf1SsPNEhPk+aAg8lXCAvkkeYl8jLpN49kHeFnCPOFId7VXhtlL2Xrffb5X/Df3rAygBa4N3AgOByki2vIFF5ZwglIje6ktSRb+P46t6sKvJgbjU5taCGrCV3U5bS6kgHxn3H92JfWZf/8OCYUGFERdztxAFJV0k0xUOtTPNJrydrcvTk+IIxhXmUUVQbtZp20HG7099ON5yFzAamhDXd7SG7jG8guwQuol8iT/F5qZusps+vpQEBVwIZwcpIh+Sz6jUlQ8uOcOJle4NTgzfnXPYTyWeHeEVMjB6etJNuZpo8X8knKgJCTDH5mh6tU9FCv8fyixGXIh7FXk8KS56uPuSWzj7OPiXt5+XhezF4vHy5vCDsmfJ5zJRY59gT8UfT/9KOLXwjVvG+ilIl3rK04BW0gW7ePq9CJ7Fk7j3uC4KpigaykXxEI+krmStYWtYN1iO2kWwiT7sTwkmeuZ4/PZvJW+IW8qB3K/kr0FNu6vP3nJSIyogD0dzofqqA2DbydXJs6pw0lqadVGkYRdGCNT5y39nRC1KrsiBqOa3gf35ldk1lGth67m5Bvle6r8Tvql9eoFC+WLFcEazaGG9LGJ6Zl3snt4PMpNCpIbSl9E7Hbsf3jslshD2fM00QJ/ggYgcVBO+Ut4XQwrPDDeFDlE0xaXFYIjepLeuA5qPmv+xE7VPtMy3OkPBeilaLV0o5gesjTJrhhdkUM8nwPuGj8U8NnKLSxzkm9nX7I5p87Tvtt4JpiauPayjqwA7tHnqZ432n8a7jXM+4HnfrcGtnL+bvEHzwSJRt8g3y0/itCtoR7CqH4mJT9mXxNRZSqGUWTi91kKgzuDnHqIdod2iBjqNcUVZ/t2GcAIFGvMJvTdAR+Wtlu+qPBHHCjkReMjtlSuqANGdNdwH1eDAlmzqO7k23kiudLzpHsM+xo7hKbjP3JP8u30EwTNDhsVE0TNJJopIbEhsp8BJ6GWSLfLvIjX7dff66v++/PnhDsJ3kyFcrekhGSC8JkOXKn7EbE7CUQvVN9Uv1qszdmYc12zURmkPZtmy/XJCEyGFMmER8UlXVKoREyV10H9YmDkbipKf/+eCHqqEZBDk5Jyv/GnmdvEHeJGNUfwhnBEiVGcm3yJOuXvwDgnqfZrUqp0rLosx2eu67IjFA+77gVSHu8UCWrblNtwkaYsnSUuo0Wj96CXu04JfghedgL7NPtuJB6MUYz7isxG/JHilGdV+3D0i7nJ1OeUQZTr1N3iE3sJ6y7pLv3Kfz2Ly5/HvkffJf8gG5PehR8EMyQNGjeER+C39MjlT9rUpQ3Y+jxz8hn5JN6TXpyZpn5H/kh8KRRc/JF+SGgK6Qrhh7zPeYaWkNFBNlICPA8SXZ5HTP5RvLzJ7I6+H5+b0iX5PeynXxb8jcpAz1W9K3ILTgHfme7Edxo0ZTSeYj0Wm/jRpdrqHoG+UFU826ztrF/0B+JCdEfCKp8e3pIvpex75u/5n8QpJkD8WL4cxuiUMpmxkXnGysXywa25XNYXvwDwq6/YoC/AKTgj/L6xSmsGXKwar/YhfHT060Jb5SW9PtWg71K8Poclm0WBwVoA9YF9SkzIg7mt2qDSoNZD+RFvpE+N8JyeZcFrP9ayOXRq1PuaV1oBCUOY5rmY3M10wZayjnb24Cdx0v3aNa7CKZ7X3Ge6TPDv/9QV9JWnCa/F7E+aiw2LuxT2LV8bKEeYl5iUDi7ZTxGVeyQ/P7un2JNoNuc1rsqmMfE9Ik26S50m1+iJ8yYG60KeVU+rCsI2WUshVBWZE96mm5B6gU6hq6yglk5XPrhAqJn9dk7wrZNL/rQUuDmxT6yHXKJ3FkvGvC50S2ujI9OXOqRq/p1fLKHjCGO913a2MzPRWiD34dQd/IhJBjEdMjj0Vtj74bExm/LK0r3TPjfgYv878sMstLA+XuoUZQa2hSehj9GMObIWBGMfksB44z5yb3OH+VcLy0xcdBVtXn55iUwDnyVYqNCroiKORoZFpkeaQlMivaT70961DWjpzcnD9zl+V907oV+hTOKhrKWCosFLJ8PUO6IlojQ5R8x2ZOAXejvyGgMGpsQebxOyfOeUR4hiT3p+RTyikcmoJ20KmdVczeyS3nfubG8sz8zR47RHKRXRQiDhP/lEi9Ur09fHbKWn2f+s724/rNCjgVkBn8I3izgh2aHJYZPiJCGdEclak8EDdA/Z/6RPqK7MPZ17LFOfacOblDClwK+ro9p2BA4R9l6xnZjCjn+cyZ3Nm8dD7oUSm96+8bvjyyJ7Yh8UfKF/XezIxsT+1x7baCo4WHy3qp++nd9IuMNS4TeD68Sx49ns9Eu8RfxaR4pqRUSkh/eE309/OXBD4KXBp0Sb451CXcLfxu+JyI/IiCqLtRe5UB0cmqb4lnk5zULeqijNjMORpfzYPsLVpM+6gEEA2Nqsloz2Wyh3MYjteFM4MX0QrYJ3g6vo8Ak173/Uv+V8RuZYlydbRPbF+3X5q5LjM6d0oejUpzfex+nrvMwztmC4VKzaK60W6zOlTeTlKnn85UVhH7jvsNrrt4teStZKn0qWyN72G/DP/6gHvByYqjUQOUy5WnlbPjbiZtUSeqAzLUmX9nrdZQshnZe/PAIjLiXFQXtT/dQu90fc3+xmGJt3m7+Wr9XviPDPRXPIj4M2WuRqHp1v4q6h+/gvKOsj+lJ1vpeNPbx2uXLCLhBDNT8FP8Wng7YKzCqmBE6xMOpTlkHKH81+eftZedVrnudCV4/T2Gevh7rhQ9FUWISyU1EqEPX1YsW+7/KHRB2KFw1/CpytOqAbHvY0vj6uOmJKerv5ODMpozgjQfQqZGbIhwig5VDXVGnRXMlR5/eh4SHxH7So97Jfgs8K3y6wmWyk/J2QqD4n7IrNC00Mfhw6JnRn+LXZlYkLJZDaU/z9RlrdGU53pog7VDCxKobx3/Y9ncpnIpUou8WfEsPCfiTOzLpP/S7Rkvs8pEEyU/yM+urv63lSuz+rr9p1yLto73TpDgP4FSSJ1NsznedfZ3f+U+18fTpzusOPIneSizK9NPc8hju+fO0ISIlbkxed5lOs9K/8eBF+Q35B0R46LioqujCqOL04ZnKPPGFB0t2sS4y37suULyl/Ilrd0xnMkUsARfBVdE1yNy0rRpw2hzaQrGauetbve4Aby1Aq5opHi9+LS4x6vDb43/pOC5IbkRm2JZcXi8MaGO9sa1lf2U7cU75bEwrE55K35uojX7Y7aa/lHi0ue/GV5J76A3spr4zkkzaL9IJ8ZmjlIwTYgI33meE9n95oQMj+Vn8rSN2ruUPY6FzktYt93NnjbZV9+84JiI6XH/JD5MH5MZqnmSfT9/rtZS8IX+zinJ2cA765niX6ucnXUsa12ejTaJ0yz75jtd0Ri6LcozKlzdpp7FbGZN4oZ6MILUCp/QW2pj+ris91y5+IuvUmWK71bTC/Dj/b7uYfwS5/u+9runfKz+S8PVoMUzGTGMp055ggThTeHpPv/vwzgvN6913jkBCwPdw/qH/xEOh4+K0KrC4rC4Q/GHEuPSEzOE2WnZFdntVMjlZSAR2i/5S+oXNs6jSy5o/nV0Y35kn+XHCvie26IDVAsS43MqPK/QJrj3k5Qwm4QXPP7wCvOa5e3j1xDSHd4YtyQBUF/I+JE1LvtIdkn2mNwpucW5N7Xri0eVjKVwFO7hXyPokbbIv6I7EliZ8swvmWM0C8Q7vPbIv9L/ktw6sY9+j6eVvUt2TwlNqeXXxQ7s83vAB2fgjpuc1rqsd1vNUQfci3FTDYl9GXsmIzWbV/yuVE7roJx0/MZf7ufJSaHOpz10vs7hcUX8PGmjrMO3ORBVfFAIQqZFHIqwKr8p/WI+xF5MmpFl09YUMcoOMMyMl4WXUgdSYMkQ/zrqv/9fdXbe1MQBQAEcBRS8KG3FaqfqaK1TtKN0rMUDPCtIIdfukoRA9iDZHJtNNsmGJISYkIQkhETDkZCEwxlUpCLIoR2VKZbWu1aLB+OUwVF0bK1VcWoF42D7OfI+wu+vN+8JAhK3wkB+TK82jNVW1J93PTJmlD+FRxiHwWyom3eEP4EA2Ai2UQLJvrJtD/aGx8JrWQCwG6rgzojysJnRcRGBj0mGVC9UK+hMelHMbwqZDWxwViHOzYUjKIPgUV3UgDngkfPXVLaVJumzrMe8IO8L0YAsIEgVqpTxUVlVPnsCSOcvR75FnQSlmFAsNV233rZd9PX4e0MJ0Uuiw6paUYKYwX4PXMZd4IHRMmlidFTHManNS/yzeNdklsr06jj/ppCBxeUf5wewFH96Uwlq1IwEUO6eolclHqxLFBXpJeOKbHKtZiO9waC3dNlGfYtCn3J2ci2SXM1D+jtv+4HUupjvmEGC/QzIL5UxE6AgwhU3KSxkvmZas6jcVd3iJeH9qjdUR+UC9ByTydqB5Wgumf40P7EU+LsaF0e+98q5WmGPZL4D8iwH0wSlwnHhHNguPmvNqqoOCIK5zERgPpACOMEoGM+NF6YhTVgvBpXOij5Q4GSv7kvDPeu6yns21NHn8Lnfr57r/6tuOlTb9I3wJD6Gp1KzNLOj/zLNHDkMoIBksXymapyWGqVuo/dS6HxoVyTW7YfAZeWAbNKT5+0IdYcr4E6sT9dd1um2+HcGNwFb4QvwNcU1Laar0e0xvbO1hJmMrf65DIjZDqTwLwvX4/0KiNbbcdePXpZ/aePC5mGeQcByflhzsuWmQIr4kJdirmKF6pBqCQVZJiy1gboAK3irUcPZfWCavQY8DZZCHmhAfoq8a8ZtzXX6oLE1CbwM3ix75DwcuB0oDrYxkpnP+Y+LJks4SCNGSnZInYp1ykxLkzU95j/DpGhyNDF0hAGx+sF6bhFfJugXXEb1Mj25knrjelit8fzhsfmfhU9HBjmZ0jSWQciU5Njz3Z2MVLC78LF2Ye1/jclhbjgcBgoP8gTODE8f+lpu0t7cn0McC3IjED9OQ/hkjbeZr4o/g6dQAf5U0Uk5tGe077Sf6wv0u8yYeeW+r20c95zouHdvnSrEFtDl290zQteK7jNBIJs/XZxdaiTfaBIrZ1e22W/UrQ91MHazUzk13Fi3x+CfFNeViRSLOkHVqZ9oZXSevc2FupP8bf5D9R1hJZsL30ckaD/Or8rbf6K2ppHBqGNUgHd4UZ6Zf6p4NbwRy8Xm4BL8KSEjb5CFyillg+q+6omqhPpNs4ouou/T9WXFxqsVS/c9sLbbCMc5B8MJO2mXvkbuPV4fFxKHhpE0TF9bVJSCT5LZym30zqZp+HckxXQe/AgWKm4p0sm7VKLZ6Jzn2dKSBnjBRMFmOUHpdLFu7zMOGnttL+xqz46aDi/dODf6SrRGfNYwYCDKMxkRiMVvF5iEh5DRUpQQ44B0sVKs7qGTzA6/LLKqeQs5rMzW7vBeDUyw84UdcAHyGlmP5qO78N34EdmQAlZeUWKqfHUz7SobMq2u4Ni5LrbfF/y5dR1wr/Ct0ANjSAMyieJ4vKRZ/pzsVlGUXCvfN1i5wX7b2eE577VzNNqggJAnNDwHnYUlglxxlfgKflDqIy+SsW6/RXPSqqstiJxgLmZFgAXgVrAaugBtE3rhLAmuHtMm+kc5/3BEvOu8BPUB9Vt1T9UHHjfeUXUUcuB56gzHXiAMDRF8+Af4eWk1nqN+6fnkwGBrKnOz6BcK10mcIoRRM9WSw37NTgI2klPW4daF+EoiRN3RxYPG4tnmNM9yIovYQ2SCFJJF3rEk2UZY99jNEFH4a+Hf/GTBPGEYDaEZmBB/jIfVZ9Rn1Uc1R41x5X0WKuY7Ziznfw==";
+let cp949Table = null;
+async function inflateRaw(bytes) {
+  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+  return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+async function ensureCp949() {
+  if (cp949Table) return cp949Table;
+  const bin = Uint8Array.from(atob(CP949_B64), (c) => c.charCodeAt(0));
+  const raw = await inflateRaw(bin);
+  cp949Table = new Uint16Array(raw.buffer, raw.byteOffset, raw.byteLength / 2);
+  return cp949Table;
+}
+function decodeCp949Sync(bytes) {
+  const table = cp949Table;
+  let out = "";
+  for (let i = 0; i < bytes.length; i++) {
+    const b = bytes[i];
+    if (b < 0x80) { out += String.fromCharCode(b); continue; }
+    if (i + 1 >= bytes.length) { out += "\uFFFD"; break; }
+    const lead = b, trail = bytes[++i];
+    const li = lead - 0x81, ti = trail - 0x41;
+    if (!table || li < 0 || li > 125 || ti < 0 || ti > 189) { out += "\uFFFD"; continue; }
+    const cp = table[li * 190 + ti];
+    out += cp ? String.fromCharCode(cp) : "\uFFFD";
+  }
+  return out;
+}
+function isValidUtf8(bytes) {
+  try {
+    const s = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+    return s;
+  } catch (_) { return null; }
+}
+async function decodeZipName(bytes, utf8Flag) {
+  const asUtf = isValidUtf8(bytes);
+  if (asUtf !== null) {
+    if (utf8Flag) return asUtf;
+    // Many zips omit the UTF-8 flag; valid UTF-8 is preferred.
+    return asUtf;
+  }
+  if (utf8Flag) {
+    // Flag set but bytes are not valid UTF-8 (mis-flagged CP949). Fall through.
+  }
+  for (const enc of ["euc-kr", "windows-949", "korean", "csEUCPkdFmtKorean"]) {
+    try { return new TextDecoder(enc).decode(bytes); } catch (_) {}
+  }
+  await ensureCp949();
+  return decodeCp949Sync(bytes);
+}
+
+function friendlyError(err) {
+  const m = String((err && err.message) || err || "");
+  if (/비어|empty/i.test(m)) return "파일이 비어 있습니다.";
+  if (/ZIP64/i.test(m)) return "ZIP64 형식은 지원하지 않습니다.";
+  if (/깊게|MAX_ARCHIVE_DEPTH|too deeply|중첩/i.test(m)) return "압축 파일이 너무 깊게 중첩되어 있습니다 (최대 " + MAX_ARCHIVE_DEPTH + "단계).";
+  if (/너무 커/i.test(m)) return m;
+  if (/압축 방식|unsupported compression/i.test(m)) return "이 파일의 압축 방식은 지원하지 않습니다.";
+  if (/손상|corrupt|invalid|형식|wrong|unexpected/i.test(m)) return "손상되었거나 잘못된 보관 파일입니다.";
+  if (/엔진|코덱|ffmpeg|libarchive|로드되지/i.test(m)) return m;
+  if (/열 수 없/i.test(m)) return m;
+  return m || "파일을 열 수 없습니다.";
+}
+
+/* ========== Engine loader (ffmpeg.wasm + libarchive, offline) ========== */
+const Engine = {
+  ffWorker: null, ffReady: false, ffLoad: null,
+  laWorker: null, laReady: false, laLoad: null,
+  status: "idle",
+};
+
+function appDir() {
+  const u = new URL(location.href);
+  let p = u.pathname;
+  if (/\/index\.html?$/i.test(p)) p = p.replace(/index\.html?$/i, "");
+  else if (!p.endsWith("/")) {
+    const last = p.substring(p.lastIndexOf("/") + 1);
+    if (last.includes(".")) p = p.substring(0, p.lastIndexOf("/") + 1);
+    else p += "/";
+  }
+  return u.origin + p;
+}
+function vendorBases() {
+  const dir = appDir();
+  const bases = [dir + "vendor/"];
+  try { bases.push(new URL("vendor/", dir).href); } catch (_) {}
+  return [...new Set(bases)];
+}
+function isHosted() {
+  return location.protocol === "https:" || location.protocol === "http:";
+}
+
+function idbOpen() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open("mhv-engines-v1", 1);
+    req.onupgradeneeded = () => req.result.createObjectStore("files");
+    req.onsuccess = () => res(req.result);
+    req.onerror = () => rej(req.error);
+  });
+}
+async function idbGet(key) {
+  try {
+    const db = await idbOpen();
+    return await new Promise((res, rej) => {
+      const r = db.transaction("files").objectStore("files").get(key);
+      r.onsuccess = () => res(r.result || null);
+      r.onerror = () => rej(r.error);
+    });
+  } catch (_) { return null; }
+}
+async function idbPut(key, value) {
+  try {
+    const db = await idbOpen();
+    await new Promise((res, rej) => {
+      const r = db.transaction("files", "readwrite").objectStore("files").put(value, key);
+      r.onsuccess = () => res();
+      r.onerror = () => rej(r.error);
+    });
+  } catch (_) {}
+}
+
+async function fetchAsset(name) {
+  let last = null;
+  // Same-origin vendor/ first (service worker cache-first when controlled).
+  for (const base of vendorBases()) {
+    try {
+      const r = await fetch(base + name);
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const buf = new Uint8Array(await r.arrayBuffer());
+      if (buf.length) {
+        try { await idbPut(name, buf); } catch (_) {}
+        return buf;
+      }
+    } catch (e) { last = e; }
+  }
+  const cached = await idbGet(name);
+  if (cached) return cached instanceof Uint8Array ? cached : new Uint8Array(cached);
+  throw last || new Error("엔진 파일을 찾지 못했습니다: " + name);
+}
+
+async function importEngineFiles(fileList) {
+  const files = Array.from(fileList || []);
+  let n = 0;
+  for (const f of files) {
+    const name = baseName(f.name);
+    const key = {
+      "ffmpeg-core.wasm": "ffmpeg-core.wasm",
+      "ffmpeg-core.js": "ffmpeg-core.js",
+      "ffmpeg-worker.js": "ffmpeg-worker.js",
+      "libarchive.wasm": "libarchive.wasm",
+      "libarchive-factory.js": "libarchive-factory.js",
+      "libarchive-worker.js": "libarchive-worker.js",
+    }[name];
+    if (!key) continue;
+    const buf = new Uint8Array(await f.arrayBuffer());
+    await idbPut(key, buf);
+    n++;
+  }
+  if (!n) throw new Error("엔진 파일을 찾지 못했습니다. vendor 폴더의 wasm/js 파일을 선택해 주세요.");
+  Engine.ffReady = false; Engine.laReady = false;
+  Engine.ffWorker && Engine.ffWorker.terminate();
+  Engine.laWorker && Engine.laWorker.terminate();
+  Engine.ffWorker = Engine.laWorker = null;
+  Engine.ffLoad = Engine.laLoad = null;
+  toast("엔진 파일 " + n + "개를 저장했습니다.");
+}
+
+function workerFromScript(bytes, mime) {
+  const blob = new Blob([bytes], { type: mime || "text/javascript" });
+  return new Worker(URL.createObjectURL(blob));
+}
+
+function engineRpc(worker, data, transfer) {
+  return new Promise((resolve, reject) => {
+    const id = "e" + Math.random().toString(36).slice(2);
+    const onMsg = (ev) => {
+      const m = ev.data || {};
+      if (m.id !== id) return;
+      worker.removeEventListener("message", onMsg);
+      if (m.type === "error") reject(new Error(m.error || "엔진 오류"));
+      else resolve(m);
+    };
+    worker.addEventListener("message", onMsg);
+    worker.postMessage(Object.assign({ id }, data), transfer || []);
+  });
+}
+
+async function ensureFfmpeg(progressText) {
+  if (Engine.ffReady) return;
+  if (Engine.ffLoad) return Engine.ffLoad;
+  Engine.ffLoad = (async () => {
+    showLoading(progressText || "코덱 엔진을 불러오는 중…");
+    try {
+      const [coreJs, wasm, workerJs] = await Promise.all([
+        fetchAsset("ffmpeg-core.js"),
+        fetchAsset("ffmpeg-core.wasm"),
+        fetchAsset("ffmpeg-worker.js").catch(() => null),
+      ]);
+      let w;
+      if (workerJs) w = workerFromScript(workerJs);
+      else w = new Worker(new URL("vendor/ffmpeg-worker.js", document.baseURI));
+      const coreUrl = URL.createObjectURL(new Blob([coreJs], { type: "text/javascript" }));
+      await engineRpc(w, { cmd: "initCoreScript", coreUrl });
+      const wasmCopy = wasm.buffer.slice(0);
+      await engineRpc(w, { cmd: "load", wasm: wasmCopy }, [wasmCopy]);
+      Engine.ffWorker = w;
+      Engine.ffReady = true;
+    } catch (e) {
+      Engine.ffLoad = null;
+      throw new Error("코덱 엔진을 불러오지 못했습니다. 페이지를 새로고침해 엔진이 내려받아졌는지 확인해 주세요.");
+    } finally {
+      hideLoading();
+    }
+  })();
+  return Engine.ffLoad;
+}
+
+async function ensureLibarchive() {
+  if (Engine.laReady) return;
+  if (Engine.laLoad) return Engine.laLoad;
+  Engine.laLoad = (async () => {
+    showLoading("압축 엔진을 불러오는 중…");
+    try {
+      const [factory, wasm, workerJs] = await Promise.all([
+        fetchAsset("libarchive-factory.js"),
+        fetchAsset("libarchive.wasm"),
+        fetchAsset("libarchive-worker.js").catch(() => null),
+      ]);
+      let w;
+      if (workerJs) w = workerFromScript(workerJs);
+      else w = new Worker(new URL("vendor/libarchive-worker.js", document.baseURI));
+      const factoryUrl = URL.createObjectURL(new Blob([factory], { type: "text/javascript" }));
+      await engineRpc(w, { cmd: "initScript", factoryUrl, scriptDir: factoryUrl });
+      const wasmCopy = wasm.buffer.slice(0);
+      await engineRpc(w, { cmd: "load", wasm: wasmCopy }, [wasmCopy]);
+      Engine.laWorker = w;
+      Engine.laReady = true;
+    } catch (e) {
+      Engine.laLoad = null;
+      throw new Error("압축 엔진을 불러오지 못했습니다. 페이지를 새로고침해 엔진이 내려받아졌는지 확인해 주세요.");
+    } finally {
+      hideLoading();
+    }
+  })();
+  return Engine.laLoad;
+}
+
+async function ffmpegToJpeg(data, name) {
+  await ensureFfmpeg("이미지를 변환하는 중…");
+  const copy = data.byteOffset === 0 && data instanceof Uint8Array ? data.slice() : new Uint8Array(data);
+  const r = await engineRpc(Engine.ffWorker, { cmd: "toJpeg", data: copy.buffer, name: baseName(name) || "in.bin" }, [copy.buffer]);
+  return r.data;
+}
+async function ffmpegToMp4(data, name) {
+  await ensureFfmpeg("영상을 변환하는 중… 처음에는 시간이 걸릴 수 있습니다.");
+  const copy = data instanceof Uint8Array ? data.slice() : new Uint8Array(data);
+  const r = await engineRpc(Engine.ffWorker, { cmd: "toMp4", data: copy.buffer, name: baseName(name) || "in.bin" }, [copy.buffer]);
+  return r.data;
+}
+
+/* ========== ZIP reader (lazy range reads on Blob) ========== */
+class ZipArchive {
+  constructor(blob, name, depth) {
+    this.blob = blob;
+    this.name = name || "archive.zip";
+    this.depth = depth || 0;
+    this.entries = [];
+    this.kind = "zip";
+  }
+  async read(start, length) {
+    if (length <= 0) return new Uint8Array(0);
+    if (start < 0 || start >= this.blob.size) throw new Error("손상되었거나 잘못된 ZIP 파일입니다.");
+    const end = Math.min(this.blob.size, start + length);
+    return new Uint8Array(await this.blob.slice(start, end).arrayBuffer());
+  }
+  static async open(blob, name, depth) {
+    if (!blob || blob.size < 22) throw new Error("파일이 비어 있거나 ZIP이 아닙니다.");
+    if (blob.size > MAX_ARCHIVE_BYTES) throw new Error("보관 파일이 너무 커서 열 수 없습니다.");
+    const z = new ZipArchive(blob, name, depth || 0);
+    await z._parse();
+    return z;
+  }
+  async _parse() {
+    const tailLen = Math.min(this.blob.size, 65535 + 22);
+    const tailStart = this.blob.size - tailLen;
+    const tail = await this.read(tailStart, tailLen);
+    const view = new DataView(tail.buffer, tail.byteOffset, tail.byteLength);
+    let eocd = -1;
+    for (let i = tail.length - 22; i >= 0; i--) {
+      if (view.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+    }
+    if (eocd < 0) throw new Error("ZIP 형식을 읽을 수 없습니다.");
+    const total = view.getUint16(eocd + 10, true);
+    const cdOff = view.getUint32(eocd + 16, true);
+    const cdSize = view.getUint32(eocd + 12, true);
+    if (total === 0xffff || cdOff === 0xffffffff || cdSize === 0xffffffff) {
+      throw new Error("ZIP64는 지원하지 않습니다.");
+    }
+    if (total > MAX_ARCHIVE_ENTRIES) throw new Error("항목이 너무 많은 보관 파일입니다.");
+    const cd = await this.read(cdOff, cdSize || 1);
+    const cv = new DataView(cd.buffer, cd.byteOffset, cd.byteLength);
+    let p = 0, skipped = 0;
+    for (let n = 0; n < total; n++) {
+      if (p + 46 > cd.length) { skipped++; break; }
+      if (cv.getUint32(p, true) !== 0x02014b50) { skipped++; break; }
+      const gp = cv.getUint16(p + 8, true);
+      const method = cv.getUint16(p + 10, true);
+      const compSize = cv.getUint32(p + 20, true);
+      const uncompSize = cv.getUint32(p + 24, true);
+      const nameLen = cv.getUint16(p + 28, true);
+      const extraLen = cv.getUint16(p + 30, true);
+      const commentLen = cv.getUint16(p + 32, true);
+      const localOff = cv.getUint32(p + 42, true);
+      const nameBytes = cd.subarray(p + 46, p + 46 + nameLen);
+      p += 46 + nameLen + extraLen + commentLen;
+      if (p > cd.length + 1) { skipped++; break; }
+      let name;
+      try { name = await decodeZipName(nameBytes, !!(gp & 0x800)); }
+      catch (_) { skipped++; continue; }
+      this.entries.push({
+        name: String(name || "").replace(/\\/g, "/"),
+        method, compSize, uncompSize, localOff, gp,
+      });
+    }
+    this._skipped = skipped;
+  }
+  async extract(entry) {
+    if (entry.compSize > MAX_ENTRY_BYTES || entry.uncompSize > MAX_ENTRY_BYTES) {
+      throw new Error("항목이 너무 커서 열 수 없습니다.");
+    }
+    if (entry.method !== 0 && entry.method !== 8) {
+      throw new Error("지원하지 않는 ZIP 압축 방식입니다.");
+    }
+    const hdr = await this.read(entry.localOff, 30);
+    const hv = new DataView(hdr.buffer, hdr.byteOffset, hdr.byteLength);
+    if (hv.getUint32(0, true) !== 0x04034b50) throw new Error("손상된 ZIP 항목입니다.");
+    const nameLen = hv.getUint16(26, true);
+    const extraLen = hv.getUint16(28, true);
+    const dataStart = entry.localOff + 30 + nameLen + extraLen;
+    if (dataStart + entry.compSize > this.blob.size) throw new Error("손상되었거나 잘못된 ZIP 파일입니다.");
+    const data = await this.read(dataStart, entry.compSize);
+    if (entry.method === 0) return data;
+    try { return await inflateRaw(data); }
+    catch (_) { throw new Error("손상되었거나 잘못된 ZIP 파일입니다."); }
+  }
+}
+
+class LibArchiveHandle {
+  constructor(handle, entries, name, depth, worker) {
+    this.handle = handle;
+    this.entries = entries;
+    this.name = name;
+    this.depth = depth || 0;
+    this.kind = "libarchive";
+    this.worker = worker;
+  }
+  static async open(blob, name, depth) {
+    if (!blob || blob.size === 0) throw new Error("파일이 비어 있습니다.");
+    if (blob.size > MAX_ARCHIVE_BYTES) throw new Error("보관 파일이 너무 커서 열 수 없습니다.");
+    await ensureLibarchive();
+    const buf = new Uint8Array(await blob.arrayBuffer());
+    const r = await engineRpc(Engine.laWorker, { cmd: "open", data: buf.buffer }, [buf.buffer]);
+    const entries = (r.entries || []).map((e) => ({
+      name: String(e.path || "").replace(/\\/g, "/"),
+      uncompSize: e.size || 0,
+      compSize: e.size || 0,
+      method: 0,
+      dir: !!e.dir,
+      path: e.path,
+    }));
+    if (entries.length > MAX_ARCHIVE_ENTRIES) throw new Error("항목이 너무 많은 보관 파일입니다.");
+    return new LibArchiveHandle(r.handle, entries, name, depth || 0, Engine.laWorker);
+  }
+  async extract(entry) {
+    if ((entry.uncompSize || 0) > MAX_ENTRY_BYTES) throw new Error("항목이 너무 커서 열 수 없습니다.");
+    const r = await engineRpc(this.worker, { cmd: "extract", handle: this.handle, path: entry.path || entry.name });
+    return r.data instanceof Uint8Array ? r.data : new Uint8Array(r.data);
+  }
+}
+
+async function openArchiveBlob(blob, name, depth) {
+  const d = depth || 0;
+  if (d >= MAX_ARCHIVE_DEPTH) throw new Error("압축 파일이 너무 깊게 중첩되어 있습니다.");
+  if (!blob) throw new Error("파일을 열 수 없습니다.");
+  if (blob.size === 0) throw new Error("파일이 비어 있습니다.");
+  const kind = archiveKind(name) || "zip";
+  if (kind === "zip") {
+    let zipErr = null;
+    try { return await ZipArchive.open(blob, name, d); }
+    catch (e) { zipErr = e; }
+    try {
+      const la = await LibArchiveHandle.open(blob, name, d);
+      if (la.entries && la.entries.some((en) => en && en.name && !en.dir && !String(en.name).endsWith("/"))) return la;
+    } catch (_) {}
+    throw zipErr || new Error("손상되었거나 잘못된 ZIP 파일입니다.");
+  }
+  return await LibArchiveHandle.open(blob, name, d);
+}
+
+/* ========== URL cache ========== */
+const urlCache = new Map(); // key -> { url, refs }
+function rememberUrl(key, url) {
+  const prev = urlCache.get(key);
+  if (prev && prev.url !== url) URL.revokeObjectURL(prev.url);
+  urlCache.set(key, { url });
+  return url;
+}
+function revokeUrl(key) {
+  const prev = urlCache.get(key);
+  if (prev) { URL.revokeObjectURL(prev.url); urlCache.delete(key); }
+}
+function revokeAllUrls(prefix) {
+  for (const [k, v] of urlCache) {
+    if (!prefix || k.startsWith(prefix)) {
+      URL.revokeObjectURL(v.url);
+      urlCache.delete(k);
+    }
+  }
+}
+function objectUrlForFile(file, key) {
+  if (urlCache.has(key)) return urlCache.get(key).url;
+  return rememberUrl(key, URL.createObjectURL(file));
+}
+
+/* ========== Library tree ========== */
+const library = {
+  roots: [], // dir/zip nodes at home
+};
+
+function makeNode(partial) {
+  return Object.assign({
+    id: uid(),
+    kind: "dir",
+    name: "",
+    path: "",
+    file: null,
+    zip: null,
+    zipEntry: null,
+    children: null, // null = not loaded (lazy zip), array = loaded
+    size: 0,
+    lastModified: 0,
+    parent: null,
+  }, partial);
+}
+
+function ensureChildDir(parent, name) {
+  if (!parent.children) parent.children = [];
+  let n = parent.children.find((c) => c.kind === "dir" && c.name === name);
+  if (!n) {
+    n = makeNode({
+      kind: "dir",
+      name,
+      path: parent.path ? parent.path + "/" + name : name,
+      children: [],
+      parent,
+    });
+    parent.children.push(n);
+  }
+  return n;
+}
+
+function addFileToDir(parent, file, displayName, relPath) {
+  const kind = kindFromName(displayName);
+  if (kind === "other") return null;
+  if (!parent.children) parent.children = [];
+  const path = parent.path ? parent.path + "/" + displayName : displayName;
+  const existing = parent.children.find((c) => c.name === displayName && c.kind === kind);
+  if (existing) {
+    existing.file = file;
+    existing.size = file.size;
+    existing.lastModified = file.lastModified;
+    return existing;
+  }
+  const node = makeNode({
+    kind,
+    name: displayName,
+    path: relPath || path,
+    file,
+    size: file.size,
+    lastModified: file.lastModified,
+    parent,
+    children: kind === "zip" ? null : undefined,
+  });
+  parent.children.push(node);
+  return node;
+}
+
+function findOrCreateRoot(name, kind) {
+  let r = library.roots.find((x) => x.name === name && x.kind === kind);
+  if (!r) {
+    r = makeNode({ kind, name, path: name, children: kind === "zip" ? null : [] });
+    library.roots.push(r);
+  }
+  return r;
+}
+
+async function addPickedFiles(fileList) {
+  const files = Array.from(fileList || []);
+  if (!files.length) return;
+  showLoading("파일을 정리하는 중…");
+  let added = 0, skippedEmpty = 0, skippedBad = 0;
+  try {
+    const usable = [];
+    for (const f of files) {
+      if (!f || !f.size) { skippedEmpty++; continue; }
+      const n = f.name || "file";
+      if (kindFromName(n) === "other" && !f.webkitRelativePath) { skippedBad++; continue; }
+      usable.push(f);
+    }
+    const withPath = usable.filter((f) => f.webkitRelativePath);
+    const without = usable.filter((f) => !f.webkitRelativePath);
+    if (withPath.length) {
+      const groups = new Map();
+      for (const f of withPath) {
+        const rel = f.webkitRelativePath.replace(/\\/g, "/");
+        const parts = rel.split("/").filter(Boolean);
+        if (!parts.length) continue;
+        const rootName = parts[0];
+        if (!groups.has(rootName)) groups.set(rootName, []);
+        groups.get(rootName).push({ file: f, parts, rel });
+      }
+      for (const [rootName, items] of groups) {
+        const root = findOrCreateRoot(rootName, "dir");
+        if (!root.children) root.children = [];
+        for (const { file: f, parts } of items) {
+          if (parts.length < 2) continue;
+          if (parts.some((s) => s === "__MACOSX" || s.startsWith("._"))) continue;
+          const fname = parts[parts.length - 1];
+          if (kindFromName(fname) === "other") continue;
+          let dir = root;
+          for (let i = 1; i < parts.length - 1; i++) dir = ensureChildDir(dir, parts[i]);
+          addFileToDir(dir, f, fname, parts.join("/"));
+          added++;
+        }
+        sortTree(root);
+      }
+    }
+    if (without.length) {
+      const looseMedia = without.filter((f) => kindFromName(f.name) === "image" || kindFromName(f.name) === "video");
+      const zips = without.filter((f) => kindFromName(f.name) === "zip");
+      for (const f of zips) {
+        if (library.roots.some((r) => r.kind === "zip" && r.file && r.file.size === f.size && r.name === f.name)) continue;
+        library.roots.push(makeNode({
+          kind: "zip", name: f.name, path: f.name, file: f, size: f.size,
+          lastModified: f.lastModified, children: null, archiveDepth: 0,
+        }));
+        added++;
+      }
+      if (looseMedia.length) {
+        const bucket = findOrCreateRoot("선택한 파일", "dir");
+        if (!bucket.children) bucket.children = [];
+        for (const f of looseMedia) {
+          addFileToDir(bucket, f, f.name, "선택한 파일/" + f.name);
+          added++;
+        }
+        sortTree(bucket);
+      }
+    }
+    library.roots.sort(sortNodes);
+    relinkPlaylist();
+    if (!cwd || cwd === homeNode) cwd = homeNode;
+    renderExplorer();
+    if (!added) {
+      toast(skippedEmpty && !usable.length ? "파일이 비어 있습니다." : "열 수 있는 이미지, 영상 또는 압축 파일이 없습니다.");
+    } else if (skippedEmpty) {
+      toast("빈 파일 " + skippedEmpty + "개는 건너뛰었습니다.");
+    }
+  } catch (e) {
+    toast(friendlyError(e));
+    renderExplorer();
+  } finally {
+    hideLoading();
+  }
+}
+
+
+function sortTree(node) {
+  if (!node.children) return;
+  node.children.sort(sortNodes);
+  for (const c of node.children) if (c.children) sortTree(c);
+}
+
+function clearLibrary() {
+  revokeAllUrls();
+  library.roots = [];
+  zipCache.clear();
+  cwd = homeNode;
+  renderExplorer();
+}
+
+const zipCache = new Map(); // node.id or file key -> ZipArchive
+
+async function archiveBlobFromNode(node) {
+  if (node.file) return node.file;
+  const parent = node.parentArchive;
+  if (parent && node.zipEntry) {
+    if ((node.zipEntry.uncompSize || 0) > MAX_ENTRY_BYTES) {
+      throw new Error("내부 압축 파일이 너무 커서 열 수 없습니다.");
+    }
+    const data = await parent.extract(node.zipEntry);
+    return new Blob([data], { type: "application/octet-stream" });
+  }
+  throw new Error("ZIP 파일을 열 수 없습니다.");
+}
+
+async function ensureArchiveLoaded(node) {
+  if (node.kind !== "zip") return node;
+  if (Array.isArray(node.children)) return node;
+  const depth = node.archiveDepth || 0;
+  if (depth >= MAX_ARCHIVE_DEPTH) {
+    throw new Error("압축 파일이 너무 깊게 중첩되어 있습니다.");
+  }
+  showLoading((archiveLabel(node.name) || "ZIP") + "을 읽는 중…");
+  try {
+    let zip = node.archive || node.zip;
+    if (!zip) {
+      const blob = await archiveBlobFromNode(node);
+      zip = await openArchiveBlob(blob, node.name, depth);
+    }
+    node.archive = zip;
+    node.zip = zip;
+    node.children = [];
+    const dirMap = new Map();
+    dirMap.set("", node);
+    const ensure = (path) => {
+      if (dirMap.has(path)) return dirMap.get(path);
+      const parentPath = dirName(path);
+      const parent = ensure(parentPath);
+      if (!parent.children) parent.children = [];
+      const n = makeNode({
+        kind: "dir",
+        name: baseName(path),
+        path: node.path + "/" + path,
+        parent,
+        children: [],
+      });
+      parent.children.push(n);
+      dirMap.set(path, n);
+      return n;
+    };
+    for (const entry of zip.entries) {
+      const name = String(entry.name || "").replace(/\\/g, "/");
+      if (name.split("/").some((s) => s === "__MACOSX" || s.startsWith("._"))) continue;
+      if (entry.dir || name.endsWith("/")) {
+        const p = name.replace(/\/+$/, "");
+        if (p) ensure(p);
+        continue;
+      }
+      if (shouldSkipPath(name) && kindFromName(name) === "other") continue;
+      const kind = kindFromName(name);
+      if (kind === "other") continue;
+      const d = dirName(name);
+      const parent = d ? ensure(d) : node;
+      if (!parent.children) parent.children = [];
+      if (kind === "zip") {
+        parent.children.push(makeNode({
+          kind: "zip",
+          name: baseName(name),
+          path: node.path + "/" + name,
+          parentArchive: zip,
+          zipEntry: entry,
+          size: entry.uncompSize,
+          parent,
+          children: null,
+          archiveDepth: depth + 1,
+        }));
+      } else {
+        parent.children.push(makeNode({
+          kind,
+          name: baseName(name),
+          path: node.path + "/" + name,
+          archive: zip,
+          zip: zip,
+          zipEntry: entry,
+          size: entry.uncompSize,
+          parent,
+        }));
+      }
+    }
+    sortTree(node);
+    if (!node.children.length) toast("이 보관 파일에서 이미지, 영상 또는 압축 파일을 찾지 못했습니다.");
+    return node;
+  } catch (e) {
+    node.children = null;
+    throw e;
+  } finally {
+    hideLoading();
+  }
+}
+
+async function ensureZipLoaded(node) { return ensureArchiveLoaded(node); }
+
+async function nodeToBlob(node) {
+  if (node.file) return node.file;
+  const arc = node.archive || node.zip;
+  if (arc && node.zipEntry) {
+    const data = await arc.extract(node.zipEntry);
+    return new Blob([data], { type: mimeFromName(node.name) });
+  }
+  throw new Error("파일을 읽을 수 없습니다.");
+}
+
+async function blobToImageUrl(blob, name) {
+  const url = URL.createObjectURL(blob);
+  if (isNativeImage(name) || !name) {
+    const ok = await new Promise((res) => {
+      const img = new Image();
+      img.onload = () => res(true);
+      img.onerror = () => res(false);
+      img.src = url;
+    });
+    if (ok) return url;
+    URL.revokeObjectURL(url);
+  } else {
+    URL.revokeObjectURL(url);
+  }
+  const buf = new Uint8Array(await blob.arrayBuffer());
+  const jpeg = await ffmpegToJpeg(buf, name);
+  return URL.createObjectURL(new Blob([jpeg], { type: "image/jpeg" }));
+}
+
+async function nodeUrl(node, prefix) {
+  const key = (prefix || "n:") + node.id;
+  if (urlCache.has(key)) return urlCache.get(key).url;
+  const blob = await nodeToBlob(node);
+  if (node.kind === "image") {
+    const url = await blobToImageUrl(blob, node.name);
+    return rememberUrl(key, url);
+  }
+  if (node.kind === "video" && !isNativeVideo(node.name)) {
+    const buf = new Uint8Array(await blob.arrayBuffer());
+    const mp4 = await ffmpegToMp4(buf, node.name);
+    return rememberUrl(key, URL.createObjectURL(new Blob([mp4], { type: "video/mp4" })));
+  }
+  return rememberUrl(key, URL.createObjectURL(blob));
+}
+
+const homeNode = makeNode({ kind: "dir", name: "홈", path: "", id: "home", children: [] });
+Object.defineProperty(homeNode, "children", {
+  get() { return library.roots; },
+  set(v) { library.roots = v; },
+});
+
+let cwd = homeNode;
+
+function pathStack(node) {
+  const s = [];
+  let n = node;
+  while (n && n !== homeNode) { s.unshift(n); n = n.parent; }
+  return s;
+}
+
+function childrenOf(node) {
+  return (node === homeNode ? library.roots : (node.children || [])).slice();
+}
+
+function imagesIn(node) {
+  return childrenOf(node).filter((c) => c.kind === "image").sort((a, b) => naturalCompare(a.name, b.name));
+}
+function videosIn(node) {
+  return childrenOf(node).filter((c) => c.kind === "video").sort((a, b) => naturalCompare(a.name, b.name));
+}
+
+/* ========== Explorer render ========== */
+function renderExplorer() {
+  const empty = $("emptyState");
+  const grid = $("grid");
+  const title = $("exTitle");
+  const crumb = $("crumb");
+  const back = $("btnExBack");
+  const items = childrenOf(cwd);
+  const atHome = cwd === homeNode || cwd.id === "home";
+
+  back.classList.toggle("hidden", atHome);
+  title.textContent = atHome ? "만화뷰어" : cwd.name;
+
+  crumb.innerHTML = "";
+  if (!atHome) {
+    const homeBtn = document.createElement("button");
+    homeBtn.type = "button";
+    homeBtn.textContent = "홈";
+    homeBtn.addEventListener("click", () => { cwd = homeNode; renderExplorer(); });
+    crumb.appendChild(homeBtn);
+    const stack = pathStack(cwd);
+    stack.forEach((n, i) => {
+      const sep = document.createElement("span");
+      sep.textContent = "/";
+      crumb.appendChild(sep);
+      if (i === stack.length - 1) {
+        const cur = document.createElement("span");
+        cur.textContent = n.name;
+        crumb.appendChild(cur);
+      } else {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = n.name;
+        b.addEventListener("click", () => { cwd = n; renderExplorer(); });
+        crumb.appendChild(b);
+      }
+    });
+  } else {
+    crumb.textContent = items.length ? "라이브러리" : "";
+  }
+
+  const folderEmpty = $("folderEmpty");
+  if (!items.length) {
+    grid.classList.add("hidden");
+    grid.innerHTML = "";
+    empty.classList.toggle("hidden", !atHome);
+    if (folderEmpty) folderEmpty.classList.toggle("show", !atHome);
+    if (!atHome) empty.classList.add("hidden");
+    return;
+  }
+  empty.classList.add("hidden");
+  if (folderEmpty) folderEmpty.classList.remove("show");
+  grid.classList.remove("hidden");
+  grid.innerHTML = "";
+  for (const node of items) grid.appendChild(makeCard(node));
+  observeThumbs();
+}
+
+function iconSvg(kind) {
+  if (kind === "dir") return `<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#7db0ff" stroke-width="1.6"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>`;
+  if (kind === "zip") return `<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#c9a27a" stroke-width="1.6"><path d="M6 3h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M14 3v6h6M9 12h3M9 15h3M10.5 9v9"/></svg>`;
+  if (kind === "video") return `<svg class="ico" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M8 6.5v11l9-5.5-9-5.5z"/></svg>`;
+  return `<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="2"/><circle cx="9" cy="9" r="1.5"/><path d="M4 16l5-5 4 4 2-2 5 5"/></svg>`;
+}
+
+function makeCard(node) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "card kind-" + node.kind;
+  btn.dataset.id = node.id;
+  btn.dataset.kind = node.kind;
+  btn.dataset.name = node.name;
+  const thumb = document.createElement("div");
+  thumb.className = "thumb";
+  thumb.innerHTML = iconSvg(node.kind);
+  if (node.kind === "image" || node.kind === "video") {
+    thumb.dataset.lazy = node.id;
+  }
+  if (node.kind === "zip") {
+    const badge = document.createElement("span");
+    badge.className = "badge";
+    badge.textContent = archiveLabel(node.name);
+    thumb.appendChild(badge);
+  }
+  if (node.kind === "dir") {
+    const badge = document.createElement("span");
+    badge.className = "badge";
+    badge.textContent = "폴더";
+    thumb.appendChild(badge);
+  }
+  if (node.kind === "video") {
+    const add = document.createElement("span");
+    add.className = "add-pl" + (isInPlaylist(node) ? " on" : "");
+    add.textContent = isInPlaylist(node) ? "✓" : "+";
+    add.title = "재생목록에 추가";
+    add.addEventListener("click", (e) => {
+      e.preventDefault(); e.stopPropagation();
+      togglePlaylist(node);
+      add.classList.toggle("on", isInPlaylist(node));
+      add.textContent = isInPlaylist(node) ? "✓" : "+";
+    });
+    thumb.appendChild(add);
+  }
+  const name = document.createElement("div");
+  name.className = "name";
+  name.textContent = node.name;
+  btn.append(thumb, name);
+
+  let pressTimer = 0, pressed = false, startX = 0, startY = 0;
+  const startPress = (x, y) => {
+    pressed = false;
+    startX = x; startY = y;
+    clearTimeout(pressTimer);
+    pressTimer = setTimeout(() => {
+      pressed = true;
+      openActionSheet(node);
+    }, 500);
+  };
+  const cancelPress = () => { clearTimeout(pressTimer); };
+  btn.addEventListener("pointerdown", (e) => {
+    if (e.button && e.button !== 0) return;
+    startPress(e.clientX, e.clientY);
+  });
+  btn.addEventListener("pointermove", (e) => {
+    if (Math.hypot(e.clientX - startX, e.clientY - startY) > 10) cancelPress();
+  });
+  btn.addEventListener("pointerup", cancelPress);
+  btn.addEventListener("pointercancel", cancelPress);
+  btn.addEventListener("click", (e) => {
+    if (pressed) { e.preventDefault(); pressed = false; return; }
+    openNode(node);
+  });
+  return btn;
+}
+
+let thumbObserver = null;
+function observeThumbs() {
+  if (thumbObserver) thumbObserver.disconnect();
+  thumbObserver = new IntersectionObserver((entries) => {
+    for (const en of entries) {
+      if (!en.isIntersecting) continue;
+      const id = en.target.dataset.lazy;
+      if (!id) continue;
+      en.target.dataset.lazy = "";
+      thumbObserver.unobserve(en.target);
+      const node = findNodeById(id);
+      if (node) loadThumb(en.target, node);
+    }
+  }, { root: $("exScroll"), rootMargin: "200px" });
+  document.querySelectorAll(".thumb[data-lazy]").forEach((el) => thumbObserver.observe(el));
+}
+
+function findNodeById(id, roots) {
+  const stack = roots ? roots.slice() : library.roots.slice();
+  // also search current zip trees which may be attached
+  const seen = new Set();
+  while (stack.length) {
+    const n = stack.pop();
+    if (!n || seen.has(n.id)) continue;
+    seen.add(n.id);
+    if (n.id === id) return n;
+    if (n.children) for (const c of n.children) stack.push(c);
+  }
+  return null;
+}
+
+const thumbJobs = [];
+let thumbActive = 0;
+function enqueueThumb(fn) {
+  return new Promise((res, rej) => {
+    thumbJobs.push({ fn, res, rej });
+    pumpThumbs();
+  });
+}
+function pumpThumbs() {
+  while (thumbActive < 2 && thumbJobs.length) {
+    const job = thumbJobs.shift();
+    thumbActive++;
+    Promise.resolve().then(job.fn).then(job.res, job.rej).finally(() => { thumbActive--; pumpThumbs(); });
+  }
+}
+async function loadThumb(thumbEl, node) {
+  return enqueueThumb(async () => {
+    try {
+      if (node.kind === "image") {
+        const url = await nodeUrl(node, "th:");
+        const img = new Image();
+        img.alt = node.name;
+        await new Promise((res) => { img.onload = res; img.onerror = res; img.src = url; });
+        try {
+          const c = document.createElement("canvas");
+          const w = img.naturalWidth || 256, h = img.naturalHeight || 256;
+          const scale = 256 / Math.max(w, h, 1);
+          c.width = Math.max(1, Math.round(w * scale));
+          c.height = Math.max(1, Math.round(h * scale));
+          c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+          const small = c.toDataURL("image/jpeg", 0.72);
+          revokeUrl("th:" + node.id);
+          const out = document.createElement("img");
+          out.alt = node.name;
+          out.className = "ready";
+          out.src = small;
+          thumbEl.innerHTML = "";
+          thumbEl.appendChild(out);
+        } catch (_) {
+          img.className = "ready";
+          thumbEl.innerHTML = "";
+          thumbEl.appendChild(img);
+        }
+      } else if (node.kind === "video") {
+        const url = await nodeUrl(node, "th:");
+        await captureVideoThumb(thumbEl, url, node);
+      }
+    } catch (_) { /* keep icon */ }
+  });
+}
+
+async function captureVideoThumb(thumbEl, url, node) {
+  const v = document.createElement("video");
+  v.muted = true; v.playsInline = true; v.preload = "metadata"; v.src = url;
+  const ok = await new Promise((res) => {
+    const t = setTimeout(() => res(false), 4000);
+    v.addEventListener("loadeddata", () => { clearTimeout(t); res(true); }, { once: true });
+    v.addEventListener("error", () => { clearTimeout(t); res(false); }, { once: true });
+  });
+  if (!ok) return;
+  try {
+    if (v.duration && isFinite(v.duration) && v.duration > 0.4) {
+      v.currentTime = Math.min(1, v.duration * 0.15);
+      await new Promise((res) => v.addEventListener("seeked", res, { once: true }));
+    }
+  } catch (_) {}
+  try {
+    const c = document.createElement("canvas");
+    const w = v.videoWidth || 160, h = v.videoHeight || 90;
+    c.width = w; c.height = h;
+    c.getContext("2d").drawImage(v, 0, 0, w, h);
+    thumbEl.innerHTML = "";
+    const img = document.createElement("img");
+    img.alt = node.name;
+    img.src = c.toDataURL("image/jpeg", 0.7);
+    thumbEl.appendChild(img);
+  } catch (_) {}
+  const badge = document.createElement("span");
+  badge.className = "badge";
+  badge.textContent = v.duration && isFinite(v.duration) ? fmtTime(v.duration) : "영상";
+  thumbEl.appendChild(badge);
+  if (node.kind === "video") {
+    const add = document.createElement("span");
+    add.className = "add-pl" + (isInPlaylist(node) ? " on" : "");
+    add.textContent = isInPlaylist(node) ? "✓" : "+";
+    add.addEventListener("click", (e) => {
+      e.preventDefault(); e.stopPropagation();
+      togglePlaylist(node);
+      add.classList.toggle("on", isInPlaylist(node));
+      add.textContent = isInPlaylist(node) ? "✓" : "+";
+    });
+    thumbEl.appendChild(add);
+  }
+  v.removeAttribute("src"); v.load();
+}
+
+async function openNode(node) {
+  if (node.kind === "dir") {
+    cwd = node;
+    renderExplorer();
+    return;
+  }
+  if (node.kind === "zip") {
+    try {
+      await ensureArchiveLoaded(node);
+      cwd = node;
+      renderExplorer();
+    } catch (e) {
+      toast(friendlyError(e));
+      renderExplorer();
+    }
+    return;
+  }
+  if (node.kind === "image") {
+    const folder = node.parent || cwd;
+    const pages = imagesIn(folder);
+    const idx = Math.max(0, pages.findIndex((p) => p.id === node.id));
+    openReader(pages, idx, folder);
+    return;
+  }
+  if (node.kind === "video") {
+    const folder = node.parent || cwd;
+    const list = videosIn(folder);
+    const idx = Math.max(0, list.findIndex((p) => p.id === node.id));
+    openVideoQueue(list, idx, "folder");
+  }
+}
+
+function openActionSheet(node) {
+  const items = [];
+  items.push({ label: "열기", fn: () => openNode(node) });
+  if (node.kind === "video") {
+    items.push({
+      label: isInPlaylist(node) ? "재생목록에서 제거" : "재생목록에 추가",
+      fn: () => { togglePlaylist(node); renderExplorer(); },
+    });
+  }
+  if (node.kind === "image") {
+    items.push({ label: "이 폴더 이미지 보기", fn: () => openNode(node) });
+  }
+  showSheet(node.name, items);
+}
+
+/* ========== Comic reader ========== */
+const reader = {
+  pages: [],
+  folderName: "",
+  folderKey: "",
+  index: 0,
+  rtl: false,
+  spreadMode: "auto", // auto | single | spread
+  coverAlone: false,
+  ui: true,
+  zoom: 1,
+  panX: 0,
+  panY: 0,
+  animating: false,
+  gen: 0,
+};
+
+const PREFS_KEY = "mhv-prefs-v1";
+function loadPrefs() {
+  try {
+    const p = JSON.parse(localStorage.getItem(PREFS_KEY) || "{}");
+    if (p.rtl != null) reader.rtl = !!p.rtl;
+    if (p.spreadMode) reader.spreadMode = p.spreadMode;
+    if (p.coverAlone != null) reader.coverAlone = !!p.coverAlone;
+    if (p.speed) videoState.speed = p.speed;
+  } catch (_) {}
+}
+function savePrefs() {
+  try {
+    localStorage.setItem(PREFS_KEY, JSON.stringify({
+      rtl: reader.rtl,
+      spreadMode: reader.spreadMode,
+      coverAlone: reader.coverAlone,
+      speed: videoState.speed,
+    }));
+  } catch (_) {}
+}
+
+function isWideLandscape() {
+  const w = window.innerWidth, h = window.innerHeight;
+  return w > h && Math.min(w, h) >= 600;
+}
+function isSpread() {
+  if (reader.spreadMode === "single") return false;
+  if (reader.spreadMode === "spread") return true;
+  return isWideLandscape();
+}
+function pageCount() { return reader.pages.length; }
+
+function alignIndex(i) {
+  const n = pageCount();
+  if (n <= 0) return 0;
+  i = Math.max(0, Math.min(n - 1, i));
+  if (!isSpread()) return i;
+  if (reader.coverAlone) {
+    if (i <= 0) return 0;
+    return i % 2 === 1 ? i : i - 1;
+  }
+  return i - (i % 2);
+}
+function readingNext(i) {
+  const n = pageCount();
+  if (!isSpread()) return i + 1 < n ? i + 1 : -1;
+  if (reader.coverAlone && i === 0) return n > 1 ? 1 : -1;
+  const nx = i + 2;
+  return nx < n ? nx : -1;
+}
+function readingPrev(i) {
+  if (!isSpread()) return i - 1 >= 0 ? i - 1 : -1;
+  if (reader.coverAlone && i <= 1) return i === 0 ? -1 : 0;
+  const p = i - 2;
+  return p >= 0 ? p : -1;
+}
+function physicalNeighbors(i) {
+  const n = readingNext(i), p = readingPrev(i);
+  if (!reader.rtl) return { left: p, right: n };
+  return { left: n, right: p };
+}
+function pairFor(index) {
+  const n = pageCount();
+  if (index == null || index < 0 || index >= n) return { empty: true };
+  if (!isSpread()) return { single: true, page: index };
+  if (reader.coverAlone && index === 0) {
+    return reader.rtl
+      ? { spread: true, left: 0, right: null, cover: true }
+      : { spread: true, left: null, right: 0, cover: true };
+  }
+  const a = index;
+  const b = index + 1 < n ? index + 1 : null;
+  if (reader.rtl) return { spread: true, left: b, right: a };
+  return { spread: true, left: a, right: b };
+}
+
+const pageUrlMemo = new Map(); // index -> url
+async function getPageUrl(i) {
+  if (i == null || i < 0 || i >= pageCount()) return null;
+  if (pageUrlMemo.has(i)) return pageUrlMemo.get(i);
+  const node = reader.pages[i];
+  const url = await nodeUrl(node, "pg:");
+  pageUrlMemo.set(i, url);
+  return url;
+}
+function harvestPageUrls() {
+  const keep = new Set();
+  const cur = reader.index;
+  const range = isSpread() ? 6 : 4;
+  for (let i = cur - range; i <= cur + range + 1; i++) keep.add(i);
+  for (const i of [...pageUrlMemo.keys()]) {
+    if (!keep.has(i)) {
+      revokeUrl("pg:" + reader.pages[i].id);
+      pageUrlMemo.delete(i);
+    }
+  }
+}
+function clearPageUrls() {
+  for (const i of [...pageUrlMemo.keys()]) {
+    const p = reader.pages[i];
+    if (p) revokeUrl("pg:" + p.id);
+  }
+  pageUrlMemo.clear();
+}
+
+async function makeImg(i) {
+  const url = await getPageUrl(i);
+  const img = document.createElement("img");
+  img.alt = reader.pages[i] ? reader.pages[i].name : "";
+  img.draggable = false;
+  img.src = url;
+  await new Promise((res) => {
+    if (img.complete) res();
+    else { img.onload = () => res(); img.onerror = () => res(); }
+  });
+  return img;
+}
+
+async function fillView(el, index) {
+  el.innerHTML = "";
+  const pair = pairFor(index);
+  if (pair.empty) {
+    el.className = "view single";
+    return;
+  }
+  if (pair.single) {
+    el.className = "view single";
+    const slot = document.createElement("div");
+    slot.className = "slot center";
+    if (pair.page != null) slot.appendChild(await makeImg(pair.page));
+    el.appendChild(slot);
+    return;
+  }
+  el.className = "view spread";
+  const sl = document.createElement("div");
+  sl.className = "slot spine-end";
+  const sr = document.createElement("div");
+  sr.className = "slot spine-start";
+  if (pair.left != null) sl.appendChild(await makeImg(pair.left));
+  if (pair.right != null) sr.appendChild(await makeImg(pair.right));
+  el.append(sl, sr);
+}
+
+function resetZoom() {
+  reader.zoom = 1;
+  reader.panX = 0;
+  reader.panY = 0;
+  applyZoom();
+}
+function applyZoom() {
+  const strip = $("strip");
+  if (reader.zoom <= 1.001) {
+    strip.style.transformOrigin = "center center";
+    // keep slide position; zoom applied separately via #strip current view?
+    // Use #viewCur transform for zoom so swipe translate on #strip stays clean.
+  }
+  $("viewCur").style.transform = reader.zoom > 1
+    ? `translate(${reader.panX}px,${reader.panY}px) scale(${reader.zoom})`
+    : "";
+  $("viewCur").style.transformOrigin = "center center";
+}
+
+async function renderReaderViews(keepTransform) {
+  const g = ++reader.gen;
+  const cur = reader.index;
+  const nb = physicalNeighbors(cur);
+  await Promise.all([
+    fillView($("viewPrev"), nb.left),
+    fillView($("viewCur"), cur),
+    fillView($("viewNext"), nb.right),
+  ]);
+  if (g !== reader.gen) return;
+  if (!keepTransform) {
+    $("strip").style.transition = "none";
+    $("strip").style.transform = "translateX(-33.3333%)";
+  }
+  resetZoom();
+  harvestPageUrls();
+  updateReaderChrome();
+  // preload neighbors
+  const n = readingNext(cur), p = readingPrev(cur);
+  [n, p, n >= 0 ? readingNext(n) : -1].forEach((i) => { if (i >= 0) getPageUrl(i); });
+}
+
+function updateReaderChrome() {
+  const n = pageCount();
+  const i = reader.index;
+  const pair = pairFor(i);
+  let label;
+  if (pair.single) label = `${i + 1} / ${n}`;
+  else {
+    const nums = [pair.left, pair.right].filter((x) => x != null).map((x) => x + 1);
+    nums.sort((a, b) => a - b);
+    label = nums.length === 2 ? `${nums[0]}–${nums[1]} / ${n}` : `${nums[0] || i + 1} / ${n}`;
+  }
+  $("pageCounter").textContent = label;
+  const slider = $("pageSlider");
+  slider.max = String(Math.max(1, n));
+  slider.value = String(i + 1);
+  $("readerTitle").textContent = reader.pages[i] ? reader.pages[i].name : "뷰어";
+  $("readerCrumb").textContent = (reader.folderName || "이미지") + (isSpread() ? " · 펼쳐보기" : " · 한 쪽");
+  $("readerChrome").classList.toggle("dim", !reader.ui);
+  saveReaderPos();
+}
+
+function storagePageKey() {
+  return "mhv-page:" + (reader.folderKey || reader.folderName || "unknown");
+}
+function saveReaderPos() {
+  try {
+    localStorage.setItem(storagePageKey(), JSON.stringify({ index: reader.index, at: Date.now() }));
+  } catch (_) {}
+}
+function restoreReaderPos() {
+  try {
+    const v = JSON.parse(localStorage.getItem(storagePageKey()) || "null");
+    if (v && typeof v.index === "number") return v.index;
+  } catch (_) {}
+  return null;
+}
+
+function setReaderUI(on) {
+  reader.ui = on;
+  $("readerChrome").classList.toggle("dim", !on);
+}
+
+function turnToPhysical(dir, animated) {
+  // dir: -1 show left (translate toward +), +1 show right (translate toward -)
+  if (reader.animating) return;
+  if (reader.zoom > 1.01) resetZoom();
+  const nb = physicalNeighbors(reader.index);
+  const target = dir < 0 ? nb.left : nb.right;
+  if (target == null || target < 0) {
+    bounceStrip(dir);
+    return;
+  }
+  if (!animated) {
+    reader.index = alignIndex(target);
+    renderReaderViews();
+    return;
+  }
+  reader.animating = true;
+  const strip = $("strip");
+  strip.style.transition = "transform 280ms cubic-bezier(.22,.75,.26,1)";
+  strip.style.transform = dir > 0 ? "translateX(-66.6666%)" : "translateX(0%)";
+  let finished = false;
+  const done = () => {
+    if (finished) return;
+    finished = true;
+    strip.removeEventListener("transitionend", done);
+    reader.index = alignIndex(target);
+    reader.animating = false;
+    renderReaderViews();
+  };
+  strip.addEventListener("transitionend", done);
+  setTimeout(done, 340);
+}
+function bounceStrip(dir) {
+  const strip = $("strip");
+  strip.style.transition = "transform 180ms ease";
+  strip.style.transform = `translateX(calc(-33.3333% + ${dir > 0 ? -28 : 28}px))`;
+  setTimeout(() => {
+    strip.style.transform = "translateX(-33.3333%)";
+    setTimeout(() => { strip.style.transition = "none"; }, 180);
+  }, 180);
+}
+
+function goReading(delta) {
+  // delta +1 = next in reading order
+  const i = delta > 0 ? readingNext(reader.index) : readingPrev(reader.index);
+  if (i < 0) return;
+  const nb = physicalNeighbors(reader.index);
+  const physical = (nb.right === i) ? 1 : -1;
+  turnToPhysical(physical, true);
+}
+
+async function openReader(pages, startIndex, folder) {
+  if (!pages || !pages.length) { toast("이미지가 없습니다."); return; }
+  reader.pages = pages;
+  reader.folderName = folder && folder.name ? folder.name : "이미지";
+  reader.folderKey = (folder && folder.path ? folder.path : reader.folderName) + ":" + pages.length;
+  const saved = restoreReaderPos();
+  // Start at the tapped image unless we want last-page memory when reopening the folder without a tap? Requirement: start at the tapped one.
+  reader.index = alignIndex(startIndex || 0);
+  // If the same page is tapped, use that. Memory is still saved for when we return via... I'll start at tapped, but remember for slider/session if startIndex omitted.
+  if (startIndex == null && saved != null) reader.index = alignIndex(saved);
+  reader.ui = true;
+  reader.animating = false;
+  resetZoom();
+  showScreen("reader");
+  await renderReaderViews();
+}
+
+function closeReader() {
+  clearPageUrls();
+  showScreen("explorer");
+  renderExplorer();
+}
+
+/* reader gestures */
+(function bindReaderGestures() {
+  const stage = $("stage");
+  const pointers = new Map();
+  let mode = "none"; // none | swipe | pinch | pan
+  let startX = 0, startY = 0, startT = 0;
+  let lastTap = 0, lastTapX = 0, lastTapY = 0;
+  let startZoom = 1, startPanX = 0, startPanY = 0, pinchDist = 0, pinchMid = {x:0,y:0};
+
+  function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+  function mid(a, b) { return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }; }
+  function pt(e) { return { x: e.clientX, y: e.clientY, id: e.pointerId }; }
+
+  stage.addEventListener("pointerdown", (e) => {
+    if (document.getElementById("screen-reader").classList.contains("hidden")) return;
+    if (e.target.closest("#readerChrome") && !e.target.closest("#stage")) return;
+    stage.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, pt(e));
+    if (pointers.size === 2) {
+      const [a, b] = [...pointers.values()];
+      mode = "pinch";
+      startZoom = reader.zoom;
+      startPanX = reader.panX;
+      startPanY = reader.panY;
+      pinchDist = dist(a, b) || 1;
+      pinchMid = mid(a, b);
+      return;
+    }
+    if (reader.animating) return;
+    mode = reader.zoom > 1.02 ? "pan" : "swipe";
+    startX = e.clientX; startY = e.clientY; startT = Date.now();
+    startPanX = reader.panX; startPanY = reader.panY;
+    $("strip").style.transition = "none";
+  });
+
+  stage.addEventListener("pointermove", (e) => {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, pt(e));
+    if (mode === "pinch" && pointers.size >= 2) {
+      const [a, b] = [...pointers.values()];
+      const d = dist(a, b) || 1;
+      let z = Math.max(1, Math.min(4.5, startZoom * (d / pinchDist)));
+      reader.zoom = z;
+      const m = mid(a, b);
+      // simple pan follow
+      reader.panX = startPanX + (m.x - pinchMid.x);
+      reader.panY = startPanY + (m.y - pinchMid.y);
+      if (z === 1) { reader.panX = 0; reader.panY = 0; }
+      applyZoom();
+      return;
+    }
+    if (mode === "pan") {
+      reader.panX = startPanX + (e.clientX - startX);
+      reader.panY = startPanY + (e.clientY - startY);
+      applyZoom();
+      return;
+    }
+    if (mode === "swipe" && reader.zoom <= 1.02) {
+      const dx = e.clientX - startX;
+      $("strip").style.transform = `translateX(calc(-33.3333% + ${dx}px))`;
+    }
+  });
+
+  function endPtr(e) {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.delete(e.pointerId);
+    if (mode === "pinch") {
+      if (pointers.size < 2) {
+        if (reader.zoom <= 1.02) { resetZoom(); }
+        mode = pointers.size ? "pan" : "none";
+      }
+      return;
+    }
+    if (mode === "pan") { mode = pointers.size ? mode : "none"; return; }
+    if (mode !== "swipe") { if (!pointers.size) mode = "none"; return; }
+    mode = "none";
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    const dt = Date.now() - startT;
+    const w = stage.clientWidth || window.innerWidth;
+    const isTap = Math.hypot(dx, dy) < 12 && dt < 350;
+
+    if (isTap) {
+      $("strip").style.transition = "transform 160ms ease";
+      $("strip").style.transform = "translateX(-33.3333%)";
+      const now = Date.now();
+      if (now - lastTap < 300 && Math.hypot(e.clientX - lastTapX, e.clientY - lastTapY) < 40) {
+        lastTap = 0;
+        // double tap zoom
+        if (reader.zoom > 1.05) resetZoom();
+        else {
+          reader.zoom = 2.2;
+          const r = stage.getBoundingClientRect();
+          reader.panX = (r.width / 2 - (e.clientX - r.left)) * (reader.zoom - 1) / reader.zoom;
+          reader.panY = (r.height / 2 - (e.clientY - r.top)) * (reader.zoom - 1) / reader.zoom;
+          applyZoom();
+        }
+        return;
+      }
+      lastTap = now; lastTapX = e.clientX; lastTapY = e.clientY;
+      const x = e.clientX - stage.getBoundingClientRect().left;
+      const third = w / 3;
+      if (x < third) turnToPhysical(-1, true);
+      else if (x > 2 * third) turnToPhysical(1, true);
+      else setReaderUI(!reader.ui);
+      return;
+    }
+
+    const velocity = dx / Math.max(16, dt);
+    const should = Math.abs(dx) > w * 0.18 || (Math.abs(velocity) > 0.6 && Math.abs(dx) > 24);
+    if (should && Math.abs(dx) > Math.abs(dy)) {
+      turnToPhysical(dx < 0 ? 1 : -1, true);
+    } else {
+      $("strip").style.transition = "transform 220ms ease";
+      $("strip").style.transform = "translateX(-33.3333%)";
+    }
+  }
+  stage.addEventListener("pointerup", endPtr);
+  stage.addEventListener("pointercancel", endPtr);
+})();
+
+function showReaderSettings() {
+  showSheet("보기 설정", null, {
+    custom: true,
+    build(body) {
+      const mkRow = (label, segItems, get, set) => {
+        const row = document.createElement("div");
+        row.className = "settings-row";
+        const lab = document.createElement("label");
+        lab.textContent = label;
+        const seg = document.createElement("div");
+        seg.className = "seg";
+        const btns = [];
+        const refresh = () => {
+          btns.forEach((b) => b.classList.toggle("on", b.dataset.v === String(get())));
+        };
+        for (const [v, text] of segItems) {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.textContent = text;
+          b.dataset.v = String(v);
+          b.addEventListener("click", async () => {
+            set(v);
+            savePrefs();
+            refresh();
+            reader.index = alignIndex(reader.index);
+            await renderReaderViews();
+          });
+          btns.push(b);
+          seg.appendChild(b);
+        }
+        refresh();
+        row.append(lab, seg);
+        body.appendChild(row);
+      };
+      mkRow("쪽 구성", [["auto","자동"],["single","한 쪽"],["spread","두 쪽"]],
+        () => reader.spreadMode, (v) => { reader.spreadMode = v; });
+      mkRow("표지 단독", [[false,"끄기"],[true,"켜기"]],
+        () => reader.coverAlone, (v) => { reader.coverAlone = v === true || v === "true"; });
+      mkRow("읽기 방향", [[false,"왼쪽부터"],[true,"오른쪽부터"]],
+        () => reader.rtl, (v) => { reader.rtl = v === true || v === "true"; });
+    }
+  });
+}
+
+/* ========== Video player ========== */
+const videoState = {
+  queue: [],
+  index: 0,
+  source: "folder", // folder | playlist
+  speed: 1,
+  ui: true,
+  hideTimer: 0,
+  seeking: false,
+};
+
+const videoEl = $("videoEl");
+const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 2];
+
+function videoPosKey(item) {
+  const n = item && (item.name || "");
+  const s = item && (item.size || 0);
+  return "mhv-vpos:" + n + ":" + s;
+}
+function saveVideoPos() {
+  const item = videoState.queue[videoState.index];
+  if (!item) return;
+  try {
+    const t = videoEl.currentTime || 0;
+    const d = videoEl.duration || 0;
+    if (d && t > 1 && t < d - 1.5) {
+      localStorage.setItem(videoPosKey(item), JSON.stringify({ t, at: Date.now() }));
+    } else if (d && t >= d - 1.5) {
+      localStorage.removeItem(videoPosKey(item));
+    }
+  } catch (_) {}
+}
+function loadVideoPos(item) {
+  try {
+    const v = JSON.parse(localStorage.getItem(videoPosKey(item)) || "null");
+    if (v && typeof v.t === "number" && v.t > 1) return v.t;
+  } catch (_) {}
+  return 0;
+}
+
+function setVideoUI(on, autoHide) {
+  videoState.ui = on;
+  $("videoChrome").classList.toggle("dim", !on);
+  clearTimeout(videoState.hideTimer);
+  if (on && autoHide && !videoEl.paused) {
+    videoState.hideTimer = setTimeout(() => setVideoUI(false), 3200);
+  }
+}
+
+function updatePlayIcon() {
+  $("icoPlay").classList.toggle("hidden", !videoEl.paused);
+  $("icoPause").classList.toggle("hidden", videoEl.paused);
+}
+
+function updateSeekUi() {
+  if (videoState.seeking) return;
+  const d = isFinite(videoEl.duration) ? videoEl.duration : 0;
+  const t = videoEl.currentTime || 0;
+  const bar = $("seekBar");
+  bar.max = String(d || 0);
+  bar.value = String(t);
+  $("timeLabel").textContent = `${fmtTime(t)} / ${fmtTime(d)}`;
+}
+
+function updateVideoChrome() {
+  const item = videoState.queue[videoState.index];
+  const n = videoState.queue.length;
+  $("videoTitle").textContent = videoState.source === "playlist" ? "재생목록" : "영상";
+  $("videoName").textContent = item ? item.name : "";
+  $("videoQueueLabel").textContent = n ? `${videoState.index + 1} / ${n}` : "";
+  $("videoCrumb").textContent = videoState.source === "playlist" ? "재생목록" : (cwd && cwd.name) || "영상";
+  $("btnSpeed").textContent = (videoState.speed % 1 === 0 ? videoState.speed.toFixed(0) : String(videoState.speed)) + "×";
+  updatePlayIcon();
+  updateSeekUi();
+}
+
+async function loadQueueItem(i, autoplay) {
+  if (i < 0 || i >= videoState.queue.length) return;
+  saveVideoPos();
+  videoState.index = i;
+  const item = videoState.queue[i];
+  showLoading("영상을 여는 중…");
+  try {
+    let url = await nodeUrl(item, "vd:");
+    const tryLoad = (src) => new Promise((res) => {
+      const ok = () => { cleanup(); res(true); };
+      const bad = () => { cleanup(); res(false); };
+      const cleanup = () => {
+        videoEl.removeEventListener("loadedmetadata", ok);
+        videoEl.removeEventListener("error", bad);
+      };
+      videoEl.addEventListener("loadedmetadata", ok, { once: true });
+      videoEl.addEventListener("error", bad, { once: true });
+      videoEl.src = src;
+      videoEl.playbackRate = videoState.speed;
+    });
+    videoEl.pause();
+    let ok = await tryLoad(url);
+    if (!ok) {
+      try {
+        const blob = await nodeToBlob(item);
+        const buf = new Uint8Array(await blob.arrayBuffer());
+        const mp4 = await ffmpegToMp4(buf, item.name);
+        revokeUrl("vd:" + item.id);
+        url = rememberUrl("vd:" + item.id, URL.createObjectURL(new Blob([mp4], { type: "video/mp4" })));
+        ok = await tryLoad(url);
+      } catch (e) { ok = false; }
+    }
+    if (!ok) throw new Error("영상을 재생할 수 없습니다.");
+    const resume = loadVideoPos(item);
+    if (resume && resume < (videoEl.duration || 0) - 1) {
+      videoEl.currentTime = resume;
+      toast("이어보기 " + fmtTime(resume));
+    }
+    updateVideoChrome();
+    if (autoplay !== false) {
+      try { await videoEl.play(); } catch (_) {}
+    }
+    setVideoUI(true, true);
+  } catch (err) {
+    toast("영상을 재생할 수 없습니다.");
+  } finally {
+    hideLoading();
+  }
+}
+
+function openVideoQueue(list, startIndex, source) {
+  const available = (list || []).filter((n) => n && (n.file || ((n.archive || n.zip) && n.zipEntry)));
+  if (!available.length) {
+    toast("재생할 영상이 없습니다. 파일을 다시 선택해 주세요.");
+    return;
+  }
+  let idx = Math.max(0, startIndex || 0);
+  // If start item missing, map to available
+  const start = list[startIndex];
+  const found = start ? available.findIndex((n) => n.id === start.id || sameMedia(n, start)) : 0;
+  if (found >= 0) idx = found;
+  videoState.queue = available;
+  videoState.source = source || "folder";
+  videoState.ui = true;
+  showScreen("video");
+  loadQueueItem(idx, true);
+}
+
+function closeVideo() {
+  saveVideoPos();
+  videoEl.pause();
+  videoEl.removeAttribute("src");
+  videoEl.load();
+  revokeAllUrls("vd:");
+  showScreen("explorer");
+  renderExplorer();
+}
+
+function nextVideo() {
+  if (videoState.index + 1 < videoState.queue.length) loadQueueItem(videoState.index + 1, true);
+  else {
+    toast("마지막 영상입니다.");
+    setVideoUI(true);
+  }
+}
+function prevVideo() {
+  if (videoEl.currentTime > 3) { videoEl.currentTime = 0; return; }
+  if (videoState.index > 0) loadQueueItem(videoState.index - 1, true);
+}
+
+videoEl.addEventListener("click", (e) => {
+  e.preventDefault();
+  setVideoUI(!videoState.ui, true);
+});
+videoEl.addEventListener("play", () => { updatePlayIcon(); setVideoUI(true, true); });
+videoEl.addEventListener("pause", () => { updatePlayIcon(); saveVideoPos(); setVideoUI(true); });
+videoEl.addEventListener("timeupdate", () => { updateSeekUi(); });
+videoEl.addEventListener("durationchange", updateSeekUi);
+videoEl.addEventListener("ended", () => {
+  saveVideoPos();
+  if (videoState.index + 1 < videoState.queue.length) nextVideo();
+  else { toast("재생이 끝났습니다."); setVideoUI(true); }
+});
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) saveVideoPos();
+});
+
+function togglePlay() {
+  if (videoEl.paused) videoEl.play().catch(() => {});
+  else videoEl.pause();
+}
+function skip(sec) {
+  if (!isFinite(videoEl.duration)) return;
+  videoEl.currentTime = Math.max(0, Math.min(videoEl.duration, (videoEl.currentTime || 0) + sec));
+}
+function cycleSpeed() {
+  const i = SPEEDS.indexOf(videoState.speed);
+  videoState.speed = SPEEDS[(i + 1) % SPEEDS.length];
+  videoEl.playbackRate = videoState.speed;
+  savePrefs();
+  updateVideoChrome();
+}
+async function toggleVideoFullscreen() {
+  const root = $("screen-video");
+  try {
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+      return;
+    }
+    if (root.requestFullscreen) await root.requestFullscreen();
+    else if (videoEl.webkitEnterFullscreen) videoEl.webkitEnterFullscreen();
+  } catch (_) {
+    try { if (videoEl.webkitEnterFullscreen) videoEl.webkitEnterFullscreen(); } catch (e) {}
+  }
+}
+
+/* ========== Playlist ========== */
+const PL_KEY = "mhv-playlist-v1";
+let playlist = []; // { id?, name, path, size, lastModified, nodeId? }
+
+function sameMedia(a, b) {
+  if (!a || !b) return false;
+  if (a.id && b.id && a.id === b.id) return true;
+  return a.name === b.name && Number(a.size) === Number(b.size) &&
+    Number(a.lastModified || 0) === Number(b.lastModified || 0);
+}
+function mediaFingerprint(n) {
+  return fileKey(n.name, n.size || 0, n.lastModified || 0) + "|" + (n.path || "");
+}
+
+function loadPlaylist() {
+  try { playlist = JSON.parse(localStorage.getItem(PL_KEY) || "[]") || []; }
+  catch (_) { playlist = []; }
+}
+function savePlaylist() {
+  try {
+    const slim = playlist.map((p) => ({
+      name: p.name, path: p.path || "", size: p.size || 0, lastModified: p.lastModified || 0,
+    }));
+    localStorage.setItem(PL_KEY, JSON.stringify(slim));
+  } catch (_) {}
+}
+
+function allVideoNodes() {
+  const out = [];
+  const stack = library.roots.slice();
+  const seen = new Set();
+  while (stack.length) {
+    const n = stack.pop();
+    if (!n || seen.has(n.id)) continue;
+    seen.add(n.id);
+    if (n.kind === "video") out.push(n);
+    if (n.children) for (const c of n.children) stack.push(c);
+  }
+  return out;
+}
+
+function resolvePlaylistNode(item) {
+  if (item._node && (item._node.file || item._node.zipEntry)) return item._node;
+  const all = allVideoNodes();
+  let hit = all.find((n) => n.name === item.name && n.size === item.size && n.lastModified === item.lastModified);
+  if (!hit) hit = all.find((n) => n.path && item.path && n.path === item.path && n.name === item.name);
+  if (!hit) hit = all.find((n) => n.name === item.name && n.size === item.size);
+  if (hit) item._node = hit;
+  return hit || null;
+}
+
+function relinkPlaylist() {
+  let linked = 0, missing = 0;
+  for (const it of playlist) {
+    it._node = null;
+    if (resolvePlaylistNode(it)) linked++;
+    else missing++;
+  }
+  return { linked, missing };
+}
+
+function isInPlaylist(node) {
+  return playlist.some((p) => sameMedia(p, node) || (p.path && node.path && p.path === node.path && p.name === node.name));
+}
+function togglePlaylist(node) {
+  if (isInPlaylist(node)) {
+    playlist = playlist.filter((p) => !(sameMedia(p, node) || (p.path && node.path && p.path === node.path && p.name === node.name)));
+    toast("재생목록에서 제거했습니다.");
+  } else {
+    playlist.push({
+      name: node.name,
+      path: node.path || node.name,
+      size: node.size || (node.file && node.file.size) || 0,
+      lastModified: node.lastModified || (node.file && node.file.lastModified) || 0,
+      _node: node,
+    });
+    toast("재생목록에 추가했습니다.");
+  }
+  savePlaylist();
+  if (!$("screen-playlist").classList.contains("hidden")) renderPlaylist();
+}
+
+function renderPlaylist() {
+  relinkPlaylist();
+  const empty = $("plEmpty");
+  const list = $("plList");
+  if (!playlist.length) {
+    empty.classList.remove("hidden");
+    list.classList.add("hidden");
+    list.innerHTML = "";
+    return;
+  }
+  empty.classList.add("hidden");
+  list.classList.remove("hidden");
+  list.innerHTML = "";
+  playlist.forEach((item, i) => {
+    const node = resolvePlaylistNode(item);
+    const li = document.createElement("li");
+    li.className = "pl-item" + (node ? "" : " missing");
+    li.dataset.i = String(i);
+    const thumb = document.createElement("div");
+    thumb.className = "pl-thumb";
+    thumb.style.background = "#222";
+    if (node) {
+      nodeUrl(node, "th:").then((url) => {
+        const img = document.createElement("img");
+        img.className = "pl-thumb";
+        img.alt = item.name;
+        img.src = url;
+        thumb.replaceWith(img);
+      }).catch(() => {});
+    }
+    const info = document.createElement("div");
+    info.className = "pl-info";
+    const n = document.createElement("div");
+    n.className = "n";
+    n.textContent = item.name;
+    const p = document.createElement("div");
+    p.className = "p";
+    p.textContent = node ? (item.path || "") : "파일을 다시 선택하면 연결됩니다";
+    info.append(n, p);
+    const ops = document.createElement("div");
+    ops.className = "pl-ops";
+    const mk = (label, fn, aria) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = label;
+      b.setAttribute("aria-label", aria);
+      b.addEventListener("click", (e) => { e.stopPropagation(); fn(); });
+      return b;
+    };
+    ops.append(
+      mk("↑", () => { if (i > 0) { const t = playlist[i-1]; playlist[i-1] = playlist[i]; playlist[i] = t; savePlaylist(); renderPlaylist(); } }, "위로"),
+      mk("↓", () => { if (i < playlist.length-1) { const t = playlist[i+1]; playlist[i+1] = playlist[i]; playlist[i] = t; savePlaylist(); renderPlaylist(); } }, "아래로"),
+      mk("×", () => { playlist.splice(i, 1); savePlaylist(); renderPlaylist(); toast("제거했습니다."); }, "제거"),
+    );
+    li.append(thumb, info, ops);
+    li.addEventListener("click", () => {
+      if (!node) { toast("파일을 다시 선택해 주세요."); return; }
+      playPlaylistFrom(i);
+    });
+    list.appendChild(li);
+  });
+}
+
+function playPlaylistFrom(start) {
+  relinkPlaylist();
+  const nodes = playlist.map((p) => resolvePlaylistNode(p));
+  if (!nodes.some(Boolean)) {
+    toast("연결된 영상이 없습니다. 폴더나 파일을 다시 열어 주세요.");
+    return;
+  }
+  // Keep placeholders out; map start index to available
+  const list = [];
+  let mapped = 0, seen = 0;
+  nodes.forEach((n) => {
+    if (n) {
+      if (seen === start) mapped = list.length;
+      list.push(n);
+    }
+    seen++;
+  });
+  openVideoQueue(list, mapped, "playlist");
+}
+
+function openPlaylistScreen() {
+  renderPlaylist();
+  showScreen("playlist");
+}
+
+/* ========== Screens, sheets, menus ========== */
+let currentScreen = "explorer";
+function showScreen(name) {
+  currentScreen = name;
+  ["explorer","reader","video","playlist"].forEach((s) => {
+    $("screen-" + s).classList.toggle("hidden", s !== name);
+  });
+}
+
+const overlay = $("overlay");
+function closeSheet() {
+  overlay.classList.add("hidden");
+  overlay.innerHTML = "";
+}
+function showSheet(title, items, opts) {
+  overlay.classList.remove("hidden");
+  overlay.innerHTML = "";
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  const h = document.createElement("h3");
+  h.textContent = title || "";
+  sheet.appendChild(h);
+  if (opts && opts.custom && opts.build) opts.build(sheet);
+  else {
+    for (const it of items || []) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "sheet-item" + (it.danger ? " danger" : "");
+      b.textContent = it.label;
+      b.addEventListener("click", () => { closeSheet(); it.fn && it.fn(); });
+      sheet.appendChild(b);
+    }
+  }
+  const cancel = document.createElement("button");
+  cancel.type = "button";
+  cancel.className = "sheet-item sheet-cancel";
+  cancel.textContent = "닫기";
+  cancel.addEventListener("click", closeSheet);
+  sheet.appendChild(cancel);
+  overlay.appendChild(sheet);
+  overlay.onclick = (e) => { if (e.target === overlay) closeSheet(); };
+}
+
+
+function showHelpSheet() {
+  showSheet("사용 방법", null, {
+    custom: true,
+    build(body) {
+      const box = document.createElement("div");
+      box.className = "help-box";
+      box.style.margin = "0";
+      box.style.maxWidth = "none";
+      box.innerHTML = ($("homeHelp") ? $("homeHelp").innerHTML : "<p>Safari에서 이 사이트를 연 다음 홈 화면에 추가하세요.</p>");
+      body.appendChild(box);
+    }
+  });
+}
+
+function openAddMenu() {
+  const items = [
+    { label: "폴더 열기", fn: () => $("dirPick").click() },
+    { label: "파일 또는 압축파일 열기", fn: () => $("filePick").click() },
+    { label: "모든 형식 열기 (iOS)", fn: () => $("filePickAll").click() },
+  ];
+  if (!isHosted()) {
+    items.push({ label: "코덱·압축 엔진 불러오기", fn: () => $("enginePick").click() });
+  }
+
+  if (library.roots.length) {
+    items.push({ label: "서재 비우기", danger: true, fn: () => {
+      if (confirm("열린 폴더와 파일을 모두 닫을까요? 재생목록 항목은 남지만, 파일을 다시 선택해야 재생됩니다.")) clearLibrary();
+    }});
+  }
+  showSheet("라이브러리에 추가", items);
+}
+
+/* ========== bind UI ========== */
+$("btnOpenDir").addEventListener("click", () => $("dirPick").click());
+$("btnOpenFiles").addEventListener("click", () => $("filePick").click());
+$("btnOpenAny") && $("btnOpenAny").addEventListener("click", () => $("filePickAll").click());
+$("btnHelp") && $("btnHelp").addEventListener("click", showHelpSheet);
+$("btnAddMenu").addEventListener("click", openAddMenu);
+$("btnPlaylist").addEventListener("click", openPlaylistScreen);
+$("btnExBack").addEventListener("click", () => {
+  if (cwd && cwd.parent) { cwd = cwd.parent; renderExplorer(); }
+  else { cwd = homeNode; renderExplorer(); }
+});
+$("filePick").addEventListener("change", async (e) => {
+  await addPickedFiles(e.target.files);
+  e.target.value = "";
+});
+$("dirPick").addEventListener("change", async (e) => {
+  await addPickedFiles(e.target.files);
+  e.target.value = "";
+});
+$("filePickAll").addEventListener("change", async (e) => {
+  await addPickedFiles(e.target.files);
+  e.target.value = "";
+});
+$("enginePick").addEventListener("change", async (e) => {
+  try { await importEngineFiles(e.target.files); }
+  catch (err) { toast(friendlyError(err)); }
+  e.target.value = "";
+});
+$("btnReaderBack").addEventListener("click", closeReader);
+$("btnReaderSettings").addEventListener("click", showReaderSettings);
+$("pageSlider").addEventListener("input", async () => {
+  const v = parseInt($("pageSlider").value, 10) - 1;
+  reader.index = alignIndex(v);
+  await renderReaderViews();
+});
+$("btnVideoBack").addEventListener("click", closeVideo);
+$("btnPlay").addEventListener("click", togglePlay);
+$("btnSkipBack").addEventListener("click", () => skip(-10));
+$("btnSkipFwd").addEventListener("click", () => skip(10));
+$("btnPrevVid").addEventListener("click", prevVideo);
+$("btnNextVid").addEventListener("click", nextVideo);
+$("btnSpeed").addEventListener("click", cycleSpeed);
+$("btnVideoFs").addEventListener("click", toggleVideoFullscreen);
+$("seekBar").addEventListener("pointerdown", () => { videoState.seeking = true; });
+$("seekBar").addEventListener("input", () => {
+  const t = parseFloat($("seekBar").value);
+  $("timeLabel").textContent = `${fmtTime(t)} / ${fmtTime(videoEl.duration || 0)}`;
+});
+$("seekBar").addEventListener("change", () => {
+  videoEl.currentTime = parseFloat($("seekBar").value) || 0;
+  videoState.seeking = false;
+  saveVideoPos();
+});
+$("seekBar").addEventListener("pointerup", () => {
+  videoEl.currentTime = parseFloat($("seekBar").value) || 0;
+  videoState.seeking = false;
+});
+$("btnPlBack").addEventListener("click", () => { showScreen("explorer"); renderExplorer(); });
+$("btnPlClear").addEventListener("click", () => {
+  if (!playlist.length) return;
+  if (confirm("재생목록을 모두 비울까요?")) { playlist = []; savePlaylist(); renderPlaylist(); }
+});
+$("btnPlPlay").addEventListener("click", () => playPlaylistFrom(0));
+
+window.addEventListener("resize", () => {
+  if (currentScreen === "reader") {
+    reader.index = alignIndex(reader.index);
+    renderReaderViews();
+  }
+});
+window.addEventListener("orientationchange", () => {
+  setTimeout(() => {
+    if (currentScreen === "reader") {
+      reader.index = alignIndex(reader.index);
+      renderReaderViews();
+    }
+  }, 200);
+});
+
+window.addEventListener("keydown", (e) => {
+  if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
+  if (currentScreen === "reader") {
+    if (e.key === "ArrowRight") { e.preventDefault(); turnToPhysical(1, true); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); turnToPhysical(-1, true); }
+    else if (e.key === "Escape") { if (!reader.ui) setReaderUI(true); else closeReader(); }
+    else if (e.key === "Home") { reader.index = alignIndex(0); renderReaderViews(); }
+    else if (e.key === "End") { reader.index = alignIndex(pageCount() - 1); renderReaderViews(); }
+    else if (e.key === "f" || e.key === "F") {
+      const el = $("screen-reader");
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (el.requestFullscreen) el.requestFullscreen();
+    }
+  } else if (currentScreen === "video") {
+    if (e.key === " " || e.key === "k" || e.key === "K") { e.preventDefault(); togglePlay(); }
+    else if (e.key === "ArrowRight") { e.preventDefault(); if (e.shiftKey) nextVideo(); else skip(10); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); if (e.shiftKey) prevVideo(); else skip(-10); }
+    else if (e.key === "Escape") closeVideo();
+    else if (e.key === "f" || e.key === "F") toggleVideoFullscreen();
+  } else if (e.key === "Escape") closeSheet();
+});
+
+// Prevent page bounce except in scroll areas
+document.addEventListener("touchmove", (e) => {
+  if (!e.target.closest(".scroll, .sheet, input")) e.preventDefault();
+}, { passive: false });
+
+// Drag and drop (desktop)
+window.addEventListener("dragover", (e) => { e.preventDefault(); });
+window.addEventListener("drop", async (e) => {
+  e.preventDefault();
+  if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+    await addPickedFiles(e.dataTransfer.files);
+  }
+});
+
+/* ========== PWA service worker ========== */
+function fmtBytes(n) {
+  if (!n || n < 0) return "0 B";
+  if (n < 1024) return n + " B";
+  if (n < 1024 * 1024) return (n / 1024).toFixed(0) + " KB";
+  return (n / (1024 * 1024)).toFixed(1) + " MB";
+}
+function showSwStatus(text, pct, ready) {
+  const box = $("swStatus");
+  if (!box) return;
+  box.classList.remove("hidden");
+  box.classList.toggle("ready", !!ready);
+  $("swStatusText").textContent = text;
+  const bar = $("swBar");
+  const pctEl = $("swStatusPct");
+  if (pct == null) {
+    if (pctEl) pctEl.textContent = "";
+  } else {
+    const p = Math.max(0, Math.min(100, pct));
+    if (bar) bar.style.width = p + "%";
+    if (pctEl) pctEl.textContent = Math.round(p) + "%";
+  }
+}
+function hideSwStatusLater() {
+  setTimeout(() => { const b = $("swStatus"); if (b) b.classList.add("hidden"); }, 4200);
+}
+function onSwMessage(data) {
+  if (!data || !data.type) return;
+  if (data.type === "precache-start") {
+    showSwStatus("코덱·압축 엔진을 준비하는 중…", 0, false);
+  } else if (data.type === "precache-progress") {
+    const total = data.bytesTotal || 0;
+    const loaded = data.bytesLoaded || 0;
+    const pct = total ? (loaded / total) * 100 : (data.index && data.files ? (data.index / data.files) * 100 : 0);
+    const name = (data.file || "").split("/").pop();
+    const label = total
+      ? "엔진 내려받는 중… " + fmtBytes(loaded) + " / " + fmtBytes(total)
+      : "엔진 내려받는 중… " + (name || "");
+    showSwStatus(label, pct, false);
+  } else if (data.type === "precache-complete" || data.type === "sw-activated") {
+    showSwStatus("오프라인 준비 완료", 100, true);
+    hideSwStatusLater();
+    window.__pwa = window.__pwa || {};
+    window.__pwa.offlineReady = true;
+    window.__pwa.cache = data.cache;
+  }
+}
+async function registerPwa() {
+  if (!("serviceWorker" in navigator) || !isHosted()) return;
+  window.__pwa = { offlineReady: false };
+  navigator.serviceWorker.addEventListener("message", (e) => onSwMessage(e.data));
+  try {
+    const swUrl = new URL("sw.js", appDir());
+    const reg = await navigator.serviceWorker.register(swUrl.href, { scope: appDir() });
+    window.__pwa.registration = true;
+    const track = (worker) => {
+      if (!worker) return;
+      worker.addEventListener("statechange", () => {
+        if (worker.state === "installed" || worker.state === "activated") {
+          if (navigator.serviceWorker.controller || worker.state === "activated") {
+            /* install may still be posting complete */
+          }
+        }
+      });
+    };
+    track(reg.installing); track(reg.waiting); track(reg.active);
+    if (reg.active && !reg.installing && !reg.waiting) {
+      // Already cached from a previous visit
+      try {
+        const keys = await caches.keys();
+        const has = keys.includes("mhv-pwa-v1");
+        if (has) {
+          const cache = await caches.open("mhv-pwa-v1");
+          const reqs = await cache.keys();
+          if (reqs.length) {
+            window.__pwa.offlineReady = true;
+            showSwStatus("오프라인 준비 완료", 100, true);
+            hideSwStatusLater();
+          }
+        }
+      } catch (_) {}
+    }
+    await navigator.serviceWorker.ready;
+    window.__pwa.ready = true;
+  } catch (e) {
+    console.warn("SW register failed", e);
+    window.__pwa = window.__pwa || {};
+    window.__pwa.error = String(e && e.message || e);
+  }
+}
+
+/* ========== boot ========== */
+loadPrefs();
+loadPlaylist();
+renderExplorer();
+registerPwa();
+
+// Detect folder picker
+(function () {
+  const supportsDir = "webkitdirectory" in $("dirPick");
+  if (!supportsDir) {
+    $("btnOpenDir").style.display = "none";
+  }
+})();
+
+/* ========== test hooks ========== */
+window.__viewer = {
+  get screen() { return currentScreen; },
+  get cwd() { return { id: cwd.id, name: cwd.name, path: cwd.path, kind: cwd.kind }; },
+  list() { return childrenOf(cwd).map((n) => ({ id: n.id, name: n.name, kind: n.kind, path: n.path })); },
+  images() { return imagesIn(cwd).map((n) => n.name); },
+  videos() { return videosIn(cwd).map((n) => n.name); },
+  isSpread: () => isSpread(),
+  reader: () => ({
+    index: reader.index,
+    count: pageCount(),
+    spread: isSpread(),
+    mode: reader.spreadMode,
+    rtl: reader.rtl,
+    coverAlone: reader.coverAlone,
+    ui: reader.ui,
+    zoom: reader.zoom,
+    visible: pairFor(reader.index),
+  }),
+  video: () => ({
+    index: videoState.index,
+    count: videoState.queue.length,
+    paused: videoEl.paused,
+    time: videoEl.currentTime || 0,
+    duration: videoEl.duration || 0,
+    speed: videoState.speed,
+    name: videoState.queue[videoState.index] && videoState.queue[videoState.index].name,
+    source: videoState.source,
+  }),
+  playlist: () => playlist.map((p) => ({ name: p.name, path: p.path, linked: !!resolvePlaylistNode(p) })),
+  async openName(name) {
+    const n = childrenOf(cwd).find((c) => c.name === name);
+    if (!n) throw new Error("not found: " + name);
+    await openNode(n);
+  },
+  goHome() { cwd = homeNode; renderExplorer(); showScreen("explorer"); },
+  back() {
+    if (currentScreen === "reader") closeReader();
+    else if (currentScreen === "video") closeVideo();
+    else if (currentScreen === "playlist") { showScreen("explorer"); renderExplorer(); }
+    else $("btnExBack").click();
+  },
+  turn(dir) { turnToPhysical(dir, false); },
+  setSpreadMode(m) { reader.spreadMode = m; savePrefs(); reader.index = alignIndex(reader.index); return renderReaderViews(); },
+  setCover(v) { reader.coverAlone = !!v; savePrefs(); reader.index = alignIndex(reader.index); return renderReaderViews(); },
+  setRtl(v) { reader.rtl = !!v; savePrefs(); return renderReaderViews(); },
+  playPl(i) { playPlaylistFrom(i || 0); },
+  async openArchive(name) {
+    const n = childrenOf(cwd).find((c) => c.name === name);
+    if (!n) throw new Error("not found: " + name);
+    try {
+      await ensureArchiveLoaded(n);
+      cwd = n;
+      renderExplorer();
+    } catch (e) {
+      toast(friendlyError(e));
+      renderExplorer();
+      throw e;
+    }
+  },
+  engine: () => ({ ff: Engine.ffReady, la: Engine.laReady }),
+  MAX_ARCHIVE_DEPTH,
+  togglePlByName(name) {
+    const n = childrenOf(cwd).find((c) => c.name === name) || allVideoNodes().find((c) => c.name === name);
+    if (n) togglePlaylist(n);
+  },
+  visiblePageBoxes() {
+    const imgs = [...$("viewCur").querySelectorAll("img")];
+    const stage = $("stage").getBoundingClientRect();
+    return imgs.map((im) => {
+      const r = im.getBoundingClientRect();
+      return { w: r.width, h: r.height, x: r.left, y: r.top, stageW: stage.width, stageH: stage.height };
+    });
+  },
+};
+
+window.addEventListener("pagehide", () => { saveVideoPos(); saveReaderPos(); });
+</script>
+</body>
+</html>
