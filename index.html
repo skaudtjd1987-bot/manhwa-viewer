@@ -159,6 +159,72 @@ button {
 .card:active .thumb { filter: brightness(.85); }
 .kind-dir .thumb, .kind-zip .thumb { background: #1a2230; }
 .kind-video .thumb { background: #161616; }
+.kind-dir.stored .thumb { background: #1a2838; }
+
+.ex-toolbar {
+  flex: 0 0 auto;
+  padding: 10px 14px 8px;
+  background: var(--elev);
+  border-bottom: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 8px;
+  z-index: 4;
+}
+.ex-toolbar .ex-actions { display: flex; gap: 8px; align-items: stretch; }
+.ex-toolbar #btnAddPhotos {
+  flex: 1; height: 48px; font-size: 17px; font-weight: 750;
+}
+.ex-toolbar .btn-compact {
+  flex: 0 0 auto; min-width: 72px; height: 48px; padding: 0 12px;
+  border-radius: 14px; font-size: 14px; font-weight: 650;
+  background: var(--surface2); color: var(--text); border: 1px solid var(--border);
+}
+.ex-toolbar .btn-compact:active { background: #262626; }
+.ex-hint {
+  margin: 0; font-size: 12px; line-height: 1.5; color: #8a8a8a; text-align: left;
+}
+.storage-meter {
+  font-size: 11px; color: var(--muted); letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.ex-select {
+  flex: 0 0 auto;
+  padding: 8px 12px calc(8px);
+  background: var(--elev);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  z-index: 4;
+}
+.ex-select.hidden { display: none !important; }
+.ex-select .sel-count { flex: 1; font-size: 13px; font-weight: 650; min-width: 70px; }
+.ex-select button {
+  height: 34px; padding: 0 10px; border-radius: 9px;
+  background: var(--surface2); border: 1px solid var(--border);
+  font-size: 13px; font-weight: 650; color: var(--text);
+}
+.ex-select button.danger { color: var(--danger); }
+.ex-select button:active { background: #262626; }
+#screen-explorer.ex-selecting .card .check { display: flex; }
+.card .check {
+  display: none;
+  position: absolute; top: 6px; left: 6px; z-index: 3;
+  width: 22px; height: 22px; border-radius: 11px;
+  border: 2px solid #fff; background: rgba(0,0,0,.45);
+  align-items: center; justify-content: center;
+  color: #0b1220; font-size: 13px; font-weight: 800;
+  pointer-events: none;
+}
+.card.selected .check { display: flex; background: var(--accent); border-color: var(--accent); }
+.card.selected .thumb { box-shadow: 0 0 0 2px var(--accent); }
+.sheet-msg { margin: 0 12px 12px; font-size: 13px; line-height: 1.55; color: var(--muted); }
+.sheet-input {
+  display: block; width: calc(100% - 24px); margin: 0 12px 14px;
+  height: 44px; padding: 0 12px; border-radius: 10px;
+  background: #000; color: var(--text); border: 1px solid var(--border);
+  font: inherit; font-size: 16px;
+}
+.sheet-confirm { color: var(--accent); font-weight: 700; }
+#loadingBarWrap { width: min(240px, 70vw); }
+#loadingBarWrap.hidden { display: none !important; }
 
 /* ===== Reader ===== */
 #screen-reader { background: #000; }
@@ -402,6 +468,7 @@ input[type=range]::-webkit-slider-thumb {
 <input id="filePickAll" type="file" multiple hidden>
 <input id="dirPick" type="file" multiple webkitdirectory directory hidden>
 <input id="enginePick" type="file" multiple hidden>
+<input id="photoPick" type="file" multiple accept="image/*,video/*" hidden>
 
 <div id="app">
   <section id="screen-explorer" class="screen" data-screen="explorer">
@@ -425,12 +492,30 @@ input[type=range]::-webkit-slider-thumb {
         </button>
       </div>
     </header>
+    <div id="exToolbar" class="ex-toolbar">
+      <div class="ex-actions">
+        <button type="button" id="btnAddPhotos" class="btn-primary">사진 추가</button>
+        <button type="button" id="btnNewFolder" class="btn-compact">새 폴더</button>
+        <button type="button" id="btnSelectMode" class="btn-compact">선택</button>
+      </div>
+      <p class="ex-hint" id="photoHint">사진 앱에서 손가락을 밀어 여러 장을 한 번에 선택할 수 있습니다.</p>
+      <div id="storageMeter" class="storage-meter"></div>
+    </div>
+    <div id="exSelectBar" class="ex-select hidden">
+      <button type="button" id="btnSelectAll">전체 선택</button>
+      <div class="sel-count" id="selectCount">항목 선택</div>
+      <button type="button" id="btnMoveSelected">이동</button>
+      <button type="button" id="btnDeleteSelected" class="danger">삭제</button>
+      <button type="button" id="btnCancelSelect">취소</button>
+    </div>
     <div id="exScroll" class="scroll">
       <div id="emptyState" class="empty">
         <h2>만화뷰어</h2>
-        <p>폴더나 압축파일, 이미지, 영상을 열어 탐색기처럼 보고, 만화책처럼 넘기거나 영상을 재생하세요.</p>
+        <p>사진을 앱에 보관해 두면, 다음에 열 때 다시 고르지 않아도 바로 볼 수 있습니다.</p>
         <div class="actions">
-          <button type="button" id="btnOpenDir" class="btn-primary">폴더 열기</button>
+          <button type="button" id="btnOpenPhotosEmpty" class="btn-primary">사진 추가</button>
+          <p class="hint" style="margin:0;text-align:center">사진 앱에서 손가락을 밀어 여러 장을 한 번에 선택할 수 있습니다.</p>
+          <button type="button" id="btnOpenDir" class="btn-secondary">폴더 열기</button>
           <button type="button" id="btnOpenFiles" class="btn-secondary">파일 또는 압축파일 열기</button>
           <button type="button" id="btnOpenAny" class="btn-secondary">모든 형식 열기 (iOS 호환)</button>
         </div>
@@ -440,13 +525,21 @@ input[type=range]::-webkit-slider-thumb {
             <li>Safari로 이 사이트를 엽니다. (파일 앱의 로컬 HTML은 Safari에서 열리지 않으므로, 이 웹 주소를 사용하세요.)</li>
             <li>처음 한 번 열면 코덱·압축 엔진이 자동으로 내려받아집니다. 아래 표시가 <b>오프라인 준비 완료</b>가 되면 이후에는 인터넷 없이 사용할 수 있습니다.</li>
             <li>Safari 공유 버튼 → <b>홈 화면에 추가</b>를 누르면 독립 앱처럼 실행됩니다.</li>
-            <li><b>파일 또는 압축파일 열기</b>로 만화 ZIP·CBZ·7Z·RAR이나 영상을 선택하세요.</li>
+            <li><b>사진 추가</b>로 사진 앱의 이미지와 영상을 고르면 앱 안에 보관되어, 다음에 다시 고르지 않아도 됩니다.</li>
+            <li>만화 ZIP·CBZ·7Z·RAR은 <b>파일 또는 압축파일 열기</b>로 가져온 뒤, 앱에 보관하거나 이번만 볼 수 있습니다.</li>
           </ol>
+          <h3>사진을 편하게 넣는 방법</h3>
+          <ul>
+            <li>iOS에서는 사진 앱이 열립니다. 한 장씩 탭하지 말고, <b>손가락을 밀어 여러 장을 한 번에</b> 고르세요. (시스템에서 전체 선택은 제공되지 않습니다.)</li>
+            <li>보관한 항목은 앨범/폴더로 묶입니다. 폴더를 만들거나 이름을 바꾸고, 선택 모드에서 전체 선택·이동·삭제할 수 있습니다.</li>
+            <li>보관된 사진은 오프라인에서도 열립니다. 저장 공간은 화면 위쪽에 표시됩니다.</li>
+          </ul>
           <h3 class="warn">알아두면 좋은 제한</h3>
           <ul>
+            <li>iOS 홈 화면 앱은 사진 보관함에 직접 들어갈 수 없습니다. 대신 한 번 가져온 뒤 앱에 보관하세요.</li>
             <li>iOS Safari는 폴더 선택이 안 될 수 있습니다. 파일을 여러 장 고르거나 ZIP/7Z/RAR으로 묶어 여세요.</li>
             <li>암호화된 압축, 일부 최신 RAR/ZIP64는 열리지 않을 수 있습니다.</li>
-            <li>재생목록의 파일 권한은 기기가 기억하지 못합니다. 다음에 볼 때는 폴더나 압축을 다시 열면 자동으로 다시 연결됩니다.</li>
+            <li>앱에 보관하지 않고 <b>이번만 보기</b>로 연 항목과, 아직 보관하지 않은 재생목록은 앱을 닫으면 다시 연결해야 할 수 있습니다.</li>
             <li>매우 깊은 중첩 압축(9단계 이상)이나 비정상적으로 큰 항목은 메모리 보호를 위해 열지 않습니다.</li>
           </ul>
         </div>
@@ -559,7 +652,7 @@ input[type=range]::-webkit-slider-thumb {
   <span>새 버전이 있습니다</span>
   <button type="button" id="btnSwUpdate">새 버전 적용</button>
 </div>
-<div id="loading" class="loading hidden"><div class="spinner"></div><div id="loadingText">불러오는 중…</div></div>
+<div id="loading" class="loading hidden"><div class="spinner"></div><div id="loadingText">불러오는 중…</div><div id="loadingBarWrap" class="sw-bar hidden"><div class="sw-bar-fill" id="loadingBar"></div></div></div>
 <div id="overlay" class="overlay hidden"></div>
 
 <script>
@@ -688,11 +781,24 @@ function toast(msg, ms) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.add("hidden"), ms || 2200);
 }
-function showLoading(text) {
+function showLoading(text, pct) {
   $("loadingText").textContent = text || "불러오는 중…";
   $("loading").classList.remove("hidden");
+  const wrap = $("loadingBarWrap");
+  const bar = $("loadingBar");
+  if (wrap && bar) {
+    if (pct == null || pct === false) wrap.classList.add("hidden");
+    else {
+      wrap.classList.remove("hidden");
+      bar.style.width = Math.max(0, Math.min(100, pct)) + "%";
+    }
+  }
 }
-function hideLoading() { $("loading").classList.add("hidden"); }
+function hideLoading() {
+  $("loading").classList.add("hidden");
+  const wrap = $("loadingBarWrap");
+  if (wrap) wrap.classList.add("hidden");
+}
 
 /* ========== CP949 ========== */
 const CP949_B64 = "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";
@@ -756,6 +862,7 @@ function friendlyError(err) {
   if (/손상|corrupt|invalid|형식|wrong|unexpected/i.test(m)) return "손상되었거나 잘못된 보관 파일입니다.";
   if (/엔진|코덱|ffmpeg|libarchive|로드되지/i.test(m)) return m;
   if (/열 수 없/i.test(m)) return m;
+  if (/저장 공간이 부족|quota/i.test(m)) return "저장 공간이 부족합니다. 사용하지 않는 앨범이나 파일을 지운 뒤 다시 시도해 주세요.";
   return m || "파일을 열 수 없습니다.";
 }
 
@@ -1191,9 +1298,45 @@ function findOrCreateRoot(name, kind) {
   return r;
 }
 
-async function addPickedFiles(fileList) {
+async function addPickedFiles(fileList, opts) {
   const files = Array.from(fileList || []);
   if (!files.length) return;
+  opts = Object.assign({}, opts || {});
+  if (window.__importOpts) {
+    Object.assign(opts, window.__importOpts);
+    window.__importOpts = null;
+  }
+  await libraryReady();
+  const choice = await chooseKeepAndAlbum(files, opts);
+  if (!choice) return;
+  if (choice.keep) {
+    try {
+      const withPath = files.filter((f) => f && f.webkitRelativePath);
+      const without = files.filter((f) => f && !f.webkitRelativePath);
+      let added = 0;
+      if (withPath.length) {
+        const items = withPath.map((f) => {
+          const rel = String(f.webkitRelativePath || "").replace(/\\/g, "/");
+          const parts = rel.split("/").filter(Boolean);
+          return { file: f, parts, rel };
+        });
+        added += await importTreeToFolder(choice.target || homeNode, items) || 0;
+      }
+      const usable = without.filter((f) => f && f.size && kindFromName(f.name || "") !== "other");
+      if (usable.length) {
+        const folder = choice.target || await findOrCreateAlbum(choice.albumName);
+        added += await importFilesToFolder(folder, usable) || 0;
+        cwd = folder;
+      }
+      renderExplorer();
+      if (added) toast((choice.albumName || (cwd && cwd.name) || "앨범") + "에 " + added + "개를 보관했습니다.");
+      else toast("열 수 있는 이미지, 영상 또는 압축 파일이 없습니다.");
+    } catch (e) {
+      toast(friendlyError(e));
+      renderExplorer();
+    }
+    return;
+  }
   showLoading("파일을 정리하는 중…");
   let added = 0, skippedEmpty = 0, skippedBad = 0;
   try {
@@ -1279,7 +1422,8 @@ function sortTree(node) {
 
 function clearLibrary() {
   revokeAllUrls();
-  library.roots = [];
+  const keep = library.roots.filter((r) => r.stored);
+  library.roots = keep;
   zipCache.clear();
   cwd = homeNode;
   renderExplorer();
@@ -1289,6 +1433,13 @@ const zipCache = new Map(); // node.id or file key -> ZipArchive
 
 async function archiveBlobFromNode(node) {
   if (node.file) return node.file;
+  if (node.storeId) {
+    const blob = await libReadFile(node.storeId);
+    if (blob) {
+      node.file = blob;
+      return blob;
+    }
+  }
   const parent = node.parentArchive;
   if (parent && node.zipEntry) {
     if ((node.zipEntry.uncompSize || 0) > MAX_ENTRY_BYTES) {
@@ -1389,6 +1540,14 @@ async function ensureZipLoaded(node) { return ensureArchiveLoaded(node); }
 
 async function nodeToBlob(node) {
   if (node.file) return node.file;
+  if (node.storeId) {
+    const blob = await libReadFile(node.storeId);
+    if (blob) {
+      const typed = blob.type ? blob : new Blob([blob], { type: mimeFromName(node.name) });
+      node.file = typed;
+      return typed;
+    }
+  }
   const arc = node.archive || node.zip;
   if (arc && node.zipEntry) {
     const data = await arc.extract(node.zipEntry);
@@ -1440,6 +1599,903 @@ Object.defineProperty(homeNode, "children", {
 
 let cwd = homeNode;
 
+/* ========== Persistent in-app library (OPFS, IndexedDB fallback) ========== */
+const LIB_META_VERSION = 1;
+const libStore = {
+  backend: "none", // opfs | idb
+  ready: false,
+  persisted: false,
+  filesDir: null,
+  opfsRoot: null,
+  usage: 0,
+  quota: 0,
+  libBytes: 0,
+};
+
+const explorerUI = {
+  selecting: false,
+  selected: new Set(),
+};
+
+function defaultAlbumName(d) {
+  d = d || new Date();
+  return d.getFullYear() + "년 " + (d.getMonth() + 1) + "월 " + d.getDate() + "일";
+}
+
+function isQuotaError(err) {
+  const n = err && err.name || "";
+  const m = String((err && err.message) || err || "");
+  return n === "QuotaExceededError" || n === "NS_ERROR_DOM_QUOTA_REACHED" ||
+    /quota|exceeded|저장 공간이 부족|disk.?full|not enough storage/i.test(m);
+}
+
+function quotaMessage() {
+  return "저장 공간이 부족합니다. 사용하지 않는 앨범이나 파일을 지운 뒤 다시 시도해 주세요.";
+}
+
+function uniqueChildName(parent, name) {
+  const kids = (parent && parent.children) ? parent.children : (library.roots || []);
+  if (!kids.some((c) => c.name === name)) return name;
+  const e = extOf(name);
+  const base = e ? name.slice(0, -(e.length + 1)) : name;
+  const suffix = (i) => (e ? base + " " + i + "." + e : base + " " + i);
+  for (let i = 2; i < 2000; i++) {
+    const n = suffix(i);
+    if (!kids.some((c) => c.name === n)) return n;
+  }
+  return name + " " + Date.now();
+}
+
+function isStoredFolder(node) {
+  return !!(node && node.kind === "dir" && node.stored);
+}
+
+function storedParentForNew() {
+  if (cwd === homeNode || (cwd && cwd.id === "home")) return homeNode;
+  if (cwd && cwd.stored && cwd.kind === "dir") return cwd;
+  return homeNode;
+}
+
+function refreshPaths(node) {
+  if (!node || node === homeNode) {
+    if (node === homeNode) (node.children || []).forEach(refreshPaths);
+    return;
+  }
+  const p = node.parent;
+  node.path = p && p !== homeNode && p.path ? p.path + "/" + node.name : node.name;
+  if (node.children) node.children.forEach(refreshPaths);
+}
+
+function storedBytes() {
+  let n = 0;
+  const stack = library.roots.slice();
+  while (stack.length) {
+    const c = stack.pop();
+    if (!c) continue;
+    if (c.stored && c.storeId && c.size) n += c.size;
+    if (c.children) for (const k of c.children) stack.push(k);
+  }
+  return n;
+}
+
+function libIdbOpen() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open("mhv-library-v1", 1);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains("blobs")) db.createObjectStore("blobs");
+      if (!db.objectStoreNames.contains("kv")) db.createObjectStore("kv");
+    };
+    req.onsuccess = () => res(req.result);
+    req.onerror = () => rej(req.error);
+  });
+}
+
+function idbKvGet(key) {
+  return libIdbOpen().then((db) => new Promise((res, rej) => {
+    const r = db.transaction("kv", "readonly").objectStore("kv").get(key);
+    r.onsuccess = () => res(r.result == null ? null : r.result);
+    r.onerror = () => rej(r.error);
+  }));
+}
+function idbKvPut(key, value) {
+  return libIdbOpen().then((db) => new Promise((res, rej) => {
+    const r = db.transaction("kv", "readwrite").objectStore("kv").put(value, key);
+    r.onsuccess = () => res();
+    r.onerror = () => rej(r.error);
+  }));
+}
+function idbBlobGet(key) {
+  return libIdbOpen().then((db) => new Promise((res, rej) => {
+    const r = db.transaction("blobs", "readonly").objectStore("blobs").get(key);
+    r.onsuccess = () => res(r.result || null);
+    r.onerror = () => rej(r.error);
+  }));
+}
+function idbBlobPut(key, blob) {
+  return libIdbOpen().then((db) => new Promise((res, rej) => {
+    const r = db.transaction("blobs", "readwrite").objectStore("blobs").put(blob, key);
+    r.onsuccess = () => res();
+    r.onerror = () => rej(r.error);
+  }));
+}
+function idbBlobDel(key) {
+  return libIdbOpen().then((db) => new Promise((res, rej) => {
+    const r = db.transaction("blobs", "readwrite").objectStore("blobs").delete(key);
+    r.onsuccess = () => res();
+    r.onerror = () => rej(r.error);
+  }));
+}
+
+async function detectOpfs() {
+  try {
+    if (!navigator.storage || !navigator.storage.getDirectory) return false;
+    const root = await navigator.storage.getDirectory();
+    const probe = await root.getDirectoryHandle("__mhv_probe__", { create: true });
+    const fh = await probe.getFileHandle("p", { create: true });
+    if (typeof fh.createWritable !== "function") {
+      try { await root.removeEntry("__mhv_probe__", { recursive: true }); } catch (_) {}
+      return false;
+    }
+    const w = await fh.createWritable();
+    await w.write(new Uint8Array([1]));
+    await w.close();
+    await root.removeEntry("__mhv_probe__", { recursive: true });
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+async function initLibraryStore() {
+  if (libStore.ready) return libStore;
+  try {
+    if (await detectOpfs()) {
+      const root = await navigator.storage.getDirectory();
+      const lib = await root.getDirectoryHandle("mhv-lib-v1", { create: true });
+      const filesDir = await lib.getDirectoryHandle("files", { create: true });
+      libStore.backend = "opfs";
+      libStore.opfsRoot = lib;
+      libStore.filesDir = filesDir;
+    } else {
+      await libIdbOpen();
+      libStore.backend = "idb";
+    }
+  } catch (_) {
+    try {
+      await libIdbOpen();
+      libStore.backend = "idb";
+    } catch (e) {
+      libStore.backend = "none";
+    }
+  }
+  libStore.ready = true;
+  return libStore;
+}
+
+async function requestPersist() {
+  try {
+    if (navigator.storage && navigator.storage.persist) {
+      libStore.persisted = !!(await navigator.storage.persist());
+    }
+  } catch (_) {}
+  return libStore.persisted;
+}
+
+async function libWriteFile(storeId, blob, onProgress) {
+  if (libStore.backend === "opfs") {
+    const fh = await libStore.filesDir.getFileHandle(storeId, { create: true });
+    const w = await fh.createWritable({ keepExistingData: false });
+    try {
+      if (blob && typeof blob.stream === "function" && blob.size > 1024 * 1024) {
+        const reader = blob.stream().getReader();
+        let written = 0;
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          await w.write(value);
+          written += value.byteLength || value.length || 0;
+          if (onProgress) onProgress(written, blob.size);
+        }
+      } else {
+        await w.write(blob);
+        if (onProgress) onProgress(blob.size, blob.size);
+      }
+      await w.close();
+    } catch (e) {
+      try { await w.abort(); } catch (_) {}
+      try { await libStore.filesDir.removeEntry(storeId); } catch (_) {}
+      if (isQuotaError(e)) throw new Error(quotaMessage());
+      throw e;
+    }
+    return;
+  }
+  if (libStore.backend === "idb") {
+    try {
+      await idbBlobPut(storeId, blob);
+      if (onProgress) onProgress(blob.size, blob.size);
+    } catch (e) {
+      if (isQuotaError(e)) throw new Error(quotaMessage());
+      throw e;
+    }
+    return;
+  }
+  throw new Error("이 브라우저에서는 앱에 보관할 수 없습니다.");
+}
+
+async function libReadFile(storeId) {
+  if (libStore.backend === "opfs") {
+    const fh = await libStore.filesDir.getFileHandle(storeId, { create: false });
+    return await fh.getFile();
+  }
+  if (libStore.backend === "idb") {
+    return await idbBlobGet(storeId);
+  }
+  return null;
+}
+
+async function libRemoveFile(storeId) {
+  try {
+    if (libStore.backend === "opfs") await libStore.filesDir.removeEntry(storeId);
+    else if (libStore.backend === "idb") await idbBlobDel(storeId);
+  } catch (_) {}
+}
+
+async function loadLibraryMeta() {
+  try {
+    if (libStore.backend === "opfs") {
+      try {
+        const fh = await libStore.opfsRoot.getFileHandle("meta.json", { create: false });
+        const f = await fh.getFile();
+        return JSON.parse(await f.text());
+      } catch (_) { return null; }
+    }
+    if (libStore.backend === "idb") {
+      return await idbKvGet("meta");
+    }
+  } catch (_) {}
+  return null;
+}
+
+async function saveLibraryMeta() {
+  const meta = serializeLibrary();
+  const text = JSON.stringify(meta);
+  try {
+    if (libStore.backend === "opfs") {
+      const fh = await libStore.opfsRoot.getFileHandle("meta.json", { create: true });
+      const w = await fh.createWritable({ keepExistingData: false });
+      await w.write(text);
+      await w.close();
+    } else if (libStore.backend === "idb") {
+      await idbKvPut("meta", meta);
+    }
+  } catch (e) {
+    if (isQuotaError(e)) throw new Error(quotaMessage());
+    throw e;
+  }
+}
+
+function serializeLibrary() {
+  const folders = [];
+  const files = [];
+  const walk = (node, parentId) => {
+    if (!node || !node.stored) return;
+    if (node.kind === "dir") {
+      folders.push({ id: node.id, name: node.name, parentId, created: node.created || 0 });
+      for (const c of node.children || []) walk(c, node.id);
+    } else if (node.storeId) {
+      files.push({
+        id: node.id,
+        storeId: node.storeId,
+        name: node.name,
+        kind: node.kind,
+        parentId,
+        size: node.size || 0,
+        lastModified: node.lastModified || 0,
+        path: node.path || node.name,
+      });
+    }
+  };
+  for (const r of library.roots) walk(r, null);
+  return { version: LIB_META_VERSION, folders, files };
+}
+
+function hydrateLibrary(meta) {
+  if (!meta || !Array.isArray(meta.folders)) return;
+  const folderMap = new Map();
+  const ensureFolder = (rec) => {
+    if (folderMap.has(rec.id)) return folderMap.get(rec.id);
+    const node = makeNode({
+      id: rec.id,
+      kind: "dir",
+      name: rec.name,
+      path: rec.name,
+      children: [],
+      stored: true,
+      created: rec.created || 0,
+      parent: homeNode,
+    });
+    folderMap.set(rec.id, node);
+    return node;
+  };
+  for (const f of meta.folders) ensureFolder(f);
+  for (const f of meta.folders) {
+    const node = folderMap.get(f.id);
+    if (f.parentId && folderMap.has(f.parentId)) {
+      const p = folderMap.get(f.parentId);
+      node.parent = p;
+      if (!p.children.some((c) => c.id === node.id)) p.children.push(node);
+    } else {
+      node.parent = homeNode;
+      if (!library.roots.some((c) => c.id === node.id)) library.roots.push(node);
+    }
+  }
+  for (const rec of meta.files || []) {
+    const parent = rec.parentId && folderMap.has(rec.parentId) ? folderMap.get(rec.parentId) : homeNode;
+    if (parent === homeNode) {
+      // file at home root
+    }
+    const node = makeNode({
+      id: rec.id || rec.storeId,
+      storeId: rec.storeId,
+      stored: true,
+      kind: rec.kind,
+      name: rec.name,
+      path: rec.path || rec.name,
+      size: rec.size || 0,
+      lastModified: rec.lastModified || 0,
+      parent,
+      children: rec.kind === "zip" ? null : undefined,
+    });
+    if (parent === homeNode) {
+      if (!library.roots.some((c) => c.id === node.id)) library.roots.push(node);
+    } else {
+      if (!parent.children) parent.children = [];
+      parent.children.push(node);
+    }
+  }
+  for (const r of library.roots) refreshPaths(r);
+  library.roots.sort(sortNodes);
+  for (const r of library.roots) if (r.children) sortTree(r);
+}
+
+async function refreshStorageMeter() {
+  libStore.libBytes = storedBytes();
+  try {
+    if (navigator.storage && navigator.storage.estimate) {
+      const est = await navigator.storage.estimate();
+      libStore.usage = est.usage || 0;
+      libStore.quota = est.quota || 0;
+    }
+  } catch (_) {}
+  renderStorageMeter();
+}
+
+function renderStorageMeter() {
+  const el = $("storageMeter");
+  if (!el) return;
+  const used = libStore.libBytes || 0;
+  const quota = libStore.quota || 0;
+  const usage = libStore.usage || 0;
+  const remain = quota > usage ? quota - usage : 0;
+  let text = "보관 " + fmtBytes(used);
+  if (quota) text += " · 남은 공간 약 " + fmtBytes(remain);
+  el.textContent = text;
+  el.classList.toggle("hidden", used === 0 && !quota);
+}
+
+let _libraryReady = null;
+function libraryReady() {
+  if (!_libraryReady) _libraryReady = (async () => {
+    await initLibraryStore();
+    const meta = await loadLibraryMeta();
+    if (meta) hydrateLibrary(meta);
+    await requestPersist();
+    await refreshStorageMeter();
+    if (typeof relinkPlaylist === "function") relinkPlaylist();
+    if (typeof renderExplorer === "function") renderExplorer();
+    return libStore;
+  })();
+  return _libraryReady;
+}
+
+async function createStoredFolder(parent, name, opts) {
+  await libraryReady();
+  parent = parent || storedParentForNew();
+  if (parent !== homeNode && !isStoredFolder(parent)) parent = homeNode;
+  const raw = (name || defaultAlbumName()).trim() || defaultAlbumName();
+  const existing = (parent === homeNode ? library.roots : (parent.children || [])).find((c) => c.kind === "dir" && c.name === raw);
+  if (existing && opts && opts.reuse) return existing;
+  const fname = uniqueChildName(parent, raw);
+  const node = makeNode({
+    kind: "dir",
+    name: fname,
+    path: parent !== homeNode && parent.path ? parent.path + "/" + fname : fname,
+    children: [],
+    parent,
+    stored: true,
+    created: Date.now(),
+  });
+  if (parent === homeNode) library.roots.push(node);
+  else {
+    if (!parent.children) parent.children = [];
+    parent.children.push(node);
+  }
+  sortTree(parent === homeNode ? homeNode : parent);
+  library.roots.sort(sortNodes);
+  if (!opts || !opts.skipSave) {
+    await saveLibraryMeta();
+    await refreshStorageMeter();
+  }
+  return node;
+}
+
+async function renameStoredNode(node, newName) {
+  newName = String(newName || "").trim();
+  if (!newName || newName === node.name) return node;
+  const parent = node.parent && node.parent !== homeNode ? node.parent : homeNode;
+  node.name = uniqueChildName({ children: (parent.children || library.roots).filter((c) => c !== node) }, newName);
+  refreshPaths(node);
+  await saveLibraryMeta();
+  return node;
+}
+
+async function collectStoredIds(node, out) {
+  if (node.storeId) out.push(node);
+  if (node.children) for (const c of node.children) collectStoredIds(c, out);
+  return out;
+}
+
+function detachNode(node) {
+  const parent = node.parent && node.parent !== homeNode ? node.parent : homeNode;
+  if (parent === homeNode) library.roots = library.roots.filter((c) => c !== node);
+  else if (parent.children) parent.children = parent.children.filter((c) => c !== node);
+  node.parent = null;
+}
+
+async function deleteStoredNode(node) {
+  const files = [];
+  collectStoredIds(node, files);
+  for (const n of files) {
+    await libRemoveFile(n.storeId);
+    revokeUrl("n:" + n.id);
+    revokeUrl("th:" + n.id);
+    revokeUrl("pg:" + n.id);
+  }
+  const gone = new Set();
+  const mark = (n) => { gone.add(n.id); if (n.storeId) gone.add(n.storeId); if (n.children) n.children.forEach(mark); };
+  mark(node);
+  playlist = playlist.filter((p) => !((p.storeId && gone.has(p.storeId)) || (p._node && gone.has(p._node.id))));
+  savePlaylist();
+  detachNode(node);
+  await saveLibraryMeta();
+  await refreshStorageMeter();
+}
+
+function isAncestor(a, b) {
+  let n = b;
+  while (n && n !== homeNode) {
+    if (n === a) return true;
+    n = n.parent;
+  }
+  return false;
+}
+
+async function moveNodesTo(nodes, dest) {
+  dest = dest || homeNode;
+  if (dest !== homeNode && !isStoredFolder(dest)) throw new Error("보관 폴더로만 이동할 수 있습니다.");
+  for (const node of nodes) {
+    if (node === dest || isAncestor(node, dest)) continue;
+    detachNode(node);
+    node.parent = dest === homeNode ? homeNode : dest;
+    if (dest === homeNode) library.roots.push(node);
+    else {
+      if (!dest.children) dest.children = [];
+      dest.children.push(node);
+    }
+    // ensure moved items are stored if going into stored library
+    if (dest === homeNode || dest.stored) {
+      node.stored = true;
+    }
+    refreshPaths(node);
+  }
+  library.roots.sort(sortNodes);
+  if (dest !== homeNode) sortTree(dest);
+  await saveLibraryMeta();
+  await refreshStorageMeter();
+}
+
+async function importOneFile(folder, file, onProgress) {
+  const kind = kindFromName(file.name || "file");
+  if (kind === "other") return null;
+  const storeId = uid();
+  await libWriteFile(storeId, file, onProgress);
+  const name = uniqueChildName(folder, file.name || "file");
+  const node = makeNode({
+    id: storeId,
+    storeId,
+    stored: true,
+    kind,
+    name,
+    path: folder && folder !== homeNode && folder.path ? folder.path + "/" + name : name,
+    size: file.size || 0,
+    lastModified: file.lastModified || 0,
+    parent: folder,
+    children: kind === "zip" ? null : undefined,
+    file,
+  });
+  if (folder === homeNode) library.roots.push(node);
+  else {
+    if (!folder.children) folder.children = [];
+    folder.children.push(node);
+  }
+  return node;
+}
+
+async function importFilesToFolder(folder, files, opts) {
+  await libraryReady();
+  await requestPersist();
+  folder = folder || homeNode;
+  if (folder !== homeNode && !folder.children) folder.children = [];
+  const list = Array.from(files || []);
+  let added = 0, idx = 0;
+  const usable = list.filter((f) => f && f.size && kindFromName(f.name || "") !== "other");
+  const totalBytes = usable.reduce((s, f) => s + (f.size || 0), 0);
+  let doneBytes = 0;
+  showLoading("앱에 보관하는 중…", 0);
+  try {
+    for (const file of usable) {
+      idx++;
+      const base = doneBytes;
+      await importOneFile(folder, file, (w, t) => {
+        const pct = totalBytes ? ((base + w) / totalBytes) * 100 : (idx / usable.length) * 100;
+        showLoading("보관하는 중… " + idx + "/" + usable.length + " · " + (file.name || ""), pct);
+      });
+      doneBytes += file.size || 0;
+      added++;
+    }
+    if (folder !== homeNode) sortTree(folder);
+    library.roots.sort(sortNodes);
+    await saveLibraryMeta();
+    await refreshStorageMeter();
+    relinkPlaylist();
+    return added;
+  } catch (e) {
+    await saveLibraryMeta().catch(() => {});
+    await refreshStorageMeter().catch(() => {});
+    throw isQuotaError(e) ? new Error(quotaMessage()) : e;
+  } finally {
+    hideLoading();
+  }
+}
+
+async function importTreeToFolder(rootParent, items) {
+  // items: { file, parts[] } with parts including root folder name as [0]
+  await libraryReady();
+  await requestPersist();
+  const groups = new Map();
+  for (const it of items) {
+    const parts = it.parts;
+    if (!parts || !parts.length) continue;
+    const rootName = parts[0];
+    if (!groups.has(rootName)) groups.set(rootName, []);
+    groups.get(rootName).push(it);
+  }
+  let added = 0, seen = 0;
+  const all = items.length;
+  showLoading("폴더를 보관하는 중…", 0);
+  try {
+    for (const [rootName, list] of groups) {
+      const folder = await createStoredFolder(rootParent, rootName);
+      for (const { file, parts } of list) {
+        seen++;
+        if (parts.length < 2) continue;
+        if (parts.some((s) => s === "__MACOSX" || s.startsWith("._"))) continue;
+        const fname = parts[parts.length - 1];
+        if (kindFromName(fname) === "other") continue;
+        let dir = folder;
+        for (let i = 1; i < parts.length - 1; i++) {
+          let sub = (dir.children || []).find((c) => c.kind === "dir" && c.name === parts[i]);
+          if (!sub) sub = await createStoredFolder(dir, parts[i]);
+          dir = sub;
+        }
+        showLoading("보관하는 중… " + seen + "/" + all + " · " + fname, (seen / Math.max(1, all)) * 100);
+        await importOneFile(dir, file);
+        added++;
+      }
+    }
+    await saveLibraryMeta();
+    await refreshStorageMeter();
+    relinkPlaylist();
+    return added;
+  } catch (e) {
+    await saveLibraryMeta().catch(() => {});
+    throw isQuotaError(e) ? new Error(quotaMessage()) : e;
+  } finally {
+    hideLoading();
+  }
+}
+
+function dialogSheet({ title, message, inputValue, inputPlaceholder, confirmLabel, altLabel, danger }) {
+  return new Promise((resolve) => {
+    overlay.classList.remove("hidden");
+    overlay.innerHTML = "";
+    const sheet = document.createElement("div");
+    sheet.className = "sheet";
+    const h = document.createElement("h3");
+    h.textContent = title || "";
+    sheet.appendChild(h);
+    if (message) {
+      const p = document.createElement("p");
+      p.className = "sheet-msg";
+      p.textContent = message;
+      sheet.appendChild(p);
+    }
+    let input = null;
+    if (inputValue != null || inputPlaceholder) {
+      input = document.createElement("input");
+      input.type = "text";
+      input.className = "sheet-input";
+      input.value = inputValue || "";
+      if (inputPlaceholder) input.placeholder = inputPlaceholder;
+      input.setAttribute("enterkeyhint", "done");
+      sheet.appendChild(input);
+      setTimeout(() => { try { input.focus(); input.select(); } catch (_) {} }, 50);
+    }
+    let settled = false;
+    const done = (val) => {
+      if (settled) return;
+      settled = true;
+      closeSheet();
+      resolve(val);
+    };
+    const confirm = document.createElement("button");
+    confirm.type = "button";
+    confirm.className = "sheet-item sheet-confirm" + (danger ? " danger" : "");
+    confirm.textContent = confirmLabel || "확인";
+    confirm.addEventListener("click", () => done({ action: "ok", value: input ? input.value : null }));
+    sheet.appendChild(confirm);
+    if (altLabel) {
+      const alt = document.createElement("button");
+      alt.type = "button";
+      alt.className = "sheet-item";
+      alt.textContent = altLabel;
+      alt.addEventListener("click", () => done({ action: "alt", value: input ? input.value : null }));
+      sheet.appendChild(alt);
+    }
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.className = "sheet-item sheet-cancel";
+    cancel.textContent = "닫기";
+    cancel.addEventListener("click", () => done(null));
+    sheet.appendChild(cancel);
+    if (input) {
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") { e.preventDefault(); done({ action: "ok", value: input.value }); }
+      });
+    }
+    overlay.appendChild(sheet);
+    overlay.onclick = (e) => { if (e.target === overlay) done(null); };
+  });
+}
+
+async function chooseKeepAndAlbum(files, opts) {
+  const fromPhotos = !!(opts && opts.fromPhotos);
+  if (opts && opts.keep != null) {
+    return {
+      keep: !!opts.keep,
+      albumName: opts.albumName || defaultAlbumName(),
+      target: opts.target || null,
+    };
+  }
+  if (fromPhotos) {
+    const inAlbum = cwd && isStoredFolder(cwd);
+    const def = inAlbum ? cwd.name : defaultAlbumName();
+    const res = await dialogSheet({
+      title: "사진을 앱에 보관할까요?",
+      message: inAlbum
+        ? "이 앨범에 보관합니다. 이름을 바꾸면 새 앨범이 만들어집니다."
+        : "한 번 보관하면 다음에 앱을 열어도 바로 볼 수 있습니다.",
+      inputValue: def,
+      inputPlaceholder: "앨범 이름",
+      confirmLabel: "앱에 보관",
+      altLabel: "이번만 보기",
+    });
+    if (!res) return null;
+    if (res.action === "alt") return { keep: false };
+    const name = (res.value || def).trim() || def;
+    let target = null;
+    if (inAlbum && name === cwd.name) target = cwd;
+    return { keep: true, albumName: name, target };
+  }
+  const res = await dialogSheet({
+    title: "이 파일을 어디에 둘까요?",
+    message: "앱에 보관하면 다시 고르지 않아도 됩니다. 이번만 보기는 앱을 닫으면 사라집니다.",
+    confirmLabel: "앱에 보관",
+    altLabel: "이번만 보기",
+  });
+  if (!res) return null;
+  if (res.action === "alt") return { keep: false };
+  const inAlbum = cwd && isStoredFolder(cwd);
+  return {
+    keep: true,
+    albumName: opts && opts.albumName || (inAlbum ? cwd.name : "보관한 파일"),
+    target: inAlbum ? cwd : null,
+  };
+}
+
+async function findOrCreateAlbum(name, target) {
+  if (target && isStoredFolder(target)) return target;
+  name = (name || defaultAlbumName()).trim() || defaultAlbumName();
+  let album = library.roots.find((r) => r.stored && r.kind === "dir" && r.name === name);
+  if (album) return album;
+  return await createStoredFolder(homeNode, name);
+}
+
+function exitSelectMode() {
+  explorerUI.selecting = false;
+  explorerUI.selected.clear();
+  const bar = $("exSelectBar");
+  if (bar) bar.classList.add("hidden");
+  const tool = $("exToolbar");
+  if (tool) tool.classList.remove("hidden");
+  const ex = $("screen-explorer");
+  if (ex) ex.classList.remove("ex-selecting");
+}
+
+function enterSelectMode() {
+  explorerUI.selecting = true;
+  explorerUI.selected.clear();
+  const bar = $("exSelectBar");
+  if (bar) bar.classList.remove("hidden");
+  const tool = $("exToolbar");
+  if (tool) tool.classList.add("hidden");
+  const ex = $("screen-explorer");
+  if (ex) ex.classList.add("ex-selecting");
+  updateSelectBar();
+  renderExplorer();
+}
+
+function updateSelectBar() {
+  const n = explorerUI.selected.size;
+  const el = $("selectCount");
+  if (el) el.textContent = n ? n + "개 선택" : "항목 선택";
+  const all = childrenOf(cwd);
+  const btn = $("btnSelectAll");
+  if (btn) btn.textContent = (all.length && n === all.length) ? "선택 해제" : "전체 선택";
+}
+
+function selectedNodes() {
+  return childrenOf(cwd).filter((n) => explorerUI.selected.has(n.id));
+}
+
+async function confirmDeleteNodes(nodes) {
+  if (!nodes.length) return;
+  const hasStored = nodes.some((n) => n.stored || n.storeId);
+  const msg = hasStored
+    ? "선택한 " + nodes.length + "개 항목을 앱에서 영구적으로 삭제할까요? 이 작업은 되돌릴 수 없습니다."
+    : "선택한 " + nodes.length + "개 항목을 닫을까요?";
+  const res = await dialogSheet({
+    title: "삭제",
+    message: msg,
+    confirmLabel: "삭제",
+    danger: true,
+  });
+  if (!res || res.action !== "ok") return false;
+  showLoading("삭제하는 중…");
+  try {
+    for (const n of nodes) {
+      if (n.stored || n.storeId) await deleteStoredNode(n);
+      else detachNode(n);
+    }
+    if (cwd && cwd !== homeNode && !findNodeById(cwd.id)) cwd = homeNode;
+    exitSelectMode();
+    renderExplorer();
+    toast("삭제했습니다.");
+  } catch (e) {
+    toast(friendlyError(e));
+  } finally {
+    hideLoading();
+  }
+  return true;
+}
+
+async function promptRename(node) {
+  const res = await dialogSheet({
+    title: "이름 변경",
+    inputValue: node.name,
+    confirmLabel: "저장",
+  });
+  if (!res || res.action !== "ok") return;
+  const name = (res.value || "").trim();
+  if (!name) return;
+  if (node.stored || node.storeId) await renameStoredNode(node, name);
+  else {
+    const parent = node.parent && node.parent !== homeNode ? node.parent : homeNode;
+    node.name = uniqueChildName({ children: (parent.children || library.roots).filter((c) => c !== node) }, name);
+    refreshPaths(node);
+  }
+  renderExplorer();
+}
+
+async function promptMove(nodes) {
+  if (!nodes.length) return;
+  const albums = library.roots.filter((r) => r.stored && r.kind === "dir");
+  const res = await new Promise((resolve) => {
+    overlay.classList.remove("hidden");
+    overlay.innerHTML = "";
+    const sheet = document.createElement("div");
+    sheet.className = "sheet";
+    const h = document.createElement("h3");
+    h.textContent = "이동할 위치";
+    sheet.appendChild(h);
+    let settled = false;
+    const done = (val) => { if (settled) return; settled = true; closeSheet(); resolve(val); };
+    const mk = (label, fn) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "sheet-item";
+      b.textContent = label;
+      b.addEventListener("click", fn);
+      sheet.appendChild(b);
+    };
+    mk("홈", () => done({ dest: homeNode }));
+    for (const a of albums) {
+      if (nodes.some((n) => n === a || isAncestor(n, a))) continue;
+      mk(a.name, () => done({ dest: a }));
+    }
+    mk("새 앨범…", async () => {
+      closeSheet();
+      const r = await dialogSheet({ title: "새 앨범", inputValue: defaultAlbumName(), confirmLabel: "만들기" });
+      if (!r || r.action !== "ok") { resolve(null); return; }
+      try {
+        const folder = await createStoredFolder(homeNode, r.value);
+        resolve({ dest: folder });
+      } catch (e) {
+        toast(friendlyError(e));
+        resolve(null);
+      }
+    });
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.className = "sheet-item sheet-cancel";
+    cancel.textContent = "닫기";
+    cancel.addEventListener("click", () => done(null));
+    sheet.appendChild(cancel);
+    overlay.appendChild(sheet);
+    overlay.onclick = (e) => { if (e.target === overlay) done(null); };
+  });
+  if (!res || !res.dest) return;
+  try {
+    await moveNodesTo(nodes, res.dest);
+    exitSelectMode();
+    cwd = res.dest;
+    renderExplorer();
+    toast("이동했습니다.");
+  } catch (e) {
+    toast(friendlyError(e));
+  }
+}
+
+async function promptNewFolder() {
+  const parent = storedParentForNew();
+  const res = await dialogSheet({
+    title: "새 폴더",
+    inputValue: parent === homeNode ? defaultAlbumName() : "새 폴더",
+    confirmLabel: "만들기",
+  });
+  if (!res || res.action !== "ok") return;
+  try {
+    const node = await createStoredFolder(parent, res.value);
+    cwd = node;
+    renderExplorer();
+    toast("폴더를 만들었습니다.");
+  } catch (e) {
+    toast(friendlyError(e));
+  }
+}
+
+
 function pathStack(node) {
   const s = [];
   let n = node;
@@ -1470,6 +2526,20 @@ function renderExplorer() {
 
   back.classList.toggle("hidden", atHome);
   title.textContent = atHome ? "만화뷰어" : cwd.name;
+  const selBtn = $("btnSelectMode");
+  if (selBtn) selBtn.disabled = !items.length;
+  const tool = $("exToolbar");
+  const sbar = $("exSelectBar");
+  if (explorerUI.selecting) {
+    if (tool) tool.classList.add("hidden");
+    if (sbar) sbar.classList.remove("hidden");
+    updateSelectBar();
+  } else {
+    if (tool) tool.classList.remove("hidden");
+    if (sbar) sbar.classList.add("hidden");
+  }
+  const ex = $("screen-explorer");
+  if (ex) ex.classList.toggle("ex-selecting", !!explorerUI.selecting);
 
   crumb.innerHTML = "";
   if (!atHome) {
@@ -1545,9 +2615,21 @@ function makeCard(node) {
   if (node.kind === "dir") {
     const badge = document.createElement("span");
     badge.className = "badge";
-    badge.textContent = "폴더";
+    badge.textContent = node.stored && (!node.parent || node.parent === homeNode) ? "앨범" : "폴더";
     thumb.appendChild(badge);
   }
+  if (node.stored && node.kind !== "dir") {
+    const badge = document.createElement("span");
+    badge.className = "badge";
+    badge.textContent = "보관";
+    thumb.appendChild(badge);
+  }
+  const check = document.createElement("span");
+  check.className = "check";
+  check.textContent = "✓";
+  thumb.appendChild(check);
+  if (explorerUI.selecting && explorerUI.selected.has(node.id)) btn.classList.add("selected");
+  if (node.stored) btn.classList.add("stored");
   if (node.kind === "video") {
     const add = document.createElement("span");
     add.className = "add-pl" + (isInPlaylist(node) ? " on" : "");
@@ -1579,6 +2661,7 @@ function makeCard(node) {
   const cancelPress = () => { clearTimeout(pressTimer); };
   btn.addEventListener("pointerdown", (e) => {
     if (e.button && e.button !== 0) return;
+    if (explorerUI.selecting) return;
     startPress(e.clientX, e.clientY);
   });
   btn.addEventListener("pointermove", (e) => {
@@ -1588,6 +2671,13 @@ function makeCard(node) {
   btn.addEventListener("pointercancel", cancelPress);
   btn.addEventListener("click", (e) => {
     if (pressed) { e.preventDefault(); pressed = false; return; }
+    if (explorerUI.selecting) {
+      if (explorerUI.selected.has(node.id)) explorerUI.selected.delete(node.id);
+      else explorerUI.selected.add(node.id);
+      btn.classList.toggle("selected", explorerUI.selected.has(node.id));
+      updateSelectBar();
+      return;
+    }
     openNode(node);
   });
   return btn;
@@ -1764,6 +2854,9 @@ function openActionSheet(node) {
   if (node.kind === "image") {
     items.push({ label: "이 폴더 이미지 보기", fn: () => openNode(node) });
   }
+  items.push({ label: "이름 변경", fn: () => promptRename(node) });
+  items.push({ label: "이동", fn: () => promptMove([node]) });
+  items.push({ label: "삭제", danger: true, fn: () => confirmDeleteNodes([node]) });
   showSheet(node.name, items);
 }
 
@@ -2017,7 +3110,7 @@ function setReaderUI(on) {
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v2";
+const PWA_CACHE = "mhv-pwa-v3";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
@@ -3057,6 +4150,7 @@ function savePlaylist() {
   try {
     const slim = playlist.map((p) => ({
       name: p.name, path: p.path || "", size: p.size || 0, lastModified: p.lastModified || 0,
+      storeId: p.storeId || (p._node && p._node.storeId) || "",
     }));
     localStorage.setItem(PL_KEY, JSON.stringify(slim));
   } catch (_) {}
@@ -3079,7 +4173,8 @@ function allVideoNodes() {
 function resolvePlaylistNode(item) {
   if (item._node && (item._node.file || item._node.zipEntry)) return item._node;
   const all = allVideoNodes();
-  let hit = all.find((n) => n.name === item.name && n.size === item.size && n.lastModified === item.lastModified);
+  let hit = item.storeId ? all.find((n) => n.storeId === item.storeId) : null;
+  if (!hit) hit = all.find((n) => n.name === item.name && n.size === item.size && n.lastModified === item.lastModified);
   if (!hit) hit = all.find((n) => n.path && item.path && n.path === item.path && n.name === item.name);
   if (!hit) hit = all.find((n) => n.name === item.name && n.size === item.size);
   if (hit) item._node = hit;
@@ -3109,6 +4204,7 @@ function togglePlaylist(node) {
       path: node.path || node.name,
       size: node.size || (node.file && node.file.size) || 0,
       lastModified: node.lastModified || (node.file && node.file.lastModified) || 0,
+      storeId: node.storeId || "",
       _node: node,
     });
     toast("재생목록에 추가했습니다.");
@@ -3265,6 +4361,8 @@ function showHelpSheet() {
 
 function openAddMenu() {
   const items = [
+    { label: "사진 추가", fn: () => $("photoPick").click() },
+    { label: "새 폴더", fn: () => promptNewFolder() },
     { label: "폴더 열기", fn: () => $("dirPick").click() },
     { label: "파일 또는 압축파일 열기", fn: () => $("filePick").click() },
     { label: "모든 형식 열기 (iOS)", fn: () => $("filePickAll").click() },
@@ -3273,15 +4371,33 @@ function openAddMenu() {
     items.push({ label: "코덱·압축 엔진 불러오기", fn: () => $("enginePick").click() });
   }
 
-  if (library.roots.length) {
-    items.push({ label: "서재 비우기", danger: true, fn: () => {
-      if (confirm("열린 폴더와 파일을 모두 닫을까요? 재생목록 항목은 남지만, 파일을 다시 선택해야 재생됩니다.")) clearLibrary();
+  if (library.roots.some((r) => !r.stored)) {
+    items.push({ label: "임시로 연 항목만 닫기", danger: true, fn: () => {
+      if (confirm("이번만 보기로 연 항목을 닫을까요? 앱에 보관한 앨범은 그대로 둡니다.")) clearLibrary();
     }});
   }
   showSheet("라이브러리에 추가", items);
 }
 
 /* ========== bind UI ========== */
+function clickPhotoPick() { $("photoPick").click(); }
+$("btnAddPhotos") && $("btnAddPhotos").addEventListener("click", clickPhotoPick);
+$("btnOpenPhotosEmpty") && $("btnOpenPhotosEmpty").addEventListener("click", clickPhotoPick);
+$("btnNewFolder") && $("btnNewFolder").addEventListener("click", () => promptNewFolder());
+$("btnSelectMode") && $("btnSelectMode").addEventListener("click", () => enterSelectMode());
+$("btnSelectAll") && $("btnSelectAll").addEventListener("click", () => {
+  const all = childrenOf(cwd);
+  if (explorerUI.selected.size === all.length) explorerUI.selected.clear();
+  else all.forEach((n) => explorerUI.selected.add(n.id));
+  renderExplorer();
+});
+$("btnCancelSelect") && $("btnCancelSelect").addEventListener("click", () => { exitSelectMode(); renderExplorer(); });
+$("btnDeleteSelected") && $("btnDeleteSelected").addEventListener("click", () => confirmDeleteNodes(selectedNodes()));
+$("btnMoveSelected") && $("btnMoveSelected").addEventListener("click", () => promptMove(selectedNodes()));
+$("photoPick").addEventListener("change", async (e) => {
+  await addPickedFiles(e.target.files, { fromPhotos: true });
+  e.target.value = "";
+});
 $("btnOpenDir").addEventListener("click", () => $("dirPick").click());
 $("btnOpenFiles").addEventListener("click", () => $("filePick").click());
 $("btnOpenAny") && $("btnOpenAny").addEventListener("click", () => $("filePickAll").click());
@@ -3403,7 +4519,8 @@ function fmtBytes(n) {
   if (!n || n < 0) return "0 B";
   if (n < 1024) return n + " B";
   if (n < 1024 * 1024) return (n / 1024).toFixed(0) + " KB";
-  return (n / (1024 * 1024)).toFixed(1) + " MB";
+  if (n < 1024 * 1024 * 1024) return (n / (1024 * 1024)).toFixed(1) + " MB";
+  return (n / (1024 * 1024 * 1024)).toFixed(1) + " GB";
 }
 function showSwStatus(text, pct, ready) {
   const box = $("swStatus");
@@ -3534,6 +4651,7 @@ renderExplorer();
 window.__pwa = window.__pwa || {};
 window.__pwa.pageCache = PWA_CACHE;
 registerPwa();
+window.__libraryReady = libraryReady();
 
 // Detect folder picker
 (function () {
@@ -3648,6 +4766,101 @@ window.__viewer = {
       const r = im.getBoundingClientRect();
       return { w: r.width, h: r.height, x: r.left, y: r.top, stageW: stage.width, stageH: stage.height };
     });
+  },
+  libraryReady: () => window.__libraryReady,
+  storageInfo: () => ({
+    backend: libStore.backend,
+    ready: libStore.ready,
+    persisted: libStore.persisted,
+    libBytes: storedBytes(),
+    usage: libStore.usage,
+    quota: libStore.quota,
+  }),
+  listStored() {
+    return library.roots.filter((r) => r.stored).map((n) => ({
+      id: n.id, name: n.name, kind: n.kind, stored: true,
+      children: (n.children || []).map((c) => ({ name: c.name, kind: c.kind, stored: !!c.stored, size: c.size || 0 })),
+    }));
+  },
+  async importPicked(opts) {
+    const input = $("photoPick") || $("filePickAll") || $("filePick");
+    return addPickedFiles(input.files, opts || { keep: true, fromPhotos: true });
+  },
+  async createFolder(name) {
+    const n = await createStoredFolder(storedParentForNew(), name);
+    renderExplorer();
+    return n.name;
+  },
+  async rename(oldName, newName) {
+    const n = childrenOf(cwd).find((c) => c.name === oldName);
+    if (!n) throw new Error("not found: " + oldName);
+    await renameStoredNode(n, newName);
+    renderExplorer();
+    return n.name;
+  },
+  enterSelect() { enterSelectMode(); },
+  exitSelect() { exitSelectMode(); renderExplorer(); },
+  toggleSelect(name) {
+    const n = childrenOf(cwd).find((c) => c.name === name);
+    if (!n) throw new Error("not found: " + name);
+    if (explorerUI.selected.has(n.id)) explorerUI.selected.delete(n.id);
+    else explorerUI.selected.add(n.id);
+    updateSelectBar();
+    renderExplorer();
+  },
+  selectAll() {
+    childrenOf(cwd).forEach((n) => explorerUI.selected.add(n.id));
+    updateSelectBar();
+    renderExplorer();
+    return explorerUI.selected.size;
+  },
+  selectedNames() { return selectedNodes().map((n) => n.name); },
+  async deleteSelected(force) {
+    const nodes = selectedNodes();
+    if (force) {
+      for (const n of nodes) {
+        if (n.stored || n.storeId) await deleteStoredNode(n);
+        else detachNode(n);
+      }
+      exitSelectMode();
+      renderExplorer();
+      return nodes.length;
+    }
+    return confirmDeleteNodes(nodes);
+  },
+  async deleteNames(names, force) {
+    const nodes = childrenOf(cwd).filter((c) => names.includes(c.name));
+    if (!nodes.length) return 0;
+    if (force) {
+      for (const n of nodes) {
+        if (n.stored || n.storeId) await deleteStoredNode(n);
+        else detachNode(n);
+      }
+      renderExplorer();
+      return nodes.length;
+    }
+    return confirmDeleteNodes(nodes);
+  },
+  async moveSelectedTo(name) {
+    let dest = homeNode;
+    if (name && name !== "홈") {
+      dest = library.roots.find((r) => r.name === name && r.kind === "dir") || dest;
+    }
+    await moveNodesTo(selectedNodes(), dest);
+    exitSelectMode();
+    cwd = dest;
+    renderExplorer();
+  },
+  async clearStored() {
+    const roots = library.roots.filter((r) => r.stored).slice();
+    for (const r of roots) await deleteStoredNode(r);
+    exitSelectMode();
+    cwd = homeNode;
+    renderExplorer();
+  },
+  isStored(name) {
+    const n = childrenOf(cwd).find((c) => c.name === name) || library.roots.find((c) => c.name === name);
+    return !!(n && n.stored);
   },
 };
 
