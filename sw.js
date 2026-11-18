@@ -1,5 +1,5 @@
 /* 만화뷰어 service worker: cache-first, versioned, engine precache with progress */
-const CACHE_VERSION = "mhv-pwa-v1";
+const CACHE_VERSION = "mhv-pwa-v2";
 
 const APP_ASSETS = [
   "./",

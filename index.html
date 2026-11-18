@@ -191,6 +191,12 @@ button {
   position: absolute; inset: 0; z-index: 2; pointer-events: none;
   transform-origin: 0 0;
 }
+#flipLayer {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 3;
+  display: block;
+}
+#flipLayer.hidden { display: none !important; }
 #readerChrome, #videoChrome {
   position: absolute; inset: 0; z-index: 6; pointer-events: none;
   display: flex; flex-direction: column; justify-content: space-between;
@@ -298,13 +304,32 @@ input[type=range]::-webkit-slider-thumb {
 .sheet-cancel { text-align: center; color: var(--muted); margin-top: 4px; }
 .settings-row {
   display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap;
   padding: 12px; gap: 10px; border-bottom: 1px solid var(--border);
 }
 .settings-row:last-child { border-bottom: 0; }
 .settings-row label { font-size: 14px; }
-.seg { display: flex; background: #000; border-radius: 10px; padding: 3px; gap: 3px; }
-.seg button { height: 30px; padding: 0 10px; border-radius: 8px; font-size: 12px; font-weight: 650; color: #bbb; }
+.seg { display: flex; background: #000; border-radius: 10px; padding: 3px; gap: 3px; margin-left: auto; }
+.seg button { height: 30px; padding: 0 8px; border-radius: 8px; font-size: 12px; font-weight: 650; color: #bbb; white-space: nowrap; }
 .seg button.on { background: var(--accent); color: #0b1220; }
+.sw-update {
+  position: fixed; left: 12px; right: 12px;
+  bottom: calc(12px + var(--safe-b));
+  z-index: 46;
+  background: rgba(18,18,22,.96);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: #ddd;
+  font-size: 13px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  box-shadow: 0 8px 24px #0008;
+}
+.sw-update.hidden { display: none !important; }
+.sw-update button {
+  background: var(--accent); color: #0b1220;
+  height: 34px; padding: 0 12px; border-radius: 8px; font-weight: 700; font-size: 13px; flex: 0 0 auto;
+}
 
 .toast {
   position: fixed; left: 50%; bottom: calc(24px + var(--safe-b));
@@ -438,6 +463,7 @@ input[type=range]::-webkit-slider-thumb {
         <div class="view" id="viewCur"></div>
         <div class="view" id="viewNext"></div>
       </div>
+      <canvas id="flipLayer" class="hidden" aria-hidden="true"></canvas>
     </div>
     <div id="readerChrome">
       <header class="topbar">
@@ -528,6 +554,10 @@ input[type=range]::-webkit-slider-thumb {
 <div id="swStatus" class="sw-status hidden" role="status" aria-live="polite">
   <div class="sw-row"><div class="sw-msg" id="swStatusText">엔진을 준비하는 중…</div><div class="sw-pct" id="swStatusPct"></div></div>
   <div class="sw-bar"><div class="sw-bar-fill" id="swBar"></div></div>
+</div>
+<div id="swUpdate" class="sw-update hidden" role="status">
+  <span>새 버전이 있습니다</span>
+  <button type="button" id="btnSwUpdate">새 버전 적용</button>
 </div>
 <div id="loading" class="loading hidden"><div class="spinner"></div><div id="loadingText">불러오는 중…</div></div>
 <div id="overlay" class="overlay hidden"></div>
@@ -1752,6 +1782,7 @@ const reader = {
   panY: 0,
   animating: false,
   gen: 0,
+  turnEffect: "curl", // curl | slide | none
 };
 
 const PREFS_KEY = "mhv-prefs-v1";
@@ -1761,6 +1792,7 @@ function loadPrefs() {
     if (p.rtl != null) reader.rtl = !!p.rtl;
     if (p.spreadMode) reader.spreadMode = p.spreadMode;
     if (p.coverAlone != null) reader.coverAlone = !!p.coverAlone;
+    if (p.turnEffect === "curl" || p.turnEffect === "slide" || p.turnEffect === "none") reader.turnEffect = p.turnEffect;
     if (p.speed) videoState.speed = p.speed;
   } catch (_) {}
 }
@@ -1770,6 +1802,7 @@ function savePrefs() {
       rtl: reader.rtl,
       spreadMode: reader.spreadMode,
       coverAlone: reader.coverAlone,
+      turnEffect: reader.turnEffect,
       speed: videoState.speed,
     }));
   } catch (_) {}
@@ -1933,6 +1966,9 @@ async function renderReaderViews(keepTransform) {
   resetZoom();
   harvestPageUrls();
   updateReaderChrome();
+  if (!flip.active && !flip.hold) {
+    hideFlipLayer();
+  }
   // preload neighbors
   const n = readingNext(cur), p = readingPrev(cur);
   [n, p, n >= 0 ? readingNext(n) : -1].forEach((i) => { if (i >= 0) getPageUrl(i); });
@@ -1980,19 +2016,550 @@ function setReaderUI(on) {
   $("readerChrome").classList.toggle("dim", !on);
 }
 
-function turnToPhysical(dir, animated) {
-  // dir: -1 show left (translate toward +), +1 show right (translate toward -)
-  if (reader.animating) return;
-  if (reader.zoom > 1.01) resetZoom();
-  const nb = physicalNeighbors(reader.index);
-  const target = dir < 0 ? nb.left : nb.right;
-  if (target == null || target < 0) {
+/* ========== Book page curl ========== */
+const PWA_CACHE = "mhv-pwa-v2";
+const TURN_EFFECTS = ["curl", "slide", "none"];
+
+const flip = {
+  active: false,
+  hold: false,
+  dir: 1,
+  fromRight: true,
+  fromBottom: true,
+  progress: 0,
+  tip: null,
+  prep: null,
+  raf: 0,
+  startX: 0,
+  startY: 0,
+};
+
+function turnEffect() {
+  const v = reader.turnEffect;
+  return TURN_EFFECTS.includes(v) ? v : "curl";
+}
+
+function hideFlipLayer() {
+  if (flip.raf) { cancelAnimationFrame(flip.raf); flip.raf = 0; }
+  flip.active = false;
+  flip.hold = false;
+  flip.prep = null;
+  flip.tip = null;
+  flip.progress = 0;
+  const c = $("flipLayer");
+  if (c) {
+    c.classList.add("hidden");
+    const ctx = c.getContext("2d");
+    if (ctx) ctx.clearRect(0, 0, c.width, c.height);
+  }
+  const strip = $("strip");
+  if (strip) strip.style.visibility = "";
+}
+
+function cancelFlip() {
+  const was = flip.active || flip.hold || reader.animating;
+  hideFlipLayer();
+  reader.animating = false;
+  return was;
+}
+
+function sizeFlipCanvas() {
+  const c = $("flipLayer");
+  const stage = $("stage");
+  if (!c || !stage) return 1;
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const w = stage.clientWidth || window.innerWidth;
+  const h = stage.clientHeight || window.innerHeight;
+  const tw = Math.max(1, Math.round(w * dpr));
+  const th = Math.max(1, Math.round(h * dpr));
+  if (c.width !== tw || c.height !== th) {
+    c.width = tw;
+    c.height = th;
+    c.style.width = w + "px";
+    c.style.height = h + "px";
+  }
+  return dpr;
+}
+
+function stageRect() {
+  return $("stage").getBoundingClientRect();
+}
+
+function boxRel(el, stage) {
+  const r = el.getBoundingClientRect();
+  return { x: r.left - stage.left, y: r.top - stage.top, w: r.width, h: r.height, img: el.tagName === "IMG" ? el : el.querySelector("img") };
+}
+
+function measureViewPages(viewEl) {
+  const stage = stageRect();
+  const viewBox = viewEl.getBoundingClientRect();
+  const curBox = $("viewCur").getBoundingClientRect();
+  // Neighbor views sit off-screen in the strip; map their boxes onto the current view.
+  const dx = curBox.left - viewBox.left;
+  const dy = curBox.top - viewBox.top;
+  const slots = [...viewEl.querySelectorAll(".slot")];
+  const out = { left: null, right: null, single: null };
+  const info = (img) => {
+    if (!img) return null;
+    const r = img.getBoundingClientRect();
+    const b = { x: r.left - stage.left + dx, y: r.top - stage.top + dy, w: r.width, h: r.height, img };
+    return b.w >= 2 && b.h >= 2 ? b : null;
+  };
+  if (viewEl.classList.contains("single")) {
+    out.single = info(slots[0] && slots[0].querySelector("img"));
+    return out;
+  }
+  out.left = info(slots[0] && slots[0].querySelector("img"));
+  out.right = info(slots[1] && slots[1].querySelector("img"));
+  return out;
+}
+
+function prepareFlipSync(dir) {
+  const fromRight = dir > 0;
+  const cur = measureViewPages($("viewCur"));
+  const dest = measureViewPages(fromRight ? $("viewNext") : $("viewPrev"));
+  const spread = isSpread() && !cur.single;
+  let front = null, back = null, under = null, still = null;
+  if (!spread) {
+    front = cur.single;
+    under = dest.single;
+  } else if (fromRight) {
+    front = cur.right;
+    still = cur.left;
+    back = dest.left;
+    under = dest.right;
+  } else {
+    front = cur.left;
+    still = cur.right;
+    back = dest.right;
+    under = dest.left;
+  }
+  if (!front || !front.img) return null;
+  return { dir, fromRight, spread, front, back, under, still };
+}
+
+function tipFromProgress(prep, p, fromBottom) {
+  const f = prep.front;
+  const W = f.w, H = f.h;
+  const fb = fromBottom != null ? fromBottom : flip.fromBottom;
+  const ox = prep.fromRight ? f.x + W : f.x;
+  const oy = f.y + (fb ? H * 0.92 : H * 0.08);
+  const destX = prep.fromRight ? f.x - W : f.x + 2 * W;
+  const t = Math.max(0, Math.min(1, p));
+  const x = ox + (destX - ox) * t;
+  const y = oy - Math.sin(t * Math.PI) * H * 0.12;
+  return { x, y };
+}
+
+function progressFromTip(prep, tip) {
+  const f = prep.front;
+  const travel = 2 * Math.max(8, f.w);
+  if (prep.fromRight) return (f.x + f.w - tip.x) / travel;
+  return (tip.x - f.x) / travel;
+}
+
+function tipFromPointer(prep, clientX, clientY, startX, startY) {
+  const stage = stageRect();
+  const f = prep.front;
+  const edgeX = prep.fromRight ? f.x + f.w : f.x;
+  return {
+    x: edgeX + (clientX - startX),
+    y: clientY - stage.top,
+  };
+}
+
+/* ---- polygon / fold math ---- */
+function lineSide(mx, my, nx, ny, px, py) {
+  return (px - mx) * nx + (py - my) * ny;
+}
+function clipPolyByLine(poly, mx, my, nx, ny, keepPos) {
+  const out = [];
+  const n = poly.length;
+  if (!n) return out;
+  for (let i = 0; i < n; i++) {
+    const a = poly[i], b = poly[(i + 1) % n];
+    const da = lineSide(mx, my, nx, ny, a[0], a[1]);
+    const db = lineSide(mx, my, nx, ny, b[0], b[1]);
+    const aIn = keepPos ? da >= -0.05 : da <= 0.05;
+    const bIn = keepPos ? db >= -0.05 : db <= 0.05;
+    if (aIn && bIn) {
+      out.push(b);
+    } else if (aIn && !bIn) {
+      const t = da / (da - db || 1e-8);
+      out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
+    } else if (!aIn && bIn) {
+      const t = da / (da - db || 1e-8);
+      out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
+      out.push(b);
+    }
+  }
+  return out;
+}
+function reflectPoly(poly, mx, my, nx, ny) {
+  return poly.map(([x, y]) => {
+    const d = (x - mx) * nx + (y - my) * ny;
+    return [x - 2 * d * nx, y - 2 * d * ny];
+  });
+}
+function pathPoly(ctx, poly) {
+  ctx.beginPath();
+  ctx.moveTo(poly[0][0], poly[0][1]);
+  for (let i = 1; i < poly.length; i++) ctx.lineTo(poly[i][0], poly[i][1]);
+  ctx.closePath();
+}
+function drawImgRect(ctx, img, r) {
+  if (!img || !r || r.w < 1 || r.h < 1) return;
+  try { ctx.drawImage(img, r.x, r.y, r.w, r.h); } catch (_) {}
+}
+
+function constrainTipLocal(px, py, W, H, fromRight, fromBottom) {
+  const cx = fromRight ? W : 0;
+  const cy = fromBottom ? H : 0;
+  if (fromRight) px = Math.min(px, W - 0.8);
+  else px = Math.max(px, 0.8);
+  if (fromRight) px = Math.max(px, -W);
+  else px = Math.min(px, 2 * W);
+  py = Math.max(-H * 0.2, Math.min(H * 1.2, py));
+  const dist = Math.hypot(px - cx, py - cy);
+  if (dist < 2) {
+    px = cx + (fromRight ? -2 : 2);
+    py = cy;
+  }
+  return { px, py, cx, cy };
+}
+
+function showFlip(prep) {
+  flip.prep = prep;
+  flip.active = true;
+  flip.fromRight = prep.fromRight;
+  flip.dir = prep.dir;
+  sizeFlipCanvas();
+  $("flipLayer").classList.remove("hidden");
+  $("strip").style.visibility = "hidden";
+}
+
+function drawFlip() {
+  const prep = flip.prep;
+  const canvas = $("flipLayer");
+  if (!prep || !canvas || !flip.tip) return;
+  const dpr = sizeFlipCanvas();
+  const ctx = canvas.getContext("2d", { alpha: true });
+  if (!ctx) return;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const wCss = canvas.width / dpr, hCss = canvas.height / dpr;
+  ctx.clearRect(0, 0, wCss, hCss);
+
+  const front = prep.front;
+  const W = front.w, H = front.h;
+  const fromRight = prep.fromRight;
+  const tip = flip.tip;
+  let lx = tip.x - front.x;
+  let ly = tip.y - front.y;
+  const fromBottom = flip.fromBottom;
+  const c = constrainTipLocal(lx, ly, W, H, fromRight, fromBottom);
+  lx = c.px; ly = c.py;
+  const cx = c.cx, cy = c.cy;
+  const dist = Math.hypot(lx - cx, ly - cy) || 1;
+  const nx = (lx - cx) / dist;
+  const ny = (ly - cy) / dist;
+  const mx = front.x + (cx + lx) / 2;
+  const my = front.y + (cy + ly) / 2;
+  // fold normal in stage space (same as local)
+  const page = [
+    [front.x, front.y],
+    [front.x + W, front.y],
+    [front.x + W, front.y + H],
+    [front.x, front.y + H],
+  ];
+  const attached = clipPolyByLine(page, mx, my, nx, ny, true);
+  const peeled = clipPolyByLine(page, mx, my, nx, ny, false);
+  const overleaf = peeled.length >= 3 ? reflectPoly(peeled, mx, my, nx, ny) : [];
+
+  // 1) still page (the half that stays put in a spread)
+  if (prep.still && prep.still.img) drawImgRect(ctx, prep.still.img, prep.still);
+
+  // 2) page revealed underneath the peel
+  if (prep.under && prep.under.img) drawImgRect(ctx, prep.under.img, prep.under);
+
+  // 3) remaining front page
+  if (attached.length >= 3 && front.img) {
+    ctx.save();
+    pathPoly(ctx, attached);
+    ctx.clip();
+    drawImgRect(ctx, front.img, front);
+    ctx.restore();
+  }
+
+  // 4) shadow on the revealed region (page lift)
+  if (peeled.length >= 3) {
+    ctx.save();
+    pathPoly(ctx, peeled);
+    ctx.clip();
+    const g = ctx.createLinearGradient(
+      front.x + cx, front.y + cy,
+      mx, my
+    );
+    g.addColorStop(0, "rgba(0,0,0,0.55)");
+    g.addColorStop(0.55, "rgba(0,0,0,0.22)");
+    g.addColorStop(1, "rgba(0,0,0,0.0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(front.x - 2, front.y - 2, W + 4, H + 4);
+    ctx.restore();
+  }
+
+  // 5) drop shadow of the curling leaf
+  if (overleaf.length >= 3) {
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.5)";
+    ctx.shadowBlur = Math.max(12, Math.min(36, W * 0.08));
+    ctx.shadowOffsetX = fromRight ? -10 : 10;
+    ctx.shadowOffsetY = 8;
+    pathPoly(ctx, overleaf);
+    ctx.fillStyle = "rgba(0,0,0,0.28)";
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // 6) overleaf (verso or paper)
+  if (overleaf.length >= 3) {
+    ctx.save();
+    pathPoly(ctx, overleaf);
+    ctx.clip();
+    const a = 1 - 2 * nx * nx;
+    const b = -2 * nx * ny;
+    const d = 1 - 2 * ny * ny;
+    const tx = 2 * (mx * nx + my * ny) * nx;
+    const ty = 2 * (mx * nx + my * ny) * ny;
+    ctx.transform(a, b, b, d, tx, ty);
+    if (prep.back && prep.back.img) {
+      // verso: horizontally flipped in the front page's box, then reflected
+      ctx.drawImage(prep.back.img, front.x + W, front.y, -W, H);
+    } else {
+      const pg = ctx.createLinearGradient(front.x, front.y, front.x + W, front.y);
+      if (fromRight) {
+        pg.addColorStop(0, "#cfc8bc");
+        pg.addColorStop(0.15, "#e8e2d7");
+        pg.addColorStop(1, "#d9d3c8");
+      } else {
+        pg.addColorStop(0, "#d9d3c8");
+        pg.addColorStop(0.85, "#e8e2d7");
+        pg.addColorStop(1, "#cfc8bc");
+      }
+      ctx.fillStyle = pg;
+      ctx.fillRect(front.x, front.y, W, H);
+    }
+    ctx.restore();
+
+    // shade + highlight on the overleaf, along the fold
+    ctx.save();
+    pathPoly(ctx, overleaf);
+    ctx.clip();
+    const foldLen = Math.max(W, H);
+    const gx0 = mx - nx * 8, gy0 = my - ny * 8;
+    const gx1 = mx + nx * Math.min(80, foldLen * 0.35);
+    const gy1 = my + ny * Math.min(80, foldLen * 0.35);
+    const sh = ctx.createLinearGradient(gx0, gy0, gx1, gy1);
+    sh.addColorStop(0, "rgba(0,0,0,0.0)");
+    sh.addColorStop(0.18, "rgba(0,0,0,0.18)");
+    sh.addColorStop(0.45, "rgba(255,255,255,0.08)");
+    sh.addColorStop(1, "rgba(0,0,0,0.0)");
+    ctx.fillStyle = sh;
+    ctx.fill();
+    ctx.restore();
+
+    // outer edge of the curling leaf (paper thickness)
+    ctx.save();
+    pathPoly(ctx, overleaf);
+    ctx.strokeStyle = "rgba(40,30,20,0.35)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // 7) fold highlight (the bend), clipped to the page and overleaf
+  if (overleaf.length >= 3 && attached.length >= 3) {
+    const fx = -ny, fy = nx;
+    const len = Math.max(H, W) * 1.6;
+    ctx.save();
+    ctx.beginPath();
+    for (const poly of [attached, peeled, overleaf]) {
+      if (!poly || poly.length < 3) continue;
+      ctx.moveTo(poly[0][0], poly[0][1]);
+      for (let i = 1; i < poly.length; i++) ctx.lineTo(poly[i][0], poly[i][1]);
+      ctx.closePath();
+    }
+    ctx.clip();
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(mx - fx * len, my - fy * len);
+    ctx.lineTo(mx + fx * len, my + fy * len);
+    ctx.strokeStyle = "rgba(0,0,0,0.28)";
+    ctx.lineWidth = 6;
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(255,255,255,0.55)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.restore();
+
+    // shade on the still-attached front, along the fold
+    if (attached.length >= 3) {
+      ctx.save();
+      pathPoly(ctx, attached);
+      ctx.clip();
+      const g2 = ctx.createLinearGradient(mx, my, mx - nx * 28, my - ny * 28);
+      g2.addColorStop(0, "rgba(0,0,0,0.28)");
+      g2.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g2;
+      ctx.fillRect(front.x - 40, front.y - 40, W + 80, H + 80);
+      ctx.restore();
+    }
+  }
+}
+
+function beginCurlDir(dir, startX, startY, fromBottom) {
+  const prep = prepareFlipSync(dir);
+  if (!prep) return false;
+  flip.fromBottom = fromBottom != null ? fromBottom : (startY - stageRect().top > prep.front.y + prep.front.h * 0.45);
+  flip.startX = startX;
+  flip.startY = startY;
+  showFlip(prep);
+  return true;
+}
+
+function updateCurlTip(tip) {
+  if (!flip.prep) return;
+  flip.tip = tip;
+  flip.progress = progressFromTip(flip.prep, tip);
+  if (flip.raf) return;
+  flip.raf = requestAnimationFrame(() => {
+    flip.raf = 0;
+    drawFlip();
+  });
+}
+
+function animateCurlTip(fromTip, toTip, duration, done) {
+  if (flip.raf) { cancelAnimationFrame(flip.raf); flip.raf = 0; }
+  const t0 = performance.now();
+  const a = fromTip, b = toTip;
+  const dur = Math.max(160, duration || 480);
+  reader.animating = true;
+  const step = (now) => {
+    const t = Math.min(1, (now - t0) / dur);
+    const e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    const tip = { x: a.x + (b.x - a.x) * e, y: a.y + (b.y - a.y) * e };
+    flip.tip = tip;
+    flip.progress = flip.prep ? progressFromTip(flip.prep, tip) : e;
+    drawFlip();
+    if (t < 1) flip.raf = requestAnimationFrame(step);
+    else { flip.raf = 0; done && done(); }
+  };
+  flip.raf = requestAnimationFrame(step);
+}
+
+function finishCurlTo(target) {
+  flip.active = false;
+  flip.hold = false;
+  reader.animating = false;
+  reader.index = alignIndex(target);
+  renderReaderViews();
+}
+
+function snapCurlBack() {
+  if (!flip.prep || !flip.tip) {
+    hideFlipLayer();
+    reader.animating = false;
+    return;
+  }
+  const origin = tipFromProgress(flip.prep, 0, flip.fromBottom);
+  // keep origin very close to the corner so the page lies flat
+  animateCurlTip(flip.tip, origin, 260, () => {
+    hideFlipLayer();
+    reader.animating = false;
+  });
+}
+
+function completeCurlTo(target) {
+  if (!flip.prep || !flip.tip) {
+    finishCurlTo(target);
+    return;
+  }
+  const dest = tipFromProgress(flip.prep, 1, flip.fromBottom);
+  const remain = Math.abs(flip.progress - 1);
+  const dur = 280 + remain * 280;
+  animateCurlTip(flip.tip, dest, dur, () => finishCurlTo(target));
+}
+
+function startAnimatedCurl(dir, target) {
+  if (!beginCurlDir(dir, 0, 0, true)) {
+    reader.index = alignIndex(target);
+    renderReaderViews();
+    return;
+  }
+  const start = tipFromProgress(flip.prep, 0.03, true);
+  const dest = tipFromProgress(flip.prep, 1, true);
+  flip.tip = start;
+  flip.progress = 0.03;
+  drawFlip();
+  const dur = 520;
+  animateCurlTip(start, dest, dur, () => finishCurlTo(target));
+}
+
+function bounceCurl(dir) {
+  if (!beginCurlDir(dir, 0, 0, true)) {
     bounceStrip(dir);
     return;
   }
-  if (!animated) {
+  const a = tipFromProgress(flip.prep, 0.02, true);
+  const b = tipFromProgress(flip.prep, 0.12, true);
+  flip.tip = a;
+  drawFlip();
+  animateCurlTip(a, b, 160, () => {
+    animateCurlTip(b, a, 200, () => {
+      hideFlipLayer();
+      reader.animating = false;
+    });
+  });
+}
+
+function holdCurlAt(dir, progress, fromBottom) {
+  cancelFlip();
+  if (!beginCurlDir(dir, 0, 0, fromBottom != null ? fromBottom : true)) return null;
+  flip.hold = true;
+  reader.animating = true;
+  const p = Math.max(0.04, Math.min(0.9, progress == null ? 0.38 : progress));
+  flip.tip = tipFromProgress(flip.prep, p, flip.fromBottom);
+  flip.progress = p;
+  drawFlip();
+  return {
+    active: true,
+    dir: flip.dir,
+    progress: flip.progress,
+    fromRight: flip.fromRight,
+    fromBottom: flip.fromBottom,
+  };
+}
+
+
+function turnToPhysical(dir, animated) {
+  // dir: -1 show left (translate toward +), +1 show right (translate toward -)
+  if (reader.animating || (flip.active && !flip.hold && animated)) return;
+  if (flip.hold) cancelFlip();
+  if (reader.zoom > 1.01) resetZoom();
+  const nb = physicalNeighbors(reader.index);
+  const target = dir < 0 ? nb.left : nb.right;
+  const fx = turnEffect();
+  if (target == null || target < 0) {
+    if (animated && fx === "curl") bounceCurl(dir);
+    else bounceStrip(dir);
+    return;
+  }
+  if (!animated || fx === "none") {
     reader.index = alignIndex(target);
     renderReaderViews();
+    return;
+  }
+  if (fx === "curl") {
+    startAnimatedCurl(dir, target);
     return;
   }
   reader.animating = true;
@@ -2048,6 +2615,7 @@ async function openReader(pages, startIndex, folder) {
 }
 
 function closeReader() {
+  cancelFlip();
   clearPageUrls();
   showScreen("explorer");
   renderExplorer();
@@ -2086,6 +2654,7 @@ function closeReader() {
     startX = e.clientX; startY = e.clientY; startT = Date.now();
     startPanX = reader.panX; startPanY = reader.panY;
     $("strip").style.transition = "none";
+    flip._dragStarted = false;
   });
 
   stage.addEventListener("pointermove", (e) => {
@@ -2112,6 +2681,23 @@ function closeReader() {
     }
     if (mode === "swipe" && reader.zoom <= 1.02) {
       const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      const fx = turnEffect();
+      if (fx === "none") return;
+      if (fx === "curl") {
+        if (!flip._dragStarted) {
+          if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy) * 0.7) return;
+          const dir = dx < 0 ? 1 : -1;
+          const nb = physicalNeighbors(reader.index);
+          const target = dir < 0 ? nb.left : nb.right;
+          flip._dragDir = dir;
+          flip._dragTarget = target;
+          if (!beginCurlDir(dir, startX, startY)) return;
+          flip._dragStarted = true;
+        }
+        updateCurlTip(tipFromPointer(flip.prep, e.clientX, e.clientY, startX, startY));
+        return;
+      }
       $("strip").style.transform = `translateX(calc(-33.3333% + ${dx}px))`;
     }
   });
@@ -2134,6 +2720,23 @@ function closeReader() {
     const dt = Date.now() - startT;
     const w = stage.clientWidth || window.innerWidth;
     const isTap = Math.hypot(dx, dy) < 12 && dt < 350;
+
+    if (flip._dragStarted) {
+      flip._dragStarted = false;
+      const velocity = dx / Math.max(16, dt);
+      const should = Math.abs(dx) > w * 0.18 || (Math.abs(velocity) > 0.6 && Math.abs(dx) > 24);
+      const dir = flip._dragDir;
+      const target = flip._dragTarget;
+      const toward = (dir > 0 && dx < 0) || (dir < 0 && dx > 0);
+      if (should && Math.abs(dx) > Math.abs(dy) && toward && target != null && target >= 0) {
+        completeCurlTo(target);
+      } else if (target == null || target < 0) {
+        snapCurlBack();
+      } else {
+        snapCurlBack();
+      }
+      return;
+    }
 
     if (isTap) {
       $("strip").style.transition = "transform 160ms ease";
@@ -2214,6 +2817,8 @@ function showReaderSettings() {
         () => reader.coverAlone, (v) => { reader.coverAlone = v === true || v === "true"; });
       mkRow("읽기 방향", [[false,"왼쪽부터"],[true,"오른쪽부터"]],
         () => reader.rtl, (v) => { reader.rtl = v === true || v === "true"; });
+      mkRow("넘김 효과", [["curl","책장 넘김"],["slide","슬라이드"],["none","없음"]],
+        () => turnEffect(), (v) => { reader.turnEffect = v; });
     }
   });
 }
@@ -2742,6 +3347,7 @@ $("btnPlPlay").addEventListener("click", () => playPlaylistFrom(0));
 
 window.addEventListener("resize", () => {
   if (currentScreen === "reader") {
+    cancelFlip();
     reader.index = alignIndex(reader.index);
     renderReaderViews();
   }
@@ -2749,6 +3355,7 @@ window.addEventListener("resize", () => {
 window.addEventListener("orientationchange", () => {
   setTimeout(() => {
     if (currentScreen === "reader") {
+      cancelFlip();
       reader.index = alignIndex(reader.index);
       renderReaderViews();
     }
@@ -2836,6 +3443,15 @@ function onSwMessage(data) {
     window.__pwa = window.__pwa || {};
     window.__pwa.offlineReady = true;
     window.__pwa.cache = data.cache;
+    if (data.type === "sw-activated" && data.cache && window.__pwa.pageCache && data.cache !== window.__pwa.pageCache) {
+      const box = $("swUpdate");
+      if (box) {
+        const st = $("swStatus");
+        if (st) st.classList.add("hidden");
+        box.classList.remove("hidden");
+        window.__pwa.updateAvailable = true;
+      }
+    }
   }
 }
 async function registerPwa() {
@@ -2861,20 +3477,49 @@ async function registerPwa() {
       // Already cached from a previous visit
       try {
         const keys = await caches.keys();
-        const has = keys.includes("mhv-pwa-v1");
+        const has = keys.includes(PWA_CACHE) || keys.some((k) => k.startsWith("mhv-pwa-"));
         if (has) {
-          const cache = await caches.open("mhv-pwa-v1");
+          const cacheName = keys.includes(PWA_CACHE) ? PWA_CACHE : keys.find((k) => k.startsWith("mhv-pwa-"));
+          const cache = await caches.open(cacheName);
           const reqs = await cache.keys();
           if (reqs.length) {
             window.__pwa.offlineReady = true;
+            window.__pwa.cache = cacheName;
             showSwStatus("오프라인 준비 완료", 100, true);
             hideSwStatusLater();
           }
         }
       } catch (_) {}
     }
+    const showUpdatePrompt = () => {
+      const box = $("swUpdate");
+      if (!box) return;
+      const st = $("swStatus");
+      if (st) st.classList.add("hidden");
+      box.classList.remove("hidden");
+      window.__pwa.updateAvailable = true;
+    };
+    const hadController = !!navigator.serviceWorker.controller;
+    if (reg.waiting && hadController) showUpdatePrompt();
+    reg.addEventListener("updatefound", () => {
+      const w = reg.installing;
+      if (!w) return;
+      w.addEventListener("statechange", () => {
+        if (w.state === "installed" && navigator.serviceWorker.controller) showUpdatePrompt();
+      });
+    });
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (hadController) showUpdatePrompt();
+    });
+    const btn = $("btnSwUpdate");
+    if (btn && !btn._bound) {
+      btn._bound = true;
+      btn.addEventListener("click", () => { location.reload(); });
+    }
+    try { reg.update(); } catch (_) {}
     await navigator.serviceWorker.ready;
     window.__pwa.ready = true;
+    window.__pwa.cacheExpected = PWA_CACHE;
   } catch (e) {
     console.warn("SW register failed", e);
     window.__pwa = window.__pwa || {};
@@ -2886,6 +3531,8 @@ async function registerPwa() {
 loadPrefs();
 loadPlaylist();
 renderExplorer();
+window.__pwa = window.__pwa || {};
+window.__pwa.pageCache = PWA_CACHE;
 registerPwa();
 
 // Detect folder picker
@@ -2914,6 +3561,8 @@ window.__viewer = {
     ui: reader.ui,
     zoom: reader.zoom,
     visible: pairFor(reader.index),
+    turnEffect: turnEffect(),
+    animating: reader.animating,
   }),
   video: () => ({
     index: videoState.index,
@@ -2938,10 +3587,40 @@ window.__viewer = {
     else if (currentScreen === "playlist") { showScreen("explorer"); renderExplorer(); }
     else $("btnExBack").click();
   },
-  turn(dir) { turnToPhysical(dir, false); },
+  turn(dir, animated) { turnToPhysical(dir, !!animated); },
   setSpreadMode(m) { reader.spreadMode = m; savePrefs(); reader.index = alignIndex(reader.index); return renderReaderViews(); },
   setCover(v) { reader.coverAlone = !!v; savePrefs(); reader.index = alignIndex(reader.index); return renderReaderViews(); },
   setRtl(v) { reader.rtl = !!v; savePrefs(); return renderReaderViews(); },
+  setTurnEffect(v) { reader.turnEffect = v; savePrefs(); },
+  turnEffect: () => turnEffect(),
+  curlState() {
+    return {
+      active: !!(flip.active || flip.hold),
+      hold: !!flip.hold,
+      dir: flip.dir,
+      progress: flip.progress,
+      fromRight: flip.fromRight,
+      fromBottom: flip.fromBottom,
+      animating: reader.animating,
+      hiddenStrip: $("strip").style.visibility === "hidden",
+      canvasVisible: !$("flipLayer").classList.contains("hidden"),
+    };
+  },
+  holdCurl(opts) {
+    const dir = opts && opts.dir != null ? opts.dir : 1;
+    const p = opts && opts.progress != null ? opts.progress : 0.38;
+    const fb = opts && opts.fromBottom != null ? opts.fromBottom : true;
+    return holdCurlAt(dir, p, fb);
+  },
+  releaseCurl(complete) {
+    if (!flip.prep) { hideFlipLayer(); reader.animating = false; return; }
+    const nb = physicalNeighbors(reader.index);
+    const dir = flip.dir;
+    const target = dir < 0 ? nb.left : nb.right;
+    if (complete && target != null && target >= 0) completeCurlTo(target);
+    else snapCurlBack();
+  },
+  cancelCurl() { cancelFlip(); },
   playPl(i) { playPlaylistFrom(i || 0); },
   async openArchive(name) {
     const n = childrenOf(cwd).find((c) => c.name === name);
