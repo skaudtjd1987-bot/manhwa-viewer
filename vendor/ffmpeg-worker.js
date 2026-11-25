@@ -130,6 +130,47 @@ self.onmessage = async (ev) => {
       if (!done) throw lastErr || new Error("영상을 변환할 수 없습니다.");
       return;
     }
+    if (cmd === "exec") {
+      // Generic run: input Blob is mounted read-only (WORKERFS) so big videos are not copied into wasm memory.
+      const inName = (msg.inName || "input.bin").replace(/[^A-Za-z0-9._-]/g, "_");
+      const outName = msg.outName || "out.mp4";
+      let inPath = inName, mounted = false;
+      try {
+        try { core.FS.mkdir("/wfs"); } catch (_) {}
+        core.FS.mount(core.FS.filesystems.WORKERFS, { blobs: [{ name: inName, data: msg.input }] }, "/wfs");
+        mounted = true;
+        inPath = "/wfs/" + inName;
+      } catch (_) {
+        const buf = new Uint8Array(await msg.input.arrayBuffer());
+        writeIn(inName, buf);
+      }
+      if (core.setProgress) core.setProgress(({ progress, time }) => { try { self.postMessage({ id, type: "progress", progress, time }); } catch (_) {} });
+      let done = false, lastErr = null;
+      try {
+        for (const tpl of msg.tries || []) {
+          const args = tpl.map((a) => (a === "{in}" ? inPath : a));
+          try { core.FS.unlink(outName); } catch (_) {}
+          try {
+            core.reset && core.reset();
+            core.exec(...args);
+            let out = null;
+            try { out = core.FS.readFile(outName); } catch (_) {}
+            if (out && out.length > 64) {
+              try { core.FS.unlink(outName); } catch (_) {}
+              self.postMessage({ id, type: "ok", data: out, args }, [out.buffer]);
+              done = true;
+              break;
+            }
+          } catch (e) { lastErr = e; }
+        }
+      } finally {
+        if (core.setProgress) core.setProgress(() => {});
+        if (mounted) { try { core.FS.unmount("/wfs"); } catch (_) {} }
+        else { try { core.FS.unlink(inName); } catch (_) {} }
+      }
+      if (!done) throw lastErr || new Error("영상을 내보낼 수 없습니다.");
+      return;
+    }
     throw new Error("알 수 없는 명령입니다.");
   } catch (e) {
     postErr(id, e && e.message ? e.message : e);

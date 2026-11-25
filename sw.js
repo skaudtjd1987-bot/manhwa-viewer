@@ -1,5 +1,8 @@
 /* 만화뷰어 service worker: cache-first, versioned, engine precache with progress */
-const CACHE_VERSION = "mhv-pwa-v3";
+const CACHE_VERSION = "mhv-pwa-v4";
+// Engine files that did not change since the previous version can be copied from the old cache
+// (fast update, works even on a weak connection). Files listed here are always re-downloaded.
+const ENGINE_CHANGED = new Set(["./vendor/ffmpeg-worker.js"]);
 
 const APP_ASSETS = [
   "./",
@@ -95,13 +98,29 @@ self.addEventListener("install", (event) => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_VERSION);
     const appUrls = APP_ASSETS.map(toAbs);
-    await cache.addAll(appUrls);
+    // bypass the HTTP cache so the new app shell is really the new one
+    await cache.addAll(appUrls.map((u) => new Request(u, { cache: "reload" })));
+
+    // reuse unchanged engine files from an older cache
+    const reused = new Set();
+    try {
+      const olds = (await caches.keys()).filter((k) => k.startsWith("mhv-pwa-") && k !== CACHE_VERSION);
+      for (const rel of ENGINE_ASSETS) {
+        if (ENGINE_CHANGED.has(rel)) continue;
+        const url = toAbs(rel);
+        for (const k of olds) {
+          const hit = await (await caches.open(k)).match(url, { ignoreSearch: true });
+          if (hit && hit.ok) { await cache.put(url, hit); reused.add(rel); break; }
+        }
+      }
+    } catch (_) {}
     await broadcast({ type: "precache-start", files: ENGINE_ASSETS.length });
 
     // Probe sizes (HEAD may be blocked; fall back to 0 and learn as we go)
     let bytesTotal = 0;
     const sizes = [];
-    for (const rel of ENGINE_ASSETS) {
+    const todo = ENGINE_ASSETS.filter((rel) => !reused.has(rel));
+    for (const rel of todo) {
       const url = toAbs(rel);
       let n = 0;
       try {
@@ -113,13 +132,13 @@ self.addEventListener("install", (event) => {
     }
 
     let bytesLoaded = 0;
-    for (let i = 0; i < ENGINE_ASSETS.length; i++) {
-      const rel = ENGINE_ASSETS[i];
+    for (let i = 0; i < todo.length; i++) {
+      const rel = todo[i];
       const url = toAbs(rel);
       const got = await cacheWithProgress(cache, url, {
         file: rel.replace("./", ""),
         index: i + 1,
-        files: ENGINE_ASSETS.length,
+        files: todo.length,
         bytesLoaded,
         bytesTotal: bytesTotal || 1,
       });

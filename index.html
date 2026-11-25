@@ -248,11 +248,15 @@ button {
 #strip .view.spread .slot { width: 50%; }
 #strip .view.spread .slot.spine-end { justify-content: flex-end; } /* left page toward spine */
 #strip .view.spread .slot.spine-start { justify-content: flex-start; }
+/* The <img> box always fills its slot and the picture is letterboxed with object-fit: contain.
+   The page-curl canvas computes the same contain rectangle (contentRectOf), so sizes never jump. */
 #strip .slot img {
-  max-width: 100%; max-height: 100%; width: auto; height: auto;
-  object-fit: contain; pointer-events: none; display: block;
+  width: 100%; height: 100%; object-fit: contain; object-position: 50% 50%;
+  pointer-events: none; display: block;
 }
-#strip .view.single .slot img, #strip .view.spread .slot img { height: 100%; width: auto; max-width: 100%; }
+#strip .view.spread .slot.spine-end img { object-position: 100% 50%; }
+#strip .view.spread .slot.spine-start img { object-position: 0% 50%; }
+#strip.hidden { display: none !important; }
 #zoomLayer {
   position: absolute; inset: 0; z-index: 2; pointer-events: none;
   transform-origin: 0 0;
@@ -457,6 +461,161 @@ input[type=range]::-webkit-slider-thumb {
 .help-box .warn { color: #e0b85a; }
 #folderEmpty { display: none; text-align: center; color: var(--muted); padding: 48px 16px; font-size: 14px; line-height: 1.6; }
 #folderEmpty.show { display: block; }
+/* ===== v4: reader chrome, fit modes, webtoon ===== */
+#stage.bg-white, #stage.bg-white #webtoon { background: #fff; }
+#stage.bg-sepia, #stage.bg-sepia #webtoon { background: #efe4cc; }
+#stage.bg-sepia #strip, #stage.bg-sepia #webtoon, #stage.bg-sepia #flipLayer { filter: sepia(.32); }
+#stage.webtoon-on { touch-action: pan-y; }
+#dimLayer { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 4; }
+#webtoon {
+  position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; z-index: 1;
+  -webkit-overflow-scrolling: touch; touch-action: pan-y; overscroll-behavior: contain; background: #000;
+}
+#webtoon .wt-page { width: 100%; max-width: 960px; margin: 0 auto; position: relative; }
+#webtoon .wt-page:not(.loaded):not(.unloaded) { aspect-ratio: .7; background: #ffffff08; }
+#webtoon .wt-page img { display: block; width: 100%; height: auto; pointer-events: none; }
+#webtoon .wt-end { color: #888; text-align: center; padding: 28px 0 calc(48px + var(--safe-b)); font-size: 13px; }
+.rbar { padding-top: 14px; }
+.r-tools { display: flex; justify-content: space-around; gap: 4px; padding-top: 6px; }
+.r-tool {
+  flex: 1; max-width: 88px; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  height: 46px; border-radius: 10px; color: #eee; font-size: 11px; font-weight: 600; justify-content: center;
+}
+.r-tool:active { background: #ffffff18; }
+.r-tool svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.r-tool.on { color: var(--accent); }
+.page-preview {
+  position: absolute; z-index: 8; pointer-events: none; transform: translateX(-50%);
+  background: rgba(20,20,20,.95); border: 1px solid #ffffff26; border-radius: 10px; padding: 5px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px; box-shadow: 0 6px 20px #000a;
+}
+.page-preview .pp-img { width: 84px; height: 118px; display: flex; align-items: center; justify-content: center; background: #000; border-radius: 6px; overflow: hidden; }
+.page-preview img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+.page-preview span { font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.resume-bar {
+  position: absolute; left: 50%; transform: translateX(-50%); z-index: 9;
+  top: calc(var(--safe-t) + var(--bar-h) + 12px);
+  background: rgba(20,20,24,.96); border: 1px solid var(--border); border-radius: 12px;
+  display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 14px; font-size: 13px;
+  box-shadow: 0 8px 24px #0009; white-space: nowrap;
+}
+.resume-bar button { height: 32px; padding: 0 12px; border-radius: 8px; font-weight: 700; font-size: 13px; }
+.resume-bar #btnResume { background: var(--accent); color: #0b1220; }
+.resume-bar #btnResumeX { color: #aaa; padding: 0 8px; }
+.page-grid { position: absolute; inset: 0; z-index: 20; background: rgba(8,8,8,.97); display: flex; flex-direction: column; }
+.pg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 12px 8px; padding: 12px 12px 24px; }
+@media (min-width: 768px) { .pg-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); } }
+.pg-cell { display: flex; flex-direction: column; gap: 4px; align-items: center; color: #ccc; font-size: 11px; font-variant-numeric: tabular-nums; }
+.pg-cell .thumb { aspect-ratio: .7; }
+.pg-cell .thumb img { object-fit: contain; background: #000; }
+.pg-cell.cur .thumb { box-shadow: 0 0 0 2px var(--accent); }
+.pg-cell.cur { color: var(--accent); font-weight: 700; }
+.sheet { max-height: 88vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.settings-row input[type=range] { flex: 1; min-width: 140px; max-width: 260px; margin-left: auto; }
+.settings-row .note { flex-basis: 100%; font-size: 12px; color: var(--muted); line-height: 1.5; margin: 0; }
+.kbd-help { font-size: 12px; color: var(--muted); line-height: 1.7; padding: 10px 12px; }
+.kbd-help b { color: #ddd; font-weight: 650; background: #ffffff14; border-radius: 4px; padding: 0 5px; }
+
+/* ===== v4: video player ===== */
+.vbar { padding-top: 26px; }
+.timeline-row { display: flex; align-items: center; gap: 6px; }
+.timeline { position: relative; flex: 1; height: 44px; touch-action: none; cursor: pointer; }
+.timeline canvas { width: 100%; height: 100%; display: block; }
+.tl-zoom { display: flex; align-items: center; gap: 2px; }
+.tl-zoom button { width: 30px; height: 30px; border-radius: 8px; background: #ffffff16; font-size: 17px; font-weight: 700; color: #fff; }
+.tl-zoom span { min-width: 34px; text-align: center; font-size: 11px; color: #bbb; font-variant-numeric: tabular-nums; }
+.tl-preview {
+  position: absolute; bottom: 50px; transform: translateX(-50%); pointer-events: none;
+  background: rgba(16,16,16,.96); border: 1px solid #ffffff26; border-radius: 8px; padding: 4px;
+  display: flex; flex-direction: column; align-items: center; gap: 3px; z-index: 3;
+}
+.tl-preview canvas { width: 128px; height: 72px; border-radius: 4px; background: #000; display: block; }
+.tl-preview span { font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.v-readout { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 2px 2px 4px; font-variant-numeric: tabular-nums; }
+.v-readout #timeLabel { font-size: 13px; color: #fff; text-align: left; min-width: 0; }
+.v-readout #frameLabel { font-size: 11px; color: #aaa; }
+.v-row { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; padding: 2px 0 4px; }
+.v-chip {
+  height: 32px; padding: 0 11px; border-radius: 9px; background: #ffffff16; border: 1px solid #ffffff22;
+  font-size: 12px; font-weight: 650; color: #eee; white-space: nowrap;
+}
+.v-chip.on { background: var(--accent); color: #0b1220; border-color: transparent; }
+.v-chip.half { border-color: var(--accent); color: var(--accent); }
+.v-controls { gap: 14px; padding: 4px 0 6px; }
+.v-btn.sm { width: 44px; height: 44px; }
+.v-btn .fs { font-size: 12px; font-weight: 800; color: #fff; letter-spacing: -1px; }
+.jog { position: relative; width: 138px; height: 138px; flex: 0 0 auto; touch-action: none; }
+.jog-ring {
+  position: absolute; inset: 0; border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, transparent 0 40%, #0000 40%),
+    repeating-conic-gradient(from 0deg, #ffffff55 0deg 1.6deg, transparent 1.6deg 12deg),
+    radial-gradient(circle at 50% 35%, #3a3a3a, #161616 70%);
+  border: 1px solid #ffffff2a; box-shadow: inset 0 2px 10px #000c, 0 4px 16px #0008;
+  touch-action: none; cursor: grab;
+}
+.jog-ring::after { content: ""; position: absolute; left: 50%; top: 7px; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.jog.active .jog-ring { cursor: grabbing; border-color: var(--accent); }
+.jog-center {
+  position: absolute; left: 50%; top: 50%; width: 62px; height: 62px; margin: -31px 0 0 -31px; border-radius: 50%;
+  background: #262626; border: 1px solid #ffffff30; display: flex; align-items: center; justify-content: center; z-index: 2;
+  box-shadow: 0 2px 10px #000a;
+}
+.jog-center svg { width: 30px; height: 30px; fill: #fff; }
+.jog-hud {
+  position: absolute; left: 50%; bottom: -17px; transform: translateX(-50%); white-space: nowrap;
+  font-size: 11px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; pointer-events: none; opacity: 0; transition: opacity .2s;
+}
+.jog.active .jog-hud { opacity: 1; }
+.edit-panel { border-top: 1px solid #ffffff22; margin-top: 4px; padding-top: 8px; display: flex; flex-direction: column; gap: 8px; }
+.ep-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.ep-row .ep-info { font-size: 12px; color: #ccc; font-variant-numeric: tabular-nums; flex: 1; text-align: center; min-width: 120px; }
+.ep-row .seg { margin-left: 0; }
+.ep-row label { font-size: 12px; color: #aaa; }
+.ep-row .btn-primary { height: 38px; font-size: 14px; padding: 0 16px; border-radius: 10px; }
+#screen-video.editing #videoEl { bottom: auto; height: 42%; }
+#screen-video.editing .v-meta { display: none; }
+#screen-video.editing .jog { width: 112px; height: 112px; }
+#screen-video.editing .jog-center { width: 52px; height: 52px; margin: -26px 0 0 -26px; }
+@media (max-height: 520px) {
+  .vbar { padding-top: 8px; }
+  .v-meta { display: none; }
+  .jog { width: 104px; height: 104px; }
+  .jog-center { width: 50px; height: 50px; margin: -25px 0 0 -25px; }
+  .v-controls { padding: 0; }
+  #screen-video.editing #videoEl { height: 30%; }
+}
+
+/* ===== v4: image editor ===== */
+#screen-imgedit { background: #0b0b0b; }
+.ie-stage { position: relative; flex: 1; overflow: hidden; touch-action: none; }
+.ie-stage canvas { position: absolute; left: 0; top: 0; }
+.ie-crop {
+  position: absolute; border: 1.5px solid #fff; box-shadow: 0 0 0 9999px rgba(0,0,0,.55);
+  background-image:
+    linear-gradient(to right, transparent calc(33.33% - .5px), #ffffff66 calc(33.33% - .5px), #ffffff66 calc(33.33% + .5px), transparent calc(33.33% + .5px), transparent calc(66.66% - .5px), #ffffff66 calc(66.66% - .5px), #ffffff66 calc(66.66% + .5px), transparent calc(66.66% + .5px)),
+    linear-gradient(to bottom, transparent calc(33.33% - .5px), #ffffff66 calc(33.33% - .5px), #ffffff66 calc(33.33% + .5px), transparent calc(33.33% + .5px), transparent calc(66.66% - .5px), #ffffff66 calc(66.66% - .5px), #ffffff66 calc(66.66% + .5px), transparent calc(66.66% + .5px));
+  touch-action: none;
+}
+.ie-crop .h { position: absolute; width: 28px; height: 28px; touch-action: none; }
+.ie-crop .h::after { content: ""; position: absolute; width: 16px; height: 16px; border: 3px solid #fff; }
+.ie-crop .h.tl { left: -14px; top: -14px; } .ie-crop .h.tl::after { left: 11px; top: 11px; border-right: 0; border-bottom: 0; }
+.ie-crop .h.tr { right: -14px; top: -14px; } .ie-crop .h.tr::after { right: 11px; top: 11px; border-left: 0; border-bottom: 0; }
+.ie-crop .h.bl { left: -14px; bottom: -14px; } .ie-crop .h.bl::after { left: 11px; bottom: 11px; border-right: 0; border-top: 0; }
+.ie-crop .h.br { right: -14px; bottom: -14px; } .ie-crop .h.br::after { right: 11px; bottom: 11px; border-left: 0; border-top: 0; }
+.ie-sel { position: absolute; border: 1.5px dashed #fff; background: #7db0ff22; pointer-events: none; }
+.ie-cursor { position: absolute; border: 1.5px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px #0008; pointer-events: none; transform: translate(-50%,-50%); }
+.ie-panel { flex: 0 0 auto; background: var(--elev); border-top: 1px solid var(--border); padding: 8px 10px calc(8px + var(--safe-b)); }
+.ie-opts { min-height: 52px; display: flex; flex-direction: column; gap: 6px; padding-bottom: 6px; }
+.ie-opts .ie-row { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.ie-opts .ie-row label { font-size: 12px; color: #bbb; min-width: 44px; flex: 0 0 auto; }
+.ie-opts .ie-row input[type=range] { flex: 1; }
+.ie-opts .ie-row .val { font-size: 11px; color: #888; width: 34px; text-align: right; font-variant-numeric: tabular-nums; }
+.ie-opts .v-chip { flex: 0 0 auto; }
+.ie-tabs { display: flex; justify-content: space-around; border-top: 1px solid var(--border); padding-top: 6px; }
+.ie-tabs button { flex: 1; height: 40px; font-size: 13px; font-weight: 650; color: #999; border-radius: 9px; }
+.ie-tabs button.on { color: var(--accent); background: #7db0ff14; }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
@@ -534,6 +693,16 @@ input[type=range]::-webkit-slider-thumb {
             <li>보관한 항목은 앨범/폴더로 묶입니다. 폴더를 만들거나 이름을 바꾸고, 선택 모드에서 전체 선택·이동·삭제할 수 있습니다.</li>
             <li>보관된 사진은 오프라인에서도 열립니다. 저장 공간은 화면 위쪽에 표시됩니다.</li>
           </ul>
+          <h3>보기 조작 (v4)</h3>
+          <ul>
+            <li>화면 가운데를 탭하면 메뉴가 나타나고, 3초 뒤 저절로 숨겨집니다. 왼쪽·오른쪽 끝을 탭하거나 밀면 넘어갑니다.</li>
+            <li>두 손가락으로 벌리거나 두 번 탭하면 확대, 확대한 상태에서는 끌어서 이동합니다.</li>
+            <li>아래 막대를 끌면 쪽 미리보기가 뜨고, <b>목록</b>에서 썸네일로 바로 이동합니다.</li>
+            <li><b>화면/너비/웹툰</b> 맞춤, 배경(검정·흰색·세피아)과 밝기는 <b>보기</b>에서 바꿉니다. 읽던 쪽은 앨범마다 기억합니다.</li>
+            <li>영상: 가운데 <b>다이얼</b>을 천천히 돌리면 한 프레임씩, 빠르게 돌리면 초 단위로 이동합니다. ◀| |▶ 로 한 프레임씩, <b>A-B 반복</b>으로 구간 반복, 타임라인 +/− 로 확대해 세밀하게 봅니다.</li>
+            <li>영상 <b>편집</b>: 시작점·끝점으로 자르기, A-B 구간 잘라내기, 속도 변경 후 <b>MP4로 내보내기</b>. <b>장면 저장</b>은 지금 화면을 PNG로 저장합니다. 모두 인터넷 없이 됩니다.</li>
+            <li>사진 <b>편집</b>: 자르기·회전·밝기/대비/채도/색온도·모자이크·흐림. 원본은 그대로 두고 사본으로 저장합니다.</li>
+          </ul>
           <h3 class="warn">알아두면 좋은 제한</h3>
           <ul>
             <li>iOS 홈 화면 앱은 사진 보관함에 직접 들어갈 수 없습니다. 대신 한 번 가져온 뒤 앱에 보관하세요.</li>
@@ -556,7 +725,9 @@ input[type=range]::-webkit-slider-thumb {
         <div class="view" id="viewCur"></div>
         <div class="view" id="viewNext"></div>
       </div>
+      <div id="webtoon" class="hidden"></div>
       <canvas id="flipLayer" class="hidden" aria-hidden="true"></canvas>
+      <div id="dimLayer"></div>
     </div>
     <div id="readerChrome">
       <header class="topbar">
@@ -571,12 +742,30 @@ input[type=range]::-webkit-slider-thumb {
           <button type="button" id="btnReaderSettings" class="text-btn">보기</button>
         </div>
       </header>
-      <div class="bottombar">
+      <div class="bottombar rbar">
         <div class="page-row">
-          <input id="pageSlider" type="range" min="1" max="1" value="1">
+          <input id="pageSlider" type="range" min="1" max="1" value="1" aria-label="페이지 이동">
           <div id="pageCounter">1 / 1</div>
         </div>
+        <div class="r-tools">
+          <button type="button" id="btnPgGrid" class="r-tool" aria-label="페이지 목록"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="7" rx="1"/><rect x="14" y="4" width="6" height="7" rx="1"/><rect x="4" y="14" width="6" height="7" rx="1"/><rect x="14" y="14" width="6" height="7" rx="1"/></svg><span>목록</span></button>
+          <button type="button" id="btnFit" class="r-tool" aria-label="화면 맞춤"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span id="fitLabel">화면</span></button>
+          <button type="button" id="btnSpreadQuick" class="r-tool" aria-label="쪽 구성"><svg viewBox="0 0 24 24"><path d="M3 5h8v14H3zM13 5h8v14h-8z"/></svg><span id="spreadLabel">한 쪽</span></button>
+          <button type="button" id="btnDirQuick" class="r-tool" aria-label="읽기 방향"><svg viewBox="0 0 24 24"><path d="M4 12h16M14 6l6 6-6 6"/></svg><span id="dirLabel">왼→오</span></button>
+          <button type="button" id="btnImgEdit" class="r-tool" aria-label="사진 편집"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13 7l4 4"/></svg><span>편집</span></button>
+        </div>
       </div>
+    </div>
+    <div id="pagePreview" class="page-preview hidden"><div class="pp-img"><img id="ppImg" alt=""></div><span id="ppNum"></span></div>
+    <div id="resumeBar" class="resume-bar hidden"><span id="resumeText"></span><button type="button" id="btnResume">이어 읽기</button><button type="button" id="btnResumeX" aria-label="닫기">✕</button></div>
+    <div id="pageGrid" class="page-grid hidden">
+      <header class="topbar">
+        <div class="topbar-inner">
+          <div class="titles" style="padding-left:8px"><div class="crumb">탭하면 바로 이동</div><h1 id="pgGridTitle">페이지</h1></div>
+          <button type="button" id="btnPgGridClose" class="text-btn">닫기</button>
+        </div>
+      </header>
+      <div class="scroll" id="pgGridScroll"><div id="pgGridList" class="pg-grid"></div></div>
     </div>
   </section>
 
@@ -595,30 +784,95 @@ input[type=range]::-webkit-slider-thumb {
           <button type="button" id="btnVideoFs" class="text-btn">전체화면</button>
         </div>
       </header>
-      <div class="bottombar">
+      <div class="bottombar vbar">
         <div class="v-meta">
           <div class="v-title" id="videoName"></div>
           <div id="videoQueueLabel"></div>
         </div>
-        <div class="seek-row">
-          <input id="seekBar" type="range" min="0" max="0" step="0.05" value="0">
-          <div id="timeLabel">0:00 / 0:00</div>
+        <div class="timeline-row">
+          <div id="timeline" class="timeline" aria-label="타임라인">
+            <canvas id="tlCanvas"></canvas>
+            <div id="tlPreview" class="tl-preview hidden"><canvas id="tlPrevCanvas" width="256" height="144"></canvas><span id="tlPrevTime"></span></div>
+          </div>
+          <div class="tl-zoom">
+            <button type="button" id="btnTlOut" aria-label="타임라인 축소">−</button>
+            <span id="tlZoomLabel">1×</span>
+            <button type="button" id="btnTlIn" aria-label="타임라인 확대">+</button>
+          </div>
+        </div>
+        <div class="v-readout"><span id="timeLabel">0:00.000 / 0:00</span><span id="frameLabel"></span></div>
+        <div class="v-row">
+          <button type="button" id="btnSpeed" class="v-chip" aria-label="배속">1×</button>
+          <button type="button" id="btnAB" class="v-chip" aria-label="구간 반복">A-B 반복</button>
+          <button type="button" id="btnSnap" class="v-chip">장면 저장</button>
+          <button type="button" id="btnEdit" class="v-chip">편집</button>
         </div>
         <div class="v-controls">
-          <button type="button" id="btnSkipBack" class="v-btn" aria-label="10초 뒤로" style="font-weight:700;font-size:11px;color:#fff">−10</button>
-          <button type="button" id="btnSkipFwd" class="v-btn" aria-label="10초 앞으로" style="font-weight:700;font-size:11px;color:#fff">+10</button>
-          <button type="button" id="btnPrevVid" class="v-btn" aria-label="이전 영상">
+          <button type="button" id="btnPrevVid" class="v-btn sm" aria-label="이전 영상">
             <svg viewBox="0 0 24 24"><path d="M6 6v12h2V6H6zm3.5 6l8.5 6V6l-8.5 6z"/></svg>
           </button>
-          <button type="button" id="btnPlay" class="v-btn lg" aria-label="재생">
-            <svg id="icoPlay" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            <svg id="icoPause" class="hidden" viewBox="0 0 24 24"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>
-          </button>
-          <button type="button" id="btnNextVid" class="v-btn" aria-label="다음 영상">
+          <button type="button" id="btnFrameBack" class="v-btn sm" aria-label="한 프레임 뒤로"><span class="fs">◀|</span></button>
+          <div id="jogDial" class="jog">
+            <div class="jog-hud" id="jogHud"></div>
+            <div class="jog-ring" id="jogRing" aria-label="조그 다이얼"></div>
+            <button type="button" id="btnPlay" class="jog-center" aria-label="재생">
+              <svg id="icoPlay" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              <svg id="icoPause" class="hidden" viewBox="0 0 24 24"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>
+            </button>
+          </div>
+          <button type="button" id="btnFrameFwd" class="v-btn sm" aria-label="한 프레임 앞으로"><span class="fs">|▶</span></button>
+          <button type="button" id="btnNextVid" class="v-btn sm" aria-label="다음 영상">
             <svg viewBox="0 0 24 24"><path d="M16 6v12h2V6h-2zM6 18V6l8.5 6L6 18z"/></svg>
           </button>
-          <button type="button" id="btnSpeed" class="v-btn" aria-label="배속" style="font-weight:700;font-size:12px;color:#fff">1×</button>
         </div>
+        <div id="editPanel" class="edit-panel hidden">
+          <div class="ep-row">
+            <button type="button" id="btnIn" class="v-chip">[ 시작점</button>
+            <div class="ep-info" id="epRange">전체</div>
+            <button type="button" id="btnOut" class="v-chip">끝점 ]</button>
+          </div>
+          <div class="ep-row">
+            <button type="button" id="btnCutAB" class="v-chip">A-B 구간 잘라내기</button>
+            <button type="button" id="btnCutUndo" class="v-chip">잘라내기 취소</button>
+            <button type="button" id="btnEpPreview" class="v-chip">편집 미리보기</button>
+            <button type="button" id="btnEpReset" class="v-chip">초기화</button>
+          </div>
+          <div class="ep-row">
+            <label>속도</label><div class="seg" id="epSpeed"></div>
+            <label>소리</label><div class="seg" id="epAudio"></div>
+          </div>
+          <div class="ep-row">
+            <label>방식</label><div class="seg" id="epMethod"></div>
+            <button type="button" id="btnExport" class="btn-primary">MP4로 내보내기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-imgedit" class="screen hidden" data-screen="imgedit">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <button type="button" id="btnIeCancel" class="text-btn" style="color:#ddd">취소</button>
+        <div class="titles" style="text-align:center"><h1 id="ieTitle">사진 편집</h1></div>
+        <button type="button" id="btnIeUndo" class="icon-btn" aria-label="되돌리기"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 010 10h-3"/></svg></button>
+        <button type="button" id="btnIeSave" class="text-btn">저장</button>
+      </div>
+    </header>
+    <div id="ieStage" class="ie-stage">
+      <canvas id="ieCanvas"></canvas>
+      <div id="ieCrop" class="ie-crop hidden"><div class="h tl" data-h="tl"></div><div class="h tr" data-h="tr"></div><div class="h bl" data-h="bl"></div><div class="h br" data-h="br"></div></div>
+      <div id="ieSel" class="ie-sel hidden"></div>
+      <div id="ieCursor" class="ie-cursor hidden"></div>
+    </div>
+    <div class="ie-panel">
+      <div id="ieOpts" class="ie-opts"></div>
+      <div class="ie-tabs" id="ieTabs">
+        <button type="button" data-tool="crop">자르기</button>
+        <button type="button" data-tool="rotate">회전</button>
+        <button type="button" data-tool="adjust">조정</button>
+        <button type="button" data-tool="mosaic">모자이크</button>
+        <button type="button" data-tool="blur">흐림</button>
       </div>
     </div>
   </section>
@@ -1812,7 +2066,14 @@ async function libWriteFile(storeId, blob, onProgress) {
   }
   if (libStore.backend === "idb") {
     try {
-      await idbBlobPut(storeId, blob);
+      try {
+        await idbBlobPut(storeId, blob);
+      } catch (e1) {
+        if (isQuotaError(e1)) throw e1;
+        // Some WebKit builds refuse Blob values in IndexedDB; store the raw bytes instead.
+        const buf = await blob.arrayBuffer();
+        await idbBlobPut(storeId, { __bytes: buf, type: blob.type || "", name: blob.name || "" });
+      }
       if (onProgress) onProgress(blob.size, blob.size);
     } catch (e) {
       if (isQuotaError(e)) throw new Error(quotaMessage());
@@ -1829,7 +2090,9 @@ async function libReadFile(storeId) {
     return await fh.getFile();
   }
   if (libStore.backend === "idb") {
-    return await idbBlobGet(storeId);
+    const v = await idbBlobGet(storeId);
+    if (v && v.__bytes) return new Blob([v.__bytes], { type: v.type || "" });
+    return v;
   }
   return null;
 }
@@ -2852,7 +3115,11 @@ function openActionSheet(node) {
     });
   }
   if (node.kind === "image") {
-    items.push({ label: "이 폴더 이미지 보기", fn: () => openNode(node) });
+    items.push({ label: "사진 편집 (사본으로 저장)", fn: () => openImageEditor(node, "explorer") });
+  }
+  if (node.kind === "dir" || node.kind === "zip") {
+    const sp = node.children ? savedPosFor(node) : null;
+    if (sp) items.unshift({ label: `이어 읽기 · ${sp.index + 1}/${sp.count}쪽`, fn: () => openReader(sp.pages, sp.index, node, { resume: true }) });
   }
   items.push({ label: "이름 변경", fn: () => promptRename(node) });
   items.push({ label: "이동", fn: () => promptMove([node]) });
@@ -2876,6 +3143,13 @@ const reader = {
   animating: false,
   gen: 0,
   turnEffect: "curl", // curl | slide | none
+  fit: "screen", // screen | width | webtoon
+  bg: "black", // black | white | sepia
+  bright: 1,
+  baseZoom: 1,
+  content: null,
+  sliding: false,
+  folder: null,
 };
 
 const PREFS_KEY = "mhv-prefs-v1";
@@ -2886,7 +3160,11 @@ function loadPrefs() {
     if (p.spreadMode) reader.spreadMode = p.spreadMode;
     if (p.coverAlone != null) reader.coverAlone = !!p.coverAlone;
     if (p.turnEffect === "curl" || p.turnEffect === "slide" || p.turnEffect === "none") reader.turnEffect = p.turnEffect;
+    if (p.fit === "screen" || p.fit === "width" || p.fit === "webtoon") reader.fit = p.fit;
+    if (p.bg === "black" || p.bg === "white" || p.bg === "sepia") reader.bg = p.bg;
+    if (typeof p.bright === "number") reader.bright = Math.max(0.3, Math.min(1, p.bright));
     if (p.speed) videoState.speed = p.speed;
+    if (p.jogResume != null) videoState.jogResume = !!p.jogResume;
   } catch (_) {}
 }
 function savePrefs() {
@@ -2896,7 +3174,11 @@ function savePrefs() {
       spreadMode: reader.spreadMode,
       coverAlone: reader.coverAlone,
       turnEffect: reader.turnEffect,
+      fit: reader.fit,
+      bg: reader.bg,
+      bright: reader.bright,
       speed: videoState.speed,
+      jogResume: videoState.jogResume,
     }));
   } catch (_) {}
 }
@@ -2968,7 +3250,7 @@ async function getPageUrl(i) {
 function harvestPageUrls() {
   const keep = new Set();
   const cur = reader.index;
-  const range = isSpread() ? 6 : 4;
+  const range = reader.fit === "webtoon" ? 14 : (isSpread() ? 6 : 4);
   for (let i = cur - range; i <= cur + range + 1; i++) keep.add(i);
   for (const i of [...pageUrlMemo.keys()]) {
     if (!keep.has(i)) {
@@ -2998,64 +3280,140 @@ async function makeImg(i) {
   return img;
 }
 
-async function fillView(el, index) {
-  el.innerHTML = "";
+async function fillView(el, index, g) {
+  // Build off-DOM, then swap in one step. Two overlapping renders used to append two slots into the
+  // same view (pages shown at half size side by side).
   const pair = pairFor(index);
-  if (pair.empty) {
-    el.className = "view single";
-    return;
-  }
+  const kids = [];
+  let cls = "view single";
   if (pair.single) {
-    el.className = "view single";
     const slot = document.createElement("div");
     slot.className = "slot center";
     if (pair.page != null) slot.appendChild(await makeImg(pair.page));
-    el.appendChild(slot);
-    return;
+    kids.push(slot);
+  } else if (!pair.empty) {
+    cls = "view spread";
+    const sl = document.createElement("div");
+    sl.className = "slot spine-end";
+    const sr = document.createElement("div");
+    sr.className = "slot spine-start";
+    const [li, ri] = await Promise.all([
+      pair.left != null ? makeImg(pair.left) : null,
+      pair.right != null ? makeImg(pair.right) : null,
+    ]);
+    if (li) sl.appendChild(li);
+    if (ri) sr.appendChild(ri);
+    kids.push(sl, sr);
   }
-  el.className = "view spread";
-  const sl = document.createElement("div");
-  sl.className = "slot spine-end";
-  const sr = document.createElement("div");
-  sr.className = "slot spine-start";
-  if (pair.left != null) sl.appendChild(await makeImg(pair.left));
-  if (pair.right != null) sr.appendChild(await makeImg(pair.right));
-  el.append(sl, sr);
+  if (g != null && g !== reader.gen) return false;
+  el.className = cls;
+  el.replaceChildren(...kids);
+  return true;
 }
 
+/* ---- zoom / pan (pinch, double-tap, fit width) ---- */
+function stageSize() {
+  const st = $("stage");
+  return { W: st.clientWidth || window.innerWidth, H: st.clientHeight || window.innerHeight };
+}
+function contentRectOf(img, box, align) {
+  const nw = img && img.naturalWidth, nh = img && img.naturalHeight;
+  if (!nw || !nh || box.w < 1 || box.h < 1) return { x: box.x, y: box.y, w: box.w, h: box.h };
+  const s = Math.min(box.w / nw, box.h / nh);
+  const w = nw * s, h = nh * s;
+  let x = box.x + (box.w - w) / 2;
+  if (align === "end") x = box.x + box.w - w;
+  else if (align === "start") x = box.x;
+  return { x, y: box.y + (box.h - h) / 2, w, h };
+}
+function measureBaseContent() {
+  // union of the visible page images in the current view, untransformed (zoom 1)
+  const m = measureViewPages($("viewCur"));
+  const rs = [m.single, m.left, m.right].filter(Boolean);
+  if (!rs.length) return null;
+  const { W, H } = stageSize();
+  const cx = W / 2, cy = H / 2, z = reader.zoom || 1;
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (const r of rs) {
+    const bx = cx + (r.x - cx - reader.panX) / z;
+    const by = cy + (r.y - cy - reader.panY) / z;
+    x0 = Math.min(x0, bx); y0 = Math.min(y0, by);
+    x1 = Math.max(x1, bx + r.w / z); y1 = Math.max(y1, by + r.h / z);
+  }
+  return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+}
+function clampPan() {
+  const c = reader.content;
+  const { W, H } = stageSize();
+  if (!c) return;
+  const z = reader.zoom;
+  const cx = W / 2, cy = H / 2;
+  const left = cx + (c.x - cx) * z, top = cy + (c.y - cy) * z;
+  const cw = c.w * z, ch = c.h * z;
+  if (cw <= W + 0.5) reader.panX = W / 2 - (left + cw / 2);
+  else reader.panX = Math.max(W - (left + cw), Math.min(-left, reader.panX));
+  if (ch <= H + 0.5) reader.panY = H / 2 - (top + ch / 2);
+  else reader.panY = Math.max(H - (top + ch), Math.min(-top, reader.panY));
+}
+function baseZoomFor() {
+  const c = reader.content;
+  if (reader.fit !== "width" || !c || !c.w) return 1;
+  const { W } = stageSize();
+  const z = W / c.w;
+  return z > 1.01 ? Math.min(z, 6) : 1;
+}
 function resetZoom() {
-  reader.zoom = 1;
+  const z = baseZoomFor();
+  reader.baseZoom = z;
+  reader.zoom = z;
   reader.panX = 0;
   reader.panY = 0;
+  if (z > 1) {
+    const { H } = stageSize();
+    const c = reader.content, cy = H / 2;
+    reader.panY = -(cy + (c.y - cy) * z); // start at the top of the page
+  }
+  applyZoom();
+}
+function zoomAt(z, px, py) {
+  // keep the content point under (px,py) fixed while changing zoom
+  const { W, H } = stageSize();
+  const cx = W / 2, cy = H / 2;
+  const qx = cx + (px - cx - reader.panX) / reader.zoom;
+  const qy = cy + (py - cy - reader.panY) / reader.zoom;
+  reader.zoom = Math.max(1, Math.min(6, z));
+  reader.panX = px - cx - (qx - cx) * reader.zoom;
+  reader.panY = py - cy - (qy - cy) * reader.zoom;
   applyZoom();
 }
 function applyZoom() {
-  const strip = $("strip");
-  if (reader.zoom <= 1.001) {
-    strip.style.transformOrigin = "center center";
-    // keep slide position; zoom applied separately via #strip current view?
-    // Use #viewCur transform for zoom so swipe translate on #strip stays clean.
-  }
-  $("viewCur").style.transform = reader.zoom > 1
+  if (reader.zoom > 1.001) clampPan();
+  else { reader.zoom = 1; reader.panX = 0; reader.panY = 0; }
+  $("viewCur").style.transform = reader.zoom > 1.001
     ? `translate(${reader.panX}px,${reader.panY}px) scale(${reader.zoom})`
     : "";
   $("viewCur").style.transformOrigin = "center center";
 }
 
 async function renderReaderViews(keepTransform) {
+  if (reader.fit === "webtoon") { renderWebtoon(); return; }
+  hideWebtoon();
   const g = ++reader.gen;
   const cur = reader.index;
   const nb = physicalNeighbors(cur);
   await Promise.all([
-    fillView($("viewPrev"), nb.left),
-    fillView($("viewCur"), cur),
-    fillView($("viewNext"), nb.right),
+    fillView($("viewPrev"), nb.left, g),
+    fillView($("viewCur"), cur, g),
+    fillView($("viewNext"), nb.right, g),
   ]);
   if (g !== reader.gen) return;
   if (!keepTransform) {
     $("strip").style.transition = "none";
     $("strip").style.transform = "translateX(-33.3333%)";
   }
+  $("viewCur").style.transform = "";
+  reader.zoom = 1; reader.panX = 0; reader.panY = 0;
+  reader.content = measureBaseContent();
   resetZoom();
   harvestPageUrls();
   updateReaderChrome();
@@ -3067,12 +3425,158 @@ async function renderReaderViews(keepTransform) {
   [n, p, n >= 0 ? readingNext(n) : -1].forEach((i) => { if (i >= 0) getPageUrl(i); });
 }
 
+/* ---- webtoon (continuous vertical scroll) ---- */
+const wt = { built: false, key: "", obs: null, items: [], raf: 0, suppress: 0 };
+function hideWebtoon() {
+  const box = $("webtoon");
+  if (!box.classList.contains("hidden")) {
+    box.classList.add("hidden");
+    if (wt.obs) { wt.obs.disconnect(); wt.obs = null; }
+    box.innerHTML = "";
+    wt.built = false; wt.items = [];
+  }
+  $("strip").classList.remove("hidden");
+  $("stage").classList.remove("webtoon-on");
+}
+function wtLoad(i) {
+  const it = wt.items[i];
+  if (!it || it.loaded || it.loading) return;
+  it.loading = true;
+  getPageUrl(i).then((url) => {
+    if (!wt.items[i] || wt.items[i] !== it) return;
+    const img = it.img;
+    const box = $("webtoon");
+    const onload = () => {
+      it.loading = false;
+      const before = it.el.offsetHeight;
+      const aboveViewport = it.el.offsetTop + before <= box.scrollTop + 1;
+      it.el.classList.add("loaded");
+      it.el.classList.remove("unloaded");
+      it.el.style.height = "";
+      it.loaded = true;
+      const after = it.el.offsetHeight;
+      if (aboveViewport && after !== before) { wt.suppress++; box.scrollTop += after - before; }
+    };
+    img.onload = onload;
+    img.onerror = () => { it.loading = false; };
+    img.src = url;
+  }).catch(() => { it.loading = false; });
+}
+function renderWebtoon() {
+  const box = $("webtoon");
+  const st = $("stage");
+  $("strip").classList.add("hidden");
+  hideFlipLayer();
+  st.classList.add("webtoon-on");
+  box.classList.remove("hidden");
+  $("viewCur").style.transform = "";
+  const key = reader.folderKey + "#" + pageCount();
+  if (!wt.built || wt.key !== key) {
+    if (wt.obs) wt.obs.disconnect();
+    box.innerHTML = "";
+    wt.items = [];
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < pageCount(); i++) {
+      const el = document.createElement("div");
+      el.className = "wt-page";
+      el.dataset.i = String(i);
+      const img = document.createElement("img");
+      img.alt = reader.pages[i].name || "";
+      img.draggable = false;
+      el.appendChild(img);
+      frag.appendChild(el);
+      wt.items.push({ el, img, loaded: false, loading: false });
+    }
+    const end = document.createElement("div");
+    end.className = "wt-end";
+    end.textContent = "마지막 페이지입니다";
+    frag.appendChild(end);
+    box.appendChild(frag);
+    wt.obs = new IntersectionObserver((entries) => {
+      for (const en of entries) if (en.isIntersecting) wtLoad(+en.target.dataset.i);
+    }, { root: box, rootMargin: "150% 0px 150% 0px" });
+    wt.items.forEach((it) => wt.obs.observe(it.el));
+    wt.built = true;
+    wt.key = key;
+    // load the target page first, then jump to it
+    const target = Math.max(0, Math.min(pageCount() - 1, reader.index));
+    wtLoad(target);
+    requestAnimationFrame(() => wtScrollTo(target, false));
+  }
+  updateReaderChrome();
+}
+function wtScrollTo(i, smooth) {
+  const it = wt.items[i];
+  if (!it) return;
+  const box = $("webtoon");
+  wt.suppress++;
+  reader.index = i;
+  for (let k = Math.max(0, i - 1); k <= Math.min(pageCount() - 1, i + 2); k++) wtLoad(k);
+  if (smooth && box.scrollTo) box.scrollTo({ top: it.el.offsetTop, behavior: "smooth" });
+  else box.scrollTop = it.el.offsetTop;
+  updateReaderChrome();
+}
+function wtCurrentIndex() {
+  const box = $("webtoon");
+  const y = box.scrollTop + box.clientHeight * 0.3;
+  let lo = 0, hi = wt.items.length - 1, ans = 0;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    if (wt.items[mid].el.offsetTop <= y) { ans = mid; lo = mid + 1; } else hi = mid - 1;
+  }
+  return ans;
+}
+function wtOnScroll() {
+  if (wt.raf) return;
+  wt.raf = requestAnimationFrame(() => {
+    wt.raf = 0;
+    if (reader.fit !== "webtoon" || !wt.items.length) return;
+    const i = wtCurrentIndex();
+    if (i !== reader.index) {
+      reader.index = i;
+      updateReaderChrome();
+      // free memory far away from the reading position
+      wt.items.forEach((it, k) => {
+        if (it.loaded && Math.abs(k - i) > 12) {
+          it.el.style.height = it.el.offsetHeight + "px";
+          it.el.classList.add("unloaded");
+          it.el.classList.remove("loaded");
+          it.img.removeAttribute("src");
+          it.loaded = false;
+        }
+      });
+      harvestPageUrls();
+    }
+    if (wt.suppress > 0) wt.suppress--;
+    else if (reader.ui) setReaderUI(false);
+  });
+}
+$("webtoon").addEventListener("scroll", wtOnScroll, { passive: true });
+$("webtoon").addEventListener("click", (e) => {
+  const box = $("webtoon");
+  const r = box.getBoundingClientRect();
+  const y = (e.clientY - r.top) / r.height;
+  if (y < 0.22) box.scrollBy ? box.scrollBy({ top: -box.clientHeight * 0.85, behavior: "smooth" }) : (box.scrollTop -= box.clientHeight * 0.85);
+  else if (y > 0.78) box.scrollBy ? box.scrollBy({ top: box.clientHeight * 0.85, behavior: "smooth" }) : (box.scrollTop += box.clientHeight * 0.85);
+  else setReaderUI(!reader.ui, true);
+});
+
+function readerGoTo(i) {
+  i = Math.max(0, Math.min(pageCount() - 1, i));
+  if (reader.fit === "webtoon") { wtScrollTo(i, false); return; }
+  cancelFlip();
+  reader.index = alignIndex(i);
+  renderReaderViews();
+}
+
+const FIT_LABEL = { screen: "화면", width: "너비", webtoon: "웹툰" };
 function updateReaderChrome() {
   const n = pageCount();
   const i = reader.index;
-  const pair = pairFor(i);
+  const web = reader.fit === "webtoon";
+  const pair = web ? { single: true, page: i } : pairFor(i);
   let label;
-  if (pair.single) label = `${i + 1} / ${n}`;
+  if (pair.single || pair.empty) label = `${i + 1} / ${n}`;
   else {
     const nums = [pair.left, pair.right].filter((x) => x != null).map((x) => x + 1);
     nums.sort((a, b) => a - b);
@@ -3081,10 +3585,17 @@ function updateReaderChrome() {
   $("pageCounter").textContent = label;
   const slider = $("pageSlider");
   slider.max = String(Math.max(1, n));
-  slider.value = String(i + 1);
+  if (!reader.sliding) slider.value = String(i + 1);
+  slider.style.direction = reader.rtl && !web ? "rtl" : "ltr";
   $("readerTitle").textContent = reader.pages[i] ? reader.pages[i].name : "뷰어";
-  $("readerCrumb").textContent = (reader.folderName || "이미지") + (isSpread() ? " · 펼쳐보기" : " · 한 쪽");
+  $("readerCrumb").textContent = (reader.folderName || "이미지") + " · " + (web ? "웹툰" : (isSpread() ? "두 쪽" : "한 쪽"));
   $("readerChrome").classList.toggle("dim", !reader.ui);
+  $("fitLabel").textContent = FIT_LABEL[reader.fit] || "화면";
+  $("btnFit").classList.toggle("on", reader.fit !== "screen");
+  $("spreadLabel").textContent = reader.spreadMode === "auto" ? (isSpread() ? "자동·두 쪽" : "자동·한 쪽") : (reader.spreadMode === "spread" ? "두 쪽" : "한 쪽");
+  $("btnSpreadQuick").style.opacity = web ? ".4" : "";
+  $("dirLabel").textContent = reader.rtl ? "오→왼" : "왼→오";
+  $("btnDirQuick").querySelector("svg").style.transform = reader.rtl ? "scaleX(-1)" : "";
   saveReaderPos();
 }
 
@@ -3093,7 +3604,7 @@ function storagePageKey() {
 }
 function saveReaderPos() {
   try {
-    localStorage.setItem(storagePageKey(), JSON.stringify({ index: reader.index, at: Date.now() }));
+    localStorage.setItem(storagePageKey(), JSON.stringify({ index: reader.index, count: pageCount(), at: Date.now() }));
   } catch (_) {}
 }
 function restoreReaderPos() {
@@ -3103,14 +3614,44 @@ function restoreReaderPos() {
   } catch (_) {}
   return null;
 }
+function folderReadKey(folder, count) {
+  const name = folder && folder.name ? folder.name : "이미지";
+  return (folder && folder.path ? folder.path : name) + ":" + count;
+}
+function savedPosFor(folder) {
+  try {
+    const pages = imagesIn(folder);
+    if (!pages.length) return null;
+    const v = JSON.parse(localStorage.getItem("mhv-page:" + folderReadKey(folder, pages.length)) || "null");
+    if (v && typeof v.index === "number" && v.index > 0) return { index: v.index, count: pages.length, pages };
+  } catch (_) {}
+  return null;
+}
 
-function setReaderUI(on) {
+let readerHideTimer = 0;
+function setReaderUI(on, autoHide) {
   reader.ui = on;
   $("readerChrome").classList.toggle("dim", !on);
+  clearTimeout(readerHideTimer);
+  if (!on) $("pagePreview").classList.add("hidden");
+  if (on && autoHide) {
+    readerHideTimer = setTimeout(() => {
+      if (currentScreen === "reader" && !reader.sliding && overlay.classList.contains("hidden") && $("pageGrid").classList.contains("hidden")) setReaderUI(false);
+    }, 3500);
+  }
+}
+function applyReaderLook() {
+  const st = $("stage");
+  st.classList.toggle("bg-white", reader.bg === "white");
+  st.classList.toggle("bg-sepia", reader.bg === "sepia");
+  const bg = reader.bg === "white" ? "#fff" : reader.bg === "sepia" ? "#efe4cc" : "#000";
+  st.style.background = bg;
+  $("screen-reader").style.background = bg;
+  $("dimLayer").style.opacity = String(Math.max(0, Math.min(0.75, 1 - reader.bright)));
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v3";
+const PWA_CACHE = "mhv-pwa-v4";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
@@ -3192,10 +3733,18 @@ function measureViewPages(viewEl) {
   const dy = curBox.top - viewBox.top;
   const slots = [...viewEl.querySelectorAll(".slot")];
   const out = { left: null, right: null, single: null };
+  const spreadView = viewEl.classList.contains("spread");
   const info = (img) => {
     if (!img) return null;
     const r = img.getBoundingClientRect();
-    const b = { x: r.left - stage.left + dx, y: r.top - stage.top + dy, w: r.width, h: r.height, img };
+    const box = { x: r.left - stage.left + dx, y: r.top - stage.top + dy, w: r.width, h: r.height };
+    if (box.w < 2 || box.h < 2) return null;
+    // The <img> box fills the slot; the visible picture is the object-fit: contain rectangle inside it.
+    // Drawing into the full box stretched portrait-phone pages to the screen during the curl (size jump).
+    const slot = img.parentElement;
+    const align = spreadView && slot ? (slot.classList.contains("spine-end") ? "end" : slot.classList.contains("spine-start") ? "start" : "center") : "center";
+    const b = contentRectOf(img, box, align);
+    b.img = img;
     return b.w >= 2 && b.h >= 2 ? b : null;
   };
   if (viewEl.classList.contains("single")) {
@@ -3426,7 +3975,11 @@ function drawFlip() {
     ctx.transform(a, b, b, d, tx, ty);
     if (prep.back && prep.back.img) {
       // verso: horizontally flipped in the front page's box, then reflected
-      ctx.drawImage(prep.back.img, front.x + W, front.y, -W, H);
+      const bi = prep.back.img;
+      const bw = bi.naturalWidth || W, bh = bi.naturalHeight || H;
+      const bs = Math.min(W / bw, H / bh);
+      const dw = bw * bs, dh = bh * bs;
+      ctx.drawImage(bi, front.x + (W - dw) / 2, front.y + (H - dh) / 2, dw, dh);
     } else {
       const pg = ctx.createLinearGradient(front.x, front.y, front.x + W, front.y);
       if (fromRight) {
@@ -3499,7 +4052,7 @@ function drawFlip() {
       ctx.save();
       pathPoly(ctx, attached);
       ctx.clip();
-      const g2 = ctx.createLinearGradient(mx, my, mx - nx * 28, my - ny * 28);
+      const g2 = ctx.createLinearGradient(mx, my, mx + nx * 28, my + ny * 28); // attached side is +n (was darkening the whole page)
       g2.addColorStop(0, "rgba(0,0,0,0.28)");
       g2.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = g2;
@@ -3635,13 +4188,22 @@ function holdCurlAt(dir, progress, fromBottom) {
 
 function turnToPhysical(dir, animated) {
   // dir: -1 show left (translate toward +), +1 show right (translate toward -)
+  if (reader.fit === "webtoon") {
+    const box = $("webtoon");
+    box.scrollBy ? box.scrollBy({ top: dir * box.clientHeight * 0.85, behavior: "smooth" }) : (box.scrollTop += dir * box.clientHeight * 0.85);
+    return;
+  }
   if (reader.animating || (flip.active && !flip.hold && animated)) return;
   if (flip.hold) cancelFlip();
-  if (reader.zoom > 1.01) resetZoom();
+  const wasZoomed = reader.zoom > 1.01;
+  if (reader.ui) setReaderUI(false);
   const nb = physicalNeighbors(reader.index);
   const target = dir < 0 ? nb.left : nb.right;
-  const fx = turnEffect();
+  let fx = turnEffect();
+  // fit-width pages are scrolled/zoomed: turn instantly so the next page starts at its top
+  if (wasZoomed) fx = "none";
   if (target == null || target < 0) {
+    if (wasZoomed) { toast(dir * (reader.rtl ? -1 : 1) > 0 ? "마지막 페이지입니다." : "첫 페이지입니다."); return; }
     if (animated && fx === "curl") bounceCurl(dir);
     else bounceStrip(dir);
     return;
@@ -3690,25 +4252,40 @@ function goReading(delta) {
   turnToPhysical(physical, true);
 }
 
-async function openReader(pages, startIndex, folder) {
+let resumeTimer = 0;
+function hideResumeBar() { clearTimeout(resumeTimer); $("resumeBar").classList.add("hidden"); }
+async function openReader(pages, startIndex, folder, opts) {
   if (!pages || !pages.length) { toast("이미지가 없습니다."); return; }
   reader.pages = pages;
+  reader.folder = folder || null;
   reader.folderName = folder && folder.name ? folder.name : "이미지";
-  reader.folderKey = (folder && folder.path ? folder.path : reader.folderName) + ":" + pages.length;
+  reader.folderKey = folderReadKey(folder, pages.length);
   const saved = restoreReaderPos();
-  // Start at the tapped image unless we want last-page memory when reopening the folder without a tap? Requirement: start at the tapped one.
   reader.index = alignIndex(startIndex || 0);
-  // If the same page is tapped, use that. Memory is still saved for when we return via... I'll start at tapped, but remember for slider/session if startIndex omitted.
-  if (startIndex == null && saved != null) reader.index = alignIndex(saved);
-  reader.ui = true;
+  if ((startIndex == null || (opts && opts.resume)) && saved != null) reader.index = alignIndex(saved);
   reader.animating = false;
-  resetZoom();
+  reader.zoom = 1; reader.panX = 0; reader.panY = 0;
+  wt.built = false;
+  hideResumeBar();
+  applyReaderLook();
   showScreen("reader");
+  setReaderUI(true, true);
   await renderReaderViews();
+  // offer to continue where the user stopped last time
+  if (saved != null && saved > 0 && saved < pages.length && Math.abs(saved - reader.index) > 1 && !(opts && opts.resume)) {
+    $("resumeText").textContent = `지난번 ${saved + 1}쪽까지 읽었어요`;
+    $("resumeBar").classList.remove("hidden");
+    $("btnResume").onclick = () => { hideResumeBar(); readerGoTo(saved); };
+    resumeTimer = setTimeout(hideResumeBar, 6000);
+  }
 }
+$("btnResumeX").addEventListener("click", hideResumeBar);
 
 function closeReader() {
   cancelFlip();
+  hideResumeBar();
+  closePageGrid();
+  hideWebtoon();
   clearPageUrls();
   showScreen("explorer");
   renderExplorer();
@@ -3721,25 +4298,33 @@ function closeReader() {
   let mode = "none"; // none | swipe | pinch | pan
   let startX = 0, startY = 0, startT = 0;
   let lastTap = 0, lastTapX = 0, lastTapY = 0;
-  let startZoom = 1, startPanX = 0, startPanY = 0, pinchDist = 0, pinchMid = {x:0,y:0};
+  let startZoom = 1, startPanX = 0, startPanY = 0, pinchDist = 0;
+  let pinchQ = { x: 0, y: 0 };
+  let tapTimer = 0;
 
   function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
   function mid(a, b) { return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }; }
   function pt(e) { return { x: e.clientX, y: e.clientY, id: e.pointerId }; }
+  function local(p) { const r = stage.getBoundingClientRect(); return { x: p.x - r.left, y: p.y - r.top }; }
 
   stage.addEventListener("pointerdown", (e) => {
     if (document.getElementById("screen-reader").classList.contains("hidden")) return;
+    if (reader.fit === "webtoon") return; // native scrolling + click handler
     if (e.target.closest("#readerChrome") && !e.target.closest("#stage")) return;
     stage.setPointerCapture(e.pointerId);
     pointers.set(e.pointerId, pt(e));
+    hideResumeBar();
     if (pointers.size === 2) {
       const [a, b] = [...pointers.values()];
+      if (flip._dragStarted) { flip._dragStarted = false; snapCurlBack(); }
+      $("strip").style.transition = "transform 160ms ease";
+      $("strip").style.transform = "translateX(-33.3333%)";
       mode = "pinch";
       startZoom = reader.zoom;
-      startPanX = reader.panX;
-      startPanY = reader.panY;
       pinchDist = dist(a, b) || 1;
-      pinchMid = mid(a, b);
+      const m = local(mid(a, b));
+      const { W, H } = stageSize();
+      pinchQ = { x: W / 2 + (m.x - W / 2 - reader.panX) / reader.zoom, y: H / 2 + (m.y - H / 2 - reader.panY) / reader.zoom };
       return;
     }
     if (reader.animating) return;
@@ -3756,13 +4341,12 @@ function closeReader() {
     if (mode === "pinch" && pointers.size >= 2) {
       const [a, b] = [...pointers.values()];
       const d = dist(a, b) || 1;
-      let z = Math.max(1, Math.min(4.5, startZoom * (d / pinchDist)));
+      const z = Math.max(1, Math.min(6, startZoom * (d / pinchDist)));
+      const m = local(mid(a, b));
+      const { W, H } = stageSize();
       reader.zoom = z;
-      const m = mid(a, b);
-      // simple pan follow
-      reader.panX = startPanX + (m.x - pinchMid.x);
-      reader.panY = startPanY + (m.y - pinchMid.y);
-      if (z === 1) { reader.panX = 0; reader.panY = 0; }
+      reader.panX = m.x - W / 2 - (pinchQ.x - W / 2) * z;
+      reader.panY = m.y - H / 2 - (pinchQ.y - H / 2) * z;
       applyZoom();
       return;
     }
@@ -3787,6 +4371,7 @@ function closeReader() {
           flip._dragTarget = target;
           if (!beginCurlDir(dir, startX, startY)) return;
           flip._dragStarted = true;
+          if (reader.ui) setReaderUI(false);
         }
         updateCurlTip(tipFromPointer(flip.prep, e.clientX, e.clientY, startX, startY));
         return;
@@ -3795,24 +4380,58 @@ function closeReader() {
     }
   });
 
+  function handleTap(e) {
+    const now = Date.now();
+    const p = local({ x: e.clientX, y: e.clientY });
+    if (now - lastTap < 300 && Math.hypot(e.clientX - lastTapX, e.clientY - lastTapY) < 40) {
+      // double tap: zoom in at the finger / back to fit
+      lastTap = 0;
+      clearTimeout(tapTimer);
+      if (reader.zoom > (reader.baseZoom || 1) * 1.05) resetZoom();
+      else zoomAt(Math.max(2.2, (reader.baseZoom || 1) * 2), p.x, p.y);
+      return;
+    }
+    lastTap = now; lastTapX = e.clientX; lastTapY = e.clientY;
+    const w = stage.clientWidth || window.innerWidth;
+    const third = w / 3;
+    clearTimeout(tapTimer);
+    if (p.x < third) turnToPhysical(-1, true);
+    else if (p.x > 2 * third) turnToPhysical(1, true);
+    else tapTimer = setTimeout(() => setReaderUI(!reader.ui, true), reader.zoom > 1.02 ? 260 : 0);
+  }
+
   function endPtr(e) {
     if (!pointers.has(e.pointerId)) return;
     pointers.delete(e.pointerId);
     if (mode === "pinch") {
       if (pointers.size < 2) {
-        if (reader.zoom <= 1.02) { resetZoom(); }
+        if (reader.zoom <= 1.02) { reader.zoom = 1; applyZoom(); }
         mode = pointers.size ? "pan" : "none";
+        if (pointers.size) {
+          const p = [...pointers.values()][0];
+          startX = p.x; startY = p.y; startPanX = reader.panX; startPanY = reader.panY;
+          startT = 0; // lifting the 2nd finger must not count as a tap / page turn
+        }
       }
       return;
     }
-    if (mode === "pan") { mode = pointers.size ? mode : "none"; return; }
-    if (mode !== "swipe") { if (!pointers.size) mode = "none"; return; }
-    mode = "none";
     const dx = e.clientX - startX;
     const dy = e.clientY - startY;
     const dt = Date.now() - startT;
     const w = stage.clientWidth || window.innerWidth;
     const isTap = Math.hypot(dx, dy) < 12 && dt < 350;
+    if (mode === "pan") {
+      mode = pointers.size ? mode : "none";
+      if (isTap) { handleTap(e); return; }
+      if (!startT) return;
+      // fit-width / zoomed: a clear horizontal flick with no horizontal room left turns the page
+      const c = reader.content;
+      const noRoomX = c && c.w * reader.zoom <= w + 2;
+      if (noRoomX && Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.4) turnToPhysical(dx < 0 ? 1 : -1, true);
+      return;
+    }
+    if (mode !== "swipe") { if (!pointers.size) mode = "none"; return; }
+    mode = "none";
 
     if (flip._dragStarted) {
       flip._dragStarted = false;
@@ -3821,39 +4440,15 @@ function closeReader() {
       const dir = flip._dragDir;
       const target = flip._dragTarget;
       const toward = (dir > 0 && dx < 0) || (dir < 0 && dx > 0);
-      if (should && Math.abs(dx) > Math.abs(dy) && toward && target != null && target >= 0) {
-        completeCurlTo(target);
-      } else if (target == null || target < 0) {
-        snapCurlBack();
-      } else {
-        snapCurlBack();
-      }
+      if (should && Math.abs(dx) > Math.abs(dy) && toward && target != null && target >= 0) completeCurlTo(target);
+      else snapCurlBack();
       return;
     }
 
     if (isTap) {
       $("strip").style.transition = "transform 160ms ease";
       $("strip").style.transform = "translateX(-33.3333%)";
-      const now = Date.now();
-      if (now - lastTap < 300 && Math.hypot(e.clientX - lastTapX, e.clientY - lastTapY) < 40) {
-        lastTap = 0;
-        // double tap zoom
-        if (reader.zoom > 1.05) resetZoom();
-        else {
-          reader.zoom = 2.2;
-          const r = stage.getBoundingClientRect();
-          reader.panX = (r.width / 2 - (e.clientX - r.left)) * (reader.zoom - 1) / reader.zoom;
-          reader.panY = (r.height / 2 - (e.clientY - r.top)) * (reader.zoom - 1) / reader.zoom;
-          applyZoom();
-        }
-        return;
-      }
-      lastTap = now; lastTapX = e.clientX; lastTapY = e.clientY;
-      const x = e.clientX - stage.getBoundingClientRect().left;
-      const third = w / 3;
-      if (x < third) turnToPhysical(-1, true);
-      else if (x > 2 * third) turnToPhysical(1, true);
-      else setReaderUI(!reader.ui);
+      handleTap(e);
       return;
     }
 
@@ -3868,13 +4463,135 @@ function closeReader() {
   }
   stage.addEventListener("pointerup", endPtr);
   stage.addEventListener("pointercancel", endPtr);
+  stage.addEventListener("wheel", (e) => {
+    if (reader.fit === "webtoon" || currentScreen !== "reader") return;
+    if (e.ctrlKey) {
+      e.preventDefault();
+      const p = local({ x: e.clientX, y: e.clientY });
+      zoomAt(reader.zoom * (e.deltaY < 0 ? 1.12 : 0.89), p.x, p.y);
+    } else if (reader.zoom > 1.02) {
+      e.preventDefault();
+      reader.panX -= e.deltaX; reader.panY -= e.deltaY; applyZoom();
+    }
+  }, { passive: false });
 })();
 
+/* page slider with thumbnail preview */
+(function bindPageSlider() {
+  const slider = $("pageSlider");
+  const prev = $("pagePreview");
+  let shownFor = -1;
+  function place(v) {
+    const r = slider.getBoundingClientRect();
+    const sr = $("screen-reader").getBoundingClientRect();
+    const max = Math.max(1, pageCount() - 1);
+    let frac = (v - 1) / max;
+    if (slider.style.direction === "rtl") frac = 1 - frac;
+    const x = r.left - sr.left + 8 + frac * (r.width - 16);
+    prev.style.left = Math.max(52, Math.min(sr.width - 52, x)) + "px";
+    prev.style.top = (r.top - sr.top - 160) + "px";
+    $("ppNum").textContent = `${v} / ${pageCount()}`;
+    const i = v - 1;
+    if (i !== shownFor) {
+      shownFor = i;
+      getPageUrl(i).then((url) => { if (shownFor === i && url) $("ppImg").src = url; }).catch(() => {});
+    }
+  }
+  const start = () => { reader.sliding = true; clearTimeout(readerHideTimer); prev.classList.remove("hidden"); place(parseInt(slider.value, 10)); };
+  slider.addEventListener("pointerdown", start);
+  slider.addEventListener("touchstart", start, { passive: true });
+  slider.addEventListener("input", () => {
+    if (!reader.sliding) start();
+    place(parseInt(slider.value, 10));
+  });
+  const commit = () => {
+    if (!reader.sliding) return;
+    reader.sliding = false;
+    prev.classList.add("hidden");
+    shownFor = -1;
+    const v = parseInt(slider.value, 10) - 1;
+    if (v !== reader.index) readerGoTo(v);
+    setReaderUI(true, true);
+  };
+  slider.addEventListener("change", commit);
+  slider.addEventListener("pointerup", () => setTimeout(commit, 0));
+  slider.addEventListener("touchend", () => setTimeout(commit, 0));
+})();
+
+/* page thumbnail grid */
+let pgGridObs = null;
+function openPageGrid() {
+  const grid = $("pageGrid");
+  const list = $("pgGridList");
+  list.innerHTML = "";
+  $("pgGridTitle").textContent = `페이지 ${pageCount()}장`;
+  if (pgGridObs) pgGridObs.disconnect();
+  pgGridObs = new IntersectionObserver((entries) => {
+    for (const en of entries) {
+      if (!en.isIntersecting) continue;
+      const cell = en.target;
+      pgGridObs.unobserve(cell);
+      const node = reader.pages[+cell.dataset.i];
+      if (node) loadThumb(cell.querySelector(".thumb"), node);
+    }
+  }, { root: $("pgGridScroll"), rootMargin: "300px 0px" });
+  const frag = document.createDocumentFragment();
+  reader.pages.forEach((p, i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "pg-cell" + (i === reader.index ? " cur" : "");
+    b.dataset.i = String(i);
+    b.innerHTML = '<div class="thumb"></div><span></span>';
+    b.querySelector("span").textContent = String(i + 1);
+    b.addEventListener("click", () => { closePageGrid(); readerGoTo(i); });
+    frag.appendChild(b);
+  });
+  list.appendChild(frag);
+  [...list.children].forEach((c) => pgGridObs.observe(c));
+  grid.classList.remove("hidden");
+  clearTimeout(readerHideTimer);
+  const cur = list.children[reader.index];
+  if (cur) requestAnimationFrame(() => cur.scrollIntoView({ block: "center" }));
+}
+function closePageGrid() {
+  $("pageGrid").classList.add("hidden");
+  if (pgGridObs) { pgGridObs.disconnect(); pgGridObs = null; }
+  $("pgGridList").innerHTML = "";
+}
+
+async function setReaderFit(f, prev) {
+  const was = prev != null ? prev : reader.fit;
+  reader.fit = f;
+  savePrefs();
+  if (was === "webtoon" && f !== "webtoon") hideWebtoon();
+  if (f === "webtoon") wt.built = false;
+  reader.index = f === "webtoon" ? reader.index : alignIndex(reader.index);
+  await renderReaderViews();
+}
+function cycleFit() {
+  const order = ["screen", "width", "webtoon"];
+  const f = order[(order.indexOf(reader.fit) + 1) % order.length];
+  setReaderFit(f);
+  toast({ screen: "화면에 맞춤", width: "너비에 맞춤 · 위아래로 밀어 보기", webtoon: "웹툰 모드 · 세로로 이어서 보기" }[f], 1400);
+}
+function tryLockOrientation() {
+  const o = screen.orientation;
+  const type = window.innerWidth > window.innerHeight ? "landscape" : "portrait";
+  if (o && o.lock) {
+    o.lock(type).then(() => toast("화면 방향을 고정했습니다.")).catch(() => {
+      toast("iPhone·iPad는 앱에서 회전을 잠글 수 없어요. 제어 센터의 '화면 방향 잠금'을 켜 주세요.", 3800);
+    });
+  } else {
+    toast("iPhone·iPad는 앱에서 회전을 잠글 수 없어요. 제어 센터의 '화면 방향 잠금'을 켜 주세요.", 3800);
+  }
+}
+
 function showReaderSettings() {
+  clearTimeout(readerHideTimer);
   showSheet("보기 설정", null, {
     custom: true,
     build(body) {
-      const mkRow = (label, segItems, get, set) => {
+      const mkRow = (label, segItems, get, set, after) => {
         const row = document.createElement("div");
         row.className = "settings-row";
         const lab = document.createElement("label");
@@ -3894,8 +4611,11 @@ function showReaderSettings() {
             set(v);
             savePrefs();
             refresh();
-            reader.index = alignIndex(reader.index);
-            await renderReaderViews();
+            if (after) after();
+            else {
+              reader.index = reader.fit === "webtoon" ? reader.index : alignIndex(reader.index);
+              await renderReaderViews();
+            }
           });
           btns.push(b);
           seg.appendChild(b);
@@ -3903,7 +4623,11 @@ function showReaderSettings() {
         refresh();
         row.append(lab, seg);
         body.appendChild(row);
+        return row;
       };
+      mkRow("화면 맞춤", [["screen","화면"],["width","너비"],["webtoon","웹툰"]],
+        () => reader.fit, (v) => { reader._prevFit = reader.fit; reader.fit = v; },
+        () => setReaderFit(reader.fit, reader._prevFit));
       mkRow("쪽 구성", [["auto","자동"],["single","한 쪽"],["spread","두 쪽"]],
         () => reader.spreadMode, (v) => { reader.spreadMode = v; });
       mkRow("표지 단독", [[false,"끄기"],[true,"켜기"]],
@@ -3911,10 +4635,55 @@ function showReaderSettings() {
       mkRow("읽기 방향", [[false,"왼쪽부터"],[true,"오른쪽부터"]],
         () => reader.rtl, (v) => { reader.rtl = v === true || v === "true"; });
       mkRow("넘김 효과", [["curl","책장 넘김"],["slide","슬라이드"],["none","없음"]],
-        () => turnEffect(), (v) => { reader.turnEffect = v; });
+        () => turnEffect(), (v) => { reader.turnEffect = v; }, () => {});
+      mkRow("배경", [["black","검정"],["white","흰색"],["sepia","세피아"]],
+        () => reader.bg, (v) => { reader.bg = v; }, applyReaderLook);
+      const br = document.createElement("div");
+      br.className = "settings-row";
+      br.innerHTML = '<label>밝기</label><input type="range" min="30" max="100" step="1" aria-label="밝기">';
+      const rng = br.querySelector("input");
+      rng.value = String(Math.round(reader.bright * 100));
+      rng.addEventListener("input", () => { reader.bright = parseInt(rng.value, 10) / 100; applyReaderLook(); });
+      rng.addEventListener("change", savePrefs);
+      body.appendChild(br);
+      const rot = document.createElement("div");
+      rot.className = "settings-row";
+      rot.innerHTML = '<label>화면 회전</label><div class="seg"><button type="button">지금 방향 고정</button></div><p class="note">iPhone·iPad 홈 화면 앱은 회전을 직접 잠글 수 없어, 안 되면 제어 센터의 화면 방향 잠금을 쓰세요.</p>';
+      rot.querySelector("button").addEventListener("click", tryLockOrientation);
+      body.appendChild(rot);
+      if (window.innerWidth >= 700 || matchMedia("(hover: hover)").matches) {
+        const k = document.createElement("div");
+        k.className = "kbd-help";
+        k.innerHTML = "키보드: <b>←</b><b>→</b> 넘기기 · <b>Space</b> 다음 · <b>G</b> 페이지 목록 · <b>M</b> 화면 맞춤 · <b>+</b><b>−</b><b>0</b> 확대 · <b>D</b> 한 쪽/두 쪽 · <b>R</b> 읽기 방향 · <b>Home</b><b>End</b> 처음/끝 · <b>F</b> 전체화면 · <b>Esc</b> 닫기";
+        body.appendChild(k);
+      }
     }
   });
 }
+
+$("btnPgGrid").addEventListener("click", openPageGrid);
+$("btnPgGridClose").addEventListener("click", () => { closePageGrid(); setReaderUI(true, true); });
+$("btnFit").addEventListener("click", () => { cycleFit(); setReaderUI(true, true); });
+$("btnSpreadQuick").addEventListener("click", async () => {
+  if (reader.fit === "webtoon") { toast("웹툰 모드에서는 한 쪽씩 봅니다."); return; }
+  reader.spreadMode = isSpread() ? "single" : "spread";
+  savePrefs();
+  reader.index = alignIndex(reader.index);
+  await renderReaderViews();
+  setReaderUI(true, true);
+});
+$("btnDirQuick").addEventListener("click", async () => {
+  reader.rtl = !reader.rtl;
+  savePrefs();
+  await renderReaderViews();
+  toast(reader.rtl ? "오른쪽부터 읽기 (일본 만화)" : "왼쪽부터 읽기", 1200);
+  setReaderUI(true, true);
+});
+$("btnImgEdit").addEventListener("click", () => {
+  const node = reader.pages[reader.index];
+  if (node) openImageEditor(node, "reader");
+});
+$("readerChrome").addEventListener("pointerdown", () => { if (reader.ui) setReaderUI(true, true); });
 
 /* ========== Video player ========== */
 const videoState = {
@@ -3925,10 +4694,14 @@ const videoState = {
   ui: true,
   hideTimer: 0,
   seeking: false,
+  jogResume: false,
+  a: null,
+  b: null,
+  edit: null,
 };
 
 const videoEl = $("videoEl");
-const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 2];
+const SPEEDS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2];
 
 function videoPosKey(item) {
   const n = item && (item.name || "");
@@ -3960,7 +4733,7 @@ function setVideoUI(on, autoHide) {
   videoState.ui = on;
   $("videoChrome").classList.toggle("dim", !on);
   clearTimeout(videoState.hideTimer);
-  if (on && autoHide && !videoEl.paused) {
+  if (on && autoHide && !videoEl.paused && !(videoState.edit && videoState.edit.open) && !jog.active && !tl.drag) {
     videoState.hideTimer = setTimeout(() => setVideoUI(false), 3200);
   }
 }
@@ -3970,16 +4743,24 @@ function updatePlayIcon() {
   $("icoPause").classList.toggle("hidden", videoEl.paused);
 }
 
+function fmtPrecise(t) {
+  if (!isFinite(t) || t < 0) t = 0;
+  const h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), s = t % 60;
+  const ss = s.toFixed(3).padStart(6, "0");
+  return h ? `${h}:${String(m).padStart(2, "0")}:${ss}` : `${m}:${ss}`;
+}
+function vDur() { return isFinite(videoEl.duration) ? videoEl.duration : 0; }
+function vTime() { return seekQ.pending != null ? seekQ.pending : (videoEl.currentTime || 0); }
 function updateSeekUi() {
-  if (videoState.seeking) return;
-  const d = isFinite(videoEl.duration) ? videoEl.duration : 0;
-  const t = videoEl.currentTime || 0;
-  const bar = $("seekBar");
-  bar.max = String(d || 0);
-  bar.value = String(t);
-  $("timeLabel").textContent = `${fmtTime(t)} / ${fmtTime(d)}`;
+  const d = vDur();
+  const t = vTime();
+  const fps = fpsDet.fps;
+  $("timeLabel").textContent = `${fmtPrecise(t)} / ${fmtTime(d)}`;
+  $("frameLabel").textContent = `프레임 ${Math.floor(t * fps + 1e-3)} · ${Math.round(fps * 100) / 100}fps${fpsDet.detected ? "" : "(추정)"}`;
+  drawTimeline();
 }
 
+function speedText(s) { return (s % 1 === 0 ? s.toFixed(0) : String(s)) + "×"; }
 function updateVideoChrome() {
   const item = videoState.queue[videoState.index];
   const n = videoState.queue.length;
@@ -3987,7 +4768,9 @@ function updateVideoChrome() {
   $("videoName").textContent = item ? item.name : "";
   $("videoQueueLabel").textContent = n ? `${videoState.index + 1} / ${n}` : "";
   $("videoCrumb").textContent = videoState.source === "playlist" ? "재생목록" : (cwd && cwd.name) || "영상";
-  $("btnSpeed").textContent = (videoState.speed % 1 === 0 ? videoState.speed.toFixed(0) : String(videoState.speed)) + "×";
+  $("btnSpeed").textContent = speedText(videoState.speed);
+  $("btnSpeed").classList.toggle("on", videoState.speed !== 1);
+  updateAbButton();
   updatePlayIcon();
   updateSeekUi();
 }
@@ -4030,6 +4813,7 @@ async function loadQueueItem(i, autoplay) {
       videoEl.currentTime = resume;
       toast("이어보기 " + fmtTime(resume));
     }
+    onVideoLoaded(item);
     updateVideoChrome();
     if (autoplay !== false) {
       try { await videoEl.play(); } catch (_) {}
@@ -4100,19 +4884,56 @@ document.addEventListener("visibilitychange", () => {
 });
 
 function togglePlay() {
-  if (videoEl.paused) videoEl.play().catch(() => {});
-  else videoEl.pause();
+  if (videoEl.paused) {
+    const e = videoState.edit;
+    if (e.preview) {
+      const segs = keepSegments();
+      const t = videoEl.currentTime;
+      if (segs.length && (t < segs[0][0] - 0.02 || t >= segs[segs.length - 1][1] - 0.05)) videoEl.currentTime = segs[0][0];
+    }
+    videoEl.play().catch(() => {});
+  } else videoEl.pause();
 }
 function skip(sec) {
   if (!isFinite(videoEl.duration)) return;
-  videoEl.currentTime = Math.max(0, Math.min(videoEl.duration, (videoEl.currentTime || 0) + sec));
+  seekTo((videoEl.currentTime || 0) + sec);
 }
-function cycleSpeed() {
-  const i = SPEEDS.indexOf(videoState.speed);
-  videoState.speed = SPEEDS[(i + 1) % SPEEDS.length];
-  videoEl.playbackRate = videoState.speed;
-  savePrefs();
-  updateVideoChrome();
+function cycleSpeed() { openSpeedSheet(); }
+function openSpeedSheet() {
+  showSheet("재생 속도", null, {
+    custom: true,
+    build(body) {
+      const row = document.createElement("div");
+      row.className = "settings-row";
+      row.innerHTML = "<label>배속</label>";
+      const seg = document.createElement("div");
+      seg.className = "seg";
+      SPEEDS.forEach((s) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = speedText(s);
+        b.classList.toggle("on", s === videoState.speed);
+        b.addEventListener("click", () => {
+          videoState.speed = s;
+          videoEl.playbackRate = s;
+          savePrefs();
+          seg.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
+          updateVideoChrome();
+        });
+        seg.appendChild(b);
+      });
+      row.appendChild(seg);
+      body.appendChild(row);
+      const r2 = document.createElement("div");
+      r2.className = "settings-row";
+      r2.innerHTML = '<label>다이얼을 놓으면</label><div class="seg"><button type="button" data-v="0">멈춘 채로</button><button type="button" data-v="1">이어서 재생</button></div><p class="note">다이얼을 천천히 돌리면 한 프레임씩, 빠르게 돌리면 초 단위로 움직입니다. 돌리는 동안은 자동으로 멈춥니다.</p>';
+      const bs = r2.querySelectorAll("button");
+      const ref = () => bs.forEach((b) => b.classList.toggle("on", (b.dataset.v === "1") === !!videoState.jogResume));
+      bs.forEach((b) => b.addEventListener("click", () => { videoState.jogResume = b.dataset.v === "1"; savePrefs(); ref(); }));
+      ref();
+      body.appendChild(r2);
+    }
+  });
 }
 async function toggleVideoFullscreen() {
   const root = $("screen-video");
@@ -4125,6 +4946,1092 @@ async function toggleVideoFullscreen() {
     else if (videoEl.webkitEnterFullscreen) videoEl.webkitEnterFullscreen();
   } catch (_) {
     try { if (videoEl.webkitEnterFullscreen) videoEl.webkitEnterFullscreen(); } catch (e) {}
+  }
+}
+
+
+/* ========== v4: precise seeking, timeline, jog dial, A-B, editor ========== */
+const seekQ = { pending: null };
+function seekTo(t) {
+  const d = vDur();
+  t = Math.max(0, Math.min(d ? d - 0.001 : 0, t));
+  if (videoEl.seeking) { seekQ.pending = t; updateSeekUi(); return; }
+  seekQ.pending = null;
+  try { videoEl.currentTime = t; } catch (_) {}
+  updateSeekUi();
+}
+videoEl.addEventListener("seeked", () => {
+  if (seekQ.pending != null) {
+    const p = seekQ.pending;
+    seekQ.pending = null;
+    try { videoEl.currentTime = p; } catch (_) {}
+  }
+  updateSeekUi();
+});
+
+/* frame rate detection (requestVideoFrameCallback; falls back to 30fps) */
+const fpsDet = { last: null, deltas: [], fps: 30, detected: false, gen: 0 };
+const COMMON_FPS = [23.976, 24, 25, 29.97, 30, 48, 50, 59.94, 60, 90, 120];
+function resetFps() {
+  fpsDet.gen++;
+  fpsDet.last = null; fpsDet.deltas = []; fpsDet.fps = 30; fpsDet.detected = false;
+  if (!videoEl.requestVideoFrameCallback) return;
+  const g = fpsDet.gen;
+  let lastFrames = null;
+  const cb = (now, meta) => {
+    if (g !== fpsDet.gen) return;
+    // only learn from normal playback (seeks, jog and frame steps produce odd gaps)
+    const playing = !videoEl.paused && !videoEl.seeking && !jog.active && !tl.drag;
+    if (playing && fpsDet.last != null && lastFrames != null) {
+      const dt = meta.mediaTime - fpsDet.last;
+      const df = (meta.presentedFrames || 0) - lastFrames;
+      const per = df > 1 ? dt / df : dt;
+      if (per > 0.004 && per < 0.25) fpsDet.deltas.push(per);
+    }
+    fpsDet.last = playing ? meta.mediaTime : null;
+    lastFrames = meta.presentedFrames || 0;
+    if (fpsDet.deltas.length >= 24) {
+      const s = fpsDet.deltas.slice().sort((a, b) => a - b);
+      const med = s[Math.floor(s.length / 2)];
+      const raw = 1 / med;
+      let best = raw, bd = Infinity;
+      for (const f of COMMON_FPS) { const dd = Math.abs(f - raw); if (dd < bd) { bd = dd; best = f; } }
+      fpsDet.fps = bd / best < 0.06 ? best : Math.round(raw);
+      fpsDet.detected = true;
+      updateSeekUi();
+      return; // done
+    }
+    videoEl.requestVideoFrameCallback(cb);
+  };
+  videoEl.requestVideoFrameCallback(cb);
+}
+function frameStep(n) {
+  if (!videoEl.paused) videoEl.pause();
+  const fps = fpsDet.fps;
+  const idx = Math.floor(vTime() * fps + 1e-3);
+  seekTo((idx + n + 0.3) / fps);
+  setVideoUI(true);
+}
+
+/* ---- timeline with zoom ---- */
+const tl = { zoom: 1, v0: 0, span: 0, drag: false, pointers: new Map(), pinchD: 0, pinchZ: 1, wasPlaying: false };
+function tlWindow() {
+  const d = vDur();
+  if (!d) return [0, 1];
+  const span = d / tl.zoom;
+  if (tl.zoom <= 1.001) { tl.v0 = 0; tl.span = d; return [0, d]; }
+  const t = vTime();
+  let v0 = tl.v0;
+  if (Math.abs(tl.span - span) > 1e-6) v0 = t - span / 2;
+  else if (!tl.drag && (t < v0 || t > v0 + span)) v0 = t - span * 0.1;
+  v0 = Math.max(0, Math.min(d - span, v0));
+  tl.v0 = v0; tl.span = span;
+  return [v0, v0 + span];
+}
+function setTlZoom(z) {
+  tl.zoom = Math.max(1, Math.min(256, z));
+  $("tlZoomLabel").textContent = (tl.zoom < 10 ? Math.round(tl.zoom * 10) / 10 : Math.round(tl.zoom)) + "×";
+  drawTimeline();
+}
+function niceStep(pxPerSec) {
+  const steps = [1 / 30, 0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 1800, 3600];
+  for (const s of steps) if (s * pxPerSec >= 56) return s;
+  return 7200;
+}
+function drawTimeline() {
+  const c = $("tlCanvas");
+  if (!c || currentScreen !== "video") return;
+  const W = c.clientWidth || 300, H = c.clientHeight || 44;
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  if (c.width !== Math.round(W * dpr) || c.height !== Math.round(H * dpr)) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); }
+  const ctx = c.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+  const d = vDur();
+  const [v0, v1] = tlWindow();
+  const span = Math.max(1e-6, v1 - v0);
+  const X = (t) => ((t - v0) / span) * W;
+  const midY = 26;
+  // track
+  ctx.fillStyle = "#ffffff2e";
+  ctx.fillRect(0, midY - 3, W, 6);
+  if (!d) return;
+  // played
+  ctx.fillStyle = "#ffffffaa";
+  ctx.fillRect(0, midY - 3, Math.max(0, Math.min(W, X(vTime()))), 6);
+  const e = videoState.edit;
+  if (e.open || e.inT != null || e.outT != null || e.cuts.length) {
+    const a = e.inT != null ? e.inT : 0, b = e.outT != null ? e.outT : d;
+    ctx.fillStyle = "#00000099";
+    if (a > v0) ctx.fillRect(0, 12, Math.min(W, X(a)), 28);
+    if (b < v1) ctx.fillRect(Math.max(0, X(b)), 12, W, 28);
+    ctx.fillStyle = "#4cd964";
+    if (a >= v0 && a <= v1) ctx.fillRect(X(a) - 1.5, 10, 3, 32);
+    if (b >= v0 && b <= v1) ctx.fillRect(X(b) - 1.5, 10, 3, 32);
+    for (const [ca, cb] of e.cuts) {
+      if (cb < v0 || ca > v1) continue;
+      ctx.fillStyle = "#ff4d4d88";
+      ctx.fillRect(X(ca), 12, Math.max(2, X(cb) - X(ca)), 28);
+    }
+  }
+  const A = videoState.a, B = videoState.b;
+  if (A != null) {
+    ctx.fillStyle = "#7db0ff55";
+    const bx = B != null ? X(B) : X(A) + 2;
+    ctx.fillRect(X(A), 14, Math.max(2, bx - X(A)), 24);
+    ctx.fillStyle = "#7db0ff";
+    ctx.font = "bold 10px -apple-system, sans-serif";
+    ctx.fillText("A", X(A) + 2, 23);
+    if (B != null) ctx.fillText("B", bx - 8, 23);
+  }
+  // ticks
+  const pps = W / span;
+  const step = niceStep(pps);
+  ctx.fillStyle = "#ffffff99";
+  ctx.font = "10px -apple-system, sans-serif";
+  ctx.textBaseline = "top";
+  const first = Math.ceil(v0 / step) * step;
+  for (let t = first; t <= v1 + 1e-9; t += step) {
+    const x = X(t);
+    ctx.fillRect(x, 0, 1, 6);
+    const lab = step < 1 ? fmtPrecise(t).replace(/^0:/, "").replace(/0+$/, "").replace(/\.$/, "") + "s" : fmtTime(t);
+    if (x < W - 30) ctx.fillText(lab, x + 2, 0);
+  }
+  // frame ticks when zoomed in far enough
+  const fdur = 1 / fpsDet.fps;
+  if (fdur * pps >= 5) {
+    ctx.fillStyle = "#ffffff44";
+    const f0 = Math.ceil(v0 / fdur);
+    for (let f = f0; f * fdur <= v1; f++) ctx.fillRect(X(f * fdur), midY + 5, 1, 5);
+  }
+  // playhead
+  const px = X(vTime());
+  if (px >= -2 && px <= W + 2) {
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(px - 1, 8, 2, 36);
+    ctx.beginPath(); ctx.arc(px, midY, 6, 0, Math.PI * 2); ctx.fill();
+  }
+  // window indicator when zoomed
+  if (tl.zoom > 1.001) {
+    ctx.fillStyle = "#7db0ff";
+    ctx.fillRect((v0 / d) * W, H - 2, Math.max(3, (span / d) * W), 2);
+  }
+}
+
+/* timeline preview thumbnails (second hidden video element) */
+const tlPrev = { v: null, want: null, busy: false, src: "" };
+function tlPreviewAt(t, clientX) {
+  const box = $("tlPreview");
+  const tlr = $("timeline").getBoundingClientRect();
+  box.classList.remove("hidden");
+  box.style.left = Math.max(66, Math.min(tlr.width - 66, clientX - tlr.left)) + "px";
+  $("tlPrevTime").textContent = fmtPrecise(t);
+  if (!tlPrev.v) {
+    tlPrev.v = document.createElement("video");
+    tlPrev.v.muted = true; tlPrev.v.playsInline = true; tlPrev.v.preload = "auto";
+    tlPrev.v.setAttribute("playsinline", "");
+    tlPrev.v.addEventListener("seeked", () => {
+      try {
+        const c = $("tlPrevCanvas"), ctx = c.getContext("2d");
+        const vw = tlPrev.v.videoWidth || 16, vh = tlPrev.v.videoHeight || 9;
+        const s = Math.min(c.width / vw, c.height / vh);
+        ctx.fillStyle = "#000"; ctx.fillRect(0, 0, c.width, c.height);
+        ctx.drawImage(tlPrev.v, (c.width - vw * s) / 2, (c.height - vh * s) / 2, vw * s, vh * s);
+      } catch (_) {}
+      tlPrev.busy = false;
+      if (tlPrev.want != null) { const w = tlPrev.want; tlPrev.want = null; tlPrevSeek(w); }
+    });
+  }
+  const src = videoEl.currentSrc || videoEl.src;
+  if (tlPrev.src !== src) { tlPrev.src = src; tlPrev.v.src = src; tlPrev.busy = false; }
+  tlPrevSeek(t);
+}
+function tlPrevSeek(t) {
+  if (tlPrev.busy) { tlPrev.want = t; return; }
+  tlPrev.busy = true;
+  try { tlPrev.v.currentTime = t; } catch (_) { tlPrev.busy = false; }
+  setTimeout(() => { tlPrev.busy = false; }, 800);
+}
+function tlTimeAt(clientX) {
+  const r = $("timeline").getBoundingClientRect();
+  const [v0, v1] = tlWindow();
+  return v0 + Math.max(0, Math.min(1, (clientX - r.left) / r.width)) * (v1 - v0);
+}
+(function bindTimeline() {
+  const el = $("timeline");
+  el.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    el.setPointerCapture(e.pointerId);
+    tl.pointers.set(e.pointerId, e.clientX);
+    clearTimeout(videoState.hideTimer);
+    if (tl.pointers.size === 2) {
+      const [a, b] = [...tl.pointers.values()];
+      tl.pinchD = Math.abs(a - b) || 1; tl.pinchZ = tl.zoom;
+      return;
+    }
+    tl.drag = true;
+    tl.wasPlaying = !videoEl.paused;
+    if (tl.wasPlaying) videoEl.pause();
+    const t = tlTimeAt(e.clientX);
+    seekTo(t);
+    tlPreviewAt(t, e.clientX);
+  });
+  el.addEventListener("pointermove", (e) => {
+    if (!tl.pointers.has(e.pointerId)) return;
+    tl.pointers.set(e.pointerId, e.clientX);
+    if (tl.pointers.size >= 2) {
+      const [a, b] = [...tl.pointers.values()];
+      setTlZoom(tl.pinchZ * ((Math.abs(a - b) || 1) / tl.pinchD));
+      return;
+    }
+    if (!tl.drag) return;
+    const t = tlTimeAt(e.clientX);
+    seekTo(t);
+    tlPreviewAt(t, e.clientX);
+  });
+  const end = (e) => {
+    if (!tl.pointers.has(e.pointerId)) return;
+    tl.pointers.delete(e.pointerId);
+    if (tl.pointers.size) return;
+    $("tlPreview").classList.add("hidden");
+    if (tl.drag) {
+      tl.drag = false;
+      saveVideoPos();
+      if (tl.wasPlaying) videoEl.play().catch(() => {});
+    }
+    setVideoUI(true, true);
+  };
+  el.addEventListener("pointerup", end);
+  el.addEventListener("pointercancel", end);
+  el.addEventListener("wheel", (e) => { e.preventDefault(); setTlZoom(tl.zoom * (e.deltaY < 0 ? 1.25 : 0.8)); }, { passive: false });
+  $("btnTlIn").addEventListener("click", () => setTlZoom(tl.zoom * 2));
+  $("btnTlOut").addEventListener("click", () => setTlZoom(tl.zoom / 2));
+})();
+
+/* ---- jog / shuttle dial ---- */
+const jog = { active: false, last: 0, lastT: 0, rot: 0, target: 0, wasPlaying: false, id: null };
+(function bindJog() {
+  const dial = $("jogDial"), ring = $("jogRing");
+  const angleOf = (e) => {
+    const r = ring.getBoundingClientRect();
+    return Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2));
+  };
+  ring.addEventListener("pointerdown", (e) => {
+    if (!vDur()) return;
+    e.preventDefault();
+    ring.setPointerCapture(e.pointerId);
+    jog.active = true; jog.id = e.pointerId;
+    jog.last = angleOf(e); jog.lastT = e.timeStamp || performance.now(); jog.omega = null;
+    jog.wasPlaying = !videoEl.paused;
+    if (jog.wasPlaying) videoEl.pause();
+    jog.target = vTime();
+    dial.classList.add("active");
+    clearTimeout(videoState.hideTimer);
+    $("jogHud").textContent = "돌려서 탐색";
+  });
+  ring.addEventListener("pointermove", (e) => {
+    if (!jog.active || e.pointerId !== jog.id) return;
+    e.preventDefault();
+    const a = angleOf(e);
+    let da = a - jog.last;
+    if (da > Math.PI) da -= 2 * Math.PI;
+    if (da < -Math.PI) da += 2 * Math.PI;
+    jog.last = a;
+    const now = e.timeStamp || performance.now();
+    const dt = Math.max(8, now - jog.lastT);
+    jog.lastT = now;
+    const inst = Math.abs(da) / dt * 1000; // rad/s
+    jog.omega = jog.omega == null ? inst : jog.omega * 0.6 + inst * 0.4; // smoothed so one late event is not a "flick"
+    const omega = jog.omega;
+    jog.rot += da;
+    ring.style.transform = `rotate(${jog.rot}rad)`;
+    const fdur = 1 / fpsDet.fps;
+    const RAD_PER_FRAME = 0.1745; // 10° = 1 frame when turning slowly
+    let secs = (da / RAD_PER_FRAME) * fdur;
+    let modeLabel = "프레임 단위";
+    if (omega > 3) {
+      const k = 1 + Math.min(11, (omega - 3) / 1.6);
+      secs *= k;
+      modeLabel = k > 6 ? "빠르게 (초 단위)" : "보통";
+    }
+    jog.target = Math.max(0, Math.min(vDur(), jog.target + secs));
+    seekTo(jog.target);
+    $("jogHud").textContent = `${modeLabel} · ${fmtPrecise(jog.target)}`;
+  });
+  const end = (e) => {
+    if (!jog.active || e.pointerId !== jog.id) return;
+    jog.active = false;
+    dial.classList.remove("active");
+    saveVideoPos();
+    if (jog.wasPlaying && videoState.jogResume) videoEl.play().catch(() => {});
+    setVideoUI(true, true);
+  };
+  ring.addEventListener("pointerup", end);
+  ring.addEventListener("pointercancel", end);
+  ring.addEventListener("wheel", (e) => { e.preventDefault(); frameStep(e.deltaY > 0 ? 1 : -1); }, { passive: false });
+})();
+
+/* ---- A-B loop ---- */
+function updateAbButton() {
+  const b = $("btnAB");
+  const A = videoState.a, B = videoState.b;
+  b.classList.toggle("on", A != null && B != null);
+  b.classList.toggle("half", A != null && B == null);
+  b.textContent = A == null ? "A-B 반복" : B == null ? "B 지점 찍기" : "A-B 반복 중";
+}
+function toggleAB() {
+  const t = vTime();
+  if (videoState.a == null) { videoState.a = t; toast("A 지점 " + fmtPrecise(t) + " · 한 번 더 누르면 B 지점", 1600); }
+  else if (videoState.b == null) {
+    if (t <= videoState.a + 0.03) { toast("B 지점은 A보다 뒤여야 합니다."); return; }
+    videoState.b = t;
+    toast("A-B 구간 반복 · 다시 누르면 해제", 1600);
+    seekTo(videoState.a);
+  } else { videoState.a = null; videoState.b = null; toast("구간 반복 해제", 1000); }
+  updateAbButton();
+  drawTimeline();
+}
+
+/* playback tick: loops, edit preview, timeline */
+let vTickRaf = 0;
+function vTick() {
+  vTickRaf = 0;
+  if (currentScreen !== "video") return;
+  const t = videoEl.currentTime;
+  if (!videoEl.paused && !videoEl.seeking) {
+    const e = videoState.edit;
+    if (e.preview) {
+      const segs = keepSegments();
+      if (segs.length) {
+        const inSeg = segs.find(([a, b]) => t >= a - 0.02 && t < b);
+        if (!inSeg) {
+          const next = segs.find(([a]) => a > t);
+          if (next) seekTo(next[0]);
+          else { videoEl.pause(); seekTo(segs[segs.length - 1][1] - 0.001); }
+        }
+      }
+    } else if (videoState.a != null && videoState.b != null && t >= videoState.b) {
+      seekTo(videoState.a);
+    }
+  }
+  updateSeekUi();
+  if (!videoEl.paused) vTickRaf = requestAnimationFrame(vTick);
+}
+videoEl.addEventListener("play", () => { if (!vTickRaf) vTickRaf = requestAnimationFrame(vTick); });
+
+/* ---- simple offline video editor ---- */
+function newEditState() { return { open: false, inT: null, outT: null, cuts: [], speed: 1, audio: true, method: "exact", preview: false }; }
+videoState.edit = newEditState();
+function onVideoLoaded(item) {
+  videoState.a = null; videoState.b = null;
+  const wasOpen = videoState.edit.open;
+  videoState.edit = newEditState();
+  videoState.edit.open = wasOpen;
+  tl.zoom = 1; setTlZoom(1);
+  seekQ.pending = null;
+  resetFps();
+  updateEditPanel();
+}
+function keepSegments() {
+  const e = videoState.edit, d = vDur();
+  const a = e.inT != null ? e.inT : 0, b = e.outT != null ? e.outT : d;
+  let segs = [[a, b]];
+  for (const [ca, cb] of e.cuts) {
+    const next = [];
+    for (const [sa, sb] of segs) {
+      if (cb <= sa || ca >= sb) { next.push([sa, sb]); continue; }
+      if (ca > sa) next.push([sa, ca]);
+      if (cb < sb) next.push([cb, sb]);
+    }
+    segs = next;
+  }
+  return segs.filter(([sa, sb]) => sb - sa > 0.04);
+}
+function editDuration() { return keepSegments().reduce((s, [a, b]) => s + (b - a), 0) / (videoState.edit.speed || 1); }
+function mkSeg(el, items, get, set) {
+  el.innerHTML = "";
+  for (const [v, label] of items) {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = label;
+    b.classList.toggle("on", get() === v);
+    b.addEventListener("click", () => { set(v); mkSeg(el, items, get, set); updateEditPanel(); });
+    el.appendChild(b);
+  }
+}
+function updateEditPanel() {
+  const e = videoState.edit;
+  $("editPanel").classList.toggle("hidden", !e.open);
+  $("screen-video").classList.toggle("editing", e.open);
+  $("btnEdit").classList.toggle("on", e.open);
+  if (!e.open) { drawTimeline(); return; }
+  const d = vDur();
+  const a = e.inT != null ? e.inT : 0, b = e.outT != null ? e.outT : d;
+  const cutTxt = e.cuts.length ? ` · 잘라냄 ${e.cuts.length}곳` : "";
+  $("epRange").textContent = `${fmtPrecise(a)} – ${fmtPrecise(b)}${cutTxt} → 결과 ${fmtTime(editDuration())}`;
+  $("btnIn").classList.toggle("on", e.inT != null);
+  $("btnOut").classList.toggle("on", e.outT != null);
+  $("btnEpPreview").classList.toggle("on", e.preview);
+  $("btnCutUndo").disabled = !e.cuts.length;
+  $("btnCutUndo").style.opacity = e.cuts.length ? "" : ".45";
+  mkSeg($("epSpeed"), [[0.25, "0.25×"], [0.5, "0.5×"], [1, "1×"], [1.5, "1.5×"], [2, "2×"]], () => e.speed, (v) => { e.speed = v; });
+  mkSeg($("epAudio"), [[true, "유지"], [false, "끄기"]], () => e.audio, (v) => { e.audio = v; });
+  mkSeg($("epMethod"), [["exact", "정확하게"], ["fast", "빠르게"]], () => e.method, (v) => {
+    e.method = v;
+    if (v === "fast") toast("빠르게: 재인코딩 없이 저장 (자르기만, 키프레임 기준이라 앞뒤가 조금 달라질 수 있음)", 3200);
+  });
+  drawTimeline();
+}
+function toggleEditPanel() {
+  const e = videoState.edit;
+  e.open = !e.open;
+  if (e.open) { videoEl.pause(); clearTimeout(videoState.hideTimer); }
+  else e.preview = false;
+  updateEditPanel();
+  setVideoUI(true);
+}
+function setInPoint() {
+  const e = videoState.edit, t = vTime();
+  if (e.outT != null && t >= e.outT - 0.04) { toast("시작점은 끝점보다 앞이어야 합니다."); return; }
+  e.inT = t; updateEditPanel(); toast("시작점 " + fmtPrecise(t), 1000);
+}
+function setOutPoint() {
+  const e = videoState.edit, t = vTime();
+  if (e.inT != null && t <= e.inT + 0.04) { toast("끝점은 시작점보다 뒤여야 합니다."); return; }
+  e.outT = t; updateEditPanel(); toast("끝점 " + fmtPrecise(t), 1000);
+}
+function cutAB() {
+  const A = videoState.a, B = videoState.b;
+  if (A == null || B == null) { toast("먼저 A-B 반복 버튼으로 지울 구간의 처음(A)과 끝(B)을 찍어 주세요.", 3000); return; }
+  videoState.edit.cuts.push([A, B]);
+  videoState.edit.cuts.sort((x, y) => x[0] - y[0]);
+  videoState.a = null; videoState.b = null;
+  updateAbButton();
+  updateEditPanel();
+  toast(`${fmtPrecise(A)} – ${fmtPrecise(B)} 구간을 잘라냅니다`, 1600);
+}
+function atempoChain(s) {
+  const parts = [];
+  while (s > 2.0001) { parts.push(2); s /= 2; }
+  while (s < 0.4999) { parts.push(0.5); s /= 0.5; }
+  parts.push(s);
+  return parts.map((p) => "atempo=" + (+p.toFixed(5))).join(",");
+}
+function buildExportTries(segs, spd, audio, method) {
+  const f = (x) => x.toFixed(3);
+  const tries = [];
+  const exact = (withAudio, vcodec) => {
+    const parts = [];
+    segs.forEach(([a, b], i) => {
+      parts.push(`[0:v]trim=start=${f(a)}:end=${f(b)},setpts=PTS-STARTPTS[v${i}]`);
+      if (withAudio) parts.push(`[0:a]atrim=start=${f(a)}:end=${f(b)},asetpts=PTS-STARTPTS[a${i}]`);
+    });
+    const ins = segs.map((_, i) => `[v${i}]` + (withAudio ? `[a${i}]` : "")).join("");
+    parts.push(`${ins}concat=n=${segs.length}:v=1:a=${withAudio ? 1 : 0}[vc]${withAudio ? "[ac]" : ""}`);
+    parts.push(`[vc]setpts=PTS/${spd},scale=trunc(iw/2)*2:trunc(ih/2)*2,format=yuv420p[vo]`);
+    if (withAudio) parts.push(`[ac]${spd === 1 ? "anull" : atempoChain(spd)}[ao]`);
+    const args = ["-i", "{in}", "-filter_complex", parts.join(";"), "-map", "[vo]"];
+    if (withAudio) args.push("-map", "[ao]", "-c:a", "aac", "-b:a", "160k");
+    else args.push("-an");
+    if (vcodec === "x264") args.push("-c:v", "libx264", "-preset", "ultrafast", "-crf", "20");
+    else args.push("-c:v", "mpeg4", "-q:v", "3");
+    args.push("-movflags", "+faststart", "out.mp4");
+    return args;
+  };
+  if (method === "fast" && segs.length === 1 && spd === 1) {
+    const [a, b] = segs[0];
+    tries.push(["-ss", f(a), "-i", "{in}", "-t", f(b - a), "-c", "copy"].concat(audio ? [] : ["-an"], ["-avoid_negative_ts", "make_zero", "-movflags", "+faststart", "out.mp4"]));
+  }
+  if (audio) tries.push(exact(true, "x264"));
+  tries.push(exact(false, "x264"));
+  tries.push(exact(false, "mpeg4"));
+  return tries;
+}
+function engineRpcProgress(worker, data, transfer, onProgress) {
+  return new Promise((resolve, reject) => {
+    const id = "e" + Math.random().toString(36).slice(2);
+    const onMsg = (ev) => {
+      const m = ev.data || {};
+      if (m.id !== id) return;
+      if (m.type === "progress") { onProgress && onProgress(m); return; }
+      worker.removeEventListener("message", onMsg);
+      if (m.type === "error") reject(new Error(m.error || "엔진 오류"));
+      else resolve(m);
+    };
+    worker.addEventListener("message", onMsg);
+    worker.postMessage(Object.assign({ id }, data), transfer || []);
+  });
+}
+function stemOf(name) { const b = baseName(name || "file"); const i = b.lastIndexOf("."); return i > 0 ? b.slice(0, i) : b; }
+async function exportEdit() {
+  const item = videoState.queue[videoState.index];
+  if (!item) return;
+  const e = videoState.edit;
+  const segs = keepSegments();
+  if (!segs.length) { toast("남는 구간이 없습니다. 시작점·끝점을 확인해 주세요."); return; }
+  const full = segs.length === 1 && segs[0][0] < 0.05 && segs[0][1] > vDur() - 0.05 && e.speed === 1 && e.audio;
+  if (full) { toast("바뀐 것이 없습니다. 시작점·끝점, 잘라내기, 속도 중 하나를 바꿔 주세요.", 2600); return; }
+  videoEl.pause();
+  const outDur = editDuration();
+  try {
+    const blob = await nodeToBlob(item);
+    await ensureFfmpeg("코덱 엔진을 불러오는 중…");
+    const t0 = Date.now();
+    showLoading("내보내는 중… 0%", 0);
+    const inName = "input." + (extOf(item.name) || "mp4");
+    const r = await engineRpcProgress(Engine.ffWorker, {
+      cmd: "exec", input: blob, inName, outName: "out.mp4",
+      tries: buildExportTries(segs, e.speed, e.audio, e.method),
+    }, [], (m) => {
+      let pct = 0;
+      if (m.time > 0) pct = (m.time / 1e6) / Math.max(0.1, outDur) * 100;
+      else if (m.progress > 0) pct = m.progress * 100;
+      pct = Math.max(0, Math.min(99, pct));
+      const el = (Date.now() - t0) / 1000;
+      const eta = pct > 3 ? Math.round(el * (100 - pct) / pct) : null;
+      showLoading(`내보내는 중… ${Math.round(pct)}%${eta != null ? ` · 약 ${fmtTime(eta)} 남음` : ""}`, pct);
+    });
+    hideLoading();
+    const data = r.data;
+    if (!data || data.length < 64) throw new Error("내보내기에 실패했습니다.");
+    const file = new File([data], stemOf(item.name) + "_편집.mp4", { type: "video/mp4", lastModified: Date.now() });
+    await deliverFile(file, { srcNode: item, album: "편집한 영상", kindLabel: "영상" });
+  } catch (err) {
+    hideLoading();
+    toast((err && err.message) ? "내보내기 실패: " + err.message : "내보내기에 실패했습니다.", 4000);
+  }
+}
+async function saveCurrentFrame() {
+  const item = videoState.queue[videoState.index];
+  const w = videoEl.videoWidth, h = videoEl.videoHeight;
+  if (!item || !w || !h) { toast("영상을 먼저 열어 주세요."); return; }
+  videoEl.pause();
+  const c = document.createElement("canvas");
+  c.width = w; c.height = h;
+  c.getContext("2d").drawImage(videoEl, 0, 0, w, h);
+  const blob = await new Promise((res) => c.toBlob(res, "image/png"));
+  if (!blob) { toast("장면을 저장하지 못했습니다."); return; }
+  const t = vTime();
+  const stamp = fmtPrecise(t).replace(/:/g, "m").replace(".", "s");
+  const file = new File([blob], `${stemOf(item.name)}_${stamp}.png`, { type: "image/png", lastModified: Date.now() });
+  await deliverFile(file, { srcNode: item, album: "편집한 사진", kindLabel: "사진" });
+}
+
+/* ---- save to app library + share / download ---- */
+function shareFile(file) {
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: file.name }).catch((e) => {
+        if (!e || e.name !== "AbortError") downloadFile(file);
+      });
+      return;
+    }
+  } catch (_) {}
+  downloadFile(file);
+}
+function downloadFile(file) {
+  const url = URL.createObjectURL(file);
+  const a = document.createElement("a");
+  a.href = url; a.download = file.name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+async function deliverFile(file, { srcNode, album, kindLabel }) {
+  let folder = null, err = null;
+  try {
+    folder = srcNode && srcNode.parent && isStoredFolder(srcNode.parent) && srcNode.stored
+      ? srcNode.parent
+      : await findOrCreateAlbum(album, null);
+    await importFilesToFolder(folder, [file]);
+    renderExplorer();
+  } catch (e) { err = e; folder = null; }
+  window.__lastDelivered = { name: file.name, size: file.size, type: file.type, folder: folder && folder.name, error: err && String(err.message || err) };
+  const canShare = !!(navigator.canShare && (() => { try { return navigator.canShare({ files: [file] }); } catch (_) { return false; } })());
+  showSheet(folder ? `앱의 "${folder.name}"에 ${kindLabel || "파일"}을 저장했어요` : `앱에 저장하지 못했어요${err ? " · " + friendlyError(err) : ""}`, [
+    canShare ? { label: kindLabel === "영상" ? "공유 · 사진 앱에 '비디오 저장'" : "공유 · 사진 앱에 '이미지 저장'", fn: () => shareFile(file) } : null,
+    { label: "파일로 내려받기", fn: () => downloadFile(file) },
+  ].filter(Boolean));
+}
+
+/* bindings */
+$("btnFrameBack").addEventListener("click", () => frameStep(-1));
+$("btnFrameFwd").addEventListener("click", () => frameStep(1));
+$("btnAB").addEventListener("click", toggleAB);
+$("btnEdit").addEventListener("click", toggleEditPanel);
+$("btnSnap").addEventListener("click", saveCurrentFrame);
+$("btnIn").addEventListener("click", setInPoint);
+$("btnOut").addEventListener("click", setOutPoint);
+$("btnCutAB").addEventListener("click", cutAB);
+$("btnCutUndo").addEventListener("click", () => { videoState.edit.cuts.pop(); updateEditPanel(); });
+$("btnEpPreview").addEventListener("click", () => {
+  const e = videoState.edit;
+  e.preview = !e.preview;
+  updateEditPanel();
+  if (e.preview) { const s = keepSegments(); if (s.length) seekTo(s[0][0]); videoEl.play().catch(() => {}); }
+});
+$("btnEpReset").addEventListener("click", () => {
+  const open = videoState.edit.open;
+  videoState.edit = newEditState(); videoState.edit.open = open;
+  updateEditPanel();
+});
+$("btnExport").addEventListener("click", exportEdit);
+$("videoChrome").addEventListener("pointerdown", (e) => {
+  if (e.target.closest(".bottombar, .topbar")) clearTimeout(videoState.hideTimer);
+});
+$("videoChrome").addEventListener("pointerup", () => { if (!videoState.edit.open) setVideoUI(true, true); });
+window.addEventListener("resize", () => { if (currentScreen === "video") drawTimeline(); });
+
+
+/* ========== v4: offline image editor (canvas) ========== */
+const ie = {
+  node: null, work: null, undo: [], adj: { b: 0, c: 0, s: 0, w: 0 }, tool: "adjust",
+  crop: null, ratio: "free", fx: { mode: "brush", size: 36, strength: 50 },
+  effect: null, effectKey: "", view: { s: 1, ox: 0, oy: 0, dpr: 1, W: 0, H: 0 },
+  base: null, raf: 0, baseDirty: true, returnTo: "explorer", dirty: false, drag: null,
+};
+function mkCanvas(w, h) { const c = document.createElement("canvas"); c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h)); return c; }
+function loadImageEl(url) {
+  return new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error("사진을 열 수 없습니다.")); im.src = url; });
+}
+async function openImageEditor(node, returnTo) {
+  if (!node || node.kind !== "image") return;
+  showLoading("사진을 여는 중…");
+  try {
+    const url = await nodeUrl(node, "ie:");
+    const img = await loadImageEl(url);
+    let w = img.naturalWidth, h = img.naturalHeight;
+    const MAX_AREA = 16000000; // iOS canvas limit is ~16.7MP
+    const s = w * h > MAX_AREA ? Math.sqrt(MAX_AREA / (w * h)) : 1;
+    const c = mkCanvas(w * s, h * s);
+    c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+    revokeUrl("ie:" + node.id);
+    Object.assign(ie, { node, work: c, undo: [], adj: { b: 0, c: 0, s: 0, w: 0 }, crop: null, ratio: "free", effect: null, effectKey: "", baseDirty: true, returnTo: returnTo || currentScreen, dirty: false, drag: null });
+    $("ieTitle").textContent = "사진 편집";
+    showScreen("imgedit");
+    setIeTool("adjust");
+    requestAnimationFrame(() => { ieLayout(); ieRender(); });
+  } catch (e) {
+    toast(friendlyError(e));
+  } finally {
+    hideLoading();
+  }
+}
+function closeImageEditor() {
+  const back = ie.returnTo === "reader" && reader.pages.length ? "reader" : "explorer";
+  ie.work = null; ie.undo = []; ie.effect = null; ie.base = null;
+  showScreen(back);
+  if (back === "explorer") renderExplorer();
+  else { applyReaderLook(); renderReaderViews(); }
+}
+function ieLayout() {
+  const st = $("ieStage"), c = $("ieCanvas");
+  const W = st.clientWidth, H = st.clientHeight;
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
+  c.style.width = W + "px"; c.style.height = H + "px";
+  const pad = 14;
+  const ww = ie.work.width, wh = ie.work.height;
+  const s = Math.min((W - pad * 2) / ww, (H - pad * 2) / wh);
+  ie.view = { s, ox: (W - ww * s) / 2, oy: (H - wh * s) / 2, dpr, W, H };
+  ie.baseDirty = true;
+  ieUpdateCropBox();
+}
+function buildLut(b, c) {
+  const lut = new Uint8ClampedArray(256);
+  const cc = c * 2.2;
+  const f = (259 * (cc + 255)) / (255 * (259 - cc));
+  for (let i = 0; i < 256; i++) lut[i] = f * (i + b * 1.1 - 128) + 128;
+  return lut;
+}
+function applyAdj(d, adj) {
+  if (!adj.b && !adj.c && !adj.s && !adj.w) return;
+  const lut = buildLut(adj.b, adj.c);
+  const sat = 1 + adj.s / 100;
+  const wr = adj.w * 0.4, wg = adj.w * 0.08, wb = -adj.w * 0.4;
+  for (let i = 0; i < d.length; i += 4) {
+    let r = lut[d[i]], g = lut[d[i + 1]], b = lut[d[i + 2]];
+    if (sat !== 1) {
+      const y = 0.299 * r + 0.587 * g + 0.114 * b;
+      r = y + (r - y) * sat; g = y + (g - y) * sat; b = y + (b - y) * sat;
+    }
+    d[i] = r + wr; d[i + 1] = g + wg; d[i + 2] = b + wb;
+  }
+}
+function ieRender() {
+  if (ie.raf) return;
+  ie.raf = requestAnimationFrame(() => {
+    ie.raf = 0;
+    if (!ie.work || currentScreen !== "imgedit") return;
+    const v = ie.view, c = $("ieCanvas"), ctx = c.getContext("2d");
+    const pw = Math.max(1, Math.round(ie.work.width * v.s * v.dpr)), ph = Math.max(1, Math.round(ie.work.height * v.s * v.dpr));
+    if (ie.baseDirty || !ie.base || ie.base.width !== pw || ie.base.height !== ph) {
+      const b = ie.base && ie.base.width === pw && ie.base.height === ph ? ie.base : mkCanvas(pw, ph);
+      const bc = b.getContext("2d");
+      bc.imageSmoothingQuality = "high";
+      bc.clearRect(0, 0, pw, ph);
+      bc.drawImage(ie.work, 0, 0, pw, ph);
+      ie.base = b;
+      ie.baseData = bc.getImageData(0, 0, pw, ph);
+      ie.baseDirty = false;
+    }
+    const out = new ImageData(new Uint8ClampedArray(ie.baseData.data), pw, ph);
+    applyAdj(out.data, ie.adj);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.putImageData(out, Math.round(v.ox * v.dpr), Math.round(v.oy * v.dpr));
+  });
+}
+function iePushUndo() {
+  const w = ie.work;
+  const copy = mkCanvas(w.width, w.height);
+  copy.getContext("2d").drawImage(w, 0, 0);
+  ie.undo.push(copy);
+  const limit = w.width * w.height > 8e6 ? 3 : 8;
+  while (ie.undo.length > limit) ie.undo.shift();
+  ie.dirty = true;
+}
+function ieSetWork(c) {
+  ie.work = c; ie.effect = null; ie.effectKey = ""; ie.baseDirty = true;
+  ieLayout();
+  if (ie.tool === "crop") ieResetCrop();
+  ieRender();
+}
+function ieUndo() {
+  if (!ie.undo.length) { toast("되돌릴 작업이 없습니다.", 1000); return; }
+  ieSetWork(ie.undo.pop());
+}
+function toWork(clientX, clientY) {
+  const r = $("ieStage").getBoundingClientRect(), v = ie.view;
+  return { x: (clientX - r.left - v.ox) / v.s, y: (clientY - r.top - v.oy) / v.s };
+}
+
+/* crop */
+const IE_RATIOS = [["free", "자유"], ["orig", "원본"], ["1:1", "1:1"], ["4:5", "4:5"], ["3:4", "3:4"], ["2:3", "2:3"], ["9:16", "9:16"], ["4:3", "4:3"], ["16:9", "16:9"]];
+function ieRatioValue() {
+  if (ie.ratio === "free") return null;
+  if (ie.ratio === "orig") return ie.work.width / ie.work.height;
+  const [a, b] = ie.ratio.split(":").map(Number);
+  return a / b;
+}
+function ieResetCrop() {
+  ie.cropTouched = false;
+  const W = ie.work.width, H = ie.work.height, r = ieRatioValue();
+  if (!r) ie.crop = { x: 0, y: 0, w: W, h: H };
+  else {
+    let w = W, h = W / r;
+    if (h > H) { h = H; w = H * r; }
+    ie.crop = { x: (W - w) / 2, y: (H - h) / 2, w, h };
+  }
+  ieUpdateCropBox();
+}
+function ieUpdateCropBox() {
+  const box = $("ieCrop");
+  if (ie.tool !== "crop" || !ie.crop || !ie.work) { box.classList.add("hidden"); return; }
+  const v = ie.view, c = ie.crop;
+  box.classList.remove("hidden");
+  box.style.left = v.ox + c.x * v.s + "px";
+  box.style.top = v.oy + c.y * v.s + "px";
+  box.style.width = c.w * v.s + "px";
+  box.style.height = c.h * v.s + "px";
+}
+function ieCropIsFull() {
+  const c = ie.crop;
+  return !c || (c.x < 1 && c.y < 1 && c.w > ie.work.width - 1 && c.h > ie.work.height - 1);
+}
+function ieApplyCrop(onlyIfTouched) {
+  if (!ie.crop || ieCropIsFull()) return false;
+  if (onlyIfTouched && !ie.cropTouched) return false;
+  const c = ie.crop;
+  const x = Math.max(0, Math.round(c.x)), y = Math.max(0, Math.round(c.y));
+  const w = Math.min(ie.work.width - x, Math.round(c.w)), h = Math.min(ie.work.height - y, Math.round(c.h));
+  if (w < 8 || h < 8) return false;
+  iePushUndo();
+  const out = mkCanvas(w, h);
+  out.getContext("2d").drawImage(ie.work, x, y, w, h, 0, 0, w, h);
+  ieSetWork(out);
+  return true;
+}
+function ieCropDrag(kind, start, p) {
+  const W = ie.work.width, H = ie.work.height, r = ieRatioValue();
+  const s0 = start.crop, MIN = Math.max(24, Math.min(W, H) * 0.03);
+  const dx = p.x - start.p.x, dy = p.y - start.p.y;
+  let { x, y, w, h } = s0;
+  if (kind === "move") {
+    x = Math.max(0, Math.min(W - w, s0.x + dx));
+    y = Math.max(0, Math.min(H - h, s0.y + dy));
+  } else {
+    const left = kind === "tl" || kind === "bl", top = kind === "tl" || kind === "tr";
+    const ax = left ? s0.x + s0.w : s0.x, ay = top ? s0.y + s0.h : s0.y; // anchor (opposite corner)
+    let px = Math.max(0, Math.min(W, (left ? s0.x : s0.x + s0.w) + dx));
+    let py = Math.max(0, Math.min(H, (top ? s0.y : s0.y + s0.h) + dy));
+    w = Math.max(MIN, Math.abs(px - ax)); h = Math.max(MIN, Math.abs(py - ay));
+    if (r) {
+      if (w / h > r) w = h * r; else h = w / r;
+      const maxW = left ? ax : W - ax, maxH = top ? ay : H - ay;
+      if (w > maxW) { w = maxW; h = w / r; }
+      if (h > maxH) { h = maxH; w = h * r; }
+    } else {
+      w = Math.min(w, left ? ax : W - ax); h = Math.min(h, top ? ay : H - ay);
+    }
+    x = left ? ax - w : ax; y = top ? ay - h : ay;
+  }
+  ie.crop = { x, y, w, h };
+  ie.cropTouched = true;
+  ieUpdateCropBox();
+}
+
+/* rotate / flip */
+function ieTransform(kind) {
+  iePushUndo();
+  const w = ie.work.width, h = ie.work.height;
+  const rot = kind === "left" || kind === "right";
+  const out = mkCanvas(rot ? h : w, rot ? w : h);
+  const ctx = out.getContext("2d");
+  if (kind === "right") { ctx.translate(h, 0); ctx.rotate(Math.PI / 2); }
+  else if (kind === "left") { ctx.translate(0, w); ctx.rotate(-Math.PI / 2); }
+  else if (kind === "flipH") { ctx.translate(w, 0); ctx.scale(-1, 1); }
+  else if (kind === "flipV") { ctx.translate(0, h); ctx.scale(1, -1); }
+  ctx.drawImage(ie.work, 0, 0);
+  ieSetWork(out);
+}
+
+/* mosaic / blur (no ctx.filter: works on iOS Safari) */
+function ieEnsureEffect() {
+  const key = ie.tool + ":" + ie.fx.strength + ":" + ie.work.width + "x" + ie.work.height;
+  if (ie.effect && ie.effectKey === key) return ie.effect;
+  const W = ie.work.width, H = ie.work.height, long = Math.max(W, H);
+  const out = mkCanvas(W, H), oc = out.getContext("2d");
+  if (ie.tool === "mosaic") {
+    const block = Math.max(4, Math.round(long * (0.006 + ie.fx.strength / 100 * 0.045)));
+    const sw = Math.ceil(W / block), sh = Math.ceil(H / block);
+    // halve step by step so every block is a real average (WebKit's one-step downscale just samples)
+    let src = ie.work;
+    while (src.width / 2 >= sw * 1.5 && src.height / 2 >= sh * 1.5) {
+      const n = mkCanvas(Math.round(src.width / 2), Math.round(src.height / 2)), nc = n.getContext("2d");
+      nc.imageSmoothingEnabled = true; nc.imageSmoothingQuality = "high";
+      nc.drawImage(src, 0, 0, n.width, n.height);
+      src = n;
+    }
+    const t = mkCanvas(sw, sh), tc = t.getContext("2d");
+    tc.imageSmoothingEnabled = true; tc.imageSmoothingQuality = "high";
+    tc.drawImage(src, 0, 0, sw, sh);
+    oc.imageSmoothingEnabled = false;
+    oc.drawImage(t, 0, 0, sw * block, sh * block);
+  } else {
+    const radius = Math.max(2, long * (0.003 + ie.fx.strength / 100 * 0.03));
+    let cur = ie.work, cw = W, ch = H;
+    const steps = [];
+    while (cw / 2 >= W / radius && cw > 8 && ch > 8) {
+      cw = Math.max(1, Math.round(cw / 2)); ch = Math.max(1, Math.round(ch / 2));
+      const n = mkCanvas(cw, ch), nc = n.getContext("2d");
+      nc.imageSmoothingEnabled = true; nc.imageSmoothingQuality = "high";
+      nc.drawImage(cur, 0, 0, cw, ch);
+      steps.push(n); cur = n;
+    }
+    for (let i = steps.length - 2; i >= 0; i--) {
+      const n = steps[i], nc = n.getContext("2d");
+      nc.imageSmoothingEnabled = true; nc.imageSmoothingQuality = "high";
+      nc.clearRect(0, 0, n.width, n.height);
+      nc.drawImage(cur, 0, 0, n.width, n.height);
+      cur = n;
+    }
+    oc.imageSmoothingEnabled = true; oc.imageSmoothingQuality = "high";
+    oc.drawImage(cur, 0, 0, W, H);
+  }
+  ie.effect = out; ie.effectKey = key;
+  return out;
+}
+function ieStampPath(points, r) {
+  const ctx = ie.work.getContext("2d");
+  ctx.save();
+  ctx.beginPath();
+  for (const p of points) { ctx.moveTo(p.x + r, p.y); ctx.arc(p.x, p.y, r, 0, Math.PI * 2); }
+  ctx.clip();
+  ctx.drawImage(ie.effect, 0, 0);
+  ctx.restore();
+  ie.baseDirty = true;
+  ieRender();
+}
+function ieStampRect(a, b) {
+  const x = Math.max(0, Math.min(a.x, b.x)), y = Math.max(0, Math.min(a.y, b.y));
+  const w = Math.min(ie.work.width, Math.max(a.x, b.x)) - x, h = Math.min(ie.work.height, Math.max(a.y, b.y)) - y;
+  if (w < 2 || h < 2) return;
+  iePushUndo();
+  ieEnsureEffect();
+  const ctx = ie.work.getContext("2d");
+  ctx.drawImage(ie.effect, x, y, w, h, x, y, w, h);
+  ie.baseDirty = true;
+  ieRender();
+}
+
+/* tool panels */
+function ieRangeRow(label, min, max, val, oninput, onchange) {
+  const row = document.createElement("div");
+  row.className = "ie-row";
+  row.innerHTML = `<label></label><input type="range" min="${min}" max="${max}" step="1"><span class="val"></span>`;
+  row.querySelector("label").textContent = label;
+  const r = row.querySelector("input"), v = row.querySelector(".val");
+  r.value = String(val); v.textContent = String(val);
+  r.addEventListener("input", () => { v.textContent = r.value; oninput(+r.value); });
+  if (onchange) r.addEventListener("change", () => onchange(+r.value));
+  return row;
+}
+function ieChipRow(items, isOn, onTap) {
+  const row = document.createElement("div");
+  row.className = "ie-row";
+  for (const [v, label] of items) {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "v-chip"; b.textContent = label;
+    b.classList.toggle("on", !!isOn(v));
+    b.addEventListener("click", () => { onTap(v); if (isOn !== null) row.querySelectorAll(".v-chip").forEach((x, i) => x.classList.toggle("on", !!isOn(items[i][0]))); });
+    row.appendChild(b);
+  }
+  return row;
+}
+function setIeTool(tool) {
+  if (ie.tool === "crop" && tool !== "crop" && ie.work) ieApplyCrop(true);
+  ie.tool = tool;
+  $("ieTabs").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.tool === tool));
+  const opts = $("ieOpts");
+  opts.innerHTML = "";
+  $("ieCursor").classList.add("hidden");
+  $("ieSel").classList.add("hidden");
+  if (tool === "crop") {
+    opts.appendChild(ieChipRow(IE_RATIOS, (v) => ie.ratio === v, (v) => { ie.ratio = v; ieResetCrop(); ie.cropTouched = v !== "free"; }));
+    opts.appendChild(ieChipRow([["apply", "자르기 적용"], ["reset", "되돌리기"]], () => false, (v) => {
+      if (v === "apply") { if (!ieApplyCrop()) toast("모서리를 끌어 자를 영역을 정하세요.", 1400); }
+      else ieResetCrop();
+    }));
+    ieResetCrop();
+  } else if (tool === "rotate") {
+    opts.appendChild(ieChipRow([["left", "⟲ 왼쪽 90°"], ["right", "⟳ 오른쪽 90°"], ["flipH", "⇋ 좌우 반전"], ["flipV", "⇵ 상하 반전"]], () => false, ieTransform));
+  } else if (tool === "adjust") {
+    const set = (k) => (v) => { ie.adj[k] = v; ie.dirty = true; ieRender(); };
+    opts.appendChild(ieRangeRow("밝기", -100, 100, ie.adj.b, set("b")));
+    opts.appendChild(ieRangeRow("대비", -100, 100, ie.adj.c, set("c")));
+    opts.appendChild(ieRangeRow("채도", -100, 100, ie.adj.s, set("s")));
+    opts.appendChild(ieRangeRow("색온도", -100, 100, ie.adj.w, set("w")));
+    opts.appendChild(ieChipRow([["reset", "조정 초기화"]], () => false, () => { ie.adj = { b: 0, c: 0, s: 0, w: 0 }; setIeTool("adjust"); ieRender(); }));
+  } else if (tool === "mosaic" || tool === "blur") {
+    opts.appendChild(ieChipRow([["brush", "브러시"], ["rect", "사각형"]], (v) => ie.fx.mode === v, (v) => { ie.fx.mode = v; }));
+    opts.appendChild(ieRangeRow("굵기", 8, 120, ie.fx.size, (v) => { ie.fx.size = v; }));
+    opts.appendChild(ieRangeRow(tool === "mosaic" ? "칸 크기" : "흐림 정도", 1, 100, ie.fx.strength, (v) => { ie.fx.strength = v; }));
+  }
+  ieUpdateCropBox();
+  ieRender();
+}
+
+(function bindImageEditor() {
+  const st = $("ieStage");
+  st.addEventListener("pointerdown", (e) => {
+    if (!ie.work) return;
+    e.preventDefault();
+    st.setPointerCapture(e.pointerId);
+    const p = toWork(e.clientX, e.clientY);
+    if (ie.tool === "crop") {
+      const h = e.target.closest(".h");
+      const inBox = e.target.closest("#ieCrop");
+      if (!h && !inBox) return;
+      ie.drag = { kind: h ? h.dataset.h : "move", p, crop: Object.assign({}, ie.crop), id: e.pointerId };
+      return;
+    }
+    if (ie.tool === "mosaic" || ie.tool === "blur") {
+      ieEnsureEffect();
+      if (ie.fx.mode === "rect") { ie.drag = { kind: "rect", p, id: e.pointerId }; return; }
+      iePushUndo();
+      ieEnsureEffect();
+      const r = ie.fx.size / 2 / ie.view.s;
+      ie.drag = { kind: "brush", last: p, r, id: e.pointerId };
+      ieStampPath([p], r);
+      ieShowCursor(e);
+    }
+  });
+  st.addEventListener("pointermove", (e) => {
+    if (ie.tool === "mosaic" || ie.tool === "blur") { if (ie.fx.mode === "brush" && e.pointerType !== "touch") ieShowCursor(e); }
+    const d = ie.drag;
+    if (!d || d.id !== e.pointerId) return;
+    const p = toWork(e.clientX, e.clientY);
+    if (d.kind === "brush") {
+      const pts = [];
+      const dist = Math.hypot(p.x - d.last.x, p.y - d.last.y);
+      const stepLen = Math.max(1, d.r / 3);
+      const n = Math.ceil(dist / stepLen);
+      for (let i = 1; i <= n; i++) pts.push({ x: d.last.x + (p.x - d.last.x) * i / n, y: d.last.y + (p.y - d.last.y) * i / n });
+      if (pts.length) ieStampPath(pts, d.r);
+      d.last = p;
+      ieShowCursor(e);
+    } else if (d.kind === "rect") {
+      const v = ie.view, sel = $("ieSel");
+      sel.classList.remove("hidden");
+      const x0 = Math.min(d.p.x, p.x), y0 = Math.min(d.p.y, p.y);
+      sel.style.left = v.ox + x0 * v.s + "px"; sel.style.top = v.oy + y0 * v.s + "px";
+      sel.style.width = Math.abs(p.x - d.p.x) * v.s + "px"; sel.style.height = Math.abs(p.y - d.p.y) * v.s + "px";
+      d.cur = p;
+    } else {
+      ieCropDrag(d.kind, d, p);
+    }
+  });
+  const end = (e) => {
+    const d = ie.drag;
+    if (!d || d.id !== e.pointerId) return;
+    ie.drag = null;
+    if (d.kind === "rect") { $("ieSel").classList.add("hidden"); if (d.cur) ieStampRect(d.p, d.cur); }
+    if (d.kind === "brush" && e.pointerType === "touch") $("ieCursor").classList.add("hidden");
+    if (d.kind === "brush" || d.kind === "rect") { ie.effect = null; ie.effectKey = ""; }
+  };
+  st.addEventListener("pointerup", end);
+  st.addEventListener("pointercancel", end);
+  $("ieTabs").addEventListener("click", (e) => { const b = e.target.closest("button[data-tool]"); if (b) setIeTool(b.dataset.tool); });
+  $("btnIeUndo").addEventListener("click", ieUndo);
+  $("btnIeCancel").addEventListener("click", async () => {
+    if (ie.dirty || (ie.tool === "crop" && ie.cropTouched && !ieCropIsFull())) {
+      const r = await dialogSheet({ title: "편집을 취소할까요?", message: "저장하지 않은 변경 사항은 사라집니다. 원본은 그대로입니다.", confirmLabel: "편집 취소", danger: true });
+      if (!r) return;
+    }
+    closeImageEditor();
+  });
+  $("btnIeSave").addEventListener("click", ieSave);
+  window.addEventListener("resize", () => { if (currentScreen === "imgedit" && ie.work) { ieLayout(); ieRender(); } });
+})();
+function ieShowCursor(e) {
+  const c = $("ieCursor"), r = $("ieStage").getBoundingClientRect();
+  c.classList.remove("hidden");
+  c.style.width = c.style.height = ie.fx.size + "px";
+  c.style.left = e.clientX - r.left + "px"; c.style.top = e.clientY - r.top + "px";
+}
+async function ieSave() {
+  if (!ie.work) return;
+  if (ie.tool === "crop") ieApplyCrop(true);
+  showLoading("저장하는 중…");
+  try {
+    const W = ie.work.width, H = ie.work.height;
+    const out = mkCanvas(W, H), ctx = out.getContext("2d");
+    ctx.drawImage(ie.work, 0, 0);
+    const a = ie.adj;
+    if (a.b || a.c || a.s || a.w) {
+      const band = 256; // process in strips to keep memory low on iPhone
+      for (let y = 0; y < H; y += band) {
+        const h = Math.min(band, H - y);
+        const data = ctx.getImageData(0, y, W, h);
+        applyAdj(data.data, a);
+        ctx.putImageData(data, 0, y);
+      }
+    }
+    const src = ie.node;
+    const ext = extOf(src.name);
+    const png = ext === "png" || ext === "gif" || ext === "webp";
+    const type = png ? "image/png" : "image/jpeg";
+    const blob = await new Promise((res) => out.toBlob(res, type, 0.93));
+    if (!blob) throw new Error("이미지를 만들 수 없습니다.");
+    const file = new File([blob], `${stemOf(src.name)}_편집.${png ? "png" : "jpg"}`, { type, lastModified: Date.now() });
+    hideLoading();
+    ie.dirty = false;
+    closeImageEditor();
+    await deliverFile(file, { srcNode: src, album: "편집한 사진", kindLabel: "사진" });
+  } catch (e) {
+    hideLoading();
+    toast(friendlyError(e));
   }
 }
 
@@ -4305,7 +6212,7 @@ function openPlaylistScreen() {
 let currentScreen = "explorer";
 function showScreen(name) {
   currentScreen = name;
-  ["explorer","reader","video","playlist"].forEach((s) => {
+  ["explorer","reader","video","playlist","imgedit"].forEach((s) => {
     $("screen-" + s).classList.toggle("hidden", s !== name);
   });
 }
@@ -4427,33 +6334,12 @@ $("enginePick").addEventListener("change", async (e) => {
 });
 $("btnReaderBack").addEventListener("click", closeReader);
 $("btnReaderSettings").addEventListener("click", showReaderSettings);
-$("pageSlider").addEventListener("input", async () => {
-  const v = parseInt($("pageSlider").value, 10) - 1;
-  reader.index = alignIndex(v);
-  await renderReaderViews();
-});
 $("btnVideoBack").addEventListener("click", closeVideo);
 $("btnPlay").addEventListener("click", togglePlay);
-$("btnSkipBack").addEventListener("click", () => skip(-10));
-$("btnSkipFwd").addEventListener("click", () => skip(10));
 $("btnPrevVid").addEventListener("click", prevVideo);
 $("btnNextVid").addEventListener("click", nextVideo);
 $("btnSpeed").addEventListener("click", cycleSpeed);
 $("btnVideoFs").addEventListener("click", toggleVideoFullscreen);
-$("seekBar").addEventListener("pointerdown", () => { videoState.seeking = true; });
-$("seekBar").addEventListener("input", () => {
-  const t = parseFloat($("seekBar").value);
-  $("timeLabel").textContent = `${fmtTime(t)} / ${fmtTime(videoEl.duration || 0)}`;
-});
-$("seekBar").addEventListener("change", () => {
-  videoEl.currentTime = parseFloat($("seekBar").value) || 0;
-  videoState.seeking = false;
-  saveVideoPos();
-});
-$("seekBar").addEventListener("pointerup", () => {
-  videoEl.currentTime = parseFloat($("seekBar").value) || 0;
-  videoState.seeking = false;
-});
 $("btnPlBack").addEventListener("click", () => { showScreen("explorer"); renderExplorer(); });
 $("btnPlClear").addEventListener("click", () => {
   if (!playlist.length) return;
@@ -4461,48 +6347,99 @@ $("btnPlClear").addEventListener("click", () => {
 });
 $("btnPlPlay").addEventListener("click", () => playPlaylistFrom(0));
 
-window.addEventListener("resize", () => {
-  if (currentScreen === "reader") {
-    cancelFlip();
+// Re-layout only when the stage size really changes (debounced). iOS fires resize events for
+// things like the home indicator / toolbar settling; re-rendering mid-turn made pages jump.
+let readerLayoutKey = "";
+let readerResizeTimer = 0;
+function onReaderResize() {
+  clearTimeout(readerResizeTimer);
+  readerResizeTimer = setTimeout(() => {
+    if (currentScreen !== "reader") return;
+    const st = $("stage");
+    const key = st.clientWidth + "x" + st.clientHeight;
+    if (key === readerLayoutKey) return;
+    readerLayoutKey = key;
+    if (reader.fit === "webtoon") { updateReaderChrome(); return; }
+    if (reader.animating || flip.active) cancelFlip();
     reader.index = alignIndex(reader.index);
     renderReaderViews();
-  }
-});
-window.addEventListener("orientationchange", () => {
-  setTimeout(() => {
-    if (currentScreen === "reader") {
-      cancelFlip();
-      reader.index = alignIndex(reader.index);
-      renderReaderViews();
-    }
-  }, 200);
-});
+  }, 120);
+}
+window.addEventListener("resize", onReaderResize);
+window.addEventListener("orientationchange", () => setTimeout(onReaderResize, 250));
 
 window.addEventListener("keydown", (e) => {
   if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (!overlay.classList.contains("hidden")) { if (e.key === "Escape") closeSheet(); return; }
   if (currentScreen === "reader") {
-    if (e.key === "ArrowRight") { e.preventDefault(); turnToPhysical(1, true); }
-    else if (e.key === "ArrowLeft") { e.preventDefault(); turnToPhysical(-1, true); }
-    else if (e.key === "Escape") { if (!reader.ui) setReaderUI(true); else closeReader(); }
-    else if (e.key === "Home") { reader.index = alignIndex(0); renderReaderViews(); }
-    else if (e.key === "End") { reader.index = alignIndex(pageCount() - 1); renderReaderViews(); }
-    else if (e.key === "f" || e.key === "F") {
+    const k = e.key;
+    const gridOpen = !$("pageGrid").classList.contains("hidden");
+    if (gridOpen) { if (k === "Escape" || k === "g" || k === "G") { closePageGrid(); } return; }
+    const web = reader.fit === "webtoon";
+    const fwd = reader.rtl && !web ? -1 : 1;
+    if (k === "ArrowRight") { e.preventDefault(); web ? turnToPhysical(1, true) : turnToPhysical(1, true); }
+    else if (k === "ArrowLeft") { e.preventDefault(); web ? turnToPhysical(-1, true) : turnToPhysical(-1, true); }
+    else if (k === "ArrowDown" && (web || reader.zoom > 1.02)) { e.preventDefault(); if (web) turnToPhysical(1, true); else { reader.panY -= 120; applyZoom(); } }
+    else if (k === "ArrowUp" && (web || reader.zoom > 1.02)) { e.preventDefault(); if (web) turnToPhysical(-1, true); else { reader.panY += 120; applyZoom(); } }
+    else if (k === " " || k === "PageDown") { e.preventDefault(); if (e.shiftKey) goReadingOrScroll(-1); else goReadingOrScroll(1); }
+    else if (k === "PageUp") { e.preventDefault(); goReadingOrScroll(-1); }
+    else if (k === "Escape") { if (!reader.ui) setReaderUI(true, true); else closeReader(); }
+    else if (k === "Home") { readerGoTo(0); }
+    else if (k === "End") { readerGoTo(pageCount() - 1); }
+    else if (k === "g" || k === "G") openPageGrid();
+    else if (k === "m" || k === "M") cycleFit();
+    else if (k === "s" || k === "S") showReaderSettings();
+    else if (k === "d" || k === "D") $("btnSpreadQuick").click();
+    else if (k === "r" || k === "R") $("btnDirQuick").click();
+    else if (k === "e" || k === "E") $("btnImgEdit").click();
+    else if ((k === "+" || k === "=") && !web) { const { W, H } = stageSize(); zoomAt(reader.zoom * 1.25, W / 2, H / 2); }
+    else if ((k === "-" || k === "_") && !web) { const { W, H } = stageSize(); zoomAt(reader.zoom / 1.25, W / 2, H / 2); }
+    else if (k === "0" && !web) resetZoom();
+    else if (k === "f" || k === "F") {
       const el = $("screen-reader");
       if (document.fullscreenElement) document.exitFullscreen();
       else if (el.requestFullscreen) el.requestFullscreen();
     }
+    void fwd;
   } else if (currentScreen === "video") {
-    if (e.key === " " || e.key === "k" || e.key === "K") { e.preventDefault(); togglePlay(); }
-    else if (e.key === "ArrowRight") { e.preventDefault(); if (e.shiftKey) nextVideo(); else skip(10); }
-    else if (e.key === "ArrowLeft") { e.preventDefault(); if (e.shiftKey) prevVideo(); else skip(-10); }
-    else if (e.key === "Escape") closeVideo();
-    else if (e.key === "f" || e.key === "F") toggleVideoFullscreen();
-  } else if (e.key === "Escape") closeSheet();
+    const k = e.key;
+    if (k === " " || k === "k" || k === "K") { e.preventDefault(); togglePlay(); }
+    else if (k === "ArrowRight") { e.preventDefault(); if (e.shiftKey) nextVideo(); else skip(5); }
+    else if (k === "ArrowLeft") { e.preventDefault(); if (e.shiftKey) prevVideo(); else skip(-5); }
+    else if (k === "." || k === ">") frameStep(1);
+    else if (k === "," || k === "<") frameStep(-1);
+    else if (k === "j" || k === "J") skip(-10);
+    else if (k === "l" || k === "L") skip(10);
+    else if (k === "a" || k === "A") toggleAB();
+    else if (k === "i" || k === "I") { if (!videoState.edit.open) toggleEditPanel(); setInPoint(); }
+    else if (k === "o" || k === "O") { if (!videoState.edit.open) toggleEditPanel(); setOutPoint(); }
+    else if (k === "e" || k === "E") toggleEditPanel();
+    else if (k === "+" || k === "=") setTlZoom(tl.zoom * 2);
+    else if (k === "-" || k === "_") setTlZoom(tl.zoom / 2);
+    else if (k === "Escape") closeVideo();
+    else if (k === "f" || k === "F") toggleVideoFullscreen();
+    setVideoUI(true, true);
+  } else if (currentScreen === "imgedit") {
+    if ((e.key === "z" || e.key === "Z")) ieUndo();
+  }
 });
+function goReadingOrScroll(delta) {
+  if (reader.fit === "webtoon") { turnToPhysical(delta, true); return; }
+  if (reader.zoom > 1.02 && reader.content) {
+    // fit width / zoomed: scroll down the page first, then turn
+    const { H } = stageSize();
+    const before = reader.panY;
+    reader.panY -= delta * H * 0.85;
+    applyZoom();
+    if (Math.abs(reader.panY - before) > 2) return;
+  }
+  goReading(delta);
+}
 
 // Prevent page bounce except in scroll areas
 document.addEventListener("touchmove", (e) => {
-  if (!e.target.closest(".scroll, .sheet, input")) e.preventDefault();
+  if (!e.target.closest(".scroll, .sheet, input, #webtoon, .ie-opts")) e.preventDefault();
 }, { passive: false });
 
 // Drag and drop (desktop)
@@ -4573,7 +6510,7 @@ function onSwMessage(data) {
 }
 async function registerPwa() {
   if (!("serviceWorker" in navigator) || !isHosted()) return;
-  window.__pwa = { offlineReady: false };
+  window.__pwa = Object.assign(window.__pwa || {}, { offlineReady: false });
   navigator.serviceWorker.addEventListener("message", (e) => onSwMessage(e.data));
   try {
     const swUrl = new URL("sw.js", appDir());
@@ -4633,7 +6570,7 @@ async function registerPwa() {
       btn._bound = true;
       btn.addEventListener("click", () => { location.reload(); });
     }
-    try { reg.update(); } catch (_) {}
+    try { reg.update().catch(() => {}); } catch (_) {}
     await navigator.serviceWorker.ready;
     window.__pwa.ready = true;
     window.__pwa.cacheExpected = PWA_CACHE;
@@ -4760,13 +6697,40 @@ window.__viewer = {
     if (n) togglePlaylist(n);
   },
   visiblePageBoxes() {
-    const imgs = [...$("viewCur").querySelectorAll("img")];
+    const m = measureViewPages($("viewCur"));
     const stage = $("stage").getBoundingClientRect();
-    return imgs.map((im) => {
-      const r = im.getBoundingClientRect();
-      return { w: r.width, h: r.height, x: r.left, y: r.top, stageW: stage.width, stageH: stage.height };
-    });
+    return [m.single, m.left, m.right].filter(Boolean).map((r) => ({ w: r.w, h: r.h, x: r.x, y: r.y, stageW: stage.width, stageH: stage.height }));
   },
+  curlFrontRect() { return flip.prep ? { x: flip.prep.front.x, y: flip.prep.front.y, w: flip.prep.front.w, h: flip.prep.front.h } : null; },
+  setFit(f) { return setReaderFit(f); },
+  setBg(b) { reader.bg = b; applyReaderLook(); },
+  goTo(i) { readerGoTo(i); },
+  openGrid() { openPageGrid(); },
+  readerUi(on) { setReaderUI(!!on); },
+  zoomAt(z, x, y) { zoomAt(z, x, y); return { zoom: reader.zoom, panX: reader.panX, panY: reader.panY }; },
+  editImage(name) { const n = childrenOf(cwd).find((c) => c.name === name) || reader.pages[reader.index]; return openImageEditor(n, currentScreen); },
+  ie: () => ({ tool: ie.tool, w: ie.work && ie.work.width, h: ie.work && ie.work.height, undo: ie.undo.length, adj: Object.assign({}, ie.adj), crop: ie.crop && Object.assign({}, ie.crop) }),
+  ieTool(t) { setIeTool(t); },
+  ieRatio(r) { ie.ratio = r; ieResetCrop(); },
+  ieApplyCrop() { return ieApplyCrop(); },
+  ieTransform(k) { ieTransform(k); },
+  ieAdj(a) { Object.assign(ie.adj, a); ieRender(); },
+  ieRect(x0, y0, x1, y1) { ieEnsureEffect(); ieStampRect({ x: x0, y: y0 }, { x: x1, y: y1 }); ie.effect = null; },
+  ieSave() { return ieSave(); },
+  ieUndo() { ieUndo(); },
+  vEdit: () => ({ edit: JSON.parse(JSON.stringify(videoState.edit)), segs: keepSegments(), a: videoState.a, b: videoState.b, fps: fpsDet.fps, fpsDetected: fpsDet.detected, zoom: tl.zoom }),
+  vSeek(t) { seekTo(t); },
+  vFrameStep(n) { frameStep(n); },
+  vSetAB(a, b) { videoState.a = a; videoState.b = b; updateAbButton(); drawTimeline(); },
+  vToggleEdit() { toggleEditPanel(); },
+  vIn(t) { seekTo(t); videoState.edit.inT = t; updateEditPanel(); },
+  vOut(t) { seekTo(t); videoState.edit.outT = t; updateEditPanel(); },
+  vCutAB() { cutAB(); },
+  vSpeedEdit(s) { videoState.edit.speed = s; updateEditPanel(); },
+  vExport() { return exportEdit(); },
+  vSnap() { return saveCurrentFrame(); },
+  vTlZoom(z) { setTlZoom(z); },
+  lastDelivered: () => window.__lastDelivered || null,
   libraryReady: () => window.__libraryReady,
   storageInfo: () => ({
     backend: libStore.backend,
