@@ -1,5 +1,5 @@
 /* 만화뷰어 service worker: cache-first, versioned, engine precache with progress */
-const CACHE_VERSION = "mhv-pwa-v5";
+const CACHE_VERSION = "mhv-pwa-v6";
 // Engine files that did not change since the previous version can be copied from the old cache
 // (fast update, works even on a weak connection). Files listed here are always re-downloaded.
 const ENGINE_CHANGED = new Set(["./vendor/ffmpeg-worker.js"]);

@@ -622,6 +622,46 @@ input[type=range]::-webkit-slider-thumb {
 .crumb:empty { display: none; }
 .titles h1 { line-height: 22px; flex: 0 0 auto; }
 .icon-btn.hidden + .titles { padding-left: 8px; }
+/* v6: every bar, sheet and panel stays inside the safe area (status bar, notch, home indicator);
+   page content itself stays edge to edge. */
+.bottombar {
+  padding-left: max(16px, calc(var(--safe-l) + 8px));
+  padding-right: max(16px, calc(var(--safe-r) + 8px));
+  padding-bottom: calc(10px + var(--safe-b));
+}
+.overlay { padding: calc(var(--safe-t) + 8px) var(--safe-r) 0 var(--safe-l); box-sizing: border-box; }
+.sheet { max-height: 100%; box-sizing: border-box; }
+.sw-update, .sw-status { left: calc(12px + var(--safe-l)); right: calc(12px + var(--safe-r)); }
+.toast { max-width: calc(90% - var(--safe-l) - var(--safe-r)); }
+.ie-panel { padding-left: calc(10px + var(--safe-l)); padding-right: calc(10px + var(--safe-r)); }
+.ex-toolbar, .ex-select { padding-left: calc(14px + var(--safe-l)) !important; padding-right: calc(14px + var(--safe-r)) !important; }
+.scroll { padding-left: var(--safe-l); padding-right: var(--safe-r); }
+.page-grid .scroll, #pgGridScroll { padding-bottom: calc(16px + var(--safe-b)); }
+.fab {
+  position: absolute; z-index: 12;
+  right: calc(16px + var(--safe-r)); bottom: calc(18px + var(--safe-b));
+  height: 52px; padding: 0 18px 0 14px; border-radius: 26px;
+  background: var(--accent); color: #0b1220; font-weight: 750; font-size: 15px;
+  display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 8px 22px #000a;
+}
+.fab svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+.fab:active { filter: brightness(.9); transform: scale(.97); }
+#screen-explorer.ex-selecting .fab { display: none; }
+#screen-explorer .scroll { padding-bottom: calc(90px + var(--safe-b)); }
+/* sheets: the safe-area strip below a sheet is a solid border, so scrolled items never sit over the home indicator */
+.sheet { padding-bottom: 16px !important; border-bottom: var(--safe-b) solid #1a1a1a; }
+/* video bar: never taller than the space under the top bar; scrolls inside when the editor is open on short screens */
+#videoChrome .vbar {
+  max-height: calc(100% - var(--safe-t) - var(--bar-h));
+  overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+  padding-bottom: 10px; border-bottom: var(--safe-b) solid rgba(0,0,0,.86); box-sizing: border-box;
+}
+#videoChrome .vbar .timeline { touch-action: none; }
+@media (max-height: 520px) {
+  #screen-video.editing .jog { width: 88px; height: 88px; }
+  #screen-video.editing .jog-center { width: 44px; height: 44px; margin: -22px 0 0 -22px; }
+  #screen-video.editing .edit-panel { gap: 6px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
@@ -635,6 +675,7 @@ input[type=range]::-webkit-slider-thumb {
 <input id="dirPick" type="file" multiple webkitdirectory directory hidden>
 <input id="enginePick" type="file" multiple hidden>
 <input id="photoPick" type="file" multiple accept="image/*,video/*" hidden>
+<input id="folderFallbackPick" type="file" multiple hidden accept="image/*,video/*,.zip,.cbz,.rar,.cbr,.7z,.cb7,.tar,.jpg,.jpeg,.png,.webp,.gif,.heic,.heif,.mp4,.mov,.m4v">
 
 <div id="app">
   <section id="screen-explorer" class="screen" data-screen="explorer">
@@ -658,6 +699,7 @@ input[type=range]::-webkit-slider-thumb {
         </button>
       </div>
     </header>
+    <button type="button" id="fabPhotos" class="fab" aria-label="사진 추가"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>사진</span></button>
     <div id="exToolbar" class="ex-toolbar">
       <div class="ex-actions">
         <button type="button" id="btnAddPhotos" class="btn-primary">사진 추가</button>
@@ -759,6 +801,7 @@ input[type=range]::-webkit-slider-thumb {
           <button type="button" id="btnFit" class="r-tool" aria-label="화면 맞춤"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span id="fitLabel">화면</span></button>
           <button type="button" id="btnSpreadQuick" class="r-tool" aria-label="쪽 구성"><svg viewBox="0 0 24 24"><path d="M3 5h8v14H3zM13 5h8v14h-8z"/></svg><span id="spreadLabel">한 쪽</span></button>
           <button type="button" id="btnDirQuick" class="r-tool" aria-label="읽기 방향"><svg viewBox="0 0 24 24"><path d="M4 12h16M14 6l6 6-6 6"/></svg><span id="dirLabel">왼→오</span></button>
+          <button type="button" id="btnQuickAdd" class="r-tool" aria-label="사진 추가"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M12 9v6M9 12h6"/></svg><span>사진</span></button>
           <button type="button" id="btnImgEdit" class="r-tool" aria-label="사진 편집"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13 7l4 4"/></svg><span>편집</span></button>
         </div>
       </div>
@@ -1044,10 +1087,10 @@ function fileKey(name, size, lastModified) {
   const standalone = () => navigator.standalone === true || (window.matchMedia && matchMedia("(display-mode: standalone)").matches);
   function apply() {
     const env = parseFloat(getComputedStyle(probe).paddingTop) || 0;
-    const fullHeight = Math.abs(window.innerHeight - screen.height) < 2 || Math.abs(window.innerHeight - screen.width) < 2;
-    const need = isIPad && standalone() && fullHeight && env < 20;
-    document.documentElement.style.setProperty("--safe-t", need ? "24px" : "env(safe-area-inset-top, 0px)");
-    window.__safeTop = { env, need, isIPad, standalone: standalone(), fullHeight };
+    // iPadOS always shows the status bar over a home-screen app (any orientation, also in windows)
+    const need = isIPad && standalone() && env < 20;
+    document.documentElement.style.setProperty("--safe-t", need ? "max(env(safe-area-inset-top, 0px), 24px)" : "env(safe-area-inset-top, 0px)");
+    window.__safeTop = { env, need, isIPad, standalone: standalone() };
   }
   apply();
   window.addEventListener("resize", () => setTimeout(apply, 60));
@@ -3678,7 +3721,7 @@ function applyReaderLook() {
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v5";
+const PWA_CACHE = "mhv-pwa-v6";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
@@ -4299,7 +4342,7 @@ async function openReader(pages, startIndex, folder, opts) {
   setReaderUI(true, true);
   await renderReaderViews();
   // offer to continue where the user stopped last time
-  if (saved != null && saved > 0 && saved < pages.length && Math.abs(saved - reader.index) > 1 && !(opts && opts.resume)) {
+  if (saved != null && saved > 0 && saved < pages.length && Math.abs(saved - reader.index) > 1 && !(opts && (opts.resume || opts.fresh))) {
     $("resumeText").textContent = `지난번 ${saved + 1}쪽까지 읽었어요`;
     $("resumeBar").classList.remove("hidden");
     $("btnResume").onclick = () => { hideResumeBar(); readerGoTo(saved); };
@@ -4673,6 +4716,12 @@ function showReaderSettings() {
       rng.addEventListener("input", () => { reader.bright = parseInt(rng.value, 10) / 100; applyReaderLook(); });
       rng.addEventListener("change", savePrefs);
       body.appendChild(br);
+      const imp = document.createElement("div");
+      imp.className = "settings-row";
+      imp.innerHTML = '<label>사진 가져오기</label><div class="seg"><button type="button" id="btnImpSet"></button></div>';
+      imp.querySelector("button").textContent = (importPrefs.mode === "view" ? "이번만 보기" : "앱에 보관") + " · 바꾸기";
+      imp.querySelector("button").addEventListener("click", () => setTimeout(showImportSettings, 0));
+      body.appendChild(imp);
       const rot = document.createElement("div");
       rot.className = "settings-row";
       rot.innerHTML = '<label>화면 회전</label><div class="seg"><button type="button">지금 방향 고정</button></div><p class="note">iPhone·iPad 홈 화면 앱은 회전을 직접 잠글 수 없어, 안 되면 제어 센터의 화면 방향 잠금을 쓰세요.</p>';
@@ -6295,9 +6344,10 @@ function showHelpSheet() {
 
 function openAddMenu() {
   const items = [
-    { label: "사진 추가", fn: () => $("photoPick").click() },
+    { label: "사진 추가 (고르면 바로 보기)", fn: () => quickPickPhotos() },
     { label: "새 폴더", fn: () => promptNewFolder() },
-    { label: "폴더 열기", fn: () => $("dirPick").click() },
+    { label: "폴더 가져오기 (파일 앱)", fn: () => quickPickFolder() },
+    { label: "사진 가져오기 설정", fn: () => setTimeout(showImportSettings, 0) },
     { label: "파일 또는 압축파일 열기", fn: () => $("filePick").click() },
     { label: "모든 형식 열기 (iOS)", fn: () => $("filePickAll").click() },
   ];
@@ -6314,7 +6364,187 @@ function openAddMenu() {
 }
 
 /* ========== bind UI ========== */
-function clickPhotoPick() { $("photoPick").click(); }
+/* ===== v6: quick photo import (one tap → reader) ===== */
+const IMPORT_KEY = "mhv-import-v1";
+const importPrefs = Object.assign({ mode: "keep", album: "date", last: "" }, (() => {
+  try { return JSON.parse(localStorage.getItem(IMPORT_KEY) || "{}"); } catch (_) { return {}; }
+})());
+function saveImportPrefs() { try { localStorage.setItem(IMPORT_KEY, JSON.stringify(importPrefs)); } catch (_) {} }
+
+// EXIF DateTimeOriginal from the first 128 KB of a JPEG (cheap); null if absent
+async function exifDate(file) {
+  try {
+    if (!/jpe?g$/i.test(file.name || "") && file.type !== "image/jpeg") return null;
+    const b = new DataView(await file.slice(0, 131072).arrayBuffer());
+    if (b.getUint16(0) !== 0xffd8) return null;
+    let o = 2;
+    while (o + 4 < b.byteLength) {
+      const m = b.getUint16(o), len = b.getUint16(o + 2);
+      if (m === 0xffe1 && b.getUint32(o + 4) === 0x45786966) {
+        const t = o + 10, le = b.getUint16(t) === 0x4949;
+        const u16 = (p) => b.getUint16(t + p, le), u32 = (p) => b.getUint32(t + p, le);
+        const findTag = (ifd, tag) => {
+          if (t + ifd + 2 > b.byteLength) return null;
+          const n = u16(ifd);
+          for (let i = 0; i < n; i++) { const e = ifd + 2 + i * 12; if (t + e + 12 > b.byteLength) return null; if (u16(e) === tag) return e; }
+          return null;
+        };
+        const readStr = (e) => { const off = u32(e + 8); let s = ""; for (let i = 0; i < 19 && t + off + i < b.byteLength; i++) s += String.fromCharCode(b.getUint8(t + off + i)); return s; };
+        const ifd0 = u32(4);
+        const ex = findTag(ifd0, 0x8769);
+        let e = ex != null ? findTag(u32(ex + 8), 0x9003) : null;
+        if (e == null) e = findTag(ifd0, 0x0132);
+        if (e == null) return null;
+        const s = readStr(e).match(/(\d{4}):(\d\d):(\d\d) (\d\d):(\d\d):(\d\d)/);
+        return s ? new Date(+s[1], +s[2] - 1, +s[3], +s[4], +s[5], +s[6]).getTime() : null;
+      }
+      if ((m & 0xff00) !== 0xff00 || m === 0xffda) break;
+      o += 2 + len;
+    }
+  } catch (_) {}
+  return null;
+}
+function namesLookRandom(files) {
+  if (files.length < 2) return false;
+  const names = files.map((f) => (f.name || "").replace(/\.[^.]+$/, ""));
+  const dup = new Set(names).size < names.length;
+  const rnd = names.filter((n) => /^[0-9a-f]{8}-[0-9a-f]{4}-|^[0-9a-f]{16,}$|^(image|photo|file|img)$/i.test(n) || !/\d/.test(n)).length;
+  return dup || rnd >= names.length / 2;
+}
+const pad2 = (n) => String(n).padStart(2, "0");
+// Natural filename order; when names are random (Photos picker, UUIDs) order by capture date and
+// prefix the date so the album keeps that order.
+async function sortImportFiles(files) {
+  const media = files.filter((f) => f && f.size && kindFromName(f.name || "") !== "other");
+  if (!namesLookRandom(media)) return media.slice().sort((a, b) => naturalCompare(a.name, b.name));
+  const withT = [];
+  for (const f of media) withT.push({ f, t: (await exifDate(f)) || f.lastModified || 0 });
+  withT.sort((a, b) => a.t - b.t);
+  return withT.map(({ f, t }, i) => {
+    if (!t) return f;
+    const d = new Date(t);
+    const stamp = `${d.getFullYear()}${pad2(d.getMonth() + 1)}${pad2(d.getDate())}_${pad2(d.getHours())}${pad2(d.getMinutes())}${pad2(d.getSeconds())}_${String(i + 1).padStart(3, "0")}`;
+    try { return new File([f], stamp + "_" + (f.name || "photo"), { type: f.type, lastModified: f.lastModified }); } catch (_) { return f; }
+  });
+}
+
+let quickCtx = "home";
+function quickPickPhotos(ctx) {
+  quickCtx = ctx || (currentScreen === "reader" ? "reader" : "home");
+  $("photoPick").click();
+}
+function quickTargetFolder() {
+  if (quickCtx === "reader" && reader.folder && isStoredFolder(reader.folder)) return reader.folder;
+  if (quickCtx !== "reader" && cwd && isStoredFolder(cwd)) return cwd;
+  return null;
+}
+async function quickImport(fileList) {
+  const raw = Array.from(fileList || []);
+  if (!raw.length) return;
+  await libraryReady();
+  const big = raw.length >= 20;
+  if (big) toast(`${raw.length}개 정리하는 중…`, 1500);
+  const files = await sortImportFiles(raw);
+  if (!files.length) { toast("열 수 있는 사진이나 영상이 없습니다."); return; }
+  const firstImg = files.find((f) => kindFromName(f.name) === "image");
+  if (importPrefs.mode === "view") {
+    const before = new Set(library.roots.flatMap((r) => (r.children || []).map((c) => c.id)));
+    await addPickedFiles(files, { keep: false });
+    const bucket = library.roots.find((r) => r.name === "선택한 파일" && !r.stored);
+    if (!bucket) return;
+    const pages = imagesIn(bucket);
+    const idx = pages.findIndex((p) => !before.has(p.id));
+    toast(`${files.length}개를 열었어요 · 이번만 보기`, 1800);
+    if (pages.length && firstImg) openReader(pages, Math.max(0, idx), bucket, { fresh: true });
+    else { cwd = bucket; renderExplorer(); }
+    return;
+  }
+  let folder = quickTargetFolder();
+  if (!folder) {
+    const name = importPrefs.album === "last" && importPrefs.last ? importPrefs.last : defaultAlbumName();
+    folder = await findOrCreateAlbum(name);
+  }
+  const beforeIds = new Set((folder.children || []).map((c) => c.id));
+  let added = 0;
+  try { added = await importFilesToFolder(folder, files); }
+  catch (e) { toast(friendlyError(e)); renderExplorer(); return; }
+  importPrefs.last = folder.name; saveImportPrefs();
+  const pages = imagesIn(folder);
+  const idx = pages.findIndex((p) => !beforeIds.has(p.id));
+  const first = !localStorage.getItem("mhv-import-tip");
+  toast(`${folder.name}에 ${added}개 추가` + (first ? " · 보관 방식은 보기 설정에서 바꿀 수 있어요" : ""), first ? 3600 : 1800);
+  try { localStorage.setItem("mhv-import-tip", "1"); } catch (_) {}
+  if (idx >= 0) {
+    // jump straight to the first new page (when reading, the album keeps going)
+    openReader(pages, idx, folder, { fresh: true });
+  } else {
+    cwd = folder; renderExplorer();
+    const v = videosIn(folder).find((n) => !beforeIds.has(n.id));
+    if (v && files.length === 1) openNode(v);
+  }
+}
+
+// folder import from the Files app: real folder picker when available, else multi-select files
+function quickPickFolder() {
+  const dir = $("dirPick");
+  const ios = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const iosVer = parseFloat((navigator.userAgent.match(/OS (\d+)[_.](\d+)/) || [0, 0, 0]).slice(1).join("."));
+  const dirOk = "webkitdirectory" in dir && (!ios || iosVer >= 18.4);
+  if (dirOk) dir.click(); else $("folderFallbackPick").click();
+}
+async function quickImportFolder(fileList) {
+  const files = Array.from(fileList || []);
+  if (!files.length) return;
+  await libraryReady();
+  if (importPrefs.mode === "view") { await addPickedFiles(files, { keep: false }); renderExplorer(); return; }
+  const withPath = files.filter((f) => f.webkitRelativePath);
+  if (!withPath.length) { quickCtx = "home"; return quickImport(files); }
+  const items = withPath.map((f) => {
+    const parts = String(f.webkitRelativePath).replace(/\\/g, "/").split("/").filter(Boolean);
+    return { file: f, parts, rel: parts.join("/") };
+  }).sort((a, b) => naturalCompare(a.rel, b.rel));
+  let added = 0;
+  try { added = await importTreeToFolder(homeNode, items); }
+  catch (e) { toast(friendlyError(e)); renderExplorer(); return; }
+  library.roots.sort(sortNodes);
+  const rootName = items[0].parts[0];
+  const root = library.roots.filter((r) => r.stored && r.name.startsWith(rootName)).pop();
+  toast(`폴더에서 ${added}개 가져왔어요`, 1800);
+  if (root) { sortTree(root); cwd = root; }
+  renderExplorer();
+  const findImgs = (n) => { const im = imagesIn(n); if (im.length) return [n, im]; for (const c of n.children || []) if (c.kind === "dir") { const r = findImgs(c); if (r) return r; } return null; };
+  const hit = root && findImgs(root);
+  if (hit) openReader(hit[1], 0, hit[0], { fresh: true });
+}
+
+function showImportSettings() {
+  showSheet("사진 가져오기", null, {
+    custom: true,
+    build(body) {
+      const row = (label, items, get, set, note) => {
+        const r = document.createElement("div");
+        r.className = "settings-row";
+        const l = document.createElement("label"); l.textContent = label;
+        const seg = document.createElement("div"); seg.className = "seg";
+        for (const [v, t] of items) {
+          const b = document.createElement("button"); b.type = "button"; b.textContent = t; b.dataset.v = v;
+          b.classList.toggle("on", get() === v);
+          b.addEventListener("click", () => { set(v); saveImportPrefs(); seg.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x.dataset.v === get())); });
+          seg.appendChild(b);
+        }
+        r.append(l, seg);
+        if (note) { const p = document.createElement("p"); p.className = "note"; p.textContent = note; r.appendChild(p); }
+        body.appendChild(r);
+      };
+      row("고르면 바로", [["keep", "앱에 보관"], ["view", "이번만 보기"]], () => importPrefs.mode, (v) => { importPrefs.mode = v; },
+        "사진을 고르면 묻지 않고 바로 보기 화면으로 열립니다.");
+      row("보관할 앨범", [["date", "날짜별"], ["last", "마지막 앨범"]], () => importPrefs.album, (v) => { importPrefs.album = v; },
+        "앨범 안이나 보는 중에 추가하면 그 앨범 끝에 붙습니다." + (importPrefs.last ? " 마지막 앨범: " + importPrefs.last : ""));
+    },
+  });
+}
+
+function clickPhotoPick() { quickPickPhotos(); }
 $("btnAddPhotos") && $("btnAddPhotos").addEventListener("click", clickPhotoPick);
 $("btnOpenPhotosEmpty") && $("btnOpenPhotosEmpty").addEventListener("click", clickPhotoPick);
 $("btnNewFolder") && $("btnNewFolder").addEventListener("click", () => promptNewFolder());
@@ -6329,10 +6559,13 @@ $("btnCancelSelect") && $("btnCancelSelect").addEventListener("click", () => { e
 $("btnDeleteSelected") && $("btnDeleteSelected").addEventListener("click", () => confirmDeleteNodes(selectedNodes()));
 $("btnMoveSelected") && $("btnMoveSelected").addEventListener("click", () => promptMove(selectedNodes()));
 $("photoPick").addEventListener("change", async (e) => {
-  await addPickedFiles(e.target.files, { fromPhotos: true });
+  await quickImport(e.target.files);
   e.target.value = "";
 });
-$("btnOpenDir").addEventListener("click", () => $("dirPick").click());
+$("btnOpenDir").addEventListener("click", quickPickFolder);
+$("fabPhotos").addEventListener("click", () => quickPickPhotos());
+$("btnQuickAdd").addEventListener("click", () => quickPickPhotos("reader"));
+$("folderFallbackPick").addEventListener("change", async (e) => { quickCtx = "home"; await quickImport(e.target.files); e.target.value = ""; });
 $("btnOpenFiles").addEventListener("click", () => $("filePick").click());
 $("btnOpenAny") && $("btnOpenAny").addEventListener("click", () => $("filePickAll").click());
 $("btnHelp") && $("btnHelp").addEventListener("click", showHelpSheet);
@@ -6347,7 +6580,7 @@ $("filePick").addEventListener("change", async (e) => {
   e.target.value = "";
 });
 $("dirPick").addEventListener("change", async (e) => {
-  await addPickedFiles(e.target.files);
+  await quickImportFolder(e.target.files);
   e.target.value = "";
 });
 $("filePickAll").addEventListener("change", async (e) => {
@@ -6466,7 +6699,7 @@ function goReadingOrScroll(delta) {
 
 // Prevent page bounce except in scroll areas
 document.addEventListener("touchmove", (e) => {
-  if (!e.target.closest(".scroll, .sheet, input, #webtoon, .ie-opts")) e.preventDefault();
+  if (!e.target.closest(".scroll, .sheet, input, #webtoon, .ie-opts, .vbar")) e.preventDefault();
 }, { passive: false });
 
 // Drag and drop (desktop)
@@ -6621,7 +6854,7 @@ window.__libraryReady = libraryReady();
 (function () {
   const supportsDir = "webkitdirectory" in $("dirPick");
   if (!supportsDir) {
-    $("btnOpenDir").style.display = "none";
+    /* v6: the fallback multi-select picker is used instead */
   }
 })();
 
