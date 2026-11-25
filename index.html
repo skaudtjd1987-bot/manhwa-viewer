@@ -616,6 +616,13 @@ input[type=range]::-webkit-slider-thumb {
 .ie-tabs button { flex: 1; height: 40px; font-size: 13px; font-weight: 650; color: #999; border-radius: 9px; }
 .ie-tabs button.on { color: var(--accent); background: #7db0ff14; }
 
+/* v5: header rows have fixed metrics so the small breadcrumb line can never ride onto the title */
+.titles { display: flex; flex-direction: column; justify-content: center; }
+.crumb { line-height: 14px; height: 14px; min-height: 0; flex: 0 0 auto; }
+.crumb:empty { display: none; }
+.titles h1 { line-height: 22px; flex: 0 0 auto; }
+.icon-btn.hidden + .titles { padding-left: 8px; }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
@@ -1026,6 +1033,26 @@ function fmtTime(s) {
 function fileKey(name, size, lastModified) {
   return `${name}|${size}|${lastModified || 0}`;
 }
+
+// v5: iPad home-screen app with a translucent status bar can report safe-area-inset-top 0 in landscape,
+// which puts the header under the clock/date strip. Measure the real inset and fall back to the status bar height.
+(function fixSafeTop() {
+  const probe = document.createElement("div");
+  probe.style.cssText = "position:fixed;top:0;left:0;width:0;height:0;visibility:hidden;padding-top:env(safe-area-inset-top,0px)";
+  document.documentElement.appendChild(probe);
+  const isIPad = /iPad/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const standalone = () => navigator.standalone === true || (window.matchMedia && matchMedia("(display-mode: standalone)").matches);
+  function apply() {
+    const env = parseFloat(getComputedStyle(probe).paddingTop) || 0;
+    const fullHeight = Math.abs(window.innerHeight - screen.height) < 2 || Math.abs(window.innerHeight - screen.width) < 2;
+    const need = isIPad && standalone() && fullHeight && env < 20;
+    document.documentElement.style.setProperty("--safe-t", need ? "24px" : "env(safe-area-inset-top, 0px)");
+    window.__safeTop = { env, need, isIPad, standalone: standalone(), fullHeight };
+  }
+  apply();
+  window.addEventListener("resize", () => setTimeout(apply, 60));
+  window.addEventListener("orientationchange", () => setTimeout(apply, 250));
+})();
 
 let toastTimer = 0;
 function toast(msg, ms) {
@@ -2829,7 +2856,7 @@ function renderExplorer() {
       }
     });
   } else {
-    crumb.textContent = items.length ? "라이브러리" : "";
+    crumb.textContent = "";
   }
 
   const folderEmpty = $("folderEmpty");
@@ -3651,7 +3678,7 @@ function applyReaderLook() {
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v4";
+const PWA_CACHE = "mhv-pwa-v5";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
