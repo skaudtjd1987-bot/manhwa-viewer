@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="만화뷰어">
 <meta name="application-name" content="만화뷰어">
 <meta name="theme-color" content="#000000">
@@ -885,6 +885,18 @@ body:has(#overlay:not(.hidden)) .toast { bottom: auto !important; top: calc(var(
 #readerChrome.dim .topbar, #readerChrome.dim .bottombar, #readerChrome.dim .topbar-inner { background: transparent !important; }
 #readerChrome .bottombar:not(.rbar) { background: transparent; }
 
+/* ===== v12 ===== */
+/* the reader is exactly the web view: never taller than innerHeight (v11 pushed the bottom bar off screen) */
+#screen-reader { top: 0 !important; bottom: 0 !important; height: auto !important; min-height: 0 !important; }
+/* bottom HUD: always fully inside the web view with room for the labels */
+#readerChrome .rbar { margin-bottom: max(12px, calc(var(--safe-b) + 6px)); padding-bottom: 8px !important; }
+#readerChrome .r-tool { height: auto; min-height: 50px; padding: 5px 0 4px; gap: 3px; }
+#readerChrome .r-tool span { line-height: 1.3; white-space: nowrap; }
+/* 쪽 반전 pill in the reader top bar */
+.swap-pill { flex: 0 0 auto; height: 30px; padding: 0 11px; border-radius: 15px; margin: 0 2px; background: rgba(138,180,255,.16); border: .5px solid rgba(138,180,255,.45); color: #cfe0ff; font-size: 12.5px; font-weight: 700; white-space: nowrap; }
+.swap-pill:active { background: rgba(138,180,255,.3); transform: scale(.96); }
+@media (max-width: 380px) { .swap-pill { padding: 0 8px; font-size: 11.5px; } }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
@@ -1020,7 +1032,7 @@ body:has(#overlay:not(.hidden)) .toast { bottom: auto !important; top: calc(var(
             <div class="crumb" id="readerCrumb">이미지</div>
             <h1 id="readerTitle">뷰어</h1>
           </div>
-          <button type="button" id="btnBmAlbum" class="text-btn hidden" aria-label="원래 앨범에서 보기">앨범</button><button type="button" id="btnBookmark" class="icon-btn" aria-label="책갈피 하기" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button><button type="button" id="btnReaderSettings" class="text-btn">보기</button>
+          <button type="button" id="btnSwapHalf" class="swap-pill hidden" aria-label="쪽 반전"></button><button type="button" id="btnBmAlbum" class="text-btn hidden" aria-label="원래 앨범에서 보기">앨범</button><button type="button" id="btnBookmark" class="icon-btn" aria-label="책갈피 하기" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button><button type="button" id="btnReaderSettings" class="text-btn">보기</button>
         </div>
       </header>
       <div class="bottombar rbar">
@@ -1323,7 +1335,9 @@ function fileKey(name, size, lastModified) {
   function apply() {
     const env = parseFloat(getComputedStyle(probe).paddingTop) || 0;
     // iPadOS always shows the status bar over a home-screen app (any orientation, also in windows)
-    const need = isIPad && standalone() && env < 20;
+    const sbm = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+    const translucent = !sbm || sbm.content === "black-translucent";
+    const need = translucent && isIPad && standalone() && env < 20;
     document.documentElement.style.setProperty("--safe-t", need ? "max(env(safe-area-inset-top, 0px), 24px)" : "env(safe-area-inset-top, 0px)");
     window.__safeTop = { env, need, isIPad, standalone: standalone() };
   }
@@ -3948,7 +3962,7 @@ function updateReaderChrome() {
   if (!reader.sliding) slider.value = String(i + 1);
   slider.style.direction = reader.rtl && !web ? "rtl" : "ltr";
   $("readerTitle").textContent = reader.pages[i] ? reader.pages[i].name + halfLabel(reader.pages[i]) : "뷰어";
-  { const sc = getSplit(reader.folder); $("splitLabel").textContent = sc.mode === "off" ? "반쪽" : sc.mode === "auto" ? "반쪽·자동" : "반쪽·항상"; $("btnSplit").classList.toggle("on", sc.mode !== "off"); }
+  { const sc = getSplit(reader.folder); $("splitLabel").textContent = sc.mode === "off" ? "반쪽" : sc.mode === "auto" ? "반쪽·자동" : "반쪽·항상"; $("btnSplit").classList.toggle("on", sc.mode !== "off"); updateSwapPill(); }
   $("readerCrumb").textContent = (reader.folderName || "이미지") + " · " + (web ? "웹툰" : (isSpread() ? "두 쪽" : "한 쪽"));
   $("readerChrome").classList.toggle("dim", !reader.ui);
   $("fitLabel").textContent = FIT_LABEL[reader.fit] || "화면";
@@ -4014,7 +4028,7 @@ function applyReaderLook() {
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v11";
+const PWA_CACHE = "mhv-pwa-v12";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
@@ -5072,8 +5086,13 @@ function showReaderSettings() {
       const sp = () => getSplit(reader.folder);
       mkRow("반쪽 나누기", [["off","끄기"],["auto","자동"],["always","항상"]],
         () => sp().mode, (v) => { setSplit(reader.folder, { mode: v }); });
-      mkRow("반쪽 순서", [[false,"읽기 방향대로"],[true,"반대로"]],
-        () => !!sp().swap, (v) => { setSplit(reader.folder, { swap: v === true || v === "true" }); });
+      { const r = document.createElement("div");
+        r.className = "settings-row";
+        r.innerHTML = '<label>쪽 반전</label><div class="seg"><button type="button" class="on" id="btnSwapRow"></button></div>';
+        const b = r.querySelector("button");
+        b.textContent = "현재: " + halfOrderText() + " · ⇄ 바꾸기";
+        b.addEventListener("click", async () => { await swapHalves(true); b.textContent = "현재: " + halfOrderText() + " · ⇄ 바꾸기"; });
+        body.appendChild(r); }
       mkRow("스캔 여백 자르기", [[true,"켜기"],[false,"끄기"]],
         () => sp().trim !== false, (v) => { setSplit(reader.folder, { trim: v === true || v === "true" }); });
       mkRow("접힌 곳", [[true,"자동 찾기"],[false,"가운데"]],
@@ -7217,20 +7236,35 @@ function splitGeom(base, img, cfg) {
     const lum = (x, y) => { const i = (y * sw + x) * 4; return px[i] * 0.299 + px[i + 1] * 0.587 + px[i + 2] * 0.114; };
     const colStat = (x, ya, yb) => { let m = 0, q = 0, n = 0; for (let y = ya; y < yb; y++) { const v = lum(x, y); m += v; q += v * v; n++; } m /= n; return { m, sd: Math.sqrt(Math.max(0, q / n - m * m)) }; };
     const rowStat = (y, xa, xb) => { let m = 0, q = 0, n = 0; for (let x = xa; x < xb; x++) { const v = lum(x, y); m += v; q += v * v; n++; } m /= n; return { m, sd: Math.sqrt(Math.max(0, q / n - m * m)) }; };
-    const flat = (st) => st.sd < 9 && (st.m < 45 || st.m > 212);
+    const flat = (st) => (st.sd < 9 && (st.m < 45 || st.m > 212)) || (st.m > 185 && st.sd < 20) || (st.m < 55 && st.sd < 14);
     let L = 0, R = sw, T = 0, B = sh;
     if (cfg.trim) {
-      while (L < sw * 0.14 && flat(colStat(L, 0, sh))) L++;
-      while (R > sw * 0.86 && flat(colStat(R - 1, 0, sh))) R--;
+      while (L < sw * 0.12 && flat(colStat(L, 0, sh))) L++;
+      while (R > sw * 0.88 && flat(colStat(R - 1, 0, sh))) R--;
       while (T < sh * 0.1 && flat(rowStat(T, L, R))) T++;
       while (B > sh * 0.9 && flat(rowStat(B - 1, L, R))) B--;
     }
     let m = (L + R) / 2;
     if (cfg.smart) {
-      const a = Math.round(L + (R - L) * 0.44), b = Math.round(L + (R - L) * 0.56);
+      const a = Math.round(L + (R - L) * 0.475), b = Math.round(L + (R - L) * 0.525);
       const ms = [];
-      for (let x = a; x < b; x++) ms.push({ x, m: colStat(x, T, B).m });
+      for (let x = a; x < b; x++) { const st = colStat(x, T, B); ms.push({ x, m: st.m, sd: st.sd }); }
+      let plain = null;
       if (ms.length > 3) {
+        const sdMin = ms.reduce((p, v) => Math.min(p, v.sd), 1e9);
+        const lim = sdMin + Math.max(4, sdMin * 0.5);
+        const ctr = (a + b) / 2;
+        for (let i = 0; i < ms.length;) {
+          if (ms[i].sd > lim) { i++; continue; }
+          let j = i;
+          while (j + 1 < ms.length && ms[j + 1].sd <= lim) j++;
+          const run = { len: j - i + 1, c: (ms[i].x + ms[j].x) / 2 + 0.5 };
+          if (!plain || run.len > plain.len || (run.len === plain.len && Math.abs(run.c - ctr) < Math.abs(plain.c - ctr))) plain = run;
+          i = j + 1;
+        }
+        if (plain && plain.len >= 2 && plain.len < ms.length) m = plain.c;
+      }
+      if (ms.length > 3 && !(plain && plain.len >= 2 && plain.len < ms.length)) {
         const avg = ms.reduce((s2, v) => s2 + v.m, 0) / ms.length;
         const lo = ms.reduce((p, v) => (v.m < p.m ? v : p)), hi = ms.reduce((p, v) => (v.m > p.m ? v : p));
         if (avg - lo.m > 16) m = lo.x + 0.5;
@@ -7248,7 +7282,8 @@ async function halfCanvas(p, maxDim) {
   const base = p.base, cfg = getSplit(p.splitFolder || reader.folder);
   const img = await loadBaseImg(base);
   const g = splitGeom(base, img, cfg);
-  const sx = p.half ? g.mid : g.x0, sw = p.half ? g.x1 - g.mid : g.mid - g.x0;
+  const ov = (g.x1 - g.x0) * 0.006;
+  const sx = p.half ? Math.max(g.x0, g.mid - ov) : g.x0, sw = p.half ? g.x1 - Math.max(g.x0, g.mid - ov) : Math.min(g.x1, g.mid + ov) - g.x0;
   const sy = g.y0, sh = g.y1 - g.y0;
   let s = maxDim ? Math.min(1, maxDim / Math.max(sw, sh)) : Math.min(1, Math.sqrt(16000000 / (sw * sh)));
   const c = mkCanvas(sw * s, sh * s);
@@ -7297,10 +7332,10 @@ function showSplitSheet() {
   const c = getSplit(reader.folder);
   const set = async (patch, msg) => { setSplit(reader.folder, patch); await renderReaderViews(); updateReaderChrome(); if (msg) toast(msg, 1600); };
   showSheet("반쪽 나누기 (펼친 스캔본)", [
+    { label: "⇄ 쪽 반전 · 현재: " + halfOrderText(), fn: () => swapHalves(true) },
     { label: (c.mode === "off" ? "✓ " : "　 ") + "끄기 · 그림 한 장 그대로", fn: () => set({ mode: "off" }, "반쪽 나누기 끔") },
     { label: (c.mode === "auto" ? "✓ " : "　 ") + "자동 · 가로로 긴 그림만 반씩", fn: () => set({ mode: "auto" }, "가로로 긴 그림만 반씩 봅니다") },
     { label: (c.mode === "always" ? "✓ " : "　 ") + "항상 · 모든 그림을 반씩", fn: () => set({ mode: "always" }, "모든 그림을 반씩 봅니다") },
-    { label: "반쪽 순서 바꾸기 (지금: " + ((reader.rtl !== !!c.swap) ? "오른쪽 반 먼저" : "왼쪽 반 먼저") + ")", fn: () => set({ swap: !c.swap, mode: c.mode === "off" ? "auto" : c.mode }, "반쪽 순서를 바꿨어요") },
     { label: "여백·접힌 곳 조정은 '보기' 설정에서", fn: () => setTimeout(showReaderSettings, 0) },
   ]);
 }
@@ -7668,26 +7703,37 @@ $("btnVolX").addEventListener("click", () => { if (volCardFor) volCardFor.closed
 
 /* v11: keep the reader exactly as tall as the screen on iPhone home-screen apps */
 (function syncAppHeight() {
-  const isIPhone = /iPhone|iPod/.test(navigator.userAgent);
-  const standalone = () => navigator.standalone === true || (window.matchMedia && matchMedia("(display-mode: standalone)").matches);
   function apply() {
-    let h = window.innerHeight;
-    const vv = window.visualViewport;
-    if (vv && vv.scale <= 1.01) h = Math.max(h, Math.round(vv.height));
-    if (isIPhone && standalone() && screen && screen.width && screen.height) {
-      // full-screen app: the screen size is the real drawing area
-      const portrait = window.innerHeight >= window.innerWidth;
-      const full = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
-      if (full > h && full - h < 120) h = full;
-    }
-    document.documentElement.style.setProperty("--app-h", h + "px");
-    window.__appH = h;
+    document.documentElement.style.setProperty("--app-h", window.innerHeight + "px");
+    window.__appH = window.innerHeight;
   }
   apply();
   window.addEventListener("resize", () => { apply(); setTimeout(apply, 120); });
   window.addEventListener("orientationchange", () => setTimeout(apply, 300));
-  if (window.visualViewport) window.visualViewport.addEventListener("resize", apply);
 })();
+
+/* v12: 쪽 반전 (swap the order of split halves) */
+function halfRightFirst() { return reader.rtl !== !!getSplit(reader.folder).swap; }
+function halfOrderText() { return halfRightFirst() ? "오른쪽 → 왼쪽" : "왼쪽 → 오른쪽"; }
+function updateSwapPill() {
+  const b = $("btnSwapHalf");
+  if (!b) return;
+  const on = getSplit(reader.folder).mode !== "off" && reader.pages.some((p) => p.half != null);
+  b.classList.toggle("hidden", !on);
+  if (on) b.textContent = (halfRightFirst() ? "오른쪽 먼저" : "왼쪽 먼저") + " ⇄";
+}
+async function swapHalves(fromSheet) {
+  const idx = reader.index;
+  const c = getSplit(reader.folder);
+  setSplit(reader.folder, { swap: !c.swap, mode: c.mode === "off" ? "auto" : c.mode });
+  await renderReaderViews();
+  // stay at the same place in the book: the first half of this spread is now the other half
+  if (reader.index !== idx && idx < reader.pages.length) { reader.index = alignIndex(idx); await renderReaderViews(); }
+  updateReaderChrome();
+  toast("쪽 순서 반전: " + (halfRightFirst() ? "오른쪽 반쪽 먼저" : "왼쪽 반쪽 먼저"), 1600);
+  void fromSheet;
+}
+$("btnSwapHalf").addEventListener("click", () => { swapHalves(); setReaderUI(true, true); });
 
 function clickPhotoPick() { quickPickPhotos(); }
 $("btnAddPhotos") && $("btnAddPhotos").addEventListener("click", clickPhotoPick);
