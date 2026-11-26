@@ -897,6 +897,9 @@ body:has(#overlay:not(.hidden)) .toast { bottom: auto !important; top: calc(var(
 .swap-pill:active { background: rgba(138,180,255,.3); transform: scale(.96); }
 @media (max-width: 380px) { .swap-pill { padding: 0 8px; font-size: 11.5px; } }
 
+/* v13: stage may start below the status bar; the strip above it is plain black */
+#screen-reader { background: #000; }
+#screen-reader #stage { top: 0; bottom: 0; height: auto !important; }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
@@ -3534,6 +3537,7 @@ function loadPrefs() {
     if (p.speed) videoState.speed = p.speed;
     if (p.jogResume != null) videoState.jogResume = !!p.jogResume;
     reader.autoNext = p.autoNext !== false;
+    reader.topGap = p.topGap !== false;
   } catch (_) {}
 }
 function savePrefs() {
@@ -3546,6 +3550,7 @@ function savePrefs() {
       fit: reader.fit,
       fitV9: true,
       autoNext: reader.autoNext !== false,
+      topGap: reader.topGap !== false,
       bg: reader.bg,
       bright: reader.bright,
       speed: videoState.speed,
@@ -3768,6 +3773,7 @@ function applyZoom() {
 }
 
 async function renderReaderViews(keepTransform) {
+  applyTopGap();
   $("stage").classList.toggle("fit-cover", reader.fit === "cover");
   if (reader.srcPages && reader.splitSig !== splitSig(reader.folder)) await resplitReader();
   if (reader.fit === "webtoon") { renderWebtoon(); return; }
@@ -4028,7 +4034,7 @@ function applyReaderLook() {
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v12";
+const PWA_CACHE = "mhv-pwa-v13";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
@@ -5118,6 +5124,8 @@ function showReaderSettings() {
         () => reader.rtl, (v) => { reader.rtl = v === true || v === "true"; });
       mkRow("넘김 효과", [["curl","책장 넘김"],["slide","슬라이드"],["none","없음"]],
         () => turnEffect(), (v) => { reader.turnEffect = v; }, () => {});
+      mkRow("상단 블러 피하기 (다이내믹 아일랜드 여백)", [[true,"켜기"],[false,"끄기"]],
+        () => reader.topGap !== false, (v) => { reader.topGap = v === true || v === "true"; }, () => { cancelFlip(); applyTopGap(); readerLayoutKey = ""; renderReaderViews(); });
       mkRow("다음 권 자동 이어보기", [[true,"켜기"],[false,"끄기"]],
         () => reader.autoNext !== false, (v) => { reader.autoNext = v === true || v === "true"; }, () => { volCardFor = null; updateVolCard(); });
       mkRow("배경", [["black","검정"],["white","흰색"],["sepia","세피아"]],
@@ -7734,6 +7742,30 @@ async function swapHalves(fromSheet) {
   void fromSheet;
 }
 $("btnSwapHalf").addEventListener("click", () => { swapHalves(); setReaderUI(true, true); });
+
+/* v13: 상단 블러 피하기 — start the page below the Dynamic Island / status bar blur (iOS translucent status bar) */
+var topGapProbe = (() => {
+  const d = document.createElement("div");
+  d.style.cssText = "position:fixed;top:0;left:0;width:0;height:0;visibility:hidden;pointer-events:none;padding-top:var(--sat-override, env(safe-area-inset-top, 0px))";
+  document.documentElement.appendChild(d);
+  return d;
+})();
+function readerTopGap() {
+  if (reader.topGap === false) return 0;
+  if (!topGapProbe) return 0;
+  const sat = parseFloat(getComputedStyle(topGapProbe).paddingTop) || 0;
+  return sat > 0 ? Math.round(sat + 12) : 0;
+}
+function applyTopGap() {
+  const t = readerTopGap();
+  const st = $("stage");
+  const v = t + "px";
+  if (st.style.top !== v) { st.style.top = v; return true; }
+  return false;
+}
+window.addEventListener("resize", () => { if (applyTopGap()) onReaderResize(); });
+window.addEventListener("orientationchange", () => setTimeout(() => { if (applyTopGap()) onReaderResize(); }, 260));
+applyTopGap();
 
 function clickPhotoPick() { quickPickPhotos(); }
 $("btnAddPhotos") && $("btnAddPhotos").addEventListener("click", clickPhotoPick);
