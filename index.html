@@ -675,6 +675,8 @@ input[type=range]::-webkit-slider-thumb {
 #grid { position: relative; }
 .drag-marker { position: absolute; width: 4px; border-radius: 2px; background: var(--accent); box-shadow: 0 0 10px var(--accent); z-index: 31; pointer-events: none; }
 
+body:has(#overlay:not(.hidden)) .toast { bottom: auto; top: calc(var(--safe-t) + 14px); }
+.gut-val { font-size: 12px; color: #ccc; min-width: 40px; text-align: right; font-variant-numeric: tabular-nums; }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
@@ -815,6 +817,7 @@ input[type=range]::-webkit-slider-thumb {
           <button type="button" id="btnFit" class="r-tool" aria-label="화면 맞춤"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span id="fitLabel">화면</span></button>
           <button type="button" id="btnSpreadQuick" class="r-tool" aria-label="쪽 구성"><svg viewBox="0 0 24 24"><path d="M3 5h8v14H3zM13 5h8v14h-8z"/></svg><span id="spreadLabel">한 쪽</span></button>
           <button type="button" id="btnDirQuick" class="r-tool" aria-label="읽기 방향"><svg viewBox="0 0 24 24"><path d="M4 12h16M14 6l6 6-6 6"/></svg><span id="dirLabel">왼→오</span></button>
+          <button type="button" id="btnSplit" class="r-tool" aria-label="반쪽 나누기"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M12 4v16" stroke-dasharray="2 2"/></svg><span id="splitLabel">반쪽</span></button>
           <button type="button" id="btnQuickAdd" class="r-tool" aria-label="사진 추가"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M12 9v6M9 12h6"/></svg><span>사진</span></button>
           <button type="button" id="btnImgEdit" class="r-tool" aria-label="사진 편집"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13 7l4 4"/></svg><span>편집</span></button>
         </div>
@@ -3356,7 +3359,7 @@ async function getPageUrl(i) {
   if (i == null || i < 0 || i >= pageCount()) return null;
   if (pageUrlMemo.has(i)) return pageUrlMemo.get(i);
   const node = reader.pages[i];
-  const url = await nodeUrl(node, "pg:");
+  const url = node.half != null ? await halfPageUrl(node) : await nodeUrl(node, "pg:");
   pageUrlMemo.set(i, url);
   return url;
 }
@@ -3509,6 +3512,7 @@ function applyZoom() {
 }
 
 async function renderReaderViews(keepTransform) {
+  if (reader.srcPages && reader.splitSig !== splitSig(reader.folder)) await resplitReader();
   if (reader.fit === "webtoon") { renderWebtoon(); return; }
   hideWebtoon();
   const g = ++reader.gen;
@@ -3700,7 +3704,8 @@ function updateReaderChrome() {
   slider.max = String(Math.max(1, n));
   if (!reader.sliding) slider.value = String(i + 1);
   slider.style.direction = reader.rtl && !web ? "rtl" : "ltr";
-  $("readerTitle").textContent = reader.pages[i] ? reader.pages[i].name : "뷰어";
+  $("readerTitle").textContent = reader.pages[i] ? reader.pages[i].name + halfLabel(reader.pages[i]) : "뷰어";
+  { const sc = getSplit(reader.folder); $("splitLabel").textContent = sc.mode === "off" ? "반쪽" : sc.mode === "auto" ? "반쪽·자동" : "반쪽·항상"; $("btnSplit").classList.toggle("on", sc.mode !== "off"); }
   $("readerCrumb").textContent = (reader.folderName || "이미지") + " · " + (web ? "웹툰" : (isSpread() ? "두 쪽" : "한 쪽"));
   $("readerChrome").classList.toggle("dim", !reader.ui);
   $("fitLabel").textContent = FIT_LABEL[reader.fit] || "화면";
@@ -3729,7 +3734,7 @@ function restoreReaderPos() {
 }
 function folderReadKey(folder, count) {
   const name = folder && folder.name ? folder.name : "이미지";
-  return (folder && folder.path ? folder.path : name) + ":" + count;
+  return (folder && folder.path ? folder.path : name) + ":" + count + splitKeySuffix(folder);
 }
 function savedPosFor(folder) {
   try {
@@ -3764,7 +3769,7 @@ function applyReaderLook() {
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v7";
+const PWA_CACHE = "mhv-pwa-v8";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
@@ -4369,10 +4374,18 @@ let resumeTimer = 0;
 function hideResumeBar() { clearTimeout(resumeTimer); $("resumeBar").classList.add("hidden"); }
 async function openReader(pages, startIndex, folder, opts) {
   if (!pages || !pages.length) { toast("이미지가 없습니다."); return; }
+  clearPageUrls();
+  reader.srcPages = pages;
+  const srcCount = pages.length;
+  reader.folder = folder || null;
+  const exp = await expandPages(pages, folder || null);
+  if (exp !== pages && startIndex != null) startIndex = Math.max(0, exp.findIndex((p) => (p.base || p) === pages[startIndex]));
+  pages = exp;
+  reader.splitSig = splitSig(folder || null);
   reader.pages = pages;
   reader.folder = folder || null;
   reader.folderName = folder && folder.name ? folder.name : "이미지";
-  reader.folderKey = folderReadKey(folder, pages.length);
+  reader.folderKey = folderReadKey(folder, srcCount);
   const saved = restoreReaderPos();
   reader.index = alignIndex(startIndex || 0);
   if ((startIndex == null || (opts && opts.resume)) && saved != null) reader.index = alignIndex(saved);
@@ -4384,6 +4397,7 @@ async function openReader(pages, startIndex, folder, opts) {
   showScreen("reader");
   setReaderUI(true, true);
   await renderReaderViews();
+  maybeHintSplit(folder, reader.srcPages);
   // offer to continue where the user stopped last time
   if (saved != null && saved > 0 && saved < pages.length && Math.abs(saved - reader.index) > 1 && !(opts && (opts.resume || opts.fresh))) {
     $("resumeText").textContent = `지난번 ${saved + 1}쪽까지 읽었어요`;
@@ -4645,7 +4659,7 @@ function openPageGrid() {
       const cell = en.target;
       pgGridObs.unobserve(cell);
       const node = reader.pages[+cell.dataset.i];
-      if (node) loadThumb(cell.querySelector(".thumb"), node);
+      if (node) (node.half != null ? loadHalfThumb : loadThumb)(cell.querySelector(".thumb"), node);
     }
   }, { root: $("pgGridScroll"), rootMargin: "300px 0px" });
   const frag = document.createDocumentFragment();
@@ -4670,6 +4684,7 @@ function closePageGrid() {
   $("pageGrid").classList.add("hidden");
   if (pgGridObs) { pgGridObs.disconnect(); pgGridObs = null; }
   $("pgGridList").innerHTML = "";
+  revokeAllUrls("thh:");
 }
 
 async function setReaderFit(f, prev) {
@@ -4743,6 +4758,30 @@ function showReaderSettings() {
         () => setReaderFit(reader.fit, reader._prevFit));
       mkRow("쪽 구성", [["auto","자동"],["single","한 쪽"],["spread","두 쪽"]],
         () => reader.spreadMode, (v) => { reader.spreadMode = v; });
+      const sp = () => getSplit(reader.folder);
+      mkRow("반쪽 나누기", [["off","끄기"],["auto","자동"],["always","항상"]],
+        () => sp().mode, (v) => { setSplit(reader.folder, { mode: v }); });
+      mkRow("반쪽 순서", [[false,"읽기 방향대로"],[true,"반대로"]],
+        () => !!sp().swap, (v) => { setSplit(reader.folder, { swap: v === true || v === "true" }); });
+      mkRow("스캔 여백 자르기", [[true,"켜기"],[false,"끄기"]],
+        () => sp().trim !== false, (v) => { setSplit(reader.folder, { trim: v === true || v === "true" }); });
+      mkRow("접힌 곳", [[true,"자동 찾기"],[false,"가운데"]],
+        () => sp().smart !== false, (v) => { setSplit(reader.folder, { smart: v === true || v === "true" }); });
+      const gut = document.createElement("div");
+      gut.className = "settings-row";
+      gut.innerHTML = '<label>접힌 곳 위치</label><input type="range" min="-5" max="5" step="0.5" aria-label="접힌 곳 위치"><span class="gut-val"></span><p class="note">반쪽 나누기를 켠 스캔본에서 가운데가 맞지 않을 때 왼쪽(−)·오른쪽(+)으로 옮깁니다.</p>';
+      const gr = gut.querySelector("input"), gv = gut.querySelector(".gut-val");
+      gr.value = String(sp().off || 0);
+      gv.textContent = (sp().off > 0 ? "+" : "") + (sp().off || 0) + "%";
+      let gutT = 0;
+      gr.addEventListener("input", () => {
+        const v = parseFloat(gr.value) || 0;
+        gv.textContent = (v > 0 ? "+" : "") + v + "%";
+        setSplit(reader.folder, { off: v });
+        clearTimeout(gutT);
+        gutT = setTimeout(() => renderReaderViews(), 180);
+      });
+      body.appendChild(gut);
       mkRow("표지 단독", [[false,"끄기"],[true,"켜기"]],
         () => reader.coverAlone, (v) => { reader.coverAlone = v === true || v === "true"; });
       mkRow("읽기 방향", [[false,"왼쪽부터"],[true,"오른쪽부터"]],
@@ -4783,6 +4822,7 @@ function showReaderSettings() {
 $("btnPgGrid").addEventListener("click", openPageGrid);
 $("btnPgGridClose").addEventListener("click", () => { closePageGrid(); setReaderUI(true, true); });
 $("btnFit").addEventListener("click", () => { cycleFit(); setReaderUI(true, true); });
+$("btnSplit").addEventListener("click", () => { clearTimeout(readerHideTimer); showSplitSheet(); });
 $("btnSpreadQuick").addEventListener("click", async () => {
   if (reader.fit === "webtoon") { toast("웹툰 모드에서는 한 쪽씩 봅니다."); return; }
   reader.spreadMode = isSpread() ? "single" : "spread";
@@ -4799,8 +4839,7 @@ $("btnDirQuick").addEventListener("click", async () => {
   setReaderUI(true, true);
 });
 $("btnImgEdit").addEventListener("click", () => {
-  const node = reader.pages[reader.index];
-  if (node) openImageEditor(node, "reader");
+  editCurrentPage();
 });
 $("readerChrome").addEventListener("pointerdown", () => { if (reader.ui) setReaderUI(true, true); });
 
@@ -6738,6 +6777,256 @@ function bindReorderHandle(handle, card, node) {
     window.addEventListener("pointerup", up, true);
     window.addEventListener("pointercancel", up, true);
   });
+}
+
+/* ===== v8: split two-page scans into half pages (virtual pages, stored files untouched) ===== */
+const SPLIT_DEF = { mode: "off", swap: false, trim: true, smart: true, off: 0 };
+function splitKey(folder) {
+  if (!folder) return "none";
+  return folder.stored ? "id:" + folder.id : "p:" + (folder.path || folder.name || "");
+}
+function getSplit(folder) {
+  try { return Object.assign({}, SPLIT_DEF, JSON.parse(localStorage.getItem("mhv-split:" + splitKey(folder)) || "{}")); }
+  catch (_) { return Object.assign({}, SPLIT_DEF); }
+}
+function setSplit(folder, patch) {
+  const c = Object.assign(getSplit(folder), patch);
+  try { localStorage.setItem("mhv-split:" + splitKey(folder), JSON.stringify(c)); } catch (_) {}
+  return c;
+}
+function splitKeySuffix(folder) {
+  const c = getSplit(folder);
+  return c.mode === "off" ? "" : ":split-" + c.mode + (c.swap ? "-s" : "");
+}
+function splitSig(folder) {
+  const c = getSplit(folder);
+  return [c.mode, c.swap, c.trim, c.smart, c.off, reader.rtl].join("|");
+}
+
+/* image size from the file header (cheap), decode only as a fallback */
+const dimsCache = new Map();
+function parseDims(b) {
+  const u8 = new Uint8Array(b.buffer, b.byteOffset, b.byteLength);
+  if (u8[0] === 0xff && u8[1] === 0xd8) {
+    let o = 2;
+    while (o + 9 < u8.length) {
+      if (u8[o] !== 0xff) { o++; continue; }
+      const m = u8[o + 1];
+      if (m === 0xd8 || m === 0x01 || (m >= 0xd0 && m <= 0xd7)) { o += 2; continue; }
+      const len = b.getUint16(o + 2);
+      if ((m >= 0xc0 && m <= 0xcf) && m !== 0xc4 && m !== 0xc8 && m !== 0xcc) return { w: b.getUint16(o + 7), h: b.getUint16(o + 5) };
+      o += 2 + len;
+    }
+    return null;
+  }
+  if (u8[0] === 0x89 && u8[1] === 0x50) return { w: b.getUint32(16), h: b.getUint32(20) };
+  if (u8[0] === 0x47 && u8[1] === 0x49) return { w: b.getUint16(6, true), h: b.getUint16(8, true) };
+  if (u8[0] === 0x42 && u8[1] === 0x4d) return { w: b.getInt32(18, true), h: Math.abs(b.getInt32(22, true)) };
+  if (u8[0] === 0x52 && u8[8] === 0x57 && u8[9] === 0x45) {
+    const tag = String.fromCharCode(u8[12], u8[13], u8[14], u8[15]);
+    if (tag === "VP8X") return { w: 1 + (u8[24] | (u8[25] << 8) | (u8[26] << 16)), h: 1 + (u8[27] | (u8[28] << 8) | (u8[29] << 16)) };
+    if (tag === "VP8L") { const v = b.getUint32(21, true); return { w: 1 + (v & 0x3fff), h: 1 + ((v >> 14) & 0x3fff) }; }
+    if (tag === "VP8 ") return { w: b.getUint16(26, true) & 0x3fff, h: b.getUint16(28, true) & 0x3fff };
+  }
+  return null;
+}
+async function imageDims(node) {
+  const base = node.base || node;
+  if (dimsCache.has(base.id)) return dimsCache.get(base.id);
+  let d = null;
+  try {
+    const blob = await nodeToBlob(base);
+    d = parseDims(new DataView(await blob.slice(0, 262144).arrayBuffer()));
+    if (!d || !d.w || !d.h) {
+      const bm = await createImageBitmap(blob);
+      d = { w: bm.width, h: bm.height };
+      bm.close && bm.close();
+    }
+  } catch (_) { d = null; }
+  dimsCache.set(base.id, d);
+  return d;
+}
+async function dimsAll(nodes) {
+  const out = new Array(nodes.length);
+  let i = 0;
+  const worker = async () => { while (i < nodes.length) { const k = i++; out[k] = await imageDims(nodes[k]); } };
+  await Promise.all([worker(), worker(), worker(), worker()]);
+  return out;
+}
+const isWideDims = (d) => !!(d && d.w / d.h > 1.2);
+
+async function expandPages(pages, folder) {
+  const cfg = getSplit(folder);
+  if (cfg.mode === "off") return pages;
+  const slow = pages.some((p) => !dimsCache.has((p.base || p).id)) && pages.length > 24;
+  if (slow) showLoading("펼친 쪽을 나누는 중…");
+  try {
+    const dims = await dimsAll(pages);
+    const out = [];
+    const rightFirst = reader.rtl !== !!cfg.swap;
+    pages.forEach((p, k) => {
+      const base = p.base || p;
+      if (cfg.mode === "always" || isWideDims(dims[k])) {
+        for (const h of rightFirst ? [1, 0] : [0, 1]) {
+          const v = Object.create(base);
+          v.id = base.id + (h ? "#R" : "#L");
+          v.half = h;
+          v.base = base;
+          out.push(v);
+        }
+      } else out.push(base);
+    });
+    return out;
+  } finally { if (slow) hideLoading(); }
+}
+
+/* crop geometry: trim flat scan borders, find the fold */
+const geomCache = new Map();
+const baseImgCache = new Map(); // base.id -> Promise<img>, small LRU
+function loadBaseImg(base) {
+  if (baseImgCache.has(base.id)) { const p = baseImgCache.get(base.id); baseImgCache.delete(base.id); baseImgCache.set(base.id, p); return p; }
+  const p = (async () => loadImageEl(await nodeUrl(base, "sp:")))();
+  baseImgCache.set(base.id, p);
+  while (baseImgCache.size > 3) { const k = baseImgCache.keys().next().value; baseImgCache.delete(k); revokeUrl("sp:" + k); }
+  p.catch(() => { baseImgCache.delete(base.id); revokeUrl("sp:" + base.id); });
+  return p;
+}
+function splitGeom(base, img, cfg) {
+  const key = base.id + "|" + cfg.trim + "|" + cfg.smart + "|" + cfg.off;
+  if (geomCache.has(key)) return geomCache.get(key);
+  const W = img.naturalWidth, H = img.naturalHeight;
+  let x0 = 0, x1 = W, y0 = 0, y1 = H, mid = W / 2;
+  try {
+    const sw = Math.min(320, W), s = sw / W, sh = Math.max(1, Math.round(H * s));
+    const c = mkCanvas(sw, sh), ctx = c.getContext("2d", { willReadFrequently: true });
+    ctx.drawImage(img, 0, 0, sw, sh);
+    const px = ctx.getImageData(0, 0, sw, sh).data;
+    const lum = (x, y) => { const i = (y * sw + x) * 4; return px[i] * 0.299 + px[i + 1] * 0.587 + px[i + 2] * 0.114; };
+    const colStat = (x, ya, yb) => { let m = 0, q = 0, n = 0; for (let y = ya; y < yb; y++) { const v = lum(x, y); m += v; q += v * v; n++; } m /= n; return { m, sd: Math.sqrt(Math.max(0, q / n - m * m)) }; };
+    const rowStat = (y, xa, xb) => { let m = 0, q = 0, n = 0; for (let x = xa; x < xb; x++) { const v = lum(x, y); m += v; q += v * v; n++; } m /= n; return { m, sd: Math.sqrt(Math.max(0, q / n - m * m)) }; };
+    const flat = (st) => st.sd < 9 && (st.m < 45 || st.m > 212);
+    let L = 0, R = sw, T = 0, B = sh;
+    if (cfg.trim) {
+      while (L < sw * 0.14 && flat(colStat(L, 0, sh))) L++;
+      while (R > sw * 0.86 && flat(colStat(R - 1, 0, sh))) R--;
+      while (T < sh * 0.1 && flat(rowStat(T, L, R))) T++;
+      while (B > sh * 0.9 && flat(rowStat(B - 1, L, R))) B--;
+    }
+    let m = (L + R) / 2;
+    if (cfg.smart) {
+      const a = Math.round(L + (R - L) * 0.44), b = Math.round(L + (R - L) * 0.56);
+      const ms = [];
+      for (let x = a; x < b; x++) ms.push({ x, m: colStat(x, T, B).m });
+      if (ms.length > 3) {
+        const avg = ms.reduce((s2, v) => s2 + v.m, 0) / ms.length;
+        const lo = ms.reduce((p, v) => (v.m < p.m ? v : p)), hi = ms.reduce((p, v) => (v.m > p.m ? v : p));
+        if (avg - lo.m > 16) m = lo.x + 0.5;
+        else if (hi.m - avg > 22 && hi.m > 200) m = hi.x + 0.5;
+      }
+    }
+    x0 = L / s; x1 = R / s; y0 = T / s; y1 = B / s; mid = m / s;
+  } catch (_) {}
+  mid = Math.max(x0 + (x1 - x0) * 0.3, Math.min(x0 + (x1 - x0) * 0.7, mid + (cfg.off / 100) * (x1 - x0)));
+  const g = { x0, x1, y0, y1, mid };
+  geomCache.set(key, g);
+  return g;
+}
+async function halfCanvas(p, maxDim) {
+  const base = p.base, cfg = getSplit(reader.folder);
+  const img = await loadBaseImg(base);
+  const g = splitGeom(base, img, cfg);
+  const sx = p.half ? g.mid : g.x0, sw = p.half ? g.x1 - g.mid : g.mid - g.x0;
+  const sy = g.y0, sh = g.y1 - g.y0;
+  let s = maxDim ? Math.min(1, maxDim / Math.max(sw, sh)) : Math.min(1, Math.sqrt(16000000 / (sw * sh)));
+  const c = mkCanvas(sw * s, sh * s);
+  const ctx = c.getContext("2d");
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(img, sx, sy, sw, sh, 0, 0, c.width, c.height);
+  return c;
+}
+const canvasBlob = (c, type, q) => new Promise((res, rej) => c.toBlob((b) => (b ? res(b) : rej(new Error("이미지를 만들 수 없습니다."))), type || "image/jpeg", q || 0.92));
+async function halfPageUrl(p) {
+  const key = "pg:" + p.id;
+  if (urlCache.has(key)) return urlCache.get(key).url;
+  const b = await canvasBlob(await halfCanvas(p));
+  return rememberUrl(key, URL.createObjectURL(b));
+}
+async function loadHalfThumb(thumbEl, p) {
+  try {
+    const b = await canvasBlob(await halfCanvas(p, 256), "image/jpeg", 0.8);
+    const img = document.createElement("img");
+    img.alt = p.name; img.className = "ready";
+    img.src = rememberUrl("thh:" + p.id, URL.createObjectURL(b));
+    thumbEl.querySelectorAll("svg.ico, img").forEach((e) => e.remove());
+    thumbEl.prepend(img);
+  } catch (_) {}
+}
+const halfLabel = (p) => (p && p.half != null ? (p.half ? " · 오른쪽 반" : " · 왼쪽 반") : "");
+
+// rebuild the page list after a setting changed, staying on the same picture/half
+async function resplitReader() {
+  if (!reader.srcPages) return;
+  const cur = reader.pages[reader.index];
+  const base = cur && (cur.base || cur), half = cur && cur.half;
+  clearPageUrls();
+  revokeAllUrls("sp:"); baseImgCache.clear(); geomCache.clear();
+  const pages = await expandPages(reader.srcPages, reader.folder);
+  reader.pages = pages;
+  reader.splitSig = splitSig(reader.folder);
+  reader.folderKey = folderReadKey(reader.folder, reader.srcPages.length);
+  let idx = pages.findIndex((p) => (p.base || p) === base && (half == null || p.half == null || p.half === half));
+  if (idx < 0) idx = pages.findIndex((p) => (p.base || p) === base);
+  reader.index = alignIndex(Math.max(0, idx));
+  wt.built = false;
+}
+function showSplitSheet() {
+  const c = getSplit(reader.folder);
+  const set = async (patch, msg) => { setSplit(reader.folder, patch); await renderReaderViews(); updateReaderChrome(); if (msg) toast(msg, 1600); };
+  showSheet("반쪽 나누기 (펼친 스캔본)", [
+    { label: (c.mode === "off" ? "✓ " : "　 ") + "끄기 · 그림 한 장 그대로", fn: () => set({ mode: "off" }, "반쪽 나누기 끔") },
+    { label: (c.mode === "auto" ? "✓ " : "　 ") + "자동 · 가로로 긴 그림만 반씩", fn: () => set({ mode: "auto" }, "가로로 긴 그림만 반씩 봅니다") },
+    { label: (c.mode === "always" ? "✓ " : "　 ") + "항상 · 모든 그림을 반씩", fn: () => set({ mode: "always" }, "모든 그림을 반씩 봅니다") },
+    { label: "반쪽 순서 바꾸기 (지금: " + ((reader.rtl !== !!c.swap) ? "오른쪽 반 먼저" : "왼쪽 반 먼저") + ")", fn: () => set({ swap: !c.swap, mode: c.mode === "off" ? "auto" : c.mode }, "반쪽 순서를 바꿨어요") },
+    { label: "여백·접힌 곳 조정은 '보기' 설정에서", fn: () => setTimeout(showReaderSettings, 0) },
+  ]);
+}
+async function maybeHintSplit(folder, pages) {
+  try {
+    if (!pages || pages.length < 2 || getSplit(folder).mode !== "off") return;
+    const hk = "mhv-split-hint:" + splitKey(folder);
+    if (localStorage.getItem(hk)) return;
+    const sample = pages.slice(0, 16);
+    const dims = await dimsAll(sample);
+    const wide = dims.filter(isWideDims).length;
+    if (wide >= 2 && wide >= sample.length * 0.5) {
+      localStorage.setItem(hk, "1");
+      toast("펼친 스캔본 같아요 · 아래 '반쪽' 버튼으로 세로 반씩 볼 수 있어요", 4200);
+    }
+  } catch (_) {}
+}
+async function halfFile(p) {
+  const b = await canvasBlob(await halfCanvas(p), "image/jpeg", 0.95);
+  const stem = (p.base.name || "page").replace(/\.[^.]+$/, "");
+  return new File([b], `${stem}_${p.half ? "오른쪽" : "왼쪽"}.jpg`, { type: "image/jpeg", lastModified: Date.now() });
+}
+async function editCurrentPage() {
+  const node = reader.pages[reader.index];
+  if (!node) return;
+  if (node.half == null) { openImageEditor(node, "reader"); return; }
+  showSheet("반쪽 사진 편집", [
+    { label: "이 반쪽 편집 (사본으로 저장)", fn: async () => {
+      try {
+        const f = await halfFile(node);
+        const pseudo = makeNode({ kind: "image", name: f.name, file: f, parent: node.base.parent, stored: node.base.stored });
+        openImageEditor(pseudo, "reader");
+      } catch (e) { toast(friendlyError(e)); }
+    } },
+    { label: "이 반쪽을 그대로 사본으로 저장", fn: async () => {
+      try { await deliverFile(await halfFile(node), { srcNode: node.base, album: "편집한 사진", kindLabel: "사진" }); }
+      catch (e) { toast(friendlyError(e)); }
+    } },
+    { label: "원본 전체 편집", fn: () => openImageEditor(node.base, "reader") },
+  ]);
 }
 
 function clickPhotoPick() { quickPickPhotos(); }
