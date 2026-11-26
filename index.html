@@ -677,6 +677,8 @@ input[type=range]::-webkit-slider-thumb {
 
 body:has(#overlay:not(.hidden)) .toast { bottom: auto; top: calc(var(--safe-t) + 14px); }
 .gut-val { font-size: 12px; color: #ccc; min-width: 40px; text-align: right; font-variant-numeric: tabular-nums; }
+#stage.fit-cover #strip .slot img { object-fit: cover; object-position: 50% 50%; width: 100%; height: 100%; }
+#stage.fit-cover #strip .view.spread .slot { justify-content: stretch; }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
@@ -3276,7 +3278,9 @@ function loadPrefs() {
     if (p.spreadMode) reader.spreadMode = p.spreadMode;
     if (p.coverAlone != null) reader.coverAlone = !!p.coverAlone;
     if (p.turnEffect === "curl" || p.turnEffect === "slide" || p.turnEffect === "none") reader.turnEffect = p.turnEffect;
-    if (p.fit === "screen" || p.fit === "width" || p.fit === "webtoon") reader.fit = p.fit;
+    if (p.fit === "screen" || p.fit === "cover" || p.fit === "width" || p.fit === "webtoon") reader.fit = p.fit;
+    // v9: 꽉 채우기 becomes the default once (only for people who were on 화면 / never chose)
+    if (!p.fitV9) { if (!p.fit || p.fit === "screen") reader.fit = "cover"; reader._fitMigrated = true; }
     if (p.bg === "black" || p.bg === "white" || p.bg === "sepia") reader.bg = p.bg;
     if (typeof p.bright === "number") reader.bright = Math.max(0.3, Math.min(1, p.bright));
     if (p.speed) videoState.speed = p.speed;
@@ -3291,6 +3295,7 @@ function savePrefs() {
       coverAlone: reader.coverAlone,
       turnEffect: reader.turnEffect,
       fit: reader.fit,
+      fitV9: true,
       bg: reader.bg,
       bright: reader.bright,
       speed: videoState.speed,
@@ -3512,6 +3517,7 @@ function applyZoom() {
 }
 
 async function renderReaderViews(keepTransform) {
+  $("stage").classList.toggle("fit-cover", reader.fit === "cover");
   if (reader.srcPages && reader.splitSig !== splitSig(reader.folder)) await resplitReader();
   if (reader.fit === "webtoon") { renderWebtoon(); return; }
   hideWebtoon();
@@ -3686,7 +3692,7 @@ function readerGoTo(i) {
   renderReaderViews();
 }
 
-const FIT_LABEL = { screen: "화면", width: "너비", webtoon: "웹툰" };
+const FIT_LABEL = { screen: "화면", cover: "꽉 채움", width: "너비", webtoon: "웹툰" };
 function updateReaderChrome() {
   const n = pageCount();
   const i = reader.index;
@@ -3769,7 +3775,7 @@ function applyReaderLook() {
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v8";
+const PWA_CACHE = "mhv-pwa-v9";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
@@ -3861,7 +3867,7 @@ function measureViewPages(viewEl) {
     // Drawing into the full box stretched portrait-phone pages to the screen during the curl (size jump).
     const slot = img.parentElement;
     const align = spreadView && slot ? (slot.classList.contains("spine-end") ? "end" : slot.classList.contains("spine-start") ? "start" : "center") : "center";
-    const b = contentRectOf(img, box, align);
+    const b = reader.fit === "cover" ? coverRectOf(img, box) : contentRectOf(img, box, align);
     b.img = img;
     return b.w >= 2 && b.h >= 2 ? b : null;
   };
@@ -3969,7 +3975,10 @@ function pathPoly(ctx, poly) {
 }
 function drawImgRect(ctx, img, r) {
   if (!img || !r || r.w < 1 || r.h < 1) return;
-  try { ctx.drawImage(img, r.x, r.y, r.w, r.h); } catch (_) {}
+  try {
+    if (r.sw) ctx.drawImage(img, r.sx, r.sy, r.sw, r.sh, r.x, r.y, r.w, r.h);
+    else ctx.drawImage(img, r.x, r.y, r.w, r.h);
+  } catch (_) {}
 }
 
 function constrainTipLocal(px, py, W, H, fromRight, fromBottom) {
@@ -4095,9 +4104,14 @@ function drawFlip() {
       // verso: horizontally flipped in the front page's box, then reflected
       const bi = prep.back.img;
       const bw = bi.naturalWidth || W, bh = bi.naturalHeight || H;
-      const bs = Math.min(W / bw, H / bh);
-      const dw = bw * bs, dh = bh * bs;
-      ctx.drawImage(bi, front.x + (W - dw) / 2, front.y + (H - dh) / 2, dw, dh);
+      if (reader.fit === "cover") {
+        const cs = Math.max(W / bw, H / bh), csw = W / cs, csh = H / cs;
+        ctx.drawImage(bi, (bw - csw) / 2, (bh - csh) / 2, csw, csh, front.x, front.y, W, H);
+      } else {
+        const bs = Math.min(W / bw, H / bh);
+        const dw = bw * bs, dh = bh * bs;
+        ctx.drawImage(bi, front.x + (W - dw) / 2, front.y + (H - dh) / 2, dw, dh);
+      }
     } else {
       const pg = ctx.createLinearGradient(front.x, front.y, front.x + W, front.y);
       if (fromRight) {
@@ -4428,6 +4442,7 @@ function closeReader() {
   let startZoom = 1, startPanX = 0, startPanY = 0, pinchDist = 0;
   let pinchQ = { x: 0, y: 0 };
   let tapTimer = 0;
+  let cov = null; // cover-fill pan state
 
   function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
   function mid(a, b) { return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }; }
@@ -4456,6 +4471,15 @@ function closeReader() {
     }
     if (reader.animating) return;
     mode = reader.zoom > 1.02 ? "pan" : "swipe";
+    cov = null;
+    if (mode === "swipe" && reader.fit === "cover") {
+      const o = coverOverflow();
+      if (o.x > 1 || o.y > 1) {
+        mode = "cpan";
+        const p0 = coverPosOf(o.imgs[0]);
+        cov = { o, x0: p0.x, y0: p0.y, axis: null, over: 0, atEdge: null };
+      }
+    }
     startX = e.clientX; startY = e.clientY; startT = Date.now();
     startPanX = reader.panX; startPanY = reader.panY;
     $("strip").style.transition = "none";
@@ -4482,6 +4506,30 @@ function closeReader() {
       reader.panY = startPanY + (e.clientY - startY);
       applyZoom();
       return;
+    }
+    if (mode === "cpan" && cov) {
+      const dx = e.clientX - startX, dy = e.clientY - startY;
+      if (!cov.axis) {
+        if (Math.hypot(dx, dy) < 8) return;
+        cov.axis = Math.abs(dx) >= Math.abs(dy) ? "x" : "y";
+        if (cov.axis === "x" && cov.o.x <= 1) { mode = "swipe"; cov = null; }
+        else if (cov.axis === "y" && cov.o.y <= 1) { cov.axis = "none"; }
+        else cov.atEdge = cov.axis === "x" ? (cov.x0 <= 0.5 ? -1 : cov.x0 >= 99.5 ? 1 : 0) : 0;
+      }
+      if (mode === "cpan" && cov) {
+        if (cov.axis === "x") {
+          const want = cov.x0 - (dx / cov.o.x) * 100;
+          const x = Math.max(0, Math.min(100, want));
+          // how far the finger went past the picture's edge (px)
+          cov.over = want < 0 ? (-want / 100) * cov.o.x : want > 100 ? ((want - 100) / 100) * cov.o.x : 0;
+          cov.overDir = want < 0 ? -1 : want > 100 ? 1 : 0;
+          setCoverPos(cov.o.imgs, x, cov.y0);
+        } else if (cov.axis === "y") {
+          const y = Math.max(0, Math.min(100, cov.y0 - (dy / cov.o.y) * 100));
+          setCoverPos(cov.o.imgs, cov.x0, y);
+        }
+        return;
+      }
     }
     if (mode === "swipe" && reader.zoom <= 1.02) {
       const dx = e.clientX - startX;
@@ -4547,6 +4595,14 @@ function closeReader() {
     const dt = Date.now() - startT;
     const w = stage.clientWidth || window.innerWidth;
     const isTap = Math.hypot(dx, dy) < 12 && dt < 350;
+    if (mode === "cpan") {
+      mode = "none";
+      const c = cov; cov = null;
+      if (isTap || !c || !c.axis) { handleTap(e); return; }
+      // dragged past the edge of the picture → turn the page (left drag past the right edge = next)
+      if (c.axis === "x" && c.over > 50 && Math.abs(dx) > Math.abs(dy)) turnToPhysical(c.overDir > 0 ? 1 : -1, true);
+      return;
+    }
     if (mode === "pan") {
       mode = pointers.size ? mode : "none";
       if (isTap) { handleTap(e); return; }
@@ -4697,10 +4753,10 @@ async function setReaderFit(f, prev) {
   await renderReaderViews();
 }
 function cycleFit() {
-  const order = ["screen", "width", "webtoon"];
+  const order = ["screen", "cover", "width", "webtoon"];
   const f = order[(order.indexOf(reader.fit) + 1) % order.length];
   setReaderFit(f);
-  toast({ screen: "화면에 맞춤", width: "너비에 맞춤 · 위아래로 밀어 보기", webtoon: "웹툰 모드 · 세로로 이어서 보기" }[f], 1400);
+  toast({ screen: "화면에 맞춤 · 그림 전체", cover: "꽉 채우기 · 좌우로 밀면 가려진 부분", width: "너비에 맞춤 · 위아래로 밀어 보기", webtoon: "웹툰 모드 · 세로로 이어서 보기" }[f], 1400);
 }
 function tryLockOrientation() {
   const o = screen.orientation;
@@ -4753,7 +4809,7 @@ function showReaderSettings() {
         body.appendChild(row);
         return row;
       };
-      mkRow("화면 맞춤", [["screen","화면"],["width","너비"],["webtoon","웹툰"]],
+      mkRow("화면 맞춤", [["screen","화면"],["cover","꽉 채우기"],["width","너비"],["webtoon","웹툰"]],
         () => reader.fit, (v) => { reader._prevFit = reader.fit; reader.fit = v; },
         () => setReaderFit(reader.fit, reader._prevFit));
       mkRow("쪽 구성", [["auto","자동"],["single","한 쪽"],["spread","두 쪽"]],
@@ -7027,6 +7083,42 @@ async function editCurrentPage() {
     } },
     { label: "원본 전체 편집", fn: () => openImageEditor(node.base, "reader") },
   ]);
+}
+
+/* ===== v9: 꽉 채우기 (cover fill) ===== */
+function coverPosOf(img) {
+  const m = String((img && img.style.objectPosition) || "").match(/(-?[\d.]+)%\s+(-?[\d.]+)%/);
+  return m ? { x: +m[1], y: +m[2] } : { x: 50, y: 50 };
+}
+// the part of the picture that object-fit: cover shows inside the box (same math the browser uses)
+function coverRectOf(img, box) {
+  const nw = img && img.naturalWidth, nh = img && img.naturalHeight;
+  const r = { x: box.x, y: box.y, w: box.w, h: box.h };
+  if (!nw || !nh || box.w < 1 || box.h < 1) return r;
+  const s = Math.max(box.w / nw, box.h / nh);
+  const sw = box.w / s, sh = box.h / s;
+  const pos = coverPosOf(img);
+  r.sx = (nw - sw) * pos.x / 100;
+  r.sy = (nh - sh) * pos.y / 100;
+  r.sw = sw; r.sh = sh;
+  return r;
+}
+// how far the current view's pictures overflow the screen (px) in cover mode
+function coverOverflow() {
+  const out = { x: 0, y: 0, imgs: [] };
+  if (reader.fit !== "cover") return out;
+  for (const img of $("viewCur").querySelectorAll(".slot img")) {
+    const nw = img.naturalWidth, nh = img.naturalHeight, w = img.clientWidth, h = img.clientHeight;
+    if (!nw || !nh || !w || !h) continue;
+    const s = Math.max(w / nw, h / nh);
+    out.x = Math.max(out.x, nw * s - w);
+    out.y = Math.max(out.y, nh * s - h);
+    out.imgs.push(img);
+  }
+  return out;
+}
+function setCoverPos(imgs, x, y) {
+  for (const img of imgs) img.style.objectPosition = `${x}% ${y}%`;
 }
 
 function clickPhotoPick() { quickPickPhotos(); }
