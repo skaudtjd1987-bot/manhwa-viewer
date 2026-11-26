@@ -663,6 +663,18 @@ input[type=range]::-webkit-slider-thumb {
   #screen-video.editing .edit-panel { gap: 6px; }
 }
 
+/* v7: album sort + drag reorder */
+.ex-row2 { display: flex; gap: 8px; align-items: center; }
+.ex-row2:has(> .hidden:only-child) { display: none; }
+.chip-btn { height: 30px; padding: 0 12px; border-radius: 15px; background: var(--surface2); border: 1px solid var(--border); font-size: 12.5px; font-weight: 650; color: #ddd; }
+.prefix-fix { display: flex; align-items: center; gap: 10px; background: #2a2416; border: 1px solid #5a4a22; border-radius: 10px; padding: 8px 10px; font-size: 12.5px; color: #e8d6a8; }
+.prefix-fix span { flex: 1; }
+.prefix-fix button { height: 30px; padding: 0 10px; border-radius: 8px; background: #e0b85a; color: #1a1408; font-weight: 750; font-size: 12.5px; flex: 0 0 auto; }
+.drag-h { position: absolute; right: 4px; top: 4px; width: 34px; height: 34px; border-radius: 9px; background: rgba(0,0,0,.62); color: #fff; font-size: 20px; line-height: 34px; text-align: center; touch-action: none; z-index: 3; cursor: grab; }
+.card.dragging { z-index: 30; position: relative; box-shadow: 0 12px 30px #000c; opacity: .95; transition: none !important; }
+#grid { position: relative; }
+.drag-marker { position: absolute; width: 4px; border-radius: 2px; background: var(--accent); box-shadow: 0 0 10px var(--accent); z-index: 31; pointer-events: none; }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
@@ -706,6 +718,8 @@ input[type=range]::-webkit-slider-thumb {
         <button type="button" id="btnNewFolder" class="btn-compact">새 폴더</button>
         <button type="button" id="btnSelectMode" class="btn-compact">선택</button>
       </div>
+      <div class="ex-row2"><button type="button" id="btnSortMode" class="chip-btn hidden">정렬 · 고른 순서</button></div>
+      <div id="prefixFix" class="prefix-fix hidden"><span></span><button type="button" id="btnPrefixFix">이름 앞 날짜 빼기</button></div>
       <p class="ex-hint" id="photoHint">사진 앱에서 손가락을 밀어 여러 장을 한 번에 선택할 수 있습니다.</p>
       <div id="storageMeter" class="storage-meter"></div>
     </div>
@@ -1592,7 +1606,7 @@ function addFileToDir(parent, file, displayName, relPath) {
   if (kind === "other") return null;
   if (!parent.children) parent.children = [];
   const path = parent.path ? parent.path + "/" + displayName : displayName;
-  const existing = parent.children.find((c) => c.name === displayName && c.kind === kind);
+  const existing = parent.children.find((c) => c.name === displayName && c.kind === kind && c.size === file.size && c.lastModified === file.lastModified);
   if (existing) {
     existing.file = file;
     existing.size = file.size;
@@ -1606,6 +1620,7 @@ function addFileToDir(parent, file, displayName, relPath) {
     file,
     size: file.size,
     lastModified: file.lastModified,
+    order: nextOrder(parent),
     parent,
     children: kind === "zip" ? null : undefined,
   });
@@ -1740,7 +1755,7 @@ async function addPickedFiles(fileList, opts) {
 
 function sortTree(node) {
   if (!node.children) return;
-  node.children.sort(sortNodes);
+  node.children.sort(cmpIn(node));
   for (const c of node.children) if (c.children) sortTree(c);
 }
 
@@ -1962,7 +1977,7 @@ function uniqueChildName(parent, name) {
   if (!kids.some((c) => c.name === name)) return name;
   const e = extOf(name);
   const base = e ? name.slice(0, -(e.length + 1)) : name;
-  const suffix = (i) => (e ? base + " " + i + "." + e : base + " " + i);
+  const suffix = (i) => (e ? base + " (" + i + ")." + e : base + " (" + i + ")");
   for (let i = 2; i < 2000; i++) {
     const n = suffix(i);
     if (!kids.some((c) => c.name === n)) return n;
@@ -2214,7 +2229,7 @@ function serializeLibrary() {
   const walk = (node, parentId) => {
     if (!node || !node.stored) return;
     if (node.kind === "dir") {
-      folders.push({ id: node.id, name: node.name, parentId, created: node.created || 0 });
+      folders.push({ id: node.id, name: node.name, parentId, created: node.created || 0, sort: node.sort || undefined, order: node.order });
       for (const c of node.children || []) walk(c, node.id);
     } else if (node.storeId) {
       files.push({
@@ -2226,6 +2241,9 @@ function serializeLibrary() {
         size: node.size || 0,
         lastModified: node.lastModified || 0,
         path: node.path || node.name,
+        order: node.order,
+        origName: node.origName || undefined,
+        taken: node.taken || undefined,
       });
     }
   };
@@ -2246,6 +2264,8 @@ function hydrateLibrary(meta) {
       children: [],
       stored: true,
       created: rec.created || 0,
+      sort: rec.sort || undefined,
+      order: typeof rec.order === "number" ? rec.order : undefined,
       parent: homeNode,
     });
     folderMap.set(rec.id, node);
@@ -2277,6 +2297,9 @@ function hydrateLibrary(meta) {
       path: rec.path || rec.name,
       size: rec.size || 0,
       lastModified: rec.lastModified || 0,
+      order: typeof rec.order === "number" ? rec.order : undefined,
+      origName: rec.origName || undefined,
+      taken: rec.taken || undefined,
       parent,
       children: rec.kind === "zip" ? null : undefined,
     });
@@ -2287,6 +2310,10 @@ function hydrateLibrary(meta) {
       parent.children.push(node);
     }
   }
+  let migrated = false;
+  const walkO = (n) => { if (n.children) { if (ensureOrders(n)) migrated = true; n.children.forEach(walkO); } };
+  library.roots.forEach(walkO);
+  window.__ordersMigrated = migrated;
   for (const r of library.roots) refreshPaths(r);
   library.roots.sort(sortNodes);
   for (const r of library.roots) if (r.children) sortTree(r);
@@ -2323,6 +2350,7 @@ function libraryReady() {
     await initLibraryStore();
     const meta = await loadLibraryMeta();
     if (meta) hydrateLibrary(meta);
+    if (window.__ordersMigrated) await saveLibraryMeta().catch(() => {});
     await requestPersist();
     await refreshStorageMeter();
     if (typeof relinkPlaylist === "function") relinkPlaylist();
@@ -2424,6 +2452,7 @@ async function moveNodesTo(nodes, dest) {
     if (dest === homeNode) library.roots.push(node);
     else {
       if (!dest.children) dest.children = [];
+      node.order = nextOrder(dest);
       dest.children.push(node);
     }
     // ensure moved items are stored if going into stored library
@@ -2443,7 +2472,8 @@ async function importOneFile(folder, file, onProgress) {
   if (kind === "other") return null;
   const storeId = uid();
   await libWriteFile(storeId, file, onProgress);
-  const name = uniqueChildName(folder, file.name || "file");
+  const name = file.name || "file"; // v7: keep the exact name the picker gave (duplicates are told apart by id)
+  const order = nextOrder(folder);
   const node = makeNode({
     id: storeId,
     storeId,
@@ -2453,10 +2483,13 @@ async function importOneFile(folder, file, onProgress) {
     path: folder && folder !== homeNode && folder.path ? folder.path + "/" + name : name,
     size: file.size || 0,
     lastModified: file.lastModified || 0,
+    order,
+    origName: file.name || undefined,
     parent: folder,
     children: kind === "zip" ? null : undefined,
     file,
   });
+  if (kind === "image") { try { node.taken = (await exifDate(file)) || undefined; } catch (_) {} }
   if (folder === homeNode) library.roots.push(node);
   else {
     if (!folder.children) folder.children = [];
@@ -2504,6 +2537,7 @@ async function importFilesToFolder(folder, files, opts) {
 
 async function importTreeToFolder(rootParent, items) {
   // items: { file, parts[] } with parts including root folder name as [0]
+  items = items.slice().sort((a, b) => naturalCompare(a.parts.join("/"), b.parts.join("/")));
   await libraryReady();
   await requestPersist();
   const groups = new Map();
@@ -2841,10 +2875,10 @@ function childrenOf(node) {
 }
 
 function imagesIn(node) {
-  return childrenOf(node).filter((c) => c.kind === "image").sort((a, b) => naturalCompare(a.name, b.name));
+  return childrenOf(node).filter((c) => c.kind === "image").sort(cmpIn(node));
 }
 function videosIn(node) {
-  return childrenOf(node).filter((c) => c.kind === "video").sort((a, b) => naturalCompare(a.name, b.name));
+  return childrenOf(node).filter((c) => c.kind === "video").sort(cmpIn(node));
 }
 
 /* ========== Explorer render ========== */
@@ -2854,10 +2888,11 @@ function renderExplorer() {
   const title = $("exTitle");
   const crumb = $("crumb");
   const back = $("btnExBack");
-  const items = childrenOf(cwd);
+  const items = cwd === homeNode ? childrenOf(cwd) : childrenOf(cwd).sort(cmpIn(cwd));
   const atHome = cwd === homeNode || cwd.id === "home";
 
   back.classList.toggle("hidden", atHome);
+  updateSortUi();
   title.textContent = atHome ? "만화뷰어" : cwd.name;
   const selBtn = $("btnSelectMode");
   if (selBtn) selBtn.disabled = !items.length;
@@ -2956,6 +2991,14 @@ function makeCard(node) {
     badge.className = "badge";
     badge.textContent = "보관";
     thumb.appendChild(badge);
+  }
+  if (explorerUI.selecting && cwd && cwd !== homeNode && cwd.stored && node.kind !== "dir" && node.kind !== "zip" && (cwd.sort || "picked") !== "x") {
+    const h = document.createElement("span");
+    h.className = "drag-h";
+    h.textContent = "≡";
+    h.setAttribute("aria-label", "끌어서 순서 바꾸기");
+    bindReorderHandle(h, btn, node);
+    btn.appendChild(h);
   }
   const check = document.createElement("span");
   check.className = "check";
@@ -3083,12 +3126,12 @@ async function loadThumb(thumbEl, node) {
           out.alt = node.name;
           out.className = "ready";
           out.src = small;
-          thumbEl.innerHTML = "";
-          thumbEl.appendChild(out);
+          thumbEl.querySelectorAll("svg.ico, img").forEach((e) => e.remove());
+          thumbEl.prepend(out);
         } catch (_) {
           img.className = "ready";
-          thumbEl.innerHTML = "";
-          thumbEl.appendChild(img);
+          thumbEl.querySelectorAll("svg.ico, img").forEach((e) => e.remove());
+          thumbEl.prepend(img);
         }
       } else if (node.kind === "video") {
         const url = await nodeUrl(node, "th:");
@@ -3118,11 +3161,11 @@ async function captureVideoThumb(thumbEl, url, node) {
     const w = v.videoWidth || 160, h = v.videoHeight || 90;
     c.width = w; c.height = h;
     c.getContext("2d").drawImage(v, 0, 0, w, h);
-    thumbEl.innerHTML = "";
+    thumbEl.querySelectorAll("svg.ico, img").forEach((e) => e.remove());
     const img = document.createElement("img");
     img.alt = node.name;
     img.src = c.toDataURL("image/jpeg", 0.7);
-    thumbEl.appendChild(img);
+    thumbEl.prepend(img);
   } catch (_) {}
   const badge = document.createElement("span");
   badge.className = "badge";
@@ -3721,7 +3764,7 @@ function applyReaderLook() {
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v6";
+const PWA_CACHE = "mhv-pwa-v7";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
@@ -6404,28 +6447,9 @@ async function exifDate(file) {
   } catch (_) {}
   return null;
 }
-function namesLookRandom(files) {
-  if (files.length < 2) return false;
-  const names = files.map((f) => (f.name || "").replace(/\.[^.]+$/, ""));
-  const dup = new Set(names).size < names.length;
-  const rnd = names.filter((n) => /^[0-9a-f]{8}-[0-9a-f]{4}-|^[0-9a-f]{16,}$|^(image|photo|file|img)$/i.test(n) || !/\d/.test(n)).length;
-  return dup || rnd >= names.length / 2;
-}
-const pad2 = (n) => String(n).padStart(2, "0");
-// Natural filename order; when names are random (Photos picker, UUIDs) order by capture date and
-// prefix the date so the album keeps that order.
-async function sortImportFiles(files) {
-  const media = files.filter((f) => f && f.size && kindFromName(f.name || "") !== "other");
-  if (!namesLookRandom(media)) return media.slice().sort((a, b) => naturalCompare(a.name, b.name));
-  const withT = [];
-  for (const f of media) withT.push({ f, t: (await exifDate(f)) || f.lastModified || 0 });
-  withT.sort((a, b) => a.t - b.t);
-  return withT.map(({ f, t }, i) => {
-    if (!t) return f;
-    const d = new Date(t);
-    const stamp = `${d.getFullYear()}${pad2(d.getMonth() + 1)}${pad2(d.getDate())}_${pad2(d.getHours())}${pad2(d.getMinutes())}${pad2(d.getSeconds())}_${String(i + 1).padStart(3, "0")}`;
-    try { return new File([f], stamp + "_" + (f.name || "photo"), { type: f.type, lastModified: f.lastModified }); } catch (_) { return f; }
-  });
+// v7: imported files keep the exact name and the order they were picked in (no sorting, no renaming)
+function pickedMedia(files) {
+  return files.filter((f) => f && f.size && kindFromName(f.name || "") !== "other");
 }
 
 let quickCtx = "home";
@@ -6438,13 +6462,14 @@ function quickTargetFolder() {
   if (quickCtx !== "reader" && cwd && isStoredFolder(cwd)) return cwd;
   return null;
 }
-async function quickImport(fileList) {
+async function quickImport(fileList, opts) {
   const raw = Array.from(fileList || []);
   if (!raw.length) return;
   await libraryReady();
   const big = raw.length >= 20;
   if (big) toast(`${raw.length}개 정리하는 중…`, 1500);
-  const files = await sortImportFiles(raw);
+  const files = pickedMedia(raw);
+  if (opts && opts.natural) files.sort((a, b) => naturalCompare(a.name, b.name)); // folder import: file-name order
   if (!files.length) { toast("열 수 있는 사진이나 영상이 없습니다."); return; }
   const firstImg = files.find((f) => kindFromName(f.name) === "image");
   if (importPrefs.mode === "view") {
@@ -6455,6 +6480,7 @@ async function quickImport(fileList) {
     const pages = imagesIn(bucket);
     const idx = pages.findIndex((p) => !before.has(p.id));
     toast(`${files.length}개를 열었어요 · 이번만 보기`, 1800);
+    cwd = bucket;
     if (pages.length && firstImg) openReader(pages, Math.max(0, idx), bucket, { fresh: true });
     else { cwd = bucket; renderExplorer(); }
     return;
@@ -6471,9 +6497,11 @@ async function quickImport(fileList) {
   importPrefs.last = folder.name; saveImportPrefs();
   const pages = imagesIn(folder);
   const idx = pages.findIndex((p) => !beforeIds.has(p.id));
+  const generic = files.filter((f) => isGenericName(f.name)).length;
   const first = !localStorage.getItem("mhv-import-tip");
-  toast(`${folder.name}에 ${added}개 추가` + (first ? " · 보관 방식은 보기 설정에서 바꿀 수 있어요" : ""), first ? 3600 : 1800);
+  toast(`${folder.name}에 ${added}개 추가` + (generic ? ` · 이름에 번호가 없는 ${generic}장은 고른 순서로` : "") + (first ? " · 보관 방식은 보기 설정에서 바꿀 수 있어요" : ""), first || generic ? 3600 : 1800);
   try { localStorage.setItem("mhv-import-tip", "1"); } catch (_) {}
+  cwd = folder; // closing the reader lands in this album
   if (idx >= 0) {
     // jump straight to the first new page (when reading, the album keeps going)
     openReader(pages, idx, folder, { fresh: true });
@@ -6498,7 +6526,7 @@ async function quickImportFolder(fileList) {
   await libraryReady();
   if (importPrefs.mode === "view") { await addPickedFiles(files, { keep: false }); renderExplorer(); return; }
   const withPath = files.filter((f) => f.webkitRelativePath);
-  if (!withPath.length) { quickCtx = "home"; return quickImport(files); }
+  if (!withPath.length) { quickCtx = "home"; return quickImport(files, { natural: true }); }
   const items = withPath.map((f) => {
     const parts = String(f.webkitRelativePath).replace(/\\/g, "/").split("/").filter(Boolean);
     return { file: f, parts, rel: parts.join("/") };
@@ -6544,6 +6572,174 @@ function showImportSettings() {
   });
 }
 
+/* ===== v7: explicit order per album (picked order), per-album sort mode, never rename on import ===== */
+const SORT_LABEL = { name: "이름순", picked: "고른 순서", date: "촬영 날짜순" };
+const DEFAULT_SORT = "name"; // comics are numbered in their file names (001, 2, 10…)
+const V6_PREFIX = /^(\d{8})_(\d{6})_(\d{3})_(.+)$/;
+function nextOrder(folder) {
+  const kids = folder && folder !== homeNode ? (folder.children || []) : library.roots;
+  let m = -1;
+  for (const c of kids) if (typeof c.order === "number" && c.order > m) m = c.order;
+  return m + 1;
+}
+// files from before v7 have no order: give them the order they were shown in (name order), once
+function ensureOrders(folder) {
+  const kids = folder && folder !== homeNode ? (folder.children || []) : library.roots;
+  const missing = kids.filter((c) => typeof c.order !== "number");
+  if (!missing.length) return false;
+  missing.sort((a, b) => naturalCompare(a.name, b.name));
+  let o = nextOrder(folder);
+  for (const c of missing) c.order = o++;
+  return true;
+}
+// names that carry no order (iOS camera hand-off gives "image.jpg"); these keep the order they were picked in
+function isGenericName(n) {
+  return /^(image|photo|img|file|picture|upload)( ?\(\d+\)| \d+)?\.[a-z0-9]+$/i.test(String(n || ""));
+}
+function cmpIn(folder) {
+  const mode = (folder && folder.sort) || DEFAULT_SORT;
+  return (a, b) => {
+    const rank = (n) => (n.kind === "dir" || n.kind === "zip" ? 0 : 1);
+    const r = rank(a) - rank(b);
+    if (r) return r;
+    if (rank(a) === 0 && mode !== "date") {
+      if (mode === "name" || typeof a.order !== "number" || typeof b.order !== "number") return naturalCompare(a.name, b.name);
+    }
+    if (mode === "name") {
+      if (isGenericName(a.name) && isGenericName(b.name)) return ((a.order ?? 0) - (b.order ?? 0)) || naturalCompare(a.name, b.name);
+      return naturalCompare(a.name, b.name) || ((a.order ?? 0) - (b.order ?? 0));
+    }
+    if (mode === "date") {
+      const ta = a.taken || a.lastModified || 0, tb = b.taken || b.lastModified || 0;
+      if (ta !== tb) return ta - tb;
+    }
+    const oa = typeof a.order === "number" ? a.order : Infinity, ob = typeof b.order === "number" ? b.order : Infinity;
+    if (oa !== ob) return oa - ob;
+    return naturalCompare(a.name, b.name);
+  };
+}
+function v6PrefixedIn(folder) {
+  return (folder && folder.children || []).filter((c) => c.kind !== "dir" && V6_PREFIX.test(c.name));
+}
+async function setAlbumSort(folder, mode) {
+  if (!folder || folder === homeNode) return;
+  folder.sort = mode;
+  sortTree(folder);
+  if (folder.stored) await saveLibraryMeta().catch(() => {});
+  renderExplorer();
+}
+// keep what the user sees, then strip the auto-added "YYYYMMDD_HHMMSS_NNN_" from v6
+async function stripV6Prefixes(folder) {
+  const list = v6PrefixedIn(folder);
+  if (!list.length) return 0;
+  const shown = childrenOf(folder).sort(cmpIn(folder));
+  shown.forEach((c, i) => { c.order = i; });
+  folder.sort = "picked";
+  for (const c of list) {
+    const orig = c.name.match(V6_PREFIX)[4];
+    c.name = orig;
+    c.origName = orig;
+    refreshPaths(c);
+  }
+  sortTree(folder);
+  await saveLibraryMeta().catch(() => {});
+  renderExplorer();
+  return list.length;
+}
+function showSortSheet(folder) {
+  folder = folder || cwd;
+  const mode = folder.sort || DEFAULT_SORT;
+  const items = Object.keys(SORT_LABEL).map((k) => ({
+    label: (k === mode ? "✓ " : "　 ") + SORT_LABEL[k] + (k === "name" ? " (기본 · 2가 10보다 앞)" : k === "picked" ? " (가져온 순서 · 직접 바꾼 순서)" : ""),
+    fn: () => setAlbumSort(folder, k),
+  }));
+  if (folder.stored) items.push({ label: "순서 직접 바꾸기 (선택 → ≡ 끌기)", fn: () => { enterSelectMode(); toast("≡ 손잡이를 끌어 순서를 바꾸세요", 2400); } });
+  const n = v6PrefixedIn(folder).length;
+  if (n) items.push({ label: `이름 앞 날짜 빼기 (${n}개 · 원래 이름으로)`, fn: async () => { const k = await stripV6Prefixes(folder); toast(`${k}개 이름을 원래대로 되돌렸어요 · 순서는 그대로`, 2400); } });
+  showSheet("정렬", items);
+}
+function updateSortUi() {
+  const b = $("btnSortMode"), fix = $("prefixFix");
+  if (!b) return;
+  const show = cwd && cwd !== homeNode && (cwd.children || []).some((c) => c.kind !== "dir");
+  b.classList.toggle("hidden", !show);
+  b.textContent = "정렬 · " + SORT_LABEL[(cwd && cwd.sort) || DEFAULT_SORT];
+  const n = show ? v6PrefixedIn(cwd).length : 0;
+  if (fix) {
+    fix.classList.toggle("hidden", !n);
+    if (n) fix.querySelector("span").textContent = `자동으로 이름 앞에 날짜가 붙은 파일 ${n}개`;
+  }
+}
+
+/* drag to reorder (album select mode). The dragged card is never moved in the DOM while the finger is down
+   (moving it would drop the pointer capture on iOS); a marker shows where it will land. */
+function bindReorderHandle(handle, card, node) {
+  handle.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); });
+  handle.addEventListener("pointerdown", (e) => {
+    e.preventDefault(); e.stopPropagation();
+    const grid = $("grid"), scroller = $("exScroll"), pid = e.pointerId;
+    try { handle.setPointerCapture(pid); } catch (_) {}
+    card.classList.add("dragging");
+    let marker = document.getElementById("dragMarker");
+    if (!marker) { marker = document.createElement("div"); marker.id = "dragMarker"; marker.className = "drag-marker"; }
+    grid.appendChild(marker);
+    marker.style.display = "none";
+    const sx = e.clientX, sy = e.clientY, st0 = scroller.scrollTop;
+    let lastX = sx, lastY = sy, raf = 0, target = null;
+    const place = () => { card.style.transform = `translate(${lastX - sx}px,${lastY - sy + (scroller.scrollTop - st0)}px) scale(1.05)`; };
+    const hit = () => {
+      const cards = [...grid.querySelectorAll(".card")].filter((c) => c !== card && c.dataset.kind !== "dir" && c.dataset.kind !== "zip");
+      const gr = grid.getBoundingClientRect();
+      for (const c of cards) {
+        const r = c.getBoundingClientRect();
+        if (lastX >= r.left - 6 && lastX <= r.right + 6 && lastY >= r.top && lastY <= r.bottom) {
+          const before = lastX < r.left + r.width / 2;
+          target = { id: c.dataset.id, before };
+          marker.style.display = "block";
+          marker.style.left = ((before ? r.left - 5 : r.right + 1) - gr.left) + "px";
+          marker.style.top = (r.top - gr.top) + "px";
+          marker.style.height = r.width + "px";
+          return;
+        }
+      }
+    };
+    const move = (ev) => {
+      if (ev.pointerId !== pid) return;
+      lastX = ev.clientX; lastY = ev.clientY;
+      place(); hit();
+      const sr = scroller.getBoundingClientRect();
+      cancelAnimationFrame(raf);
+      const edge = lastY < sr.top + 50 ? -1 : lastY > sr.bottom - 50 ? 1 : 0;
+      if (edge) { const tick = () => { scroller.scrollTop += edge * 8; place(); hit(); raf = requestAnimationFrame(tick); }; raf = requestAnimationFrame(tick); }
+    };
+    const up = async (ev) => {
+      if (ev.pointerId !== pid) return;
+      cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", move, true);
+      window.removeEventListener("pointerup", up, true);
+      window.removeEventListener("pointercancel", up, true);
+      card.classList.remove("dragging");
+      card.style.transform = "";
+      marker.remove();
+      if (!target || ev.type === "pointercancel") return;
+      const folder = cwd;
+      const list = childrenOf(folder).sort(cmpIn(folder)).filter((c) => c !== node);
+      let at = list.findIndex((c) => c.id === target.id);
+      if (at < 0) return;
+      if (!target.before) at++;
+      list.splice(at, 0, node);
+      list.forEach((c, i) => { c.order = i; });
+      folder.sort = "picked";
+      sortTree(folder);
+      await saveLibraryMeta().catch(() => {});
+      renderExplorer();
+    };
+    window.addEventListener("pointermove", move, true);
+    window.addEventListener("pointerup", up, true);
+    window.addEventListener("pointercancel", up, true);
+  });
+}
+
 function clickPhotoPick() { quickPickPhotos(); }
 $("btnAddPhotos") && $("btnAddPhotos").addEventListener("click", clickPhotoPick);
 $("btnOpenPhotosEmpty") && $("btnOpenPhotosEmpty").addEventListener("click", clickPhotoPick);
@@ -6564,8 +6760,10 @@ $("photoPick").addEventListener("change", async (e) => {
 });
 $("btnOpenDir").addEventListener("click", quickPickFolder);
 $("fabPhotos").addEventListener("click", () => quickPickPhotos());
+$("btnSortMode").addEventListener("click", () => showSortSheet(cwd));
+$("btnPrefixFix").addEventListener("click", async () => { const k = await stripV6Prefixes(cwd); toast(`${k}개 이름을 원래대로 되돌렸어요 · 순서는 그대로`, 2400); });
 $("btnQuickAdd").addEventListener("click", () => quickPickPhotos("reader"));
-$("folderFallbackPick").addEventListener("change", async (e) => { quickCtx = "home"; await quickImport(e.target.files); e.target.value = ""; });
+$("folderFallbackPick").addEventListener("change", async (e) => { quickCtx = "home"; await quickImport(e.target.files, { natural: true }); e.target.value = ""; });
 $("btnOpenFiles").addEventListener("click", () => $("filePick").click());
 $("btnOpenAny") && $("btnOpenAny").addEventListener("click", () => $("filePickAll").click());
 $("btnHelp") && $("btnHelp").addEventListener("click", showHelpSheet);
