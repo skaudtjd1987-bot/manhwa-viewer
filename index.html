@@ -873,6 +873,18 @@ input[type=range]::-moz-range-thumb { width: 20px; height: 20px; border: 0; bord
 body:has(#screen-reader:not(.hidden) #readerChrome:not(.dim)) .toast { bottom: calc(var(--safe-b) + 132px); }
 body:has(#overlay:not(.hidden)) .toast { bottom: auto !important; top: calc(var(--safe-t) + 14px); }
 
+/* ===== v11 ===== */
+/* 꽉 채우기: whole page (or half) fills the slot, nothing cut off, no panning */
+#stage.fit-cover #strip .slot img { object-fit: fill !important; object-position: 50% 50% !important; width: 100%; height: 100%; }
+#stage.fit-cover #strip .view.spread .slot { justify-content: stretch; }
+/* reader always reaches all four screen edges (iOS home-screen apps can report a short 100% height) */
+#screen-reader { top: 0; left: 0; right: 0; bottom: auto; width: 100%; height: 100%; height: var(--app-h, 100dvh); min-height: 100%; }
+#screen-reader #stage { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* hidden HUD leaves nothing on the page: no blur, no shade, no gradient */
+#readerChrome.dim, #readerChrome.dim * { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; box-shadow: none !important; }
+#readerChrome.dim .topbar, #readerChrome.dim .bottombar, #readerChrome.dim .topbar-inner { background: transparent !important; }
+#readerChrome .bottombar:not(.rbar) { background: transparent; }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
@@ -3589,6 +3601,7 @@ async function getPageUrl(i) {
   if (pageUrlMemo.has(i)) return pageUrlMemo.get(i);
   const node = reader.pages[i];
   const url = node.half != null ? await halfPageUrl(node) : await nodeUrl(node, "pg:");
+  if (reader.pages[i] !== node) return reader.pages[i] ? getPageUrl(i) : null;
   pageUrlMemo.set(i, url);
   return url;
 }
@@ -4001,7 +4014,7 @@ function applyReaderLook() {
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v10";
+const PWA_CACHE = "mhv-pwa-v11";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
@@ -4331,8 +4344,7 @@ function drawFlip() {
       const bi = prep.back.img;
       const bw = bi.naturalWidth || W, bh = bi.naturalHeight || H;
       if (reader.fit === "cover") {
-        const cs = Math.max(W / bw, H / bh), csw = W / cs, csh = H / cs;
-        ctx.drawImage(bi, (bw - csw) / 2, (bh - csh) / 2, csw, csh, front.x, front.y, W, H);
+        ctx.drawImage(bi, 0, 0, bw, bh, front.x, front.y, W, H);
       } else {
         const bs = Math.min(W / bw, H / bh);
         const dw = bw * bs, dh = bh * bs;
@@ -4624,6 +4636,7 @@ async function openReader(pages, startIndex, folder, opts) {
   if (exp !== pages && startIndex != null) startIndex = Math.max(0, exp.findIndex((p) => (p.base || p) === pages[startIndex]));
   pages = exp;
   reader.splitSig = splitSig(folder || null);
+  pageUrlMemo.clear();
   reader.pages = pages;
   reader.folder = folder || null;
   reader.folderName = folder && folder.name ? folder.name : "이미지";
@@ -4995,10 +5008,10 @@ async function setReaderFit(f, prev) {
   await renderReaderViews();
 }
 function cycleFit() {
-  const order = ["screen", "cover", "width", "webtoon"];
+  const order = ["cover", "screen", "width", "webtoon"];
   const f = order[(order.indexOf(reader.fit) + 1) % order.length];
   setReaderFit(f);
-  toast({ screen: "화면에 맞춤 · 그림 전체", cover: "꽉 채우기 · 좌우로 밀면 가려진 부분", width: "너비에 맞춤 · 위아래로 밀어 보기", webtoon: "웹툰 모드 · 세로로 이어서 보기" }[f], 1400);
+  toast({ screen: "화면에 맞춤 · 그림 전체", cover: "꽉 채우기 · 잘림 없이 화면 가득", width: "너비에 맞춤 · 위아래로 밀어 보기", webtoon: "웹툰 모드 · 세로로 이어서 보기" }[f], 1400);
 }
 function tryLockOrientation() {
   const o = screen.orientation;
@@ -5051,7 +5064,7 @@ function showReaderSettings() {
         body.appendChild(row);
         return row;
       };
-      mkRow("화면 맞춤", [["screen","화면"],["cover","꽉 채우기"],["width","너비"],["webtoon","웹툰"]],
+      mkRow("화면 맞춤", [["cover","꽉 채우기"],["screen","화면"],["width","너비"],["webtoon","웹툰"]],
         () => reader.fit, (v) => { reader._prevFit = reader.fit; reader.fit = v; },
         () => setReaderFit(reader.fit, reader._prevFit));
       mkRow("쪽 구성", [["auto","자동"],["single","한 쪽"],["spread","두 쪽"]],
@@ -7271,6 +7284,7 @@ async function resplitReader() {
   clearPageUrls();
   revokeAllUrls("sp:"); baseImgCache.clear(); geomCache.clear();
   const pages = await expandPages(reader.srcPages, reader.folder);
+  pageUrlMemo.clear();
   reader.pages = pages;
   reader.splitSig = splitSig(reader.folder);
   reader.folderKey = folderReadKey(reader.folder, reader.srcPages.length);
@@ -7340,18 +7354,14 @@ function coverRectOf(img, box) {
   const nw = img && img.naturalWidth, nh = img && img.naturalHeight;
   const r = { x: box.x, y: box.y, w: box.w, h: box.h };
   if (!nw || !nh || box.w < 1 || box.h < 1) return r;
-  const s = Math.max(box.w / nw, box.h / nh);
-  const sw = box.w / s, sh = box.h / s;
-  const pos = coverPosOf(img);
-  r.sx = (nw - sw) * pos.x / 100;
-  r.sy = (nh - sh) * pos.y / 100;
-  r.sw = sw; r.sh = sh;
+  // v11: object-fit: fill → every pixel of the picture is shown, stretched to the box
+  r.sx = 0; r.sy = 0; r.sw = nw; r.sh = nh;
   return r;
 }
 // how far the current view's pictures overflow the screen (px) in cover mode
 function coverOverflow() {
   const out = { x: 0, y: 0, imgs: [] };
-  if (reader.fit !== "cover") return out;
+  if (reader.fit !== "cover" || true) return out; // v11: fill never overflows → no sideways pan
   for (const img of $("viewCur").querySelectorAll(".slot img")) {
     const nw = img.naturalWidth, nh = img.naturalHeight, w = img.clientWidth, h = img.clientHeight;
     if (!nw || !nh || !w || !h) continue;
@@ -7655,6 +7665,29 @@ $("btnBmClose").addEventListener("click", closeBmPanel);
 document.querySelectorAll("#pgFilter button").forEach((b) => b.addEventListener("click", () => { pgFilter = b.dataset.f; applyPgFilter(); $("pgGridScroll").scrollTop = 0; }));
 $("btnVolGo").addEventListener("click", () => { if (volCardFor) goVolume(volCardFor.delta, volCardFor.t); });
 $("btnVolX").addEventListener("click", () => { if (volCardFor) volCardFor.closed = true; hideVolCard(); });
+
+/* v11: keep the reader exactly as tall as the screen on iPhone home-screen apps */
+(function syncAppHeight() {
+  const isIPhone = /iPhone|iPod/.test(navigator.userAgent);
+  const standalone = () => navigator.standalone === true || (window.matchMedia && matchMedia("(display-mode: standalone)").matches);
+  function apply() {
+    let h = window.innerHeight;
+    const vv = window.visualViewport;
+    if (vv && vv.scale <= 1.01) h = Math.max(h, Math.round(vv.height));
+    if (isIPhone && standalone() && screen && screen.width && screen.height) {
+      // full-screen app: the screen size is the real drawing area
+      const portrait = window.innerHeight >= window.innerWidth;
+      const full = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
+      if (full > h && full - h < 120) h = full;
+    }
+    document.documentElement.style.setProperty("--app-h", h + "px");
+    window.__appH = h;
+  }
+  apply();
+  window.addEventListener("resize", () => { apply(); setTimeout(apply, 120); });
+  window.addEventListener("orientationchange", () => setTimeout(apply, 300));
+  if (window.visualViewport) window.visualViewport.addEventListener("resize", apply);
+})();
 
 function clickPhotoPick() { quickPickPhotos(); }
 $("btnAddPhotos") && $("btnAddPhotos").addEventListener("click", clickPhotoPick);
