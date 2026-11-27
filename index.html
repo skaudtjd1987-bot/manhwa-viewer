@@ -958,6 +958,93 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
 .page-preview .pp-img { border-radius: 8px; width: 96px; height: 134px; box-shadow: 0 4px 12px rgba(0,0,0,.5); }
 .page-preview span { background: rgba(138,180,255,.18); color: #dce8ff; border-radius: 9px; padding: 1px 9px; font-size: 11.5px !important; }
 
+/* ===== v15 ===== */
+:root { --star: #ffc247; }
+#btnBookmark svg { stroke-linejoin: round; }
+#btnBookmark.on svg { fill: var(--star) !important; stroke: var(--star) !important; filter: drop-shadow(0 0 7px rgba(255,194,71,.75)) !important; }
+.bm-chip svg { fill: var(--star) !important; }
+.bm-chip b { background: rgba(255,194,71,.28) !important; }
+/* lock button */
+#btnLock { opacity: .55; }
+#btnLock.open { opacity: 1; color: #c9a7ff; }
+#btnLock.open svg .shackle { transform: translate(-4px, -2px) rotate(-18deg); transform-origin: 8px 10px; }
+#btnLock svg .shackle { transition: transform .2s; }
+/* home tools */
+.lib-tools { margin: 6px calc(16px + var(--safe-r)) 2px calc(16px + var(--safe-l)); display: flex; flex-direction: column; gap: 9px; }
+.lib-search { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 6px 0 12px; border-radius: 12px; background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.1); }
+.lib-search:focus-within { border-color: rgba(138,180,255,.6); background: rgba(138,180,255,.08); }
+.lib-search svg { width: 17px; height: 17px; flex: none; stroke: rgba(255,255,255,.55); fill: none; stroke-width: 2; }
+.lib-search input { flex: 1; min-width: 0; height: 100%; background: transparent; border: 0; outline: 0; color: #fff; font-size: 16px; -webkit-appearance: none; appearance: none; }
+.lib-search input::placeholder { color: rgba(255,255,255,.4); }
+.lib-search input::-webkit-search-cancel-button { display: none; }
+.lib-search button { width: 30px; height: 30px; border-radius: 15px; color: rgba(255,255,255,.7); font-size: 14px; background: rgba(255,255,255,.1); }
+.lib-tabs { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding-bottom: 1px; }
+.lib-tabs::-webkit-scrollbar { display: none; }
+.lib-tab, .lib-tabs .bm-chip { flex: none; height: 32px; padding: 0 13px; border-radius: 16px; font-size: 13.5px; font-weight: 650; color: rgba(255,255,255,.78); background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.1); display: inline-flex; align-items: center; gap: 6px; margin: 0 !important; white-space: nowrap; }
+.lib-tab.on { background: #fff; color: #0b0c10; border-color: #fff; }
+.lib-tab[data-tab="secret"] { color: #dcc8ff; border-color: rgba(201,167,255,.45); background: rgba(120,80,200,.18); }
+.lib-tab[data-tab="secret"].on { background: #c9a7ff; color: #160c2a; }
+.lib-tagrow, .tag-sugg { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag-chip { height: 28px; padding: 0 10px; border-radius: 14px; font-size: 12.5px; font-weight: 600; color: rgba(255,255,255,.8); background: rgba(255,255,255,.06); border: .5px solid rgba(255,255,255,.12); display: inline-flex; align-items: center; gap: 5px; }
+.tag-chip small { font-size: 11px; color: rgba(255,255,255,.5); }
+.tag-chip.on { background: rgba(138,180,255,.2); color: #dce8ff; border-color: rgba(138,180,255,.5); }
+.tag-chip button { color: inherit; font-size: 15px; line-height: 1; padding: 0 0 0 2px; opacity: .8; }
+.secret-bar { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 14px; background: linear-gradient(100deg, rgba(120,80,200,.28), rgba(60,40,110,.2)); border: .5px solid rgba(201,167,255,.35); }
+.secret-bar b { flex: 1; font-size: 14px; color: #ece2ff; }
+.secret-bar button { height: 30px; padding: 0 12px; border-radius: 15px; font-size: 13px; font-weight: 700; background: rgba(255,255,255,.12); color: #fff; }
+.secret-bar button.lock { background: #c9a7ff; color: #160c2a; }
+.lib-group { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 8px; margin: 10px 2px -2px; }
+.lib-group b { font-size: 16px; font-weight: 800; letter-spacing: -.02em; }
+.lib-group span { font-size: 12px; color: rgba(255,255,255,.5); }
+.lib-group:first-child { margin-top: 0; }
+.lib-empty { grid-column: 1 / -1; text-align: center; color: rgba(255,255,255,.55); font-size: 14px; line-height: 1.6; padding: 40px 10px; margin: 0; }
+.card { position: relative; }
+.card-tags { font-size: 11px; color: #a9c4ff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; padding-right: 22px; }
+.card-more { position: absolute; right: -2px; bottom: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: rgba(255,255,255,.6); border-radius: 15px; z-index: 4; }
+.card-more:active { background: rgba(255,255,255,.12); }
+.card.kind-dir .name, .card.kind-zip .name, .card.kind-dir .meta { padding-right: 24px; }
+.card.is-secret .thumb { box-shadow: 0 0 0 1.5px rgba(201,167,255,.6), 0 10px 22px rgba(0,0,0,.5); }
+.app-ver { font-size: 11px; color: rgba(255,255,255,.35); margin-top: 4px; letter-spacing: .02em; }
+/* series/tag editor */
+.meta-lab { display: block; font-size: 12.5px; color: rgba(255,255,255,.6); margin: 10px 12px 6px; font-weight: 600; }
+.tag-sugg { margin: 8px 12px 0; }
+.tag-edit { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 0 12px; padding: 8px; min-height: 44px; border-radius: 12px; background: rgba(255,255,255,.06); border: 1px solid var(--border); }
+.tag-edit input { flex: 1; min-width: 90px; height: 28px; background: transparent; border: 0; outline: 0; color: #fff; font-size: 16px; }
+/* PIN pad */
+.pin-sheet { text-align: center; }
+.pin-sub { margin: 0 12px 14px; color: rgba(255,255,255,.6); font-size: 13px; }
+.pin-dots { display: flex; justify-content: center; gap: 16px; margin: 6px 0 6px; }
+.pin-dots i { width: 14px; height: 14px; border-radius: 7px; border: 1.5px solid rgba(255,255,255,.55); transition: background .12s, transform .12s; }
+.pin-dots i.on { background: #fff; border-color: #fff; transform: scale(1.08); }
+.pin-err { min-height: 18px; margin: 4px 0 8px; font-size: 12.5px; color: #ff8a9e; }
+.pin-keys { display: grid; grid-template-columns: repeat(3, 72px); gap: 12px 22px; justify-content: center; margin: 4px 0 10px; }
+.pin-key { width: 72px; height: 72px; border-radius: 36px; font-size: 28px; font-weight: 500; color: #fff; background: rgba(255,255,255,.1); font-variant-numeric: tabular-nums; }
+.pin-key:active { background: rgba(255,255,255,.28); }
+.pin-key.blank { visibility: hidden; }
+.pin-key[data-k="del"] { background: transparent; }
+.pin-key svg { width: 26px; height: 26px; fill: none; stroke: #fff; stroke-width: 1.6; stroke-linejoin: round; }
+.pin-forgot { display: block; margin: 0 auto 6px; color: rgba(255,255,255,.55); font-size: 13px; padding: 8px 12px; }
+.shake { animation: pinshake .32s; }
+@keyframes pinshake { 0%,100% { transform: none; } 20%,60% { transform: translateX(-9px); } 40%,80% { transform: translateX(9px); } }
+/* bookmarks memo */
+.bm-memo-txt { display: block; font-size: 11.5px; color: #ffe2a6; margin: 1px 4px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bm-acts .bm-memo { font-size: 14px; }
+/* auto page-turn */
+#btnAuto svg { width: 22px; height: 22px; }
+#btnAuto .ic-pause { display: none; }
+#btnAuto.on .ic-play { display: none; }
+#btnAuto.on .ic-pause { display: inline; }
+#btnAuto.on { color: var(--accent); }
+#btnAuto.on svg { filter: drop-shadow(0 0 6px rgba(138,180,255,.75)); }
+.auto-ind { position: absolute; left: 50%; bottom: calc(max(12px, var(--safe-b)) + 10px); transform: translate(-50%, 8px); z-index: 30; display: flex; flex-direction: column; align-items: stretch; gap: 5px; padding: 7px 14px 8px; border-radius: 16px; background: rgba(16,17,22,.62); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border: .5px solid rgba(255,255,255,.12); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; min-width: 132px; }
+.auto-ind.show { opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
+.auto-ind b { font-size: 12px; font-weight: 700; color: #e6eeff; text-align: center; white-space: nowrap; }
+.auto-ind b::before { content: "❚❚ "; font-size: 9px; color: var(--accent); letter-spacing: -1px; }
+.auto-ind .ai-bar { height: 2px; border-radius: 1px; background: rgba(255,255,255,.15); overflow: hidden; }
+.auto-ind .ai-bar i { display: block; height: 100%; transform-origin: 0 50%; transform: scaleX(0); background: var(--accent); }
+.settings-note { margin: -4px 12px 8px; font-size: 12px; color: rgba(255,255,255,.5); }
+.settings-ver { text-align: center; font-size: 11.5px; color: rgba(255,255,255,.35); margin: 12px 0 2px; }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
@@ -983,6 +1070,7 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
           <div id="crumb" class="crumb"></div>
           <h1 id="exTitle">만화뷰어</h1>
         </div>
+        <button type="button" id="btnLock" class="icon-btn" aria-label="시크릿 서재"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9.5" rx="2.2"/><path class="shackle" d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>
         <button type="button" id="btnPlaylist" class="icon-btn" aria-label="재생목록">
           <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/><path d="M16 16l5 3-5 3v-6z" fill="currentColor" stroke="none"/></svg>
         </button>
@@ -997,9 +1085,9 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
     <div id="bmPanel" class="bm-panel hidden">
       <header class="topbar"><div class="topbar-inner">
         <button type="button" id="btnBmClose" class="icon-btn" aria-label="뒤로"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
-        <div class="titles"><div class="crumb" id="bmSub"></div><h1 id="bmTitle">책갈피 모아보기</h1></div>
+        <div class="titles"><div class="crumb" id="bmSub"></div><h1 id="bmTitle">즐겨찾기 컷</h1></div>
       </div></header>
-      <div class="scroll" id="bmScroll"><div id="bmList" class="pg-grid bm-grid"></div><p id="bmEmpty" class="pg-empty hidden">아직 책갈피가 없어요.<br>읽는 중에 위쪽 ♡를 누르면 여기에 모여요.</p></div>
+      <div class="scroll" id="bmScroll"><div id="bmList" class="pg-grid bm-grid"></div><p id="bmEmpty" class="pg-empty hidden">아직 즐겨찾기 컷이 없어요.<br>읽는 중에 위쪽 ☆를 누르면 여기에 모여요.<br>길게 누르면 메모도 남길 수 있어요.</p></div>
     </div>
     <button type="button" id="fabPhotos" class="fab" aria-label="사진 추가"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>사진</span></button>
     <div id="exToolbar" class="ex-toolbar">
@@ -1012,6 +1100,7 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
       <div id="prefixFix" class="prefix-fix hidden"><span></span><button type="button" id="btnPrefixFix">이름 앞 날짜 빼기</button></div>
       <p class="ex-hint" id="photoHint">사진 앱에서 손가락을 밀어 여러 장을 한 번에 선택할 수 있습니다.</p>
       <div id="storageMeter" class="storage-meter"></div>
+      <div class="app-ver" id="appVer">만화뷰어 v15 · 오프라인</div>
     </div>
     <div id="exSelectBar" class="ex-select hidden">
       <button type="button" id="btnSelectAll">전체 선택</button>
@@ -1067,8 +1156,13 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
         </div>
       </div>
       <div id="folderEmpty">이 폴더가 비어 있습니다.</div>
+      <div id="libTools" class="lib-tools hidden">
+        <div class="lib-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="libSearch" type="search" placeholder="제목 · 시리즈 · #태그 검색" enterkeyhint="search" autocomplete="off" aria-label="서재 검색"><button type="button" id="libSearchClear" class="hidden" aria-label="검색어 지우기">✕</button></div>
+        <div class="lib-tabs" id="libTabs"><button type="button" class="lib-tab on" data-tab="all">전체</button><button type="button" class="lib-tab" data-tab="series">시리즈별</button><button type="button" class="lib-tab" data-tab="tags">태그별</button><button type="button" id="bmChip" class="bm-chip hidden"><svg viewBox="0 0 24 24"><path d="M12 3.6l2.6 5.3 5.8.85-4.2 4.1 1 5.8L12 16.9l-5.2 2.75 1-5.8-4.2-4.1 5.8-.85z"/></svg>즐겨찾기 컷 <b>0</b></button><button type="button" class="lib-tab hidden" data-tab="secret">🔓 시크릿</button></div>
+        <div id="libTagRow" class="lib-tagrow hidden"></div>
+        <div id="secretBar" class="secret-bar hidden"><b>시크릿 서재</b><button type="button" id="btnSecretSet">설정</button><button type="button" id="btnSecretLock" class="lock">잠그기</button></div>
+      </div>
       <div id="heroCard" class="hero hidden"></div>
-      <button type="button" id="bmChip" class="bm-chip hidden"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>책갈피 모아보기 <b>0</b></button>
       <div id="grid" class="grid hidden"></div>
     </div>
   </section>
@@ -1085,6 +1179,7 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
       <div id="dimLayer"></div>
       <div id="readProg" class="read-prog" aria-hidden="true"><i></i></div>
     </div>
+    <div id="autoInd" class="auto-ind" role="button" aria-label="자동 넘김 멈추기"><b>자동 넘김</b><div class="ai-bar"><i></i></div></div>
     <div id="readerChrome">
       <header class="topbar">
         <div class="topbar-inner">
@@ -1095,7 +1190,7 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
             <div class="crumb" id="readerCrumb">이미지</div>
             <h1 id="readerTitle">뷰어</h1>
           </div>
-          <button type="button" id="btnSwapHalf" class="swap-pill hidden" aria-label="쪽 반전"></button><button type="button" id="btnBmAlbum" class="text-btn hidden" aria-label="원래 앨범에서 보기">앨범</button><button type="button" id="btnBookmark" class="icon-btn" aria-label="책갈피 하기" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button><button type="button" id="btnReaderSettings" class="text-btn">보기</button>
+          <button type="button" id="btnSwapHalf" class="swap-pill hidden" aria-label="쪽 반전"></button><button type="button" id="btnBmAlbum" class="text-btn hidden" aria-label="원래 앨범에서 보기">앨범</button><button type="button" id="btnAuto" class="icon-btn" aria-label="자동 넘김 시작" aria-pressed="false"><svg viewBox="0 0 24 24"><path class="ic-play" d="M8 5.5v13l10.5-6.5z" fill="currentColor" stroke="none"/><g class="ic-pause" fill="currentColor" stroke="none"><rect x="7" y="5.5" width="3.6" height="13" rx="1"/><rect x="13.4" y="5.5" width="3.6" height="13" rx="1"/></g></svg></button><button type="button" id="btnBookmark" class="icon-btn" aria-label="책갈피(★) · 길게 누르면 메모" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3.6l2.6 5.3 5.8.85-4.2 4.1 1 5.8L12 16.9l-5.2 2.75 1-5.8-4.2-4.1 5.8-.85z"/></svg></button><button type="button" id="btnReaderSettings" class="text-btn">보기</button>
         </div>
       </header>
       <div class="bottombar rbar">
@@ -3188,11 +3283,14 @@ function renderExplorer() {
   const title = $("exTitle");
   const crumb = $("crumb");
   const back = $("btnExBack");
-  const items = cwd === homeNode ? childrenOf(cwd) : childrenOf(cwd).sort(cmpIn(cwd));
+  let items = cwd === homeNode ? childrenOf(cwd) : childrenOf(cwd).sort(cmpIn(cwd));
   const atHome = cwd === homeNode || cwd.id === "home";
+  const lv = libViewItems(items, atHome);
+  items = lv.items;
 
   back.classList.toggle("hidden", atHome);
   updateBmChip();
+  renderLibTools();
   renderHero();
   updateSortUi();
   title.textContent = atHome ? "만화뷰어" : cwd.name;
@@ -3240,6 +3338,13 @@ function renderExplorer() {
   }
 
   const folderEmpty = $("folderEmpty");
+  if (!items.length && lv.filtered) {
+    empty.classList.add("hidden");
+    if (folderEmpty) folderEmpty.classList.remove("show");
+    grid.classList.remove("hidden");
+    grid.innerHTML = '<p class="lib-empty">' + lv.emptyMsg + '</p>';
+    return;
+  }
   if (!items.length) {
     grid.classList.add("hidden");
     grid.innerHTML = "";
@@ -3252,7 +3357,7 @@ function renderExplorer() {
   if (folderEmpty) folderEmpty.classList.remove("show");
   grid.classList.remove("hidden");
   grid.innerHTML = "";
-  for (const node of items) grid.appendChild(makeCard(node));
+  renderLibGrid(grid, items, lv);
   observeThumbs();
 }
 
@@ -3329,6 +3434,7 @@ function makeCard(node) {
   name.textContent = node.name;
   btn.append(thumb, name);
   decorateAlbumCard(btn, node, thumb);
+  addCardExtras(btn, node, thumb);
   if (node.kind === "dir" || (node.kind === "zip" && Array.isArray(node.children))) {
     const kids = childrenOf(node);
     const ni = kids.filter((c) => c.kind === "image").length, nv = kids.filter((c) => c.kind === "video").length, nd = kids.filter((c) => c.kind === "dir" || c.kind === "zip").length;
@@ -3552,6 +3658,11 @@ function openActionSheet(node) {
     const sp = node.children ? savedPosFor(node) : null;
     if (sp) items.unshift({ label: `이어 읽기 · ${sp.index + 1}/${sp.count}쪽`, fn: () => openReader(sp.pages, sp.index, node, { resume: true }) });
   }
+  if (node.kind === "dir" || node.kind === "zip") {
+    items.push({ label: "시리즈·태그 편집", fn: () => editSeriesTags(node) });
+    if (isHiddenOwn(node)) items.push({ label: "숨김 해제 (일반 서재로)", fn: () => unhideAlbum(node) });
+    else if (!isHiddenNode(node)) items.push({ label: "시크릿 서재로 숨기기", fn: () => hideAlbum(node) });
+  }
   items.push({ label: "이름 변경", fn: () => promptRename(node) });
   items.push({ label: "이동", fn: () => promptMove([node]) });
   items.push({ label: "삭제", danger: true, fn: () => confirmDeleteNodes([node]) });
@@ -3566,7 +3677,7 @@ const reader = {
   index: 0,
   rtl: false,
   spreadMode: "auto", // auto | single | spread
-  coverAlone: false,
+  coverAlone: true, // 표지 단독 표시: 1 | 2-3 | 4-5 …
   ui: true,
   zoom: 1,
   panX: 0,
@@ -3589,7 +3700,7 @@ function loadPrefs() {
     const p = JSON.parse(localStorage.getItem(PREFS_KEY) || "{}");
     if (p.rtl != null) reader.rtl = !!p.rtl;
     if (p.spreadMode) reader.spreadMode = p.spreadMode;
-    if (p.coverAlone != null) reader.coverAlone = !!p.coverAlone;
+    if (p.coverAlone != null && p.coverV15) reader.coverAlone = !!p.coverAlone; // v15: 표지 단독 표시 starts ON once
     if (p.turnEffect === "curl" || p.turnEffect === "slide" || p.turnEffect === "none") reader.turnEffect = p.turnEffect;
     if (p.fit === "screen" || p.fit === "cover" || p.fit === "width" || p.fit === "webtoon") reader.fit = p.fit;
     // v9: 꽉 채우기 becomes the default once (only for people who were on 화면 / never chose)
@@ -3601,6 +3712,8 @@ function loadPrefs() {
     reader.autoNext = p.autoNext !== false;
     reader.topGap = p.topGap !== false;
     reader.progLine = p.progLine !== false;
+    if ([2, 4, 6, 10].includes(p.autoSec)) reader.autoSec = p.autoSec;
+    if (["slow", "normal", "fast", "turbo"].includes(p.autoSpeed)) reader.autoSpeed = p.autoSpeed;
     if (p.clarity === "crisp" || p.clarity === "warm" || p.clarity === "none") reader.clarity = p.clarity;
   } catch (_) {}
 }
@@ -3610,12 +3723,15 @@ function savePrefs() {
       rtl: reader.rtl,
       spreadMode: reader.spreadMode,
       coverAlone: reader.coverAlone,
+      coverV15: true,
       turnEffect: reader.turnEffect,
       fit: reader.fit,
       fitV9: true,
       autoNext: reader.autoNext !== false,
       topGap: reader.topGap !== false,
       progLine: reader.progLine !== false,
+      autoSec: autoSec(),
+      autoSpeed: autoSpeedKey(),
       clarity: reader.clarity || "none",
       bg: reader.bg,
       bright: reader.bright,
@@ -3641,7 +3757,7 @@ function alignIndex(i) {
   if (n <= 0) return 0;
   i = Math.max(0, Math.min(n - 1, i));
   if (!isSpread()) return i;
-  if (reader.coverAlone) {
+  if (coverSolo()) {
     if (i <= 0) return 0;
     return i % 2 === 1 ? i : i - 1;
   }
@@ -3650,13 +3766,13 @@ function alignIndex(i) {
 function readingNext(i) {
   const n = pageCount();
   if (!isSpread()) return i + 1 < n ? i + 1 : -1;
-  if (reader.coverAlone && i === 0) return n > 1 ? 1 : -1;
+  if (coverSolo() && i === 0) return n > 1 ? 1 : -1;
   const nx = i + 2;
   return nx < n ? nx : -1;
 }
 function readingPrev(i) {
   if (!isSpread()) return i - 1 >= 0 ? i - 1 : -1;
-  if (reader.coverAlone && i <= 1) return i === 0 ? -1 : 0;
+  if (coverSolo() && i <= 1) return i === 0 ? -1 : 0;
   const p = i - 2;
   return p >= 0 ? p : -1;
 }
@@ -3669,7 +3785,7 @@ function pairFor(index) {
   const n = pageCount();
   if (index == null || index < 0 || index >= n) return { empty: true };
   if (!isSpread()) return { single: true, page: index };
-  if (reader.coverAlone && index === 0) {
+  if (coverSolo() && index === 0) {
     return reader.rtl
       ? { spread: true, left: 0, right: null, cover: true }
       : { spread: true, left: null, right: 0, cover: true };
@@ -4039,7 +4155,7 @@ function updateReaderChrome() {
   $("readerChrome").classList.toggle("dim", !reader.ui);
   $("fitLabel").textContent = FIT_LABEL[reader.fit] || "화면";
   $("btnFit").classList.toggle("on", reader.fit !== "screen");
-  $("spreadLabel").textContent = reader.spreadMode === "auto" ? (isSpread() ? "자동·두 쪽" : "자동·한 쪽") : (reader.spreadMode === "spread" ? "두 쪽" : "한 쪽");
+  $("spreadLabel").textContent = reader.spreadMode === "auto" ? (isSpread() ? "가로·펼침" : "가로 자동") : (reader.spreadMode === "spread" ? "2쪽 펼침" : "한 쪽");
   $("btnSpreadQuick").style.opacity = web ? ".4" : "";
   $("dirLabel").textContent = reader.rtl ? "오→왼" : "왼→오";
   $("btnDirQuick").querySelector("svg").style.transform = reader.rtl ? "scaleX(-1)" : "";
@@ -4104,7 +4220,7 @@ function applyReaderLook() {
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v14";
+const PWA_CACHE = "mhv-pwa-v15";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
@@ -4761,6 +4877,7 @@ async function openReader(pages, startIndex, folder, opts) {
 $("btnResumeX").addEventListener("click", hideResumeBar);
 
 function closeReader() {
+  autoStop();
   const wasBm = reader.bmMode;
   reader.bmMode = false;
   hideVolCard();
@@ -5160,8 +5277,9 @@ function showReaderSettings() {
       mkRow("화면 맞춤", [["cover","꽉 채우기"],["screen","화면"],["width","너비"],["webtoon","웹툰"]],
         () => reader.fit, (v) => { reader._prevFit = reader.fit; reader.fit = v; },
         () => setReaderFit(reader.fit, reader._prevFit));
-      mkRow("쪽 구성", [["auto","자동"],["single","한 쪽"],["spread","두 쪽"]],
+      mkRow("2쪽 펼침", [["single","끄기"],["auto","가로 자동"],["spread","항상"]],
         () => reader.spreadMode, (v) => { reader.spreadMode = v; });
+      if (readerHasHalves()) { const nt = document.createElement("p"); nt.className = "settings-note"; nt.textContent = "반쪽 나누기 중에는 펼칠 때 한 그림의 두 반쪽을 나란히 붙여 보여줘요 (표지 단독은 그림에 맞춰 자동)."; body.appendChild(nt); }
       const sp = () => getSplit(reader.folder);
       mkRow("반쪽 나누기", [["off","끄기"],["auto","자동"],["always","항상"]],
         () => sp().mode, (v) => { setSplit(reader.folder, { mode: v }); });
@@ -5191,7 +5309,7 @@ function showReaderSettings() {
         gutT = setTimeout(() => renderReaderViews(), 180);
       });
       body.appendChild(gut);
-      mkRow("표지 단독", [[false,"끄기"],[true,"켜기"]],
+      mkRow("표지 단독 표시", [[false,"끄기"],[true,"켜기"]],
         () => reader.coverAlone, (v) => { reader.coverAlone = v === true || v === "true"; });
       mkRow("읽기 방향", [[false,"왼쪽부터"],[true,"오른쪽부터"]],
         () => reader.rtl, (v) => { reader.rtl = v === true || v === "true"; });
@@ -5201,6 +5319,10 @@ function showReaderSettings() {
         () => reader.topGap !== false, (v) => { reader.topGap = v === true || v === "true"; }, () => { cancelFlip(); applyTopGap(); readerLayoutKey = ""; renderReaderViews(); });
       mkRow("다음 권 자동 이어보기", [[true,"켜기"],[false,"끄기"]],
         () => reader.autoNext !== false, (v) => { reader.autoNext = v === true || v === "true"; }, () => { volCardFor = null; updateVolCard(); });
+      mkRow("자동 넘김 간격", [[2,"2초"],[4,"4초"],[6,"6초"],[10,"10초"]],
+        () => autoSec(), (v) => { reader.autoSec = +v; }, () => { updateAutoUi(); if (auto.on) autoSchedule(); });
+      mkRow("자동 스크롤 속도 (웹툰)", [["slow","느리게"],["normal","보통"],["fast","빠르게"],["turbo","초고속"]],
+        () => autoSpeedKey(), (v) => { reader.autoSpeed = v; }, updateAutoUi);
       mkRow("화질 보정", [["none","원본"],["crisp","만화 선명"],["warm","야간 따뜻"]],
         () => reader.clarity || "none", (v) => { reader.clarity = v; }, applyClarity);
       mkRow("얇은 진행 선", [[true,"켜기"],[false,"끄기"]],
@@ -5226,10 +5348,11 @@ function showReaderSettings() {
       rot.innerHTML = '<label>화면 회전</label><div class="seg"><button type="button">지금 방향 고정</button></div><p class="note">iPhone·iPad 홈 화면 앱은 회전을 직접 잠글 수 없어, 안 되면 제어 센터의 화면 방향 잠금을 쓰세요.</p>';
       rot.querySelector("button").addEventListener("click", tryLockOrientation);
       body.appendChild(rot);
+      const ver = document.createElement("p"); ver.className = "settings-ver"; ver.textContent = "만화뷰어 " + APP_VER + " · 오프라인 · 모든 설정은 이 기기에만 저장"; body.appendChild(ver);
       if (window.innerWidth >= 700 || matchMedia("(hover: hover)").matches) {
         const k = document.createElement("div");
         k.className = "kbd-help";
-        k.innerHTML = "키보드: <b>←</b><b>→</b> 넘기기 · <b>Space</b> 다음 · <b>G</b> 페이지 목록 · <b>B</b> 책갈피 · <b>M</b> 화면 맞춤 · <b>+</b><b>−</b><b>0</b> 확대 · <b>D</b> 한 쪽/두 쪽 · <b>R</b> 읽기 방향 · <b>Home</b><b>End</b> 처음/끝 · <b>F</b> 전체화면 · <b>Esc</b> 닫기";
+        k.innerHTML = "키보드: <b>←</b><b>→</b> 넘기기 · <b>Space</b> 다음 · <b>G</b> 페이지 목록 · <b>B</b> 책갈피 · <b>P</b> 자동 넘김 · <b>M</b> 화면 맞춤 · <b>+</b><b>−</b><b>0</b> 확대 · <b>D</b> 한 쪽/두 쪽 · <b>R</b> 읽기 방향 · <b>Home</b><b>End</b> 처음/끝 · <b>F</b> 전체화면 · <b>Esc</b> 닫기";
         body.appendChild(k);
       }
     }
@@ -7536,7 +7659,7 @@ function toggleBookmark() {
   } else {
     const p = reader.pages[reader.index];
     bmAdd(p);
-    toast(`책갈피 ♥ ${reader.index + 1}쪽${halfLabel(p)}`, 1200);
+    toast(`★ ${reader.index + 1}쪽${halfLabel(p)} 담았어요 · 길게 누르면 메모`, 1500);
   }
   updateBmButton();
 }
@@ -7592,7 +7715,7 @@ function bmPageNode(o) {
   v.splitFolder = o.album || null;
   return v;
 }
-function bmCount() { return bmResolve().length; }
+function bmCount() { return bmVisible().length; }
 
 /* home chip + collection panel */
 function updateBmChip() {
@@ -7605,10 +7728,10 @@ function updateBmChip() {
 }
 var bmObs = null;
 function openBmPanel() {
-  const list = bmResolve();
+  const list = bmVisible();
   const panel = $("bmPanel"), grid = $("bmList");
   grid.innerHTML = "";
-  $("bmTitle").textContent = "책갈피 모아보기";
+  $("bmTitle").textContent = "즐겨찾기 컷";
   $("bmSub").textContent = list.length ? `${list.length}컷 · 탭하면 모아서 넘겨 보기` : "";
   $("bmEmpty").classList.toggle("hidden", list.length > 0);
   if (bmObs) bmObs.disconnect();
@@ -7626,10 +7749,11 @@ function openBmPanel() {
     const cell = document.createElement("div");
     cell.className = "pg-cell bm-cell";
     cell.dataset.i = String(i);
-    cell.innerHTML = '<button type="button" class="bm-open" aria-label="열기"><div class="thumb"></div></button><span class="bm-cap"></span><div class="bm-acts"><button type="button" class="bm-alb">앨범에서</button><button type="button" class="bm-del" aria-label="책갈피 빼기"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button></div>';
+    cell.innerHTML = '<button type="button" class="bm-open" aria-label="열기"><div class="thumb"></div></button><span class="bm-cap"></span><div class="bm-acts"><button type="button" class="bm-memo" aria-label="메모">✎</button><button type="button" class="bm-alb">앨범에서</button><button type="button" class="bm-del" aria-label="책갈피 빼기"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button></div>';
     cell.querySelector(".bm-cap").textContent = (o.album ? o.album.name + " · " : "") + (o.page + 1) + "쪽" + (o.r.half != null ? (o.r.half ? " 오른쪽" : " 왼쪽") : "");
     cell.querySelector(".bm-open").addEventListener("click", () => openBmReader(i));
     cell.querySelector(".bm-alb").addEventListener("click", () => openBmInAlbum(bmPageNode(o)));
+    bindBmMemo(cell, o);
     cell.querySelector(".bm-del").addEventListener("click", () => {
       bmRemove(bmPageNode(o));
       toast("책갈피를 뺐어요", 1000);
@@ -7650,7 +7774,7 @@ function closeBmPanel() {
   updateBmChip();
 }
 async function openBmReader(i) {
-  const list = bmResolve();
+  const list = bmVisible();
   if (!list.length) return;
   const pages = list.map(bmPageNode);
   closeBmPanel();
@@ -7684,7 +7808,7 @@ function applyPgFilter() {
 
 /* ---- 다음 권 이어보기 ---- */
 function volKids(node) {
-  return childrenOf(node).filter((c) => c.kind === "dir" || c.kind === "zip").sort((a, b) => naturalCompare(a.name, b.name));
+  return childrenOf(node).filter((c) => (c.kind === "dir" || c.kind === "zip") && isVisibleNode(c)).sort((a, b) => naturalCompare(a.name, b.name));
 }
 function flattenVols(scope, out) {
   for (const c of volKids(scope)) {
@@ -7849,6 +7973,7 @@ var LAST_KEY = "mhv-last-read";
 function saveLastRead() {
   const f = reader.folder;
   if (!f || f.virtual || reader.bmMode || f === homeNode) return;
+  pushRecent(f);
   try { localStorage.setItem(LAST_KEY, JSON.stringify({ id: f.id, path: f.path || f.name, name: f.name, at: Date.now() })); } catch (_) {}
 }
 function albumProgress(folder) {
@@ -7877,7 +8002,7 @@ function renderHero() {
   const atHome = cwd === homeNode || cwd.id === "home";
   let rec = null;
   try { rec = JSON.parse(localStorage.getItem(LAST_KEY) || "null"); } catch (_) {}
-  const album = atHome && !explorerUI.selecting ? findAlbumForLast(rec) : null;
+  const album = atHome && !explorerUI.selecting && heroAllowed() ? pickHeroAlbum(rec) : null;
   const pr = album ? albumProgress(album) : null;
   if (!album || !pr) { box.classList.add("hidden"); box.innerHTML = ""; box.dataset.for = ""; return; }
   const sig = album.id + "|" + pr.cur + "|" + pr.count;
@@ -7954,6 +8079,512 @@ function updateReadProg() {
   el.firstChild.style.transform = `scaleX(${frac})`;
   el.classList.toggle("show", !reader.ui && reader.progLine !== false && n > 1);
 }
+
+/* ===== v15: 시리즈·태그/검색, 시크릿 서재(PIN), 자동 넘김, 책갈피 메모 ===== */
+var APP_VER = "v15";
+var META_KEY = "mhv-albummeta-v1", SECRET_KEY = "mhv-secret-v1", RECENT_KEY = "mhv-recent-v1";
+function v15Load(k, d) { try { const v = JSON.parse(localStorage.getItem(k) || "null"); return v && typeof v === "object" ? v : d; } catch (_) { return d; } }
+function v15Save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} }
+function albumKey(n) { if (!n || n === homeNode || n.virtual) return ""; return n.stored ? "id:" + n.id : "p:" + (n.path || n.name); }
+
+/* ---------- album meta: 시리즈 / 태그 ---------- */
+var albumMeta = v15Load(META_KEY, {});
+function metaOf(n) { return albumMeta[albumKey(n)] || {}; }
+function setMeta(n, m) {
+  const k = albumKey(n); if (!k) return;
+  const tags = [...new Set((m.tags || []).map((t) => String(t).trim().replace(/^#/, "")).filter(Boolean))].slice(0, 20);
+  const series = String(m.series || "").trim();
+  if (!series && !tags.length) delete albumMeta[k]; else albumMeta[k] = { series, tags };
+  v15Save(META_KEY, albumMeta);
+}
+function seriesGroupOf(n) { const s = metaOf(n).series; if (s) return s; return n.parent && n.parent !== homeNode ? n.parent.name : ""; }
+function allTags() {
+  const m = new Map();
+  for (const n of allAlbums()) if (!isHiddenNode(n) || libView.tab === "secret") for (const t of metaOf(n).tags || []) m.set(t, (m.get(t) || 0) + 1);
+  return [...m.entries()].sort((a, b) => b[1] - a[1] || naturalCompare(a[0], b[0]));
+}
+function allSeries() { const s = new Set(); for (const k in albumMeta) if (albumMeta[k].series) s.add(albumMeta[k].series); return [...s].sort(naturalCompare); }
+function allAlbums(withEmpty) {
+  const out = [], st = library.roots.slice().reverse();
+  while (st.length) {
+    const n = st.pop();
+    if (!n) continue;
+    if (n.kind === "dir") { if (withEmpty || imagesIn(n).length) out.push(n); const k = (n.children || []).filter((c) => c.kind === "dir" || c.kind === "zip"); for (let i = k.length - 1; i >= 0; i--) st.push(k[i]); }
+    else if (n.kind === "zip") { out.push(n); if (Array.isArray(n.children)) n.children.filter((c) => c.kind === "dir").forEach((c) => st.push(c)); }
+  }
+  return out;
+}
+
+/* ---------- 시크릿 서재 ---------- */
+var secret = v15Load(SECRET_KEY, {});
+if (!Array.isArray(secret.hidden)) secret.hidden = [];
+if (secret.autoLock == null) secret.autoLock = true;
+var secretOpen = false, secretFails = 0, secretWaitUntil = 0;
+function saveSecret() { v15Save(SECRET_KEY, secret); }
+function isHiddenOwn(n) { const k = albumKey(n); return !!k && secret.hidden.includes(k); }
+function isHiddenNode(n) {
+  if (!secret.hidden.length || !n) return false;
+  let x = n.base || n, guard = 0;
+  while (x && x !== homeNode && guard++ < 64) { if (isHiddenOwn(x)) return true; x = x.parent; }
+  return false;
+}
+function isVisibleNode(n) { return secretOpen || !isHiddenNode(n); }
+async function hashPin(pin, salt) {
+  const d = new TextEncoder().encode("mhv:" + salt + ":" + pin);
+  const h = await crypto.subtle.digest("SHA-256", d);
+  return [...new Uint8Array(h)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+function pinPad(o) {
+  return new Promise((resolve) => {
+    overlay.classList.remove("hidden");
+    overlay.innerHTML = "";
+    const sheet = document.createElement("div");
+    sheet.className = "sheet pin-sheet";
+    sheet.innerHTML = '<h3></h3><p class="pin-sub"></p><div class="pin-dots"><i></i><i></i><i></i><i></i></div><p class="pin-err"></p><div class="pin-keys"></div>';
+    sheet.querySelector("h3").textContent = o.title || "PIN";
+    sheet.querySelector(".pin-sub").textContent = o.sub || "";
+    const keys = sheet.querySelector(".pin-keys"), dots = sheet.querySelectorAll(".pin-dots i"), err = sheet.querySelector(".pin-err");
+    let val = "", busy = false, settled = false;
+    const paint = () => dots.forEach((d, i) => d.classList.toggle("on", i < val.length));
+    const finish = (v) => { if (settled) return; settled = true; document.removeEventListener("keydown", onKey, true); closeSheet(); resolve(v); };
+    const press = async (k) => {
+      if (busy) return;
+      if (k === "del") { val = val.slice(0, -1); paint(); return; }
+      if (val.length >= 4) return;
+      val += k; err.textContent = ""; paint();
+      if (val.length < 4) return;
+      busy = true;
+      const r = o.check ? await o.check(val) : true;
+      if (r === true) { setTimeout(() => finish(val), 90); return; }
+      err.textContent = typeof r === "string" ? r : "PIN이 맞지 않아요";
+      sheet.classList.remove("shake"); void sheet.offsetWidth; sheet.classList.add("shake");
+      setTimeout(() => { val = ""; paint(); busy = false; }, 320);
+    };
+    ["1","2","3","4","5","6","7","8","9","","0","del"].forEach((k) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "pin-key" + (k ? "" : " blank"); b.dataset.k = k;
+      if (k === "del") { b.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 6h11v12H9l-6-6z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/></svg>'; b.setAttribute("aria-label", "지우기"); }
+      else b.textContent = k;
+      if (k) b.addEventListener("click", () => press(k)); else b.disabled = true;
+      keys.appendChild(b);
+    });
+    const onKey = (e) => {
+      if (/^[0-9]$/.test(e.key)) { e.preventDefault(); e.stopPropagation(); press(e.key); }
+      else if (e.key === "Backspace") { e.preventDefault(); e.stopPropagation(); press("del"); }
+      else if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); finish(null); }
+    };
+    document.addEventListener("keydown", onKey, true);
+    if (o.forgot) {
+      const f = document.createElement("button");
+      f.type = "button"; f.className = "pin-forgot"; f.textContent = "PIN을 잊었어요";
+      f.addEventListener("click", () => { finish(null); setTimeout(o.forgot, 0); });
+      sheet.appendChild(f);
+    }
+    const cancel = document.createElement("button");
+    cancel.type = "button"; cancel.className = "sheet-item sheet-cancel"; cancel.textContent = "취소";
+    cancel.addEventListener("click", () => finish(null));
+    sheet.appendChild(cancel);
+    overlay.appendChild(sheet);
+    overlay.onclick = (e) => { if (e.target === overlay) finish(null); };
+  });
+}
+async function setupPin() {
+  let first = "";
+  const a = await pinPad({ title: "새 PIN 만들기", sub: "숫자 4자리 · 이 기기에만 저장돼요" });
+  if (!a) return false;
+  first = a;
+  const b = await pinPad({ title: "PIN 한 번 더", sub: "확인을 위해 같은 4자리를 다시 눌러 주세요", check: async (v) => v === first || "처음 입력한 PIN과 달라요" });
+  if (!b) return false;
+  const salt = [...crypto.getRandomValues(new Uint8Array(16))].map((x) => x.toString(16).padStart(2, "0")).join("");
+  secret.salt = salt;
+  secret.hash = await hashPin(b, salt);
+  saveSecret();
+  toast("PIN을 만들었어요 · 이 기기에만 저장돼요", 1800);
+  return true;
+}
+async function checkPin(v) {
+  if (Date.now() < secretWaitUntil) return `잠시 후 다시 시도해 주세요 (${Math.ceil((secretWaitUntil - Date.now()) / 1000)}초)`;
+  if ((await hashPin(v, secret.salt)) === secret.hash) { secretFails = 0; return true; }
+  secretFails++;
+  if (secretFails >= 5) { secretWaitUntil = Date.now() + 30000; secretFails = 0; return "5번 틀려서 30초 동안 잠겨요"; }
+  return "PIN이 맞지 않아요";
+}
+function forgotPin() {
+  dialogSheet({ title: "PIN 초기화", message: "PIN은 이 기기에만 저장돼서 되찾을 수 없어요. 초기화하면 PIN이 지워지고, 숨긴 앨범은 지워지지 않고 일반 서재로 돌아옵니다.", confirmLabel: "PIN 초기화 · 숨김 모두 해제", danger: true }).then((r) => {
+    if (!r || r.action !== "ok") return;
+    secret = { hidden: [], autoLock: secret.autoLock };
+    saveSecret(); secretOpen = false; libView.tab = "all";
+    renderExplorer(); toast("PIN을 지우고 숨긴 앨범을 모두 꺼냈어요", 2000);
+  });
+}
+async function unlockSecret() {
+  if (!secret.hash) { if (!(await setupPin())) return false; }
+  else if (!(await pinPad({ title: "시크릿 서재", sub: "PIN 4자리를 입력하세요", check: checkPin, forgot: forgotPin }))) return false;
+  secretOpen = true; libView.tab = "secret"; libView.q = ""; cwd = homeNode;
+  const s = $("libSearch"); if (s) s.value = "";
+  renderExplorer();
+  toast("시크릿 서재를 열었어요", 1200);
+  return true;
+}
+function lockSecret(quiet) {
+  if (!secretOpen) return;
+  secretOpen = false;
+  if (libView.tab === "secret") libView.tab = "all";
+  if (currentScreen === "reader" && ((reader.folder && isHiddenNode(reader.folder)) || reader.pages.some((p) => isHiddenNode(p)))) { try { closeReader(); } catch (_) {} }
+  if (!$("bmPanel").classList.contains("hidden")) closeBmPanel();
+  if (cwd !== homeNode && isHiddenNode(cwd)) cwd = homeNode;
+  renderExplorer();
+  if (!quiet) toast("시크릿 서재를 잠갔어요", 1100);
+}
+function onLockTap() {
+  if (secretOpen) { lockSecret(); return; }
+  if (secret.hash) { unlockSecret(); return; }
+  showSheet("시크릿 서재", null, { custom: true, build(body) {
+    const p = document.createElement("p"); p.className = "sheet-msg";
+    p.textContent = "보여주고 싶지 않은 앨범을 숨겨 두는 곳이에요. 숫자 4자리 PIN으로 잠그고, PIN은 서버 없이 이 기기 안에만 (해시로) 저장돼요. 앨범 카드의 ⋯ 메뉴에서 '시크릿 서재로 숨기기'를 고르면 됩니다.";
+    body.appendChild(p);
+    const b = document.createElement("button"); b.type = "button"; b.className = "sheet-item sheet-confirm"; b.textContent = "PIN 만들고 열기";
+    b.addEventListener("click", () => { closeSheet(); unlockSecret(); });
+    body.appendChild(b);
+  } });
+}
+async function hideAlbum(node) {
+  if (!secret.hash) { toast("먼저 시크릿 서재 PIN을 만들어요", 1400); if (!(await setupPin())) return; }
+  const k = albumKey(node); if (!k) return;
+  if (!secret.hidden.includes(k)) secret.hidden.push(k);
+  saveSecret();
+  renderExplorer();
+  toast(`'${node.name}'을(를) 시크릿 서재로 숨겼어요`, 1600);
+}
+function unhideAlbum(node) {
+  const k = albumKey(node);
+  secret.hidden = secret.hidden.filter((x) => x !== k);
+  saveSecret(); renderExplorer();
+  toast(`'${node.name}' 숨김을 해제했어요`, 1400);
+}
+function showSecretSettings() {
+  showSheet("시크릿 서재 설정", null, { custom: true, build(body) {
+    const note = document.createElement("p"); note.className = "sheet-msg";
+    note.textContent = "PIN은 이 기기 안에만 저장돼요(서버 없음). 잊어버리면 되찾을 수 없지만, 'PIN 끄기'나 'PIN을 잊었어요'로 초기화하면 숨긴 앨범은 지워지지 않고 일반 서재로 돌아와요.";
+    body.appendChild(note);
+    const row = document.createElement("div"); row.className = "settings-row";
+    row.innerHTML = '<label>자동 잠금 (탭을 나가거나 앱을 내리면)</label><div class="seg"><button type="button" data-v="true">켜기</button><button type="button" data-v="false">끄기</button></div>';
+    const paint = () => row.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.v === String(secret.autoLock !== false)));
+    row.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => { secret.autoLock = b.dataset.v === "true"; saveSecret(); paint(); }));
+    paint(); body.appendChild(row);
+    const mk = (label, fn, danger) => { const b = document.createElement("button"); b.type = "button"; b.className = "sheet-item" + (danger ? " danger" : ""); b.textContent = label; b.addEventListener("click", () => { closeSheet(); fn(); }); body.appendChild(b); };
+    mk("PIN 변경", async () => { const ok = await pinPad({ title: "지금 PIN 확인", sub: "현재 PIN 4자리", check: checkPin }); if (ok) await setupPin(); });
+    mk("PIN 끄기 · 숨김 모두 해제", () => dialogSheet({ title: "PIN 끄기", message: "PIN을 지우고 숨긴 앨범을 모두 일반 서재로 돌려놓을까요? 앨범은 지워지지 않아요.", confirmLabel: "PIN 끄기", danger: true }).then((r) => {
+      if (!r || r.action !== "ok") return;
+      secret = { hidden: [], autoLock: secret.autoLock }; saveSecret(); secretOpen = false; libView.tab = "all"; renderExplorer(); toast("PIN을 껐어요", 1200);
+    }), true);
+  } });
+}
+document.addEventListener("visibilitychange", () => { if (document.hidden && secretOpen && secret.autoLock !== false) lockSecret(true); });
+
+/* ---------- 최근 읽은 작품 (hero) ---------- */
+function pushRecent(f) {
+  const k = albumKey(f); if (!k) return;
+  const list = (v15Load(RECENT_KEY, { l: [] }).l || []).filter((r) => r.k !== k);
+  list.unshift({ k, id: f.id, path: f.path || f.name, name: f.name, at: Date.now() });
+  v15Save(RECENT_KEY, { l: list.slice(0, 12) });
+}
+function pickHeroAlbum(rec) {
+  const cands = [];
+  if (rec) cands.push(rec);
+  for (const r of v15Load(RECENT_KEY, { l: [] }).l || []) cands.push(r);
+  const wantHidden = libView.tab === "secret";
+  for (const r of cands) {
+    const a = findAlbumForLast(r);
+    if (!a) continue;
+    if (isHiddenNode(a) !== wantHidden) continue;
+    if (wantHidden && !secretOpen) continue;
+    if (albumProgress(a)) return a;
+  }
+  return null;
+}
+function heroAllowed() { return !libView.q.trim() && (libView.tab === "all" || libView.tab === "secret"); }
+
+/* ---------- 서재 검색 / 탭 ---------- */
+var libView = { tab: "all", q: "", tag: "" };
+function libMatches(n, q) {
+  if (!q) return true;
+  const m = metaOf(n);
+  const hay = [n.name, m.series || "", seriesGroupOf(n), ...(m.tags || []).map((t) => "#" + t)].join(" ").toLowerCase();
+  return q.split(/\s+/).every((w) => hay.includes(w.replace(/^#/, "")) || hay.includes(w));
+}
+function libViewItems(items, atHome) {
+  if (!atHome) return { items: secretOpen ? items : items.filter((n) => !isHiddenNode(n)) };
+  const q = libView.q.trim().toLowerCase();
+  const tab = libView.tab;
+  if (tab === "all" && !q) return { items: items.filter((n) => !isHiddenNode(n)) };
+  let pool;
+  if (tab === "secret") pool = secretOpen ? allAlbums(true).filter(isHiddenOwn) : [];
+  else if (tab === "all") pool = allAlbums(true).concat(library.roots.filter((n) => n.kind !== "dir" && n.kind !== "zip")).filter((n) => !isHiddenNode(n));
+  else pool = allAlbums().filter((n) => !isHiddenNode(n));
+  if (tab === "tags" && libView.tag) pool = pool.filter((n) => (metaOf(n).tags || []).includes(libView.tag));
+  if (q) pool = pool.filter((n) => libMatches(n, q));
+  const out = { items: pool, filtered: true };
+  out.emptyMsg = q ? `'${libView.q.trim()}'에 맞는 작품이 없어요` : tab === "secret" ? "숨긴 앨범이 없어요.<br>앨범 카드의 ⋯ → '시크릿 서재로 숨기기'" : tab === "tags" ? "태그가 붙은 작품이 없어요.<br>카드의 ⋯ → '시리즈·태그 편집'에서 붙여 보세요" : "작품이 없어요";
+  if (tab === "series") {
+    const g = new Map();
+    for (const n of pool) { const s = seriesGroupOf(n) || ""; if (!g.has(s)) g.set(s, []); g.get(s).push(n); }
+    out.groups = [...g.entries()].sort((a, b) => (a[0] ? 0 : 1) - (b[0] ? 0 : 1) || naturalCompare(a[0], b[0]))
+      .map(([s, l]) => ({ title: s || "시리즈 없음", items: l.sort((a, b) => naturalCompare(a.name, b.name)) }));
+  }
+  return out;
+}
+function renderLibGrid(grid, items, lv) {
+  if (lv && lv.groups) {
+    for (const g of lv.groups) {
+      const h = document.createElement("div");
+      h.className = "lib-group";
+      h.innerHTML = "<b></b><span></span>";
+      h.firstChild.textContent = g.title;
+      h.lastChild.textContent = g.items.length + "권";
+      grid.appendChild(h);
+      for (const n of g.items) grid.appendChild(makeCard(n));
+    }
+    return;
+  }
+  for (const node of items) grid.appendChild(makeCard(node));
+}
+function setLibTab(t) {
+  if (libView.tab === "secret" && t !== "secret" && secretOpen && secret.autoLock !== false) { libView.tab = t; lockSecret(true); toast("시크릿 서재를 잠갔어요", 1000); return; }
+  libView.tab = t;
+  if (t !== "tags") libView.tag = "";
+  renderExplorer();
+  $("exScroll").scrollTop = 0;
+}
+function renderLibTools() {
+  const box = $("libTools"); if (!box) return;
+  const atHome = cwd === homeNode || cwd.id === "home";
+  const any = library.roots.length > 0 || secret.hidden.length > 0;
+  box.classList.toggle("hidden", !atHome || !any || explorerUI.selecting);
+  const lb = $("btnLock");
+  if (lb) { lb.classList.toggle("hidden", !atHome); lb.classList.toggle("open", secretOpen); lb.setAttribute("aria-label", secretOpen ? "시크릿 서재 잠그기" : "시크릿 서재"); }
+  box.querySelectorAll(".lib-tab").forEach((b) => b.classList.toggle("on", b.dataset.tab === libView.tab));
+  const st = box.querySelector('.lib-tab[data-tab="secret"]');
+  if (st) st.classList.toggle("hidden", !secretOpen);
+  const on = box.querySelector(".lib-tab.on"), tabs = $("libTabs");
+  if (on && tabs && !box.classList.contains("hidden")) { const r = on.offsetLeft + on.offsetWidth; if (r > tabs.scrollLeft + tabs.clientWidth) tabs.scrollLeft = r - tabs.clientWidth + 8; else if (on.offsetLeft < tabs.scrollLeft) tabs.scrollLeft = Math.max(0, on.offsetLeft - 8); }
+  const clr = $("libSearchClear"); if (clr) clr.classList.toggle("hidden", !libView.q);
+  const tr = $("libTagRow");
+  if (tr) {
+    const show = libView.tab === "tags";
+    tr.classList.toggle("hidden", !show);
+    if (show) {
+      tr.innerHTML = "";
+      const tags = allTags();
+      const mk = (t, label, cnt) => { const b = document.createElement("button"); b.type = "button"; b.className = "tag-chip" + (libView.tag === t ? " on" : ""); b.textContent = label; if (cnt) { const s = document.createElement("small"); s.textContent = cnt; b.appendChild(s); } b.addEventListener("click", () => { libView.tag = t; renderExplorer(); }); tr.appendChild(b); };
+      mk("", "모든 태그");
+      tags.forEach(([t, c]) => mk(t, "#" + t, c));
+    }
+  }
+  const sb = $("secretBar");
+  if (sb) {
+    sb.classList.toggle("hidden", !(secretOpen && libView.tab === "secret"));
+    sb.querySelector("b").textContent = `시크릿 서재 · ${secret.hidden.length}개`;
+  }
+}
+function bindLibTools() {
+  const s = $("libSearch");
+  if (!s || s.dataset.bound) return;
+  s.dataset.bound = "1";
+  let t = 0;
+  s.addEventListener("input", () => { libView.q = s.value; clearTimeout(t); t = setTimeout(() => renderExplorer(), 90); });
+  s.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); s.blur(); } });
+  $("libSearchClear").addEventListener("click", () => { s.value = ""; libView.q = ""; renderExplorer(); });
+  document.querySelectorAll("#libTools .lib-tab").forEach((b) => b.addEventListener("click", () => setLibTab(b.dataset.tab)));
+  $("btnLock").addEventListener("click", onLockTap);
+  $("btnSecretLock").addEventListener("click", () => lockSecret());
+  $("btnSecretSet").addEventListener("click", showSecretSettings);
+}
+
+/* ---------- 시리즈·태그 편집 ---------- */
+function editSeriesTags(node) {
+  const m = metaOf(node);
+  let tags = (m.tags || []).slice();
+  showSheet("시리즈·태그 편집", null, { custom: true, build(body) {
+    const cap = document.createElement("p"); cap.className = "sheet-msg"; cap.textContent = node.name; body.appendChild(cap);
+    const l1 = document.createElement("label"); l1.className = "meta-lab"; l1.textContent = "시리즈명"; body.appendChild(l1);
+    const si = document.createElement("input"); si.type = "text"; si.className = "sheet-input"; si.id = "metaSeries"; si.placeholder = "예: 원피스"; si.value = m.series || ""; si.setAttribute("list", "metaSeriesList"); si.setAttribute("enterkeyhint", "next");
+    body.appendChild(si);
+    const dl = document.createElement("datalist"); dl.id = "metaSeriesList"; allSeries().forEach((s) => { const o = document.createElement("option"); o.value = s; dl.appendChild(o); }); body.appendChild(dl);
+    const sug = allSeries().slice(0, 6);
+    if (sug.length) { const r = document.createElement("div"); r.className = "tag-sugg"; sug.forEach((s) => { const b = document.createElement("button"); b.type = "button"; b.className = "tag-chip"; b.textContent = s; b.addEventListener("click", () => { si.value = s; }); r.appendChild(b); }); body.appendChild(r); }
+    const l2 = document.createElement("label"); l2.className = "meta-lab"; l2.textContent = "태그 (쉼표나 엔터로 추가)"; body.appendChild(l2);
+    const box = document.createElement("div"); box.className = "tag-edit";
+    const ti = document.createElement("input"); ti.type = "text"; ti.id = "metaTagInput"; ti.placeholder = tags.length ? "" : "예: 액션, 완결"; ti.setAttribute("enterkeyhint", "done");
+    const paint = () => {
+      box.querySelectorAll(".tag-chip").forEach((c) => c.remove());
+      tags.forEach((t, i) => { const c = document.createElement("span"); c.className = "tag-chip on"; c.textContent = "#" + t; const x = document.createElement("button"); x.type = "button"; x.textContent = "×"; x.setAttribute("aria-label", t + " 빼기"); x.addEventListener("click", () => { tags.splice(i, 1); paint(); }); c.appendChild(x); box.insertBefore(c, ti); });
+    };
+    const commit = () => { const parts = ti.value.split(/[,，\n]/).map((x) => x.trim().replace(/^#/, "")).filter(Boolean); for (const p of parts) if (!tags.includes(p)) tags.push(p); ti.value = ""; paint(); };
+    ti.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); commit(); } else if (e.key === "Backspace" && !ti.value && tags.length) { tags.pop(); paint(); } });
+    ti.addEventListener("input", () => { if (/[,，]/.test(ti.value)) commit(); });
+    box.appendChild(ti); body.appendChild(box); paint();
+    const exist = allTags().map((x) => x[0]).filter((t) => !tags.includes(t)).slice(0, 10);
+    if (exist.length) { const r = document.createElement("div"); r.className = "tag-sugg"; exist.forEach((t) => { const b = document.createElement("button"); b.type = "button"; b.className = "tag-chip"; b.textContent = "#" + t; b.addEventListener("click", () => { if (!tags.includes(t)) tags.push(t); b.remove(); paint(); }); r.appendChild(b); }); body.appendChild(r); }
+    const save = document.createElement("button"); save.type = "button"; save.className = "sheet-item sheet-confirm"; save.id = "metaSave"; save.textContent = "저장";
+    save.addEventListener("click", () => { commit(); setMeta(node, { series: si.value, tags }); closeSheet(); renderExplorer(); toast("시리즈·태그를 저장했어요", 1100); });
+    body.appendChild(save);
+  } });
+}
+function addCardExtras(btn, node, thumb) {
+  if (node.kind !== "dir" && node.kind !== "zip") return;
+  const m = metaOf(node);
+  if (m.series || (m.tags && m.tags.length)) {
+    const t = document.createElement("div");
+    t.className = "card-tags";
+    t.textContent = [m.series ? m.series : "", ...(m.tags || []).slice(0, 3).map((x) => "#" + x)].filter(Boolean).join(" ");
+    btn.appendChild(t);
+  }
+  if (isHiddenOwn(node)) btn.classList.add("is-secret");
+  const more = document.createElement("span");
+  more.className = "card-more"; more.setAttribute("role", "button"); more.setAttribute("aria-label", node.name + " 메뉴"); more.textContent = "⋯";
+  more.addEventListener("pointerdown", (e) => e.stopPropagation());
+  more.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); if (!explorerUI.selecting) openActionSheet(node); });
+  btn.appendChild(more);
+}
+
+/* ---------- 책갈피 메모 ---------- */
+function bmRecordOf(p) { const k = bmKeyOf(p); return k ? bmList.find((r) => r.k === k) : null; }
+async function editBmMemo(rec, after) {
+  if (!rec) return;
+  const r = await dialogSheet({ title: "컷 메모", message: "짧게 남겨 두면 즐겨찾기 컷에서 같이 보여요.", inputValue: rec.memo || "", inputPlaceholder: "예: 명장면, 고백 장면", confirmLabel: "저장" });
+  if (!r || r.action !== "ok") return;
+  const v = String(r.value || "").trim().slice(0, 40);
+  if (v) rec.memo = v; else delete rec.memo;
+  saveBm();
+  toast(v ? "메모를 남겼어요" : "메모를 지웠어요", 1000);
+  if (after) after();
+}
+function bindBmMemo(cell, o) {
+  if (o.r.memo) { const m = document.createElement("span"); m.className = "bm-memo-txt"; m.textContent = "“" + o.r.memo + "”"; cell.insertBefore(m, cell.querySelector(".bm-acts")); }
+  const b = cell.querySelector(".bm-memo");
+  if (b) b.addEventListener("click", () => editBmMemo(o.r, () => { const y = $("bmScroll").scrollTop; openBmPanel(); $("bmScroll").scrollTop = y; }));
+}
+function bmVisible() { return bmResolve().filter((o) => isVisibleNode(o.base)); }
+(function bindBmLongPress() {
+  const b = document.getElementById("btnBookmark");
+  if (!b) return;
+  let t = 0, fired = false;
+  b.addEventListener("pointerdown", () => { fired = false; clearTimeout(t); t = setTimeout(() => {
+    fired = true;
+    const p = reader.pages[reader.index]; if (!p) return;
+    if (!isBm(p)) { bmAdd(p); updateBmButton(); }
+    editBmMemo(bmRecordOf(p), updateBmButton);
+  }, 550); });
+  ["pointerup", "pointercancel", "pointerleave"].forEach((ev) => b.addEventListener(ev, () => clearTimeout(t)));
+  b.addEventListener("click", (e) => { if (fired) { fired = false; e.stopImmediatePropagation(); e.preventDefault(); } }, true);
+})();
+
+/* ---------- 자동 스크롤 · 자동 넘김 ---------- */
+var AUTO_SPEEDS = { slow: 30, normal: 60, fast: 120, turbo: 240 };
+var AUTO_SPEED_LABEL = { slow: "느리게", normal: "보통", fast: "빠르게", turbo: "초고속" };
+var auto = { on: false, timer: 0, raf: 0, last: 0, acc: 0 };
+function autoSec() { return [2, 4, 6, 10].includes(reader.autoSec) ? reader.autoSec : 4; }
+function autoSpeedKey() { return ["slow", "normal", "fast", "turbo"].includes(reader.autoSpeed) ? reader.autoSpeed : "normal"; }
+function updateAutoUi() {
+  const b = $("btnAuto");
+  if (b) { b.classList.toggle("on", auto.on); b.setAttribute("aria-pressed", auto.on ? "true" : "false"); b.setAttribute("aria-label", auto.on ? "자동 넘김 멈추기" : "자동 넘김 시작"); }
+  const ind = $("autoInd");
+  if (!ind) return;
+  ind.classList.toggle("show", auto.on);
+  ind.querySelector("b").textContent = reader.fit === "webtoon" ? `자동 스크롤 · ${AUTO_SPEED_LABEL[autoSpeedKey()]}` : `자동 넘김 · ${autoSec()}초`;
+}
+function autoBar(sec) {
+  const i = $("autoInd").querySelector(".ai-bar i");
+  i.style.transition = "none"; i.style.transform = "scaleX(0)"; void i.offsetWidth;
+  if (sec > 0) { i.style.transition = `transform ${sec}s linear`; i.style.transform = "scaleX(1)"; }
+}
+function autoSchedule() {
+  clearTimeout(auto.timer); cancelAnimationFrame(auto.raf);
+  if (!auto.on) return;
+  if (reader.fit === "webtoon") {
+    autoBar(0);
+    auto.last = performance.now(); auto.acc = 0;
+    const step = (now) => {
+      if (!auto.on) return;
+      const box = $("webtoon");
+      const dt = Math.min(0.1, (now - auto.last) / 1000); auto.last = now;
+      const v = AUTO_SPEEDS[autoSpeedKey()] * Math.max(1, box.clientHeight / 800);
+      auto.acc += v * dt;
+      if (auto.acc >= 1) { const d = Math.floor(auto.acc); auto.acc -= d; box.scrollTop += d; }
+      if (box.scrollTop + box.clientHeight >= box.scrollHeight - 2) { autoStop("end"); return; }
+      auto.raf = requestAnimationFrame(step);
+    };
+    auto.raf = requestAnimationFrame(step);
+    return;
+  }
+  const sec = autoSec();
+  autoBar(sec);
+  auto.timer = setTimeout(autoTick, sec * 1000);
+}
+function autoTick() {
+  if (!auto.on) return;
+  if (currentScreen !== "reader") { autoStop(); return; }
+  if (reader.animating || reader.sliding) { auto.timer = setTimeout(autoTick, 250); return; }
+  if (readingNext(reader.index) < 0) { autoStop("end"); return; }
+  goReading(1);
+  autoSchedule();
+}
+function autoStart() {
+  if (currentScreen !== "reader" || !pageCount()) return;
+  auto.on = true;
+  setReaderUI(false);
+  updateAutoUi();
+  autoSchedule();
+}
+function autoStop(reason) {
+  if (!auto.on) return;
+  auto.on = false;
+  clearTimeout(auto.timer); cancelAnimationFrame(auto.raf);
+  updateAutoUi();
+  if (reason === "end") toast("끝까지 왔어요 · 자동 넘김을 멈췄어요", 1500);
+  else if (reason === "touch") toast("자동 넘김 일시정지", 900);
+}
+function autoToggle() { if (auto.on) autoStop("btn"); else autoStart(); }
+(function bindAuto() {
+  const st = document.getElementById("stage");
+  if (st) {
+    st.addEventListener("pointerdown", () => { if (auto.on) autoStop("touch"); }, true);
+    st.addEventListener("wheel", () => { if (auto.on) autoStop("touch"); }, { capture: true, passive: true });
+  }
+  const ind = document.getElementById("autoInd");
+  if (ind) ind.addEventListener("click", () => autoStop("touch"));
+  new MutationObserver(() => { if (auto.on && !overlay.classList.contains("hidden")) autoStop("sheet"); }).observe(overlay, { attributes: true, attributeFilter: ["class"] });
+  const pg = document.getElementById("pageGrid");
+  if (pg) new MutationObserver(() => { if (auto.on && !pg.classList.contains("hidden")) autoStop("sheet"); }).observe(pg, { attributes: true, attributeFilter: ["class"] });
+  document.addEventListener("visibilitychange", () => { if (document.hidden) autoStop(); });
+  document.addEventListener("keydown", (e) => { if (auto.on && currentScreen === "reader" && e.key !== " " && e.key !== "p" && e.key !== "P" && !/^(Shift|Meta|Control|Alt)$/.test(e.key)) autoStop("touch"); }, true);
+})();
+
+/* ---------- 2쪽 펼침: 반쪽 나누기와 함께면 같은 그림의 두 반쪽끼리 짝 ---------- */
+var halvesMemo = { pages: null, v: false, h: -1 };
+function readerHasHalves() {
+  if (halvesMemo.pages !== reader.pages || halvesMemo.n !== reader.pages.length) {
+    const P = reader.pages;
+    halvesMemo.pages = P; halvesMemo.n = P.length; halvesMemo.v = false; halvesMemo.h = -1;
+    for (let i = 0; i < P.length; i++) {
+      const p = P[i];
+      if (!p || p.half == null) continue;
+      halvesMemo.v = true;
+      if (P[i + 1] && P[i + 1].half != null && P[i + 1].base === p.base) { halvesMemo.h = i; break; }
+    }
+  }
+  return halvesMemo.v;
+}
+function coverSolo() {
+  // with 반쪽 나누기 the pairing follows the scans: pick the alignment that keeps the two halves of one spread together
+  if (readerHasHalves()) return halvesMemo.h >= 0 ? halvesMemo.h % 2 === 1 : !!reader.coverAlone;
+  return !!reader.coverAlone;
+}
+
+/* bindings */
+bindLibTools();
+document.getElementById("btnAuto").addEventListener("click", (e) => { e.stopPropagation(); autoToggle(); });
 
 function clickPhotoPick() { quickPickPhotos(); }
 $("btnAddPhotos") && $("btnAddPhotos").addEventListener("click", clickPhotoPick);
@@ -8051,6 +8682,7 @@ window.addEventListener("keydown", (e) => {
     if (gridOpen) { if (k === "Escape" || k === "g" || k === "G") { closePageGrid(); } return; }
     const web = reader.fit === "webtoon";
     const fwd = reader.rtl && !web ? -1 : 1;
+    if (k === "p" || k === "P") { e.preventDefault(); autoToggle(); return; }
     if (k === "ArrowRight") { e.preventDefault(); web ? turnToPhysical(1, true) : turnToPhysical(1, true); }
     else if (k === "ArrowLeft") { e.preventDefault(); web ? turnToPhysical(-1, true) : turnToPhysical(-1, true); }
     else if (k === "ArrowDown" && (web || reader.zoom > 1.02)) { e.preventDefault(); if (web) turnToPhysical(1, true); else { reader.panY -= 120; applyZoom(); } }
