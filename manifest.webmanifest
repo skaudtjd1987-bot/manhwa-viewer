@@ -9,8 +9,8 @@
   "id": "./",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#0c0b0d",
+  "theme_color": "#0c0b0d",
   "orientation": "any",
   "icons": [
     {

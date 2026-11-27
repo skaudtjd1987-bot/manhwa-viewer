@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="만화뷰어">
 <meta name="application-name" content="만화뷰어">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#0c0b0d">
 <meta name="format-detection" content="telephone=no">
 <title>만화뷰어</title>
 <link rel="manifest" href="manifest.webmanifest">
@@ -24,7 +24,7 @@
   --border: #2c2c2c;
   --text: #f3f3f3;
   --muted: #9a9a9a;
-  --accent: #7db0ff;
+  --accent: #e0586a;
   --danger: #ff6b6b;
   --safe-t: env(safe-area-inset-top, 0px);
   --safe-b: env(safe-area-inset-bottom, 0px);
@@ -104,7 +104,7 @@ button {
   display: flex; align-items: center; justify-content: center; gap: 8px;
   height: 48px; border-radius: 14px; font-weight: 650; font-size: 16px;
 }
-.btn-primary { background: var(--accent); color: #0b1220; }
+.btn-primary { background: var(--accent); color: #fff6ec; }
 .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
 .btn-primary:active { filter: brightness(.92); }
 .btn-secondary:active { background: #262626; }
@@ -149,8 +149,8 @@ button {
   display: flex; align-items: center; justify-content: center;
   font-size: 18px; line-height: 1; font-weight: 600;
 }
-.thumb .add-pl:active { background: var(--accent); color: #0b1220; }
-.thumb .add-pl.on { background: var(--accent); color: #0b1220; }
+.thumb .add-pl:active { background: var(--accent); color: #fff6ec; }
+.thumb .add-pl.on { background: var(--accent); color: #fff6ec; }
 .card .name {
   font-size: 12px; line-height: 1.3; color: var(--text);
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
@@ -210,7 +210,7 @@ button {
   width: 22px; height: 22px; border-radius: 11px;
   border: 2px solid #fff; background: rgba(0,0,0,.45);
   align-items: center; justify-content: center;
-  color: #0b1220; font-size: 13px; font-weight: 800;
+  color: #fff6ec; font-size: 13px; font-weight: 800;
   pointer-events: none;
 }
 .card.selected .check { display: flex; background: var(--accent); border-color: var(--accent); }
@@ -307,7 +307,7 @@ input[type=range]::-webkit-slider-thumb {
   background: #ffffff16; border: 1px solid #ffffff22;
   font-size: 12px; font-weight: 600; color: #eee;
 }
-.chip.on { background: var(--accent); color: #0b1220; border-color: transparent; }
+.chip.on { background: var(--accent); color: #fff6ec; border-color: transparent; }
 
 /* ===== Video ===== */
 #screen-video { background: #000; }
@@ -381,7 +381,7 @@ input[type=range]::-webkit-slider-thumb {
 .settings-row label { font-size: 14px; }
 .seg { display: flex; background: #000; border-radius: 10px; padding: 3px; gap: 3px; margin-left: auto; }
 .seg button { height: 30px; padding: 0 8px; border-radius: 8px; font-size: 12px; font-weight: 650; color: #bbb; white-space: nowrap; }
-.seg button.on { background: var(--accent); color: #0b1220; }
+.seg button.on { background: var(--accent); color: #fff6ec; }
 .sw-update {
   position: fixed; left: 12px; right: 12px;
   bottom: calc(12px + var(--safe-b));
@@ -397,7 +397,7 @@ input[type=range]::-webkit-slider-thumb {
 }
 .sw-update.hidden { display: none !important; }
 .sw-update button {
-  background: var(--accent); color: #0b1220;
+  background: var(--accent); color: #fff6ec;
   height: 34px; padding: 0 12px; border-radius: 8px; font-weight: 700; font-size: 13px; flex: 0 0 auto;
 }
 
@@ -500,7 +500,7 @@ input[type=range]::-webkit-slider-thumb {
   box-shadow: 0 8px 24px #0009; white-space: nowrap;
 }
 .resume-bar button { height: 32px; padding: 0 12px; border-radius: 8px; font-weight: 700; font-size: 13px; }
-.resume-bar #btnResume { background: var(--accent); color: #0b1220; }
+.resume-bar #btnResume { background: var(--accent); color: #fff6ec; }
 .resume-bar #btnResumeX { color: #aaa; padding: 0 8px; }
 .page-grid { position: absolute; inset: 0; z-index: 20; background: rgba(8,8,8,.97); display: flex; flex-direction: column; }
 .pg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 12px 8px; padding: 12px 12px 24px; }
@@ -539,7 +539,7 @@ input[type=range]::-webkit-slider-thumb {
   height: 32px; padding: 0 11px; border-radius: 9px; background: #ffffff16; border: 1px solid #ffffff22;
   font-size: 12px; font-weight: 650; color: #eee; white-space: nowrap;
 }
-.v-chip.on { background: var(--accent); color: #0b1220; border-color: transparent; }
+.v-chip.on { background: var(--accent); color: #fff6ec; border-color: transparent; }
 .v-chip.half { border-color: var(--accent); color: var(--accent); }
 .v-controls { gap: 14px; padding: 4px 0 6px; }
 .v-btn.sm { width: 44px; height: 44px; }
@@ -603,7 +603,7 @@ input[type=range]::-webkit-slider-thumb {
 .ie-crop .h.tr { right: -14px; top: -14px; } .ie-crop .h.tr::after { right: 11px; top: 11px; border-left: 0; border-bottom: 0; }
 .ie-crop .h.bl { left: -14px; bottom: -14px; } .ie-crop .h.bl::after { left: 11px; bottom: 11px; border-right: 0; border-top: 0; }
 .ie-crop .h.br { right: -14px; bottom: -14px; } .ie-crop .h.br::after { right: 11px; bottom: 11px; border-left: 0; border-top: 0; }
-.ie-sel { position: absolute; border: 1.5px dashed #fff; background: #7db0ff22; pointer-events: none; }
+.ie-sel { position: absolute; border: 1.5px dashed #fff; background: #e0586a22; pointer-events: none; }
 .ie-cursor { position: absolute; border: 1.5px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px #0008; pointer-events: none; transform: translate(-50%,-50%); }
 .ie-panel { flex: 0 0 auto; background: var(--elev); border-top: 1px solid var(--border); padding: 8px 10px calc(8px + var(--safe-b)); }
 .ie-opts { min-height: 52px; display: flex; flex-direction: column; gap: 6px; padding-bottom: 6px; }
@@ -614,7 +614,7 @@ input[type=range]::-webkit-slider-thumb {
 .ie-opts .v-chip { flex: 0 0 auto; }
 .ie-tabs { display: flex; justify-content: space-around; border-top: 1px solid var(--border); padding-top: 6px; }
 .ie-tabs button { flex: 1; height: 40px; font-size: 13px; font-weight: 650; color: #999; border-radius: 9px; }
-.ie-tabs button.on { color: var(--accent); background: #7db0ff14; }
+.ie-tabs button.on { color: var(--accent); background: #e0586a14; }
 
 /* v5: header rows have fixed metrics so the small breadcrumb line can never ride onto the title */
 .titles { display: flex; flex-direction: column; justify-content: center; }
@@ -641,7 +641,7 @@ input[type=range]::-webkit-slider-thumb {
   position: absolute; z-index: 12;
   right: calc(16px + var(--safe-r)); bottom: calc(18px + var(--safe-b));
   height: 52px; padding: 0 18px 0 14px; border-radius: 26px;
-  background: var(--accent); color: #0b1220; font-weight: 750; font-size: 15px;
+  background: var(--accent); color: #fff6ec; font-weight: 750; font-size: 15px;
   display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 8px 22px #000a;
 }
 .fab svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
@@ -691,9 +691,9 @@ body:has(#overlay:not(.hidden)) .toast { bottom: auto; top: calc(var(--safe-t) +
   --hair: rgba(255,255,255,.09);
   --text: #f2f3f5;
   --muted: #8d929c;
-  --accent: #8ab4ff;
+  --accent: #e0586a;
   --accent-ink: #0a1324;
-  --heart: #ff5c7a;
+  --heart: #d63c50;
   --blur: blur(20px) saturate(160%);
 }
 html, body { font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif; -webkit-font-smoothing: antialiased; letter-spacing: -0.01em; }
@@ -715,7 +715,7 @@ html, body { font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Appl
 .ex-toolbar .ex-actions { gap: 8px; align-items: center; }
 .ex-toolbar #btnAddPhotos {
   flex: 0 0 auto; height: 36px; padding: 0 14px 0 12px; border-radius: 18px; font-size: 14px; font-weight: 650;
-  background: var(--accent); color: var(--accent-ink); box-shadow: 0 4px 14px rgba(138,180,255,.18);
+  background: var(--accent); color: var(--accent-ink); box-shadow: 0 4px 14px rgba(211,58,79,.18);
 }
 .ex-toolbar #btnAddPhotos::before { content: ""; width: 16px; height: 16px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E") center/contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E") center/contain no-repeat; }
 .ex-toolbar .btn-compact {
@@ -752,10 +752,10 @@ html, body { font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Appl
 .bm-chip {
   display: inline-flex; align-items: center; gap: 8px; margin: 6px 16px 2px calc(16px + var(--safe-l));
   height: 36px; padding: 0 14px 0 12px; border-radius: 18px;
-  background: rgba(255,92,122,.10); border: .5px solid rgba(255,92,122,.32); color: #ffd3dc; font-size: 13.5px; font-weight: 650;
+  background: rgba(214,60,80,.10); border: .5px solid rgba(214,60,80,.32); color: #ffd3dc; font-size: 13.5px; font-weight: 650;
 }
 .bm-chip svg { width: 16px; height: 16px; fill: var(--heart); stroke: none; }
-.bm-chip b { font-weight: 700; color: #fff; background: rgba(255,92,122,.32); border-radius: 9px; padding: 0 7px; font-size: 12px; line-height: 18px; font-variant-numeric: tabular-nums; }
+.bm-chip b { font-weight: 700; color: #fff; background: rgba(214,60,80,.32); border-radius: 9px; padding: 0 7px; font-size: 12px; line-height: 18px; font-variant-numeric: tabular-nums; }
 .bm-chip:active { transform: scale(.97); }
 
 /* FAB: glassy accent pill */
@@ -856,7 +856,7 @@ input[type=range]::-moz-range-thumb { width: 20px; height: 20px; border: 0; bord
 .bm-acts .bm-alb { height: 26px; padding: 0 10px; border-radius: 13px; background: rgba(255,255,255,.07); border: .5px solid var(--hair); font-size: 11px; font-weight: 600; color: #cfd3da; }
 .bm-acts .bm-del { width: 30px; height: 30px; border-radius: 15px; display: inline-flex; align-items: center; justify-content: center; }
 .bm-acts .bm-del svg { width: 18px; height: 18px; fill: var(--heart); stroke: none; }
-.bm-acts .bm-del:active { background: rgba(255,92,122,.16); }
+.bm-acts .bm-del:active { background: rgba(214,60,80,.16); }
 
 /* next-volume card */
 .vol-card {
@@ -893,8 +893,8 @@ body:has(#overlay:not(.hidden)) .toast { bottom: auto !important; top: calc(var(
 #readerChrome .r-tool { height: auto; min-height: 50px; padding: 5px 0 4px; gap: 3px; }
 #readerChrome .r-tool span { line-height: 1.3; white-space: nowrap; }
 /* 쪽 반전 pill in the reader top bar */
-.swap-pill { flex: 0 0 auto; height: 30px; padding: 0 11px; border-radius: 15px; margin: 0 2px; background: rgba(138,180,255,.16); border: .5px solid rgba(138,180,255,.45); color: #cfe0ff; font-size: 12.5px; font-weight: 700; white-space: nowrap; }
-.swap-pill:active { background: rgba(138,180,255,.3); transform: scale(.96); }
+.swap-pill { flex: 0 0 auto; height: 30px; padding: 0 11px; border-radius: 15px; margin: 0 2px; background: rgba(211,58,79,.16); border: .5px solid rgba(211,58,79,.45); color: #cfe0ff; font-size: 12.5px; font-weight: 700; white-space: nowrap; }
+.swap-pill:active { background: rgba(211,58,79,.3); transform: scale(.96); }
 @media (max-width: 380px) { .swap-pill { padding: 0 8px; font-size: 11.5px; } }
 
 /* v13: stage may start below the status bar; the strip above it is plain black */
@@ -914,7 +914,7 @@ body:has(#overlay:not(.hidden)) .toast { bottom: auto !important; top: calc(var(
 .hero-kick { font-size: 11.5px; font-weight: 700; letter-spacing: .06em; color: rgba(255,255,255,.62); }
 .hero-title { font-size: 19px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.25; color: #fff; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .hero-bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,.18); overflow: hidden; margin-top: 2px; }
-.hero-bar i { display: block; height: 100%; border-radius: 2px; background: linear-gradient(90deg, #8ab4ff, #b9d0ff); box-shadow: 0 0 10px rgba(138,180,255,.6); }
+.hero-bar i { display: block; height: 100%; border-radius: 2px; background: linear-gradient(90deg, #e0586a, #f0d9a8); box-shadow: 0 0 10px rgba(211,58,79,.6); }
 .hero-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 2px; }
 .hero-pg { font-size: 12.5px; color: rgba(255,255,255,.75); font-variant-numeric: tabular-nums; font-weight: 600; }
 .hero-go { height: 34px; padding: 0 16px; border-radius: 17px; background: #fff; color: #0b0c10; font-weight: 800; font-size: 13.5px; box-shadow: 0 6px 16px rgba(0,0,0,.35); }
@@ -926,8 +926,8 @@ body:has(#overlay:not(.hidden)) .toast { bottom: auto !important; top: calc(var(
   background: linear-gradient(90deg, rgba(0,0,0,.38), rgba(255,255,255,.16) 40%, rgba(255,255,255,.04) 70%, rgba(0,0,0,0)); }
 .kind-dir .thumb::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(0,0,0,0) 30%, rgba(0,0,0,.18)); }
 .book-prog { position: absolute; left: 8px; right: 0; bottom: 0; height: 3px; background: rgba(0,0,0,.45); z-index: 3; }
-.book-prog i { display: block; height: 100%; background: linear-gradient(90deg, #8ab4ff, #c4d8ff); box-shadow: 0 0 8px rgba(138,180,255,.7); }
-.book-pill { position: absolute; top: 7px; right: 7px; z-index: 3; font-size: 10px; font-weight: 750; padding: 2px 7px; border-radius: 9px; color: #dce8ff; background: rgba(20,30,55,.6); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border: .5px solid rgba(138,180,255,.45); }
+.book-prog i { display: block; height: 100%; background: linear-gradient(90deg, #e0586a, #f0d9a8); box-shadow: 0 0 8px rgba(211,58,79,.7); }
+.book-pill { position: absolute; top: 7px; right: 7px; z-index: 3; font-size: 10px; font-weight: 750; padding: 2px 7px; border-radius: 9px; color: #f3e4d4; background: rgba(40,16,20,.6); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border: .5px solid rgba(211,58,79,.45); }
 .book-pill.done { color: #d9ffe6; border-color: rgba(110,220,150,.5); background: rgba(16,45,28,.6); }
 .card.kind-dir:active .thumb { transform: translateY(1px) scale(.98); }
 .card .thumb { transition: transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s; }
@@ -939,7 +939,7 @@ body:has(#overlay:not(.hidden)) .toast { bottom: auto !important; top: calc(var(
 
 /* thin reading progress line (HUD hidden) */
 .read-prog { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; z-index: 5; pointer-events: none; opacity: 0; transition: opacity .3s; background: rgba(255,255,255,.08); }
-.read-prog i { display: block; height: 100%; width: 100%; transform-origin: 0 50%; transform: scaleX(0); background: linear-gradient(90deg, rgba(138,180,255,.75), rgba(200,220,255,.95)); box-shadow: 0 0 6px rgba(138,180,255,.6); transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+.read-prog i { display: block; height: 100%; width: 100%; transform-origin: 0 50%; transform: scaleX(0); background: linear-gradient(90deg, rgba(211,58,79,.75), rgba(240,217,168,.95)); box-shadow: 0 0 6px rgba(211,58,79,.6); transition: transform .35s cubic-bezier(.2,.8,.2,1); }
 .read-prog.show { opacity: 1; }
 
 /* HUD: fade + slide, glow on active toggles */
@@ -948,15 +948,15 @@ body:has(#overlay:not(.hidden)) .toast { bottom: auto !important; top: calc(var(
 #readerChrome.dim .rbar { transform: translateY(14px); }
 #readerChrome .topbar-inner, #readerChrome .rbar { background: rgba(16,17,22,.6); border-color: rgba(255,255,255,.11); }
 #readerChrome .titles h1 { letter-spacing: -0.025em; }
-#readerChrome .r-tool.on svg { filter: drop-shadow(0 0 6px rgba(138,180,255,.75)); }
-#readerChrome .r-tool.on { background: rgba(138,180,255,.1); }
-#btnBookmark.on svg { filter: drop-shadow(0 0 7px rgba(255,92,122,.75)); }
-.swap-pill { box-shadow: 0 0 12px rgba(138,180,255,.25); }
-input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5), 0 0 0 4px rgba(138,180,255,.18); }
+#readerChrome .r-tool.on svg { filter: drop-shadow(0 0 6px rgba(211,58,79,.75)); }
+#readerChrome .r-tool.on { background: rgba(211,58,79,.1); }
+#btnBookmark.on svg { filter: drop-shadow(0 0 7px rgba(214,60,80,.75)); }
+.swap-pill { box-shadow: 0 0 12px rgba(211,58,79,.25); }
+input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5), 0 0 0 4px rgba(211,58,79,.18); }
 /* scrubber preview card */
 .page-preview { background: rgba(18,20,26,.82) !important; -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); border: .5px solid rgba(255,255,255,.14) !important; border-radius: 14px !important; padding: 7px 7px 8px !important; box-shadow: 0 16px 36px rgba(0,0,0,.6) !important; }
 .page-preview .pp-img { border-radius: 8px; width: 96px; height: 134px; box-shadow: 0 4px 12px rgba(0,0,0,.5); }
-.page-preview span { background: rgba(138,180,255,.18); color: #dce8ff; border-radius: 9px; padding: 1px 9px; font-size: 11.5px !important; }
+.page-preview span { background: rgba(211,58,79,.18); color: #f3e4d4; border-radius: 9px; padding: 1px 9px; font-size: 11.5px !important; }
 
 /* ===== v15 ===== */
 :root { --star: #ffc247; }
@@ -966,13 +966,13 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
 .bm-chip b { background: rgba(255,194,71,.28) !important; }
 /* lock button */
 #btnLock { opacity: .55; }
-#btnLock.open { opacity: 1; color: #c9a7ff; }
+#btnLock.open { opacity: 1; color: #d8b679; }
 #btnLock.open svg .shackle { transform: translate(-4px, -2px) rotate(-18deg); transform-origin: 8px 10px; }
 #btnLock svg .shackle { transition: transform .2s; }
 /* home tools */
 .lib-tools { margin: 6px calc(16px + var(--safe-r)) 2px calc(16px + var(--safe-l)); display: flex; flex-direction: column; gap: 9px; }
 .lib-search { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 6px 0 12px; border-radius: 12px; background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.1); }
-.lib-search:focus-within { border-color: rgba(138,180,255,.6); background: rgba(138,180,255,.08); }
+.lib-search:focus-within { border-color: rgba(211,58,79,.6); background: rgba(211,58,79,.08); }
 .lib-search svg { width: 17px; height: 17px; flex: none; stroke: rgba(255,255,255,.55); fill: none; stroke-width: 2; }
 .lib-search input { flex: 1; min-width: 0; height: 100%; background: transparent; border: 0; outline: 0; color: #fff; font-size: 16px; -webkit-appearance: none; appearance: none; }
 .lib-search input::placeholder { color: rgba(255,255,255,.4); }
@@ -982,28 +982,28 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
 .lib-tabs::-webkit-scrollbar { display: none; }
 .lib-tab, .lib-tabs .bm-chip { flex: none; height: 32px; padding: 0 13px; border-radius: 16px; font-size: 13.5px; font-weight: 650; color: rgba(255,255,255,.78); background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.1); display: inline-flex; align-items: center; gap: 6px; margin: 0 !important; white-space: nowrap; }
 .lib-tab.on { background: #fff; color: #0b0c10; border-color: #fff; }
-.lib-tab[data-tab="secret"] { color: #dcc8ff; border-color: rgba(201,167,255,.45); background: rgba(120,80,200,.18); }
-.lib-tab[data-tab="secret"].on { background: #c9a7ff; color: #160c2a; }
+.lib-tab[data-tab="secret"] { color: #efdcb8; border-color: rgba(216,182,121,.45); background: rgba(120,90,40,.18); }
+.lib-tab[data-tab="secret"].on { background: #d8b679; color: #1a1206; }
 .lib-tagrow, .tag-sugg { display: flex; flex-wrap: wrap; gap: 6px; }
 .tag-chip { height: 28px; padding: 0 10px; border-radius: 14px; font-size: 12.5px; font-weight: 600; color: rgba(255,255,255,.8); background: rgba(255,255,255,.06); border: .5px solid rgba(255,255,255,.12); display: inline-flex; align-items: center; gap: 5px; }
 .tag-chip small { font-size: 11px; color: rgba(255,255,255,.5); }
-.tag-chip.on { background: rgba(138,180,255,.2); color: #dce8ff; border-color: rgba(138,180,255,.5); }
+.tag-chip.on { background: rgba(211,58,79,.2); color: #f3e4d4; border-color: rgba(211,58,79,.5); }
 .tag-chip button { color: inherit; font-size: 15px; line-height: 1; padding: 0 0 0 2px; opacity: .8; }
-.secret-bar { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 14px; background: linear-gradient(100deg, rgba(120,80,200,.28), rgba(60,40,110,.2)); border: .5px solid rgba(201,167,255,.35); }
-.secret-bar b { flex: 1; font-size: 14px; color: #ece2ff; }
+.secret-bar { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 14px; background: linear-gradient(100deg, rgba(120,90,40,.28), rgba(60,40,20,.2)); border: .5px solid rgba(216,182,121,.35); }
+.secret-bar b { flex: 1; font-size: 14px; color: #f3e4d4; }
 .secret-bar button { height: 30px; padding: 0 12px; border-radius: 15px; font-size: 13px; font-weight: 700; background: rgba(255,255,255,.12); color: #fff; }
-.secret-bar button.lock { background: #c9a7ff; color: #160c2a; }
+.secret-bar button.lock { background: #d8b679; color: #1a1206; }
 .lib-group { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 8px; margin: 10px 2px -2px; }
 .lib-group b { font-size: 16px; font-weight: 800; letter-spacing: -.02em; }
 .lib-group span { font-size: 12px; color: rgba(255,255,255,.5); }
 .lib-group:first-child { margin-top: 0; }
 .lib-empty { grid-column: 1 / -1; text-align: center; color: rgba(255,255,255,.55); font-size: 14px; line-height: 1.6; padding: 40px 10px; margin: 0; }
 .card { position: relative; }
-.card-tags { font-size: 11px; color: #a9c4ff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; padding-right: 22px; }
+.card-tags { font-size: 11px; color: #d8b679; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; padding-right: 22px; }
 .card-more { position: absolute; right: -2px; bottom: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: rgba(255,255,255,.6); border-radius: 15px; z-index: 4; }
 .card-more:active { background: rgba(255,255,255,.12); }
 .card.kind-dir .name, .card.kind-zip .name, .card.kind-dir .meta { padding-right: 24px; }
-.card.is-secret .thumb { box-shadow: 0 0 0 1.5px rgba(201,167,255,.6), 0 10px 22px rgba(0,0,0,.5); }
+.card.is-secret .thumb { box-shadow: 0 0 0 1.5px rgba(216,182,121,.6), 0 10px 22px rgba(0,0,0,.5); }
 .app-ver { font-size: 11px; color: rgba(255,255,255,.35); margin-top: 4px; letter-spacing: .02em; }
 /* series/tag editor */
 .meta-lab { display: block; font-size: 12.5px; color: rgba(255,255,255,.6); margin: 10px 12px 6px; font-weight: 600; }
@@ -1016,7 +1016,7 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
 .pin-dots { display: flex; justify-content: center; gap: 16px; margin: 6px 0 6px; }
 .pin-dots i { width: 14px; height: 14px; border-radius: 7px; border: 1.5px solid rgba(255,255,255,.55); transition: background .12s, transform .12s; }
 .pin-dots i.on { background: #fff; border-color: #fff; transform: scale(1.08); }
-.pin-err { min-height: 18px; margin: 4px 0 8px; font-size: 12.5px; color: #ff8a9e; }
+.pin-err { min-height: 18px; margin: 4px 0 8px; font-size: 12.5px; color: #e0586a; }
 .pin-keys { display: grid; grid-template-columns: repeat(3, 72px); gap: 12px 22px; justify-content: center; margin: 4px 0 10px; }
 .pin-key { width: 72px; height: 72px; border-radius: 36px; font-size: 28px; font-weight: 500; color: #fff; background: rgba(255,255,255,.1); font-variant-numeric: tabular-nums; }
 .pin-key:active { background: rgba(255,255,255,.28); }
@@ -1035,7 +1035,7 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
 #btnAuto.on .ic-play { display: none; }
 #btnAuto.on .ic-pause { display: inline; }
 #btnAuto.on { color: var(--accent); }
-#btnAuto.on svg { filter: drop-shadow(0 0 6px rgba(138,180,255,.75)); }
+#btnAuto.on svg { filter: drop-shadow(0 0 6px rgba(211,58,79,.75)); }
 .auto-ind { position: absolute; left: 50%; bottom: calc(max(12px, var(--safe-b)) + 10px); transform: translate(-50%, 8px); z-index: 30; display: flex; flex-direction: column; align-items: stretch; gap: 5px; padding: 7px 14px 8px; border-radius: 16px; background: rgba(16,17,22,.62); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border: .5px solid rgba(255,255,255,.12); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; min-width: 132px; }
 .auto-ind.show { opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
 .auto-ind b { font-size: 12px; font-weight: 700; color: #e6eeff; text-align: center; white-space: nowrap; }
@@ -1049,9 +1049,9 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
 .bgm-btn { position: relative; }
 .bgm-btn svg { transition: opacity .2s; }
 .bgm-btn .eq { position: absolute; right: 5px; bottom: 6px; display: none; gap: 1.5px; align-items: flex-end; height: 9px; }
-.bgm-btn .eq i { width: 2px; height: 3px; border-radius: 1px; background: #ffb4d0; }
-.bgm-btn.loaded { color: #ffb4d0; }
-.bgm-btn.playing { color: #ff8fbd; }
+.bgm-btn .eq i { width: 2px; height: 3px; border-radius: 1px; background: #e3c28a; }
+.bgm-btn.loaded { color: #e3c28a; }
+.bgm-btn.playing { color: #d63c50; }
 .bgm-btn.playing svg { filter: drop-shadow(0 0 6px rgba(255,120,180,.7)); }
 .bgm-btn.playing .eq { display: flex; }
 .bgm-btn.playing .eq i { animation: bgmeq .9s ease-in-out infinite; }
@@ -1063,7 +1063,7 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
 .bgm-now { display: flex; gap: 14px; align-items: center; padding: 4px 4px 0; }
 .bgm-cover { width: 64px; height: 64px; border-radius: 12px; overflow: hidden; flex: none; background: linear-gradient(135deg, #3a1f4d, #1b2340); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(0,0,0,.45); }
 .bgm-cover img, .br-cv img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.bgm-cover span, .br-cv span { color: #ffb4d0; font-size: 26px; }
+.bgm-cover span, .br-cv span { color: #e3c28a; font-size: 26px; }
 .bgm-meta { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .bgm-title { font-size: 17px; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bgm-sub { font-size: 12px; color: rgba(255,255,255,.55); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -1073,28 +1073,28 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
 .bgm-c { width: 46px; height: 46px; border-radius: 23px; display: flex; align-items: center; justify-content: center; color: #fff; background: rgba(255,255,255,.07); }
 .bgm-c svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; }
 .bgm-c.big { width: 62px; height: 62px; border-radius: 31px; background: #fff; color: #0b0c10; box-shadow: 0 8px 22px rgba(0,0,0,.4); }
-.bgm-c.big.on { background: linear-gradient(135deg, #ffb4d0, #b9a0ff); }
+.bgm-c.big.on { background: linear-gradient(135deg, #e3c28a, #b8263a); }
 .bgm-c.big svg { width: 28px; height: 28px; }
-.bgm-c.on:not(.big) { color: #ff8fa3; }
+.bgm-c.on:not(.big) { color: #e0586a; }
 .bgm-c:active { transform: scale(.94); }
-.bgm-rep { height: 34px; padding: 0 10px; border-radius: 17px; font-size: 12px; font-weight: 700; color: #e9dcff; background: rgba(185,160,255,.14); border: .5px solid rgba(185,160,255,.35); white-space: nowrap; }
+.bgm-rep { height: 34px; padding: 0 10px; border-radius: 17px; font-size: 12px; font-weight: 700; color: #f3e4d4; background: rgba(216,182,121,.14); border: .5px solid rgba(216,182,121,.35); white-space: nowrap; }
 .bgm-vol { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; padding: 0 4px; font-size: 12.5px; color: rgba(255,255,255,.7); }
 .bgm-vol input { flex: 1; min-width: 140px; }
 .bgm-vol small { flex-basis: 100%; font-size: 11px; color: rgba(255,255,255,.4); }
-.bgm-album { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border-radius: 14px; background: rgba(255,180,208,.08); border: .5px solid rgba(255,180,208,.3); cursor: pointer; }
+.bgm-album { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border-radius: 14px; background: rgba(216,182,121,.08); border: .5px solid rgba(216,182,121,.3); cursor: pointer; }
 .bgm-album span { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .bgm-album b { font-size: 14px; }
 .bgm-album small { font-size: 11.5px; color: rgba(255,255,255,.55); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bgm-album input { -webkit-appearance: none; appearance: none; width: 48px; height: 28px; border-radius: 14px; background: rgba(255,255,255,.18); position: relative; flex: none; transition: background .2s; margin: 0; }
 .bgm-album input::after { content: ""; position: absolute; left: 3px; top: 3px; width: 22px; height: 22px; border-radius: 11px; background: #fff; transition: transform .2s; }
-.bgm-album input:checked { background: #ff8fbd; }
+.bgm-album input:checked { background: #d63c50; }
 .bgm-album input:checked::after { transform: translateX(20px); }
 .bgm-tabs { display: flex; gap: 6px; padding: 3px; border-radius: 12px; background: rgba(255,255,255,.06); }
 .bgm-tabs button { flex: 1; height: 34px; border-radius: 9px; font-size: 13.5px; font-weight: 700; color: rgba(255,255,255,.7); }
 .bgm-tabs button.on { background: #fff; color: #0b0c10; }
-.bgm-pre { width: 100%; height: 40px; border-radius: 12px; font-size: 13.5px; font-weight: 700; color: #ffe1ee; background: linear-gradient(100deg, rgba(255,143,189,.22), rgba(185,160,255,.2)); border: .5px solid rgba(255,180,208,.4); }
+.bgm-pre { width: 100%; height: 40px; border-radius: 12px; font-size: 13.5px; font-weight: 700; color: #f3e4d4; background: linear-gradient(100deg, rgba(214,60,80,.22), rgba(216,182,121,.2)); border: .5px solid rgba(216,182,121,.4); }
 .bgm-pre.done { color: #c9f5d9; background: rgba(60,180,110,.14); border-color: rgba(110,220,150,.4); }
-.bgm-pre.add { color: #dce8ff; background: rgba(138,180,255,.14); border-color: rgba(138,180,255,.4); }
+.bgm-pre.add { color: #f3e4d4; background: rgba(211,58,79,.14); border-color: rgba(211,58,79,.4); }
 .bgm-search { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px; border-radius: 12px; background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.12); }
 .bgm-search input { flex: 1; min-width: 0; background: transparent; border: 0; outline: 0; color: #fff; font-size: 16px; -webkit-appearance: none; appearance: none; }
 .bgm-search span { font-size: 12px; color: rgba(255,255,255,.5); white-space: nowrap; font-variant-numeric: tabular-nums; }
@@ -1102,50 +1102,50 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
 .bgm-list { display: flex; flex-direction: column; gap: 2px; max-height: 38vh; overflow-y: auto; -webkit-overflow-scrolling: touch; margin: 0 -4px; padding: 0 4px; }
 .bgm-row { display: flex; align-items: center; gap: 11px; padding: 7px 6px; border-radius: 12px; cursor: pointer; }
 .bgm-row:active { background: rgba(255,255,255,.08); }
-.bgm-row.cur { background: rgba(255,143,189,.12); }
-.bgm-row.cur b { color: #ffb4d0; }
+.bgm-row.cur { background: rgba(214,60,80,.12); }
+.bgm-row.cur b { color: #e3c28a; }
 .br-cv { width: 42px; height: 42px; border-radius: 8px; overflow: hidden; flex: none; background: #22263a; display: flex; align-items: center; justify-content: center; }
 .br-tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .br-tx b { font-size: 14px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .br-tx small { font-size: 11.5px; color: rgba(255,255,255,.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bdg { font-style: normal; flex: none; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 8px; color: rgba(255,255,255,.6); background: rgba(255,255,255,.08); }
 .bdg.ok { color: #c9f5d9; background: rgba(60,180,110,.18); }
-.bdg.on { color: #dce8ff; background: rgba(138,180,255,.18); }
+.bdg.on { color: #f3e4d4; background: rgba(211,58,79,.18); }
 .br-del { width: 32px; height: 32px; border-radius: 16px; color: rgba(255,255,255,.6); font-size: 14px; flex: none; }
-.br-del:active { background: rgba(255,80,100,.2); color: #ff8a9e; }
+.br-del:active { background: rgba(255,80,100,.2); color: #e0586a; }
 .bgm-empty { text-align: center; color: rgba(255,255,255,.5); font-size: 13px; line-height: 1.6; padding: 24px 0; margin: 0; }
-.bgm-more { margin: 6px auto 4px; height: 34px; padding: 0 16px; border-radius: 17px; font-size: 13px; color: #dce8ff; background: rgba(138,180,255,.14); }
-.bgm-offer { position: absolute; left: 50%; top: calc(var(--safe-t) + 72px); transform: translateX(-50%); z-index: 40; display: flex; align-items: center; gap: 8px; max-width: calc(100% - 32px); padding: 7px 8px 7px 14px; border-radius: 20px; background: rgba(30,18,36,.78); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: .5px solid rgba(255,180,208,.4); box-shadow: 0 10px 26px rgba(0,0,0,.45); font-size: 13px; color: #fff; }
+.bgm-more { margin: 6px auto 4px; height: 34px; padding: 0 16px; border-radius: 17px; font-size: 13px; color: #f3e4d4; background: rgba(211,58,79,.14); }
+.bgm-offer { position: absolute; left: 50%; top: calc(var(--safe-t) + 72px); transform: translateX(-50%); z-index: 40; display: flex; align-items: center; gap: 8px; max-width: calc(100% - 32px); padding: 7px 8px 7px 14px; border-radius: 20px; background: rgba(30,18,36,.78); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: .5px solid rgba(216,182,121,.4); box-shadow: 0 10px 26px rgba(0,0,0,.45); font-size: 13px; color: #fff; }
 .bgm-offer span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-.bgm-offer b { color: #ffb4d0; }
-.bgm-offer .bo-play { height: 30px; padding: 0 12px; border-radius: 15px; background: #ff8fbd; color: #24071a; font-weight: 800; font-size: 12.5px; flex: none; }
+.bgm-offer b { color: #e3c28a; }
+.bgm-offer .bo-play { height: 30px; padding: 0 12px; border-radius: 15px; background: #d63c50; color: #24071a; font-weight: 800; font-size: 12.5px; flex: none; }
 .bgm-offer .bo-x { width: 26px; height: 26px; border-radius: 13px; color: rgba(255,255,255,.6); flex: none; }
 /* v16.1: background-capable player polish — mini player bar */
 .bgm-tip { margin: -2px 4px 0; font-size: 11px; line-height: 1.45; color: rgba(255,255,255,.42); }
-.bgm-pre.busy { background: linear-gradient(90deg, rgba(255,143,189,.38) var(--p, 0%), rgba(255,255,255,.06) var(--p, 0%)); color: #fff; font-variant-numeric: tabular-nums; }
+.bgm-pre.busy { background: linear-gradient(90deg, rgba(214,60,80,.38) var(--p, 0%), rgba(255,255,255,.06) var(--p, 0%)); color: #fff; font-variant-numeric: tabular-nums; }
 .bgm-tools { display: flex; flex-direction: column; gap: 8px; }
 .bgm-mini { position: fixed; left: calc(12px + var(--safe-l)); right: calc(12px + var(--safe-r)); bottom: calc(12px + var(--safe-b)); z-index: 30; max-width: 620px; margin: 0 auto;
   display: none; flex-direction: column; border-radius: 18px; overflow: hidden; background: rgba(24,18,30,.82); -webkit-backdrop-filter: blur(20px) saturate(1.4); backdrop-filter: blur(20px) saturate(1.4);
-  border: .5px solid rgba(255,180,208,.28); box-shadow: 0 14px 34px rgba(0,0,0,.55); }
+  border: .5px solid rgba(216,182,121,.28); box-shadow: 0 14px 34px rgba(0,0,0,.55); }
 .bgm-mini.show { display: flex; animation: bmin .25s cubic-bezier(.2,.8,.2,1); }
 @keyframes bmin { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
 .bgm-mini .bm-seek { -webkit-appearance: none; appearance: none; width: 100%; height: 14px; margin: -5px 0 -6px; background: transparent; position: relative; z-index: 2; cursor: pointer; }
-.bgm-mini .bm-seek::-webkit-slider-runnable-track { height: 3px; background: linear-gradient(90deg, #ff8fbd var(--bp, 0%), rgba(255,255,255,.14) var(--bp, 0%)); border-radius: 2px; }
+.bgm-mini .bm-seek::-webkit-slider-runnable-track { height: 3px; background: linear-gradient(90deg, #d63c50 var(--bp, 0%), rgba(255,255,255,.14) var(--bp, 0%)); border-radius: 2px; }
 .bgm-mini .bm-seek::-moz-range-track { height: 3px; background: rgba(255,255,255,.14); }
 .bgm-mini .bm-seek::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; border-radius: 6px; background: #fff; margin-top: -4.5px; box-shadow: 0 1px 4px rgba(0,0,0,.5); }
 .bgm-mini .bm-row { display: flex; align-items: center; gap: 8px; padding: 7px 8px 8px 8px; }
 .bgm-mini .bm-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; text-align: left; color: #fff; }
 .bgm-mini .bm-cv { width: 42px; height: 42px; border-radius: 9px; overflow: hidden; flex: none; background: linear-gradient(135deg, #3a1f4d, #1b2340); display: flex; align-items: center; justify-content: center; }
 .bgm-mini .bm-cv img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.bgm-mini .bm-cv span { color: #ffb4d0; }
-.bgm-mini.playing .bm-cv { box-shadow: 0 0 0 1.5px rgba(255,143,189,.6); }
+.bgm-mini .bm-cv span { color: #e3c28a; }
+.bgm-mini.playing .bm-cv { box-shadow: 0 0 0 1.5px rgba(214,60,80,.6); }
 .bgm-mini .bm-tx { display: flex; flex-direction: column; min-width: 0; gap: 2px; }
 .bgm-mini .bm-t { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bgm-mini .bm-time { font-size: 11.5px; color: rgba(255,255,255,.55); font-variant-numeric: tabular-nums; }
 .bgm-mini .bm-b { width: 38px; height: 38px; border-radius: 19px; flex: none; display: flex; align-items: center; justify-content: center; color: #fff; }
 .bgm-mini .bm-b svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; }
 .bgm-mini .bm-play { width: 42px; height: 42px; border-radius: 21px; background: #fff; color: #0b0c10; }
-.bgm-mini.playing .bm-play { background: linear-gradient(135deg, #ffb4d0, #b9a0ff); }
+.bgm-mini.playing .bm-play { background: linear-gradient(135deg, #e3c28a, #b8263a); }
 .bgm-mini .bm-rep { font-size: 15px; }
 .bgm-mini .bm-b:active { transform: scale(.92); }
 body.bgm-mini-on #fabPhotos { bottom: calc(18px + var(--safe-b) + 78px); }
@@ -1170,11 +1170,397 @@ body.bgm-mini-vis:not(:has(#overlay:not(.hidden))) .toast { bottom: calc(var(--b
 .bgm-langs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 2px 0; -webkit-overflow-scrolling: touch; }
 .bgm-langs::-webkit-scrollbar { display: none; }
 .bgm-lang { flex: 1 0 auto; height: 34px; padding: 0 10px; border-radius: 17px; font-size: 13.5px; font-weight: 650; color: rgba(255,255,255,.75); background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.12); font-variant-numeric: tabular-nums; }
-.bgm-lang.on { background: linear-gradient(135deg, #ffb4d0, #b9a0ff); color: #15101c; border-color: transparent; }
+.bgm-lang.on { background: linear-gradient(135deg, #e3c28a, #b8263a); color: #15101c; border-color: transparent; }
 .bgm-lang:active { transform: scale(.96); }
 .sheet.bgm-sheet-host { background: rgba(22,20,28,.97); }
 .sheet.bgm-sheet-host .sheet-head { background: rgba(22,20,28,.99); }
 
+/*V17CSS-START*/
+/* ===== v17: LUNERA Noir — matte dark, crimson accent, ivory & gold highlights ===== */
+@font-face { font-family: "Pretendard LUNERA"; src: url("fonts/PretendardSub.woff2") format("woff2-variations"), url("fonts/PretendardSub.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+:root {
+  --bg: #0c0b0d; --surface: #141215; --surface2: #1b181c; --surface3: #231f24;
+  --elev: rgba(14,12,15,.8); --glass: rgba(22,19,23,.72); --glass-strong: rgba(20,17,21,.92);
+  --border: rgba(255,240,225,.08); --hair: rgba(255,240,225,.085); --hair2: rgba(255,240,225,.14);
+  --text: #f4eee6; --text2: rgba(244,238,230,.72); --muted: #8f8781; --faint: rgba(244,238,230,.42);
+  --accent: #d6455a; --accent-deep: #a8202f; --accent-soft: rgba(214,69,90,.14); --accent-line: rgba(214,69,90,.42); --accent-ink: #fff6ec;
+  --gold: #d8b679; --gold-soft: rgba(216,182,121,.13); --gold-line: rgba(216,182,121,.36); --ivory: #f3e9da;
+  --ok: #8fd3a8; --ok-soft: rgba(110,200,140,.13);
+  --heart: #d6455a; --star: #e3be6e;
+  --r-sm: 12px; --r-md: 16px; --r-lg: 22px; --r-xl: 26px;
+  --ease: cubic-bezier(.2,.8,.2,1); --dur: .24s;
+  --blur: blur(22px) saturate(140%);
+  --shadow-1: 0 6px 18px rgba(0,0,0,.38); --shadow-2: 0 18px 44px rgba(0,0,0,.55);
+}
+html, body { font-family: "Pretendard LUNERA", "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif; background: var(--bg); color: var(--text); font-feature-settings: "tnum" 0; letter-spacing: -0.012em; }
+.screen { background: var(--bg); }
+::selection { background: var(--accent-soft); }
+
+/* top bars */
+.topbar { background: var(--elev); border-bottom: .5px solid var(--hair); }
+#screen-explorer > .topbar { background: rgba(12,11,13,.84); }
+.titles h1 { font-weight: 750; letter-spacing: -0.035em; color: var(--text); }
+#screen-explorer:not(.in-folder) #exTitle { font-size: 22px; }
+.crumb { color: var(--muted); }
+.crumb button { color: var(--gold); }
+.icon-btn { color: var(--text); min-width: 44px; min-height: 44px; transition: background var(--dur) var(--ease), transform .12s, color var(--dur); }
+.icon-btn:active { background: rgba(255,240,225,.08); }
+.icon-btn svg { stroke-width: 1.6; }
+.bgm-btn.loaded { color: var(--gold); }
+.bgm-btn.playing { color: var(--accent); }
+.bgm-btn.playing svg { filter: drop-shadow(0 0 6px rgba(214,69,90,.55)); }
+.bgm-btn .eq i { background: var(--accent); }
+
+/* explorer */
+.ex-toolbar #btnAddPhotos { height: 40px; background: var(--accent-deep); color: var(--accent-ink); box-shadow: 0 6px 18px rgba(168,32,47,.32), inset 0 0 0 .5px rgba(255,255,255,.12); }
+.ex-toolbar .btn-compact { height: 40px; border-radius: 20px; background: rgba(255,240,225,.05); border-color: var(--hair); color: var(--text); }
+.ex-hint, .storage-meter, .app-ver { color: var(--faint); }
+.app-ver { letter-spacing: .02em; }
+.btn-primary { background: var(--accent-deep); color: var(--accent-ink); border-radius: var(--r-md); }
+.btn-secondary { background: rgba(255,240,225,.05); border-color: var(--hair); color: var(--text); border-radius: var(--r-md); }
+.chip-btn { background: rgba(255,240,225,.05); border-color: var(--hair); color: var(--text2); }
+.fab { background: var(--accent-deep); color: var(--accent-ink); box-shadow: 0 14px 32px rgba(0,0,0,.6), 0 4px 14px rgba(168,32,47,.38), inset 0 0 0 .5px rgba(255,255,255,.16); transition: transform .18s var(--ease), bottom .3s var(--ease); }
+.fab:active { transform: scale(.95); }
+.empty h2 { font-weight: 800; letter-spacing: -.04em; background: none; color: var(--ivory); }
+.empty p { color: var(--text2); }
+.help-box { background: rgba(255,240,225,.035); border: .5px solid var(--hair); border-radius: var(--r-lg); }
+.help-box h3 { color: var(--gold); }
+.lib-search { height: 44px; border-radius: 14px; background: rgba(255,240,225,.05); border-color: var(--hair); }
+.lib-search:focus-within { border-color: var(--gold-line); background: rgba(216,182,121,.06); }
+.lib-tab, .lib-tabs .bm-chip { height: 40px; border-radius: 20px; background: rgba(255,240,225,.05); border-color: var(--hair); color: var(--text2); transition: background var(--dur), color var(--dur); }
+.lib-tab.on { background: var(--ivory); color: #17120e; border-color: var(--ivory); }
+.lib-group b { color: var(--ivory); }
+.lib-group span { color: var(--muted); }
+.card .name { color: var(--text); }
+.card .meta { color: var(--muted); }
+.card-tags { color: var(--gold); }
+.card-more { width: 36px; height: 36px; }
+.thumb { background: var(--surface2); }
+.kind-dir .thumb, .kind-zip .thumb, .kind-dir.stored .thumb { background: linear-gradient(160deg, #221d22, #151216); }
+.book-pill { color: var(--ivory); background: rgba(20,16,18,.62); }
+.book-prog i { background: var(--accent); box-shadow: 0 0 8px rgba(214,69,90,.6); }
+.hero { background: #171315; border-color: var(--hair2); border-radius: var(--r-xl); }
+.hero::after { background: linear-gradient(100deg, rgba(12,10,12,.72), rgba(12,10,12,.25) 62%, rgba(12,10,12,.45)); }
+.hero-kick { color: var(--gold); letter-spacing: .12em; font-size: 11px; text-transform: uppercase; }
+.hero-bar i { background: var(--accent); box-shadow: 0 0 10px rgba(214,69,90,.55); }
+.hero-go { height: 40px; padding: 0 18px; border-radius: 20px; background: var(--ivory); color: #17120e; }
+.ex-select button { height: 40px; border-radius: 20px; background: rgba(255,240,225,.05); border-color: var(--hair); }
+
+/* sheets */
+.overlay { background: rgba(6,5,7,.5); transition: background-color .2s; }
+.sheet { background: var(--glass-strong); border-radius: var(--r-xl) var(--r-xl) 0 0; border-top: .5px solid var(--hair2); box-shadow: 0 -20px 60px rgba(0,0,0,.55); border-bottom-color: rgba(20,17,21,.98) !important; animation: v17sheet .32s var(--ease); }
+@keyframes v17sheet { from { transform: translateY(36px); opacity: .4; } to { transform: none; opacity: 1; } }
+.sheet-head { background: rgba(20,17,21,.97); border-radius: var(--r-xl) var(--r-xl) 0 0; }
+.sheet-head::before { background: rgba(255,240,225,.24); }
+.sheet h3, .sheet-head h3 { font-size: 17.5px; font-weight: 750; letter-spacing: -0.03em; color: var(--ivory); }
+.sheet-x { background: rgba(255,240,225,.09); color: var(--text); }
+.sheet-item { border-radius: 14px; min-height: 50px; }
+.sheet-item:not(.sheet-cancel) { background: rgba(255,240,225,.04); }
+.sheet-item:active { background: rgba(255,240,225,.09); }
+.sheet-item.danger { color: #ff8a8a; }
+.sheet-cancel { color: var(--text2); background: rgba(255,240,225,.05); }
+.settings-row { background: rgba(255,240,225,.035); border-bottom-color: var(--hair); min-height: 52px; }
+.settings-row label { color: var(--text); }
+.seg { background: rgba(255,240,225,.07); border-radius: 11px; }
+.seg button { height: 32px; border-radius: 9px; color: var(--text2); }
+.seg button.on { background: var(--ivory); color: #17120e; box-shadow: 0 2px 8px rgba(0,0,0,.35); }
+.settings-ver { color: var(--faint); }
+
+/* toasts: soft glass pill with a crimson dot */
+.toast { background: rgba(26,22,26,.9); color: var(--text); border: .5px solid var(--hair2); border-radius: 999px; padding: 11px 18px 11px 30px; font-size: 13.5px; font-weight: 600; letter-spacing: -0.02em; box-shadow: 0 14px 34px rgba(0,0,0,.5); max-width: min(92%, 460px); line-height: 1.4; animation: v17toast .28s var(--ease); }
+.toast::before { content: ""; position: absolute; left: 14px; top: 50%; width: 7px; height: 7px; margin-top: -3.5px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px rgba(214,69,90,.8); }
+@keyframes v17toast { from { opacity: 0; transform: translate(-50%, 8px) scale(.97); } to { opacity: 1; transform: translate(-50%, 0); } }
+body:has(#screen-explorer:not(.hidden)):not(:has(#overlay:not(.hidden))) .toast { bottom: calc(var(--safe-b) + 86px); }
+body.bgm-mini-on:not(:has(#overlay:not(.hidden))) .toast { bottom: calc(var(--safe-b) + 160px); }
+.sw-update, .sw-status, .resume-bar, .vol-card { background: var(--glass-strong); border-color: var(--hair2); border-radius: var(--r-md); }
+.resume-bar #btnResume { background: var(--accent-deep); color: var(--accent-ink); }
+
+/* reader HUD */
+#readerChrome .topbar-inner, #readerChrome .rbar { background: rgba(16,13,16,.66); border-color: var(--hair2); }
+#readerChrome .topbar-inner { border-radius: 18px; }
+#readerChrome .rbar { border-radius: 24px; }
+#readerChrome .r-tool { color: var(--text); min-height: 44px; }
+#readerChrome .r-tool span { color: var(--text2); }
+#readerChrome .r-tool.on, #readerChrome .r-tool.on span { color: var(--gold); }
+#readerChrome .r-tool.on { background: var(--gold-soft); }
+#readerChrome .r-tool.on svg { filter: drop-shadow(0 0 6px rgba(216,182,121,.6)); }
+#pageCounter { color: var(--text2); }
+.swap-pill { box-shadow: 0 0 12px rgba(216,182,121,.2); }
+input[type=range]::-webkit-slider-runnable-track { background: rgba(255,240,225,.16); }
+input[type=range]::-webkit-slider-thumb { background: var(--ivory); box-shadow: 0 2px 10px rgba(0,0,0,.5), 0 0 0 4px rgba(214,69,90,.2); }
+.read-prog i { background: var(--accent); box-shadow: 0 0 6px rgba(214,69,90,.55); }
+.page-preview span { background: var(--accent-soft); color: var(--ivory); }
+.page-grid { background: rgba(12,10,13,.95); }
+.bgm-offer { background: rgba(22,18,22,.86); border-color: var(--gold-line); }
+.bgm-offer b { color: var(--gold); }
+.bgm-offer .bo-play { height: 34px; background: var(--accent-deep); color: var(--accent-ink); }
+.bgm-offer .bo-x { width: 34px; height: 34px; }
+
+/* ===== BGM player ===== */
+.sheet.bgm-sheet-host { background: rgba(17,14,18,.96); max-width: 600px; }
+.sheet.bgm-sheet-host .sheet-head { background: rgba(17,14,18,.99); }
+.bgm-sheet { gap: 12px; }
+.bgm-hero { position: relative; border-radius: var(--r-lg); overflow: hidden; isolation: isolate; border: .5px solid var(--hair2); background: #1a1418; box-shadow: var(--shadow-1); }
+.bgm-hero-bg { position: absolute; inset: -40px; z-index: -2; background: radial-gradient(120% 90% at 20% 10%, #4a1620, transparent 60%), radial-gradient(90% 80% at 90% 100%, #3a2a14, transparent 60%), #171215; background-size: cover; background-position: center; filter: blur(30px) saturate(1.25) brightness(.5); transform: scale(1.15); transition: background-image .4s; }
+.bgm-hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(14,11,14,.15), rgba(14,11,14,.6)); }
+.bgm-now { gap: 16px; padding: 16px 16px 6px; }
+.bgm-cover { width: 104px; height: 104px; border-radius: 16px; background: radial-gradient(120% 120% at 25% 15%, #5a1c27, #1d1418 70%); box-shadow: 0 16px 34px rgba(0,0,0,.55), inset 0 0 0 .5px rgba(255,255,255,.12); transition: width .32s var(--ease), height .32s var(--ease), border-radius .32s var(--ease), transform .25s var(--ease); cursor: zoom-in; }
+.bgm-cover span { color: var(--gold); font-size: 34px; }
+.bgm-now.big { flex-direction: column; align-items: stretch; text-align: center; }
+.bgm-now.big .bgm-cover { width: min(100%, 300px); height: auto; aspect-ratio: 1; margin: 0 auto; border-radius: 20px; cursor: zoom-out; }
+.bgm-now.big .bgm-meta { align-items: center; }
+.bgm-playing .bgm-cover { transform: none; }
+.bgm-meta { gap: 5px; flex: 1; }
+.bgm-kick { font-size: 10.5px; font-weight: 750; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bgm-title { font-size: 19px; font-weight: 780; letter-spacing: -0.035em; color: var(--ivory); }
+.bgm-sub { color: var(--text2); font-size: 12.5px; }
+.bgm-nextup { font-size: 11.5px; color: var(--faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bgm-nextup b { color: var(--text2); font-weight: 650; }
+.bgm-prog { padding: 4px 16px 0; color: var(--text2); }
+.bgm-prog input, .bgm-scrub { -webkit-appearance: none; appearance: none; height: 28px; background: transparent; }
+.bgm-prog input::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--ivory) var(--sp, 0%), rgba(255,240,225,.18) var(--sp, 0%)); }
+.bgm-prog input::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; margin-top: -5px; border-radius: 50%; background: var(--ivory); box-shadow: 0 2px 8px rgba(0,0,0,.5); transition: transform .15s; }
+.bgm-prog input:active::-webkit-slider-thumb { transform: scale(1.35); }
+.bgm-ctrl { gap: 10px; padding: 2px 10px 14px; }
+.bgm-c { width: 48px; height: 48px; border-radius: 24px; background: rgba(255,240,225,.07); color: var(--ivory); transition: transform .12s, background var(--dur); }
+.bgm-c svg { width: 22px; height: 22px; stroke-width: 1.8; }
+.bgm-c.big { width: 66px; height: 66px; border-radius: 33px; background: var(--ivory); color: #17120e; box-shadow: 0 10px 26px rgba(0,0,0,.45); }
+.bgm-c.big.on { background: var(--accent-deep); color: var(--accent-ink); box-shadow: 0 10px 28px rgba(168,32,47,.45), inset 0 0 0 .5px rgba(255,255,255,.18); }
+.bgm-c.on:not(.big) { color: var(--accent); background: var(--accent-soft); }
+.bgm-rep { width: 48px; height: 48px; padding: 0; border-radius: 24px; display: flex; align-items: center; justify-content: center; background: rgba(255,240,225,.07); border: 0; color: var(--text2); }
+.bgm-rep svg { width: 21px; height: 21px; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.bgm-rep.m-one, .bgm-rep.m-shuffle { color: var(--gold); background: var(--gold-soft); }
+.bgm-rep { position: relative; }
+.bgm-vol { color: var(--text2); padding: 0 6px; }
+.bgm-vol small { color: var(--faint); }
+.bgm-album { background: var(--gold-soft); border-color: var(--gold-line); border-radius: var(--r-md); min-height: 56px; }
+.bgm-album input:checked { background: var(--accent-deep); }
+.bgm-tip { color: var(--faint); }
+.bgm-tabs { gap: 4px; padding: 4px; border-radius: 16px; background: rgba(255,240,225,.05); border: .5px solid var(--hair); position: sticky; top: 64px; z-index: 4; -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); background-color: rgba(26,22,27,.92); }
+.bgm-tabs button { height: 46px; border-radius: 12px; font-size: 13px; font-weight: 700; color: var(--text2); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.15; gap: 1px; transition: background var(--dur) var(--ease), color var(--dur); min-width: 0; }
+.bgm-tabs button small { font-size: 10.5px; font-weight: 600; opacity: .7; font-variant-numeric: tabular-nums; }
+.bgm-tabs button.on { background: var(--ivory); color: #17120e; box-shadow: 0 4px 12px rgba(0,0,0,.3); }
+.bgm-langs { gap: 6px; }
+.bgm-lang { height: 44px; border-radius: 22px; background: rgba(255,240,225,.05); border-color: var(--hair); color: var(--text2); }
+.bgm-lang.on { background: var(--accent-deep); color: var(--accent-ink); border-color: transparent; }
+.bgm-pre { height: 46px; border-radius: 14px; color: var(--ivory); background: rgba(255,240,225,.05); border: .5px solid var(--hair2); display: flex; align-items: center; justify-content: center; gap: 8px; }
+.bgm-pre.done { color: var(--ok); background: var(--ok-soft); border-color: rgba(110,200,140,.32); }
+.bgm-pre.add { color: var(--ivory); background: var(--gold-soft); border-color: var(--gold-line); }
+.bgm-pre.busy { background: linear-gradient(90deg, rgba(214,69,90,.34) var(--p, 0%), rgba(255,240,225,.05) var(--p, 0%)); color: #fff; }
+.bgm-search { height: 46px; border-radius: 14px; background: rgba(255,240,225,.05); border-color: var(--hair); }
+.bgm-search:focus-within { border-color: var(--gold-line); }
+.bgm-search span { color: var(--faint); }
+.bgm-list { max-height: none; overflow: visible; gap: 2px; margin: 0 -6px; padding: 0 6px; }
+.bgm-row { min-height: 60px; gap: 12px; padding: 7px 4px 7px 6px; border-radius: 14px; transition: background .15s; }
+.bgm-row:active { background: rgba(255,240,225,.06); }
+.bgm-row.cur { background: var(--accent-soft); }
+.bgm-row.cur b { color: #ff9aa6; }
+.bgm-row.cur .br-cv::after { content: ""; position: absolute; inset: 0; background: rgba(12,10,12,.45) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='%23f3e9da'%3E%3Crect x='5' y='9' width='2.6' height='8' rx='1.3'/%3E%3Crect x='10.7' y='6' width='2.6' height='11' rx='1.3'/%3E%3Crect x='16.4' y='10' width='2.6' height='7' rx='1.3'/%3E%3C/g%3E%3C/svg%3E") center/22px no-repeat; }
+.br-cv { position: relative; width: 46px; height: 46px; border-radius: 10px; background: radial-gradient(120% 120% at 25% 15%, #4a1822, #1b1418 70%); box-shadow: inset 0 0 0 .5px rgba(255,255,255,.08); }
+.br-cv span { color: var(--gold); }
+.br-tx b { color: var(--text); font-weight: 650; font-size: 14.5px; }
+.br-tx small { color: var(--muted); font-size: 12px; }
+.bdg { color: var(--text2); background: rgba(255,240,225,.06); border-radius: 7px; font-size: 10px; padding: 3px 7px; letter-spacing: -0.01em; }
+.bdg.ok { color: var(--ok); background: var(--ok-soft); }
+.bdg.on { color: var(--gold); background: var(--gold-soft); }
+.br-del, .br-add, .br-more { width: 44px; height: 44px; border-radius: 22px; flex: none; display: flex; align-items: center; justify-content: center; color: var(--text2); }
+.br-add svg, .br-more svg, .br-del svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.br-add:active, .br-more:active { background: rgba(255,240,225,.09); color: var(--ivory); }
+.br-add.in { color: var(--gold); }
+.bgm-empty { color: var(--muted); }
+.bgm-more { height: 44px; padding: 0 20px; border-radius: 22px; color: var(--ivory); background: rgba(255,240,225,.06); }
+.bgm-row .br-chk { width: 24px; height: 24px; border-radius: 12px; flex: none; border: 1.5px solid rgba(255,240,225,.35); display: flex; align-items: center; justify-content: center; transition: background .15s, border-color .15s; }
+.bgm-row.sel .br-chk { background: var(--accent-deep); border-color: var(--accent-deep); }
+.bgm-row.sel .br-chk::after { content: ""; width: 10px; height: 6px; border: solid #fff; border-width: 0 0 2px 2px; transform: translateY(-1px) rotate(-45deg); }
+.bgm-row.sel { background: var(--accent-soft); }
+
+/* mini player */
+.bgm-mini { background: rgba(22,18,22,.86); border-color: var(--hair2); border-radius: 22px; box-shadow: 0 18px 40px rgba(0,0,0,.6); transition: bottom .3s var(--ease); }
+.bgm-mini .bm-seek::-webkit-slider-runnable-track { background: linear-gradient(90deg, var(--accent) var(--bp, 0%), rgba(255,240,225,.12) var(--bp, 0%)); }
+.bgm-mini .bm-seek::-webkit-slider-thumb { background: var(--ivory); }
+.bgm-mini .bm-row { gap: 4px; padding: 6px 6px 7px 8px; }
+.bgm-mini .bm-cv { width: 44px; height: 44px; border-radius: 11px; background: radial-gradient(120% 120% at 25% 15%, #4a1822, #1b1418 70%); }
+.bgm-mini .bm-cv span { color: var(--gold); }
+.bgm-mini.playing .bm-cv { box-shadow: 0 0 0 1.5px rgba(214,69,90,.7), 0 0 14px rgba(214,69,90,.35); }
+.bgm-mini .bm-t { color: var(--ivory); }
+.bgm-mini .bm-time { color: var(--muted); }
+.bgm-mini .bm-b { width: 44px; height: 44px; border-radius: 22px; color: var(--ivory); }
+.bgm-mini .bm-play { width: 44px; height: 44px; background: var(--ivory); color: #17120e; }
+.bgm-mini.playing .bm-play { background: var(--accent-deep); color: var(--accent-ink); }
+.bgm-mini .bm-rep { color: var(--text2); }
+.bgm-mini .bm-rep svg { width: 19px; height: 19px; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.bgm-mini .bm-rep.m-one, .bgm-mini .bm-rep.m-shuffle { color: var(--gold); }
+.bgm-mini .bm-kick { font-size: 10px; letter-spacing: .1em; color: var(--gold); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; }
+.bgm-mini .bm-time .bm-kick { margin-right: 4px; }
+@media (min-width: 700px) { .bgm-mini { max-width: 560px; } }
+
+/* reader: floating music orb (HUD hidden) + now-playing banner */
+.bgm-orb { position: fixed; z-index: 31; right: calc(14px + var(--safe-r)); bottom: calc(18px + var(--safe-b)); width: 48px; height: 48px; border-radius: 50%; padding: 0; display: none; align-items: center; justify-content: center;
+  background: rgba(18,15,19,.7); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: 0 8px 22px rgba(0,0,0,.5); opacity: .92; transition: opacity .6s ease, transform .2s var(--ease); }
+.bgm-orb.show { display: flex; animation: v17orb .3s var(--ease); }
+.bgm-orb.idle { opacity: .38; }
+.bgm-orb:active { transform: scale(.92); opacity: 1; }
+@keyframes v17orb { from { transform: scale(.6); opacity: 0; } to { transform: none; opacity: .92; } }
+.bgm-orb .ring { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(var(--accent) var(--op, 0%), rgba(255,240,225,.14) var(--op, 0%)); -webkit-mask: radial-gradient(circle, transparent 20px, #000 20.5px); mask: radial-gradient(circle, transparent 20px, #000 20.5px); }
+.bgm-orb .art { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; background: radial-gradient(120% 120% at 25% 15%, #4a1822, #1b1418 70%); display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 16px; }
+.bgm-orb .art img { width: 100%; height: 100%; object-fit: cover; }
+.bgm-orb.playing .art { animation: v17spin 14s linear infinite; }
+@keyframes v17spin { to { transform: rotate(360deg); } }
+.bgm-orb .st { position: absolute; width: 20px; height: 20px; border-radius: 50%; background: rgba(12,10,12,.62); display: flex; align-items: center; justify-content: center; }
+.bgm-orb .st svg { width: 11px; height: 11px; fill: var(--ivory); }
+.bgm-orb.playing .st { opacity: 0; }
+.bgm-np { position: fixed; z-index: 45; left: 50%; top: calc(var(--safe-t) + 10px); transform: translate(-50%, -140%); display: flex; align-items: center; gap: 10px; max-width: min(88vw, 420px); padding: 7px 16px 7px 7px; border-radius: 999px;
+  background: rgba(22,18,22,.9); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); border: .5px solid var(--hair2); box-shadow: 0 14px 34px rgba(0,0,0,.5); transition: transform .42s var(--ease); pointer-events: none; }
+.bgm-np.show { transform: translate(-50%, 0); }
+.bgm-np .art { width: 34px; height: 34px; border-radius: 50%; overflow: hidden; flex: none; background: radial-gradient(120% 120% at 25% 15%, #4a1822, #1b1418 70%); display: flex; align-items: center; justify-content: center; color: var(--gold); }
+.bgm-np .art img { width: 100%; height: 100%; object-fit: cover; }
+.bgm-np .tx { display: flex; flex-direction: column; min-width: 0; }
+.bgm-np small { font-size: 10px; font-weight: 750; letter-spacing: .14em; color: var(--gold); text-transform: uppercase; }
+.bgm-np b { font-size: 13.5px; font-weight: 700; color: var(--ivory); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* home: LUNERA music shelf */
+.mshelf { margin: 10px 0 4px; }
+.mshelf-h { display: flex; align-items: center; justify-content: space-between; padding: 0 calc(16px + var(--safe-r)) 0 calc(16px + var(--safe-l)); margin-bottom: 8px; }
+.mshelf-h div { display: flex; flex-direction: column; gap: 1px; }
+.mshelf-h small { font-size: 10.5px; font-weight: 750; letter-spacing: .16em; color: var(--gold); }
+.mshelf-h b { font-size: 17px; font-weight: 780; letter-spacing: -.035em; color: var(--ivory); }
+.mshelf-h button { height: 44px; padding: 0 4px 0 12px; font-size: 13px; font-weight: 650; color: var(--text2); }
+.mshelf-row { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding: 2px calc(16px + var(--safe-r)) 6px calc(16px + var(--safe-l)); scroll-snap-type: x proximity; scroll-padding: 0 calc(16px + var(--safe-r)) 0 calc(16px + var(--safe-l)); }
+.mshelf-row::-webkit-scrollbar { display: none; }
+.ms-card { flex: none; width: 128px; display: flex; flex-direction: column; gap: 7px; text-align: left; scroll-snap-align: start; position: relative; }
+.ms-card:active .ms-art { transform: scale(.965); }
+.ms-art { position: relative; width: 128px; height: 128px; border-radius: 16px; overflow: hidden; background: radial-gradient(120% 120% at 25% 15%, #5a1c27, #18121a 72%); box-shadow: 0 10px 24px rgba(0,0,0,.45), inset 0 0 0 .5px rgba(255,255,255,.08); transition: transform .18s var(--ease); display: grid; }
+.ms-art.m4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+.ms-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ms-art .ph { display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 30px; }
+.ms-art .ph svg { width: 34px; height: 34px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+.ms-play { position: absolute; right: 8px; bottom: 8px; width: 44px; height: 44px; border-radius: 22px; background: rgba(243,233,218,.94); color: #17120e; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(0,0,0,.45); }
+.ms-play svg { width: 18px; height: 18px; fill: currentColor; }
+.ms-card b { font-size: 13.5px; font-weight: 680; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ms-card small { font-size: 11.5px; color: var(--muted); margin-top: -5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ms-card.new .ms-art { background: rgba(255,240,225,.04); border: 1px dashed rgba(216,182,121,.4); box-shadow: none; }
+.ms-card.now .ms-art::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 0 0 2px rgba(214,69,90,.75); border-radius: 16px; }
+.ms-eq { position: absolute; left: 9px; top: 9px; display: flex; gap: 2px; align-items: flex-end; height: 14px; padding: 3px 5px; border-radius: 7px; background: rgba(12,10,12,.6); box-sizing: content-box; }
+.ms-eq i { width: 2.5px; height: 4px; border-radius: 1px; background: var(--accent); animation: bgmeq .9s ease-in-out infinite; }
+.ms-eq i:nth-child(2) { animation-delay: -.3s; } .ms-eq i:nth-child(3) { animation-delay: -.6s; }
+.ms-eq.paused i { animation: none; height: 4px; }
+
+/* ===== playlists ===== */
+.bpl-head { display: flex; align-items: center; gap: 8px; }
+.bpl-new { flex: 1; height: 50px; border-radius: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14.5px; font-weight: 720; color: var(--accent-ink); background: var(--accent-deep); box-shadow: 0 8px 20px rgba(168,32,47,.3), inset 0 0 0 .5px rgba(255,255,255,.14); }
+.bpl-new svg, .bpl-ib svg, .bpl-act svg, .bpl-back svg, .bpl-grip svg, .bpl-rm svg, .bpl-pop svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.bpl-new:active, .bpl-act:active, .bpl-ib:active { transform: scale(.97); }
+.bpl-ib { width: 50px; height: 50px; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--ivory); background: rgba(255,240,225,.06); border: .5px solid var(--hair); flex: none; }
+.bpl-cards { display: flex; flex-direction: column; gap: 6px; }
+.bpl-card { display: flex; align-items: center; gap: 14px; padding: 8px 6px 8px 8px; border-radius: 18px; background: rgba(255,240,225,.03); border: .5px solid var(--hair); cursor: pointer; transition: background .15s, transform .15s var(--ease); min-height: 84px; }
+.bpl-card:active { background: rgba(255,240,225,.07); transform: scale(.99); }
+.bpl-card.cur { border-color: var(--accent-line); background: var(--accent-soft); }
+.bpl-mosaic { width: 68px; height: 68px; border-radius: 13px; overflow: hidden; flex: none; display: grid; background: radial-gradient(120% 120% at 25% 15%, #5a1c27, #18121a 72%); box-shadow: 0 8px 18px rgba(0,0,0,.4), inset 0 0 0 .5px rgba(255,255,255,.08); }
+.bpl-mosaic.m4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+.bpl-mosaic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bpl-mosaic .ph { display: flex; align-items: center; justify-content: center; color: var(--gold); }
+.bpl-mosaic .ph svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+.bpl-ct { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.bpl-ct b { font-size: 15.5px; font-weight: 720; letter-spacing: -.03em; color: var(--ivory); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bpl-ct small { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.bpl-ct small i { font-style: normal; color: var(--ok); }
+.bpl-play { width: 48px; height: 48px; border-radius: 24px; flex: none; display: flex; align-items: center; justify-content: center; background: var(--ivory); color: #17120e; box-shadow: 0 6px 16px rgba(0,0,0,.35); }
+.bpl-play svg { width: 18px; height: 18px; fill: currentColor; }
+.bpl-play:active { transform: scale(.93); }
+.bpl-card.cur .bpl-play { background: var(--accent-deep); color: var(--accent-ink); }
+.bpl-emptyst { text-align: center; padding: 26px 18px 18px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.bpl-emptyst .art { width: 96px; height: 96px; border-radius: 26px; display: flex; align-items: center; justify-content: center; background: radial-gradient(120% 120% at 25% 15%, #5a1c27, #18121a 72%); box-shadow: 0 16px 36px rgba(0,0,0,.5), inset 0 0 0 .5px rgba(255,255,255,.1); color: var(--gold); }
+.bpl-emptyst .art svg { width: 44px; height: 44px; stroke: currentColor; fill: none; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.bpl-emptyst b { font-size: 16px; color: var(--ivory); font-weight: 750; letter-spacing: -.03em; margin-top: 6px; }
+.bpl-emptyst p { margin: 0; font-size: 13px; line-height: 1.6; color: var(--muted); }
+.bpl-detail-h { display: flex; gap: 14px; align-items: center; }
+.bpl-back { height: 44px; padding: 0 12px 0 6px; border-radius: 22px; display: inline-flex; align-items: center; gap: 2px; font-size: 14px; font-weight: 650; color: var(--text2); background: rgba(255,240,225,.05); flex: none; align-self: flex-start; }
+.bpl-dtop { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.bpl-big { width: 96px; height: 96px; border-radius: 18px; }
+.bpl-dname { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.bpl-dname small.k { font-size: 10.5px; font-weight: 750; letter-spacing: .16em; color: var(--gold); }
+.bpl-dname b { font-size: 21px; font-weight: 800; letter-spacing: -.04em; color: var(--ivory); line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: keep-all; }
+.bpl-dname small.m { font-size: 12.5px; color: var(--text2); font-variant-numeric: tabular-nums; }
+.bpl-dname small.m i { font-style: normal; color: var(--ok); }
+.bpl-acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.bpl-act { height: 48px; border-radius: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; font-weight: 720; color: var(--ivory); background: rgba(255,240,225,.07); border: .5px solid var(--hair); }
+.bpl-act.pri { background: var(--ivory); color: #17120e; border-color: transparent; }
+.bpl-act.pri svg { fill: currentColor; stroke: none; }
+.bpl-act:disabled { opacity: .4; }
+.bpl-bar { display: flex; flex-wrap: wrap; gap: 6px; }
+.bpl-bar::-webkit-scrollbar { display: none; }
+.bpl-chip { flex: none; height: 44px; padding: 0 15px 0 12px; border-radius: 22px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 650; color: var(--text2); background: rgba(255,240,225,.05); border: .5px solid var(--hair); }
+.bpl-chip svg { width: 17px; height: 17px; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.bpl-chip.on { color: #17120e; background: var(--gold); border-color: transparent; }
+.bpl-chip.done { color: var(--ok); background: var(--ok-soft); border-color: rgba(110,200,140,.3); }
+.bpl-chip.busy { color: #fff; background: linear-gradient(90deg, rgba(214,69,90,.4) var(--p, 0%), rgba(255,240,225,.05) var(--p, 0%)); font-variant-numeric: tabular-nums; }
+.bpl-chip:active { transform: scale(.96); }
+.bpl-rows { display: flex; flex-direction: column; gap: 2px; position: relative; }
+.bpl-rows .bgm-row { background: transparent; will-change: transform; }
+.bpl-rows .bgm-row.cur { background: var(--accent-soft); }
+.bpl-rows .bgm-row.missing { opacity: .45; }
+.bpl-idx { width: 22px; flex: none; text-align: center; font-size: 12.5px; font-weight: 650; color: var(--faint); font-variant-numeric: tabular-nums; }
+.bpl-rm { width: 44px; height: 44px; border-radius: 22px; flex: none; display: flex; align-items: center; justify-content: center; color: #ff8a8a; }
+.bpl-rm:active { background: rgba(255,90,90,.14); }
+.bpl-grip { width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; color: var(--text2); touch-action: none; cursor: grab; border-radius: 12px; }
+.bpl-grip:active { cursor: grabbing; }
+.bpl-rows.editing .bgm-row { cursor: default; }
+.bgm-row.dragging { z-index: 6; background: rgba(40,33,40,.98) !important; box-shadow: 0 16px 36px rgba(0,0,0,.6), inset 0 0 0 .5px var(--gold-line); transition: none !important; }
+.bpl-rows.drag .bgm-row:not(.dragging) { transition: transform .2s var(--ease); }
+.bpl-hint { font-size: 11.5px; color: var(--faint); text-align: center; margin: 2px 0 0; }
+/* multi-select action bar */
+.bpl-selbar { position: sticky; bottom: 0; z-index: 6; display: flex; align-items: center; gap: 8px; padding: 10px; margin: 4px -4px 0; border-radius: 18px; background: rgba(32,26,32,.96); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); border: .5px solid var(--hair2); box-shadow: 0 -8px 30px rgba(0,0,0,.45); animation: v17up .25s var(--ease); }
+@keyframes v17up { from { transform: translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
+.bpl-selbar b { flex: 1; min-width: 0; font-size: 13.5px; color: var(--ivory); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bpl-selbar button { height: 44px; padding: 0 14px; border-radius: 14px; font-size: 13.5px; font-weight: 700; color: var(--text2); background: rgba(255,240,225,.07); flex: none; }
+.bpl-selbar button.pri { background: var(--accent-deep); color: var(--accent-ink); }
+.bpl-selbar button:disabled { opacity: .4; }
+/* popups (picker, prompt, menus) — float above the sheet */
+.bpl-layer { position: fixed; inset: 0; z-index: 58; display: flex; align-items: flex-end; justify-content: center; background: rgba(6,5,7,.45); animation: v17fade .2s ease; padding: 0 var(--safe-r) 0 var(--safe-l); }
+.bpl-layer.center { align-items: center; padding: 20px; }
+@keyframes v17fade { from { opacity: 0; } to { opacity: 1; } }
+.bpl-pop { width: 100%; max-width: 480px; max-height: min(78dvh, 640px); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; background: rgba(28,23,28,.98); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); border: .5px solid var(--hair2); border-radius: 26px 26px 0 0; padding: 18px 14px calc(14px + var(--safe-b)); box-shadow: 0 -20px 60px rgba(0,0,0,.6); animation: v17pop .3s var(--ease); }
+.bpl-layer.center .bpl-pop { border-radius: 24px; padding: 20px 16px 16px; max-width: 400px; animation: v17zoom .24s var(--ease); }
+@keyframes v17pop { from { transform: translateY(40px); } to { transform: none; } }
+@keyframes v17zoom { from { transform: scale(.94); opacity: 0; } to { transform: none; opacity: 1; } }
+.bpl-pop h4 { margin: 0 4px 2px; font-size: 17px; font-weight: 780; letter-spacing: -.03em; color: var(--ivory); }
+.bpl-pop .sub { margin: 0 4px 14px; font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bpl-opt { width: 100%; min-height: 56px; display: flex; align-items: center; gap: 12px; padding: 6px 10px; border-radius: 16px; text-align: left; color: var(--text); font-size: 15px; font-weight: 620; }
+.bpl-opt:active { background: rgba(255,240,225,.07); }
+.bpl-opt .bpl-mosaic { width: 46px; height: 46px; border-radius: 10px; }
+.bpl-opt .t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.bpl-opt .t span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bpl-opt .t small { font-size: 12px; color: var(--muted); font-weight: 500; }
+.bpl-opt .ck { width: 26px; height: 26px; border-radius: 13px; flex: none; display: flex; align-items: center; justify-content: center; border: 1.5px solid rgba(255,240,225,.25); }
+.bpl-opt.in .ck { background: var(--gold); border-color: var(--gold); }
+.bpl-opt.in .ck::after { content: ""; width: 10px; height: 6px; border: solid #17120e; border-width: 0 0 2px 2px; transform: translateY(-1px) rotate(-45deg); }
+.bpl-opt.newp { color: var(--gold); }
+.bpl-opt.newp .ic { width: 46px; height: 46px; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 1px dashed rgba(216,182,121,.5); }
+.bpl-opt.danger { color: #ff8a8a; }
+.bpl-opt svg { width: 21px; height: 21px; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.bpl-sep { height: .5px; background: var(--hair); margin: 6px 6px; }
+.bpl-input { width: 100%; height: 52px; border-radius: 14px; padding: 0 14px; font-size: 17px; color: var(--ivory); background: rgba(255,240,225,.06); border: 1px solid var(--hair2); outline: 0; -webkit-appearance: none; appearance: none; user-select: text; -webkit-user-select: text; }
+.bpl-input:focus { border-color: var(--gold-line); background: rgba(216,182,121,.06); }
+.bpl-btns { display: flex; gap: 8px; margin-top: 14px; }
+.bpl-btns button { flex: 1; height: 50px; border-radius: 15px; font-size: 15px; font-weight: 720; color: var(--text2); background: rgba(255,240,225,.07); }
+.bpl-btns button.pri { background: var(--ivory); color: #17120e; }
+.bpl-btns button.danger { background: var(--accent-deep); color: var(--accent-ink); }
+.bpl-btns button:disabled { opacity: .4; }
+.bpl-msg { margin: 0 4px 6px; font-size: 14px; line-height: 1.55; color: var(--text2); }
+.bpl-count { display: block; text-align: right; font-size: 11.5px; color: var(--faint); margin: 6px 4px 0; font-variant-numeric: tabular-nums; }
+/* snackbar with undo */
+.bpl-snack { position: fixed; z-index: 62; left: 50%; bottom: calc(var(--safe-b) + 22px); transform: translate(-50%, 20px); opacity: 0; display: flex; align-items: center; gap: 12px; max-width: min(92vw, 440px); padding: 6px 6px 6px 18px; border-radius: 999px; background: rgba(30,25,30,.96); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); border: .5px solid var(--hair2); box-shadow: 0 16px 36px rgba(0,0,0,.55); font-size: 13.5px; font-weight: 620; color: var(--ivory); transition: transform .28s var(--ease), opacity .2s; pointer-events: none; }
+.bpl-snack.show { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
+.bpl-snack span { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bpl-snack button { height: 40px; padding: 0 14px; border-radius: 20px; font-weight: 750; color: var(--gold); background: var(--gold-soft); flex: none; }
+
+@media (min-width: 700px) {
+  .bpl-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .bpl-pop { border-radius: 26px; margin-bottom: 24px; }
+  .bgm-now:not(.big) .bgm-cover { width: 120px; height: 120px; }
+}
+@media (prefers-reduced-motion: reduce) { .bgm-orb.playing .art { animation: none; } }
+/*V17CSS-END*/
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
@@ -1231,7 +1617,7 @@ body.bgm-mini-vis:not(:has(#overlay:not(.hidden))) .toast { bottom: calc(var(--b
       <div id="prefixFix" class="prefix-fix hidden"><span></span><button type="button" id="btnPrefixFix">이름 앞 날짜 빼기</button></div>
       <p class="ex-hint" id="photoHint">사진 앱에서 손가락을 밀어 여러 장을 한 번에 선택할 수 있습니다.</p>
       <div id="storageMeter" class="storage-meter"></div>
-      <div class="app-ver" id="appVer">만화뷰어 v16 · 오프라인</div>
+      <div class="app-ver" id="appVer">만화뷰어 v17 · 오프라인</div>
     </div>
     <div id="exSelectBar" class="ex-select hidden">
       <button type="button" id="btnSelectAll">전체 선택</button>
@@ -1294,6 +1680,7 @@ body.bgm-mini-vis:not(:has(#overlay:not(.hidden))) .toast { bottom: calc(var(--b
         <div id="secretBar" class="secret-bar hidden"><b>시크릿 서재</b><button type="button" id="btnSecretSet">설정</button><button type="button" id="btnSecretLock" class="lock">잠그기</button></div>
       </div>
       <div id="heroCard" class="hero hidden"></div>
+      <div id="musicShelf" class="mshelf hidden"></div>
       <div id="grid" class="grid hidden"></div>
     </div>
   </section>
@@ -4355,7 +4742,7 @@ function applyReaderLook() {
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v16c";
+const PWA_CACHE = "mhv-pwa-v17";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
@@ -7054,6 +7441,7 @@ function showScreen(name) {
 
 const overlay = $("overlay");
 function closeSheet() {
+  try { bplCloseLayer(); } catch (_) {}
   sheetDrag = null; overlay.style.backgroundColor = "";
   overlay.classList.add("hidden");
   overlay.innerHTML = "";
@@ -8220,7 +8608,7 @@ function updateReadProg() {
 }
 
 /* ===== v15: 시리즈·태그/검색, 시크릿 서재(PIN), 자동 넘김, 책갈피 메모 ===== */
-var APP_VER = "v16";
+var APP_VER = "v17";
 var META_KEY = "mhv-albummeta-v1", SECRET_KEY = "mhv-secret-v1", RECENT_KEY = "mhv-recent-v1";
 function v15Load(k, d) { try { const v = JSON.parse(localStorage.getItem(k) || "null"); return v && typeof v === "object" ? v : d; } catch (_) { return d; } }
 function v15Save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} }
@@ -8907,7 +9295,7 @@ function bgmStep(d, auto) {
   const q = bgm.queue;
   if (!q.length) return;
   let i;
-  if (bgmPrefs.repeat === "shuffle" && q.length > 1) { do { i = Math.floor(Math.random() * q.length); } while (i === bgm.idx); }
+  if (bgmPrefs.repeat === "shuffle" && q.length > 1) i = bgmShuffleNext();
   else i = (bgm.idx + d + q.length) % q.length;
   if (!auto && d < 0 && bgmAudio.currentTime > 4) { bgmAudio.currentTime = 0; return; }
   bgmPlayTrack(q[i]);
@@ -8965,7 +9353,9 @@ function bgmAlbumKey(f) { return f && !f.virtual && !reader.bmMode ? albumKey(f)
 function bgmAlbumRef(f) { const k = bgmAlbumKey(f); return k ? bgmPrefs.albums[k] || null : null; }
 function bgmSetAlbum(f, on) {
   const k = bgmAlbumKey(f); if (!k) return;
-  if (on && bgm.cur) bgmPrefs.albums[k] = bgmRef(bgm.cur); else delete bgmPrefs.albums[k];
+  const plc = bgm.ctx && bgm.ctx.pl ? bplGet(bgm.ctx.pl) : null;
+  if (on && plc) bgmPrefs.albums[k] = { kind: "playlist", id: plc.id, title: plc.name };
+  else if (on && bgm.cur) bgmPrefs.albums[k] = bgmRef(bgm.cur); else delete bgmPrefs.albums[k];
   bgmSavePrefs();
 }
 function bgmHideOffer() { const o = $("bgmOffer"); if (o) o.classList.add("hidden"); clearTimeout(bgmHideOffer.t); }
@@ -8973,12 +9363,13 @@ async function bgmOnAlbumOpen(f) {
   bgmHideOffer();
   const ref = bgmAlbumRef(f);
   if (!ref) return;
-  if (bgmSameTrack(bgm.cur, ref) && !bgmAudio.paused) return; // already playing its BGM: keep going
+  if (bgmAlbumMatches(ref) && !bgmAudio.paused) return; // already playing its BGM: keep going
+  if (ref.kind === "playlist") { await bplOfferAlbum(f, ref); return; }
   const t = await bgmResolveRef(ref);
   if (!t || currentScreen !== "reader" || reader.folder !== f) return;
   const o = $("bgmOffer");
   o.querySelector("b").textContent = t.title;
-  o.querySelector(".bo-play").onclick = (e) => { e.stopPropagation(); bgmHideOffer(); bgmPlayTrack(t, bgm.queue.some((x) => bgmSameTrack(x, t)) ? bgm.queue : null); };
+  o.querySelector(".bo-play").onclick = (e) => { e.stopPropagation(); bgmHideOffer(); if (!bgm.queue.some((x) => bgmSameTrack(x, t))) bgmSetCtx(null); bgmPlayTrack(t, bgm.queue.some((x) => bgmSameTrack(x, t)) ? bgm.queue : null); };
   o.querySelector(".bo-x").onclick = (e) => { e.stopPropagation(); bgmHideOffer(); };
   o.classList.remove("hidden");
   bgmHideOffer.t = setTimeout(bgmHideOffer, 8000);
@@ -8993,7 +9384,7 @@ var BGM_ICONS = {
   vol: '<svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="currentColor" stroke="none"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>',
   mute: '<svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="currentColor" stroke="none"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>',
 };
-var BGM_REPEAT = { all: "🔁 전체 반복", one: "🔂 한 곡 반복", shuffle: "🔀 셔플" };
+var BGM_REPEAT = { all: "전체 반복", one: "한 곡 반복", shuffle: "셔플 재생" };
 function bgmTabTracks(tab) {
   if (tab === "local") return bgmLocalTracks();
   if (tab === "lunera") {
@@ -9015,7 +9406,8 @@ async function openBgmPlayer(tab) {
     const s = document.createElement("div");
     s.id = "bgmSheet"; s.className = "bgm-sheet";
     s.innerHTML = `
-      <div class="bgm-now"><div class="bgm-cover"></div><div class="bgm-meta"><b class="bgm-title">곡을 골라 주세요</b><span class="bgm-sub">LUNERA · The Clown Art</span></div></div>
+      <div class="bgm-hero"><div class="bgm-hero-bg"></div>
+      <div class="bgm-now"><div class="bgm-cover" role="button" tabindex="0" aria-label="앨범 아트 크게 보기"></div><div class="bgm-meta"><span class="bgm-kick">LUNERA BGM</span><b class="bgm-title">곡을 골라 주세요</b><span class="bgm-sub">LUNERA · The Clown Art</span><span class="bgm-nextup"></span></div></div>
       <div class="bgm-prog"><span class="bgm-t0">0:00</span><input type="range" id="bgmSeek" min="0" max="1000" value="0" step="1" aria-label="재생 위치"><span class="bgm-t1">0:00</span></div>
       <div class="bgm-ctrl">
         <button type="button" id="bgmRepeat" class="bgm-rep"></button>
@@ -9023,17 +9415,17 @@ async function openBgmPlayer(tab) {
         <button type="button" id="bgmPlay" class="bgm-c big" aria-label="재생">${BGM_ICONS.play}</button>
         <button type="button" id="bgmNext" class="bgm-c" aria-label="다음 곡">${BGM_ICONS.next}</button>
         <button type="button" id="bgmMute" class="bgm-c" aria-label="음소거">${BGM_ICONS.vol}</button>
-      </div>
+      </div></div>
       <div class="bgm-vol"><span>음량</span><input type="range" id="bgmVol" min="0" max="100" step="1" aria-label="음량"><small>iPhone·iPad는 기기 음량 버튼으로 조절돼요</small></div>
       <label class="bgm-album hidden" id="bgmAlbumRow"><span><b>이 앨범 BGM으로 지정</b><small id="bgmAlbumSub"></small></span><input type="checkbox" id="bgmAlbumChk" role="switch"></label>
-      <p class="bgm-tip">화면을 끄거나 다른 앱으로 가도 계속 재생돼요 · 잠금 화면·제어 센터에서도 조작 가능. 곡이 넘어갈 때 iOS가 멈추면 잠금 화면의 ▶를 누르면 바로 이어져요.</p>
-      <div class="bgm-tabs" role="tablist"><button type="button" data-tab="builtin">기본 내장</button><button type="button" data-tab="local">내 음원</button><button type="button" data-tab="lunera">루네라 전체</button></div>
+      <p class="bgm-tip">화면을 끄거나 다른 앱으로 가도 계속 재생돼요 · 잠금 화면·제어 센터에서도 조작할 수 있어요.</p>
+      <div class="bgm-tabs" role="tablist"><button type="button" data-tab="builtin">기본 내장</button><button type="button" data-tab="playlists">플레이리스트</button><button type="button" data-tab="local">내 음원</button><button type="button" data-tab="lunera">루네라 전체</button></div>
       <div class="bgm-tools" id="bgmTools"></div>
       <div class="bgm-list" id="bgmList"></div>`;
     body.appendChild(s);
     const seek = s.querySelector("#bgmSeek");
     let seeking = false;
-    seek.addEventListener("input", () => { seeking = true; const d = bgmAudio.duration; if (isFinite(d)) s.querySelector(".bgm-t0").textContent = bgmFmt(d * seek.value / 1000); });
+    seek.addEventListener("input", () => { seeking = true; seek.style.setProperty("--sp", (seek.value / 10) + "%"); const d = bgmAudio.duration; if (isFinite(d)) s.querySelector(".bgm-t0").textContent = bgmFmt(d * seek.value / 1000); });
     seek.addEventListener("change", () => { const d = bgmAudio.duration; if (isFinite(d)) bgmAudio.currentTime = d * seek.value / 1000; seeking = false; });
     seek.dataset.seeking = "";
     seek.addEventListener("pointerdown", () => { seek.dataset.seeking = "1"; });
@@ -9042,7 +9434,7 @@ async function openBgmPlayer(tab) {
     s.querySelector("#bgmPrev").addEventListener("click", () => bgmStep(-1));
     s.querySelector("#bgmNext").addEventListener("click", () => bgmStep(1));
     s.querySelector("#bgmMute").addEventListener("click", () => { bgmPrefs.muted = !bgmPrefs.muted; bgmApplyVolume(); bgmSavePrefs(); bgmPaint(); });
-    s.querySelector("#bgmRepeat").addEventListener("click", () => { bgmPrefs.repeat = { all: "one", one: "shuffle", shuffle: "all" }[bgmPrefs.repeat]; bgmSavePrefs(); bgmPaint(); toast(BGM_REPEAT[bgmPrefs.repeat], 900); });
+    s.querySelector("#bgmRepeat").addEventListener("click", () => { bgmPrefs.repeat = { all: "one", one: "shuffle", shuffle: "all" }[bgmPrefs.repeat]; bgmSavePrefs(); bgm.bag = null; bgmPaint(); toast(BGM_REPEAT[bgmPrefs.repeat], 900); });
     const vol = s.querySelector("#bgmVol");
     vol.value = String(Math.round(bgmPrefs.volume * 100));
     vol.addEventListener("input", () => { bgmPrefs.volume = +vol.value / 100; if (bgmPrefs.muted && bgmPrefs.volume > 0) bgmPrefs.muted = false; bgmApplyVolume(); bgmPaint(); });
@@ -9050,10 +9442,11 @@ async function openBgmPlayer(tab) {
     s.querySelector("#bgmAlbumChk").addEventListener("change", (e) => {
       if (!bgm.cur) { e.target.checked = false; toast("먼저 곡을 재생해 주세요", 1200); return; }
       bgmSetAlbum(reader.folder, e.target.checked);
-      toast(e.target.checked ? `이 앨범을 열면 '${bgm.cur.title}'을(를) 이어 들려 드려요` : "이 앨범 BGM 지정을 풀었어요", 1600);
+      toast(e.target.checked ? (bgm.ctx && bgm.ctx.pl && bplGet(bgm.ctx.pl) ? `이 앨범을 열면 ‘${bplGet(bgm.ctx.pl).name}’ 플레이리스트를 들려 드려요` : `이 앨범을 열면 ‘${bgm.cur.title}’을(를) 이어 들려 드려요`) : "이 앨범 BGM 지정을 풀었어요", 1600);
       bgmPaint();
     });
-    s.querySelectorAll(".bgm-tabs button").forEach((b) => b.addEventListener("click", () => { bgm.ui.tab = b.dataset.tab; bgm.ui.limit = 60; bgmRenderList(); }));
+    s.querySelectorAll(".bgm-tabs button").forEach((b) => b.addEventListener("click", () => { if (bgm.ui.tab === b.dataset.tab && b.dataset.tab === "playlists" && bgm.ui.pl) { bgm.ui.pl = null; bgm.ui.plEdit = false; } else if (bgm.ui.tab === b.dataset.tab) return; bgm.ui.tab = b.dataset.tab; bgm.ui.limit = 60; if (bgm.sel && !bgm.sel.target) bgm.sel = null; bgmRenderList(); bplTabScroll(); }));
+    bgm17Bind(s);
     bgmPaint();
     bgmRenderList();
   } });
@@ -9068,6 +9461,7 @@ function bgmPaintTime() {
   const d = bgmAudio.duration, c = bgmAudio.currentTime;
   const seek = s.querySelector("#bgmSeek");
   if (seek.dataset.seeking !== "1") seek.value = String(isFinite(d) && d > 0 ? Math.round(c / d * 1000) : 0);
+  seek.style.setProperty("--sp", (seek.value / 10) + "%");
   s.querySelector(".bgm-t0").textContent = bgmFmt(c);
   s.querySelector(".bgm-t1").textContent = isFinite(d) && d > 0 ? bgmFmt(d) : (bgm.cur ? bgmFmt(bgm.cur.duration) : "0:00");
 }
@@ -9084,18 +9478,21 @@ function bgmPaint() {
   const pb = s.querySelector("#bgmPlay"); pb.innerHTML = playing ? BGM_ICONS.pause : BGM_ICONS.play; pb.setAttribute("aria-label", playing ? "일시정지" : "재생"); pb.classList.toggle("on", playing);
   s.querySelector("#bgmMute").innerHTML = bgmPrefs.muted || bgmPrefs.volume === 0 ? BGM_ICONS.mute : BGM_ICONS.vol;
   s.querySelector("#bgmMute").classList.toggle("on", !!bgmPrefs.muted);
-  s.querySelector("#bgmRepeat").textContent = BGM_REPEAT[bgmPrefs.repeat];
+  { const rb = s.querySelector("#bgmRepeat"); if (rb.dataset.m !== bgmPrefs.repeat) { rb.dataset.m = bgmPrefs.repeat; rb.innerHTML = BGM_REP_ICON[bgmPrefs.repeat]; rb.className = "bgm-rep m-" + bgmPrefs.repeat; rb.setAttribute("aria-label", BGM_REPEAT[bgmPrefs.repeat]); } }
   s.querySelector("#bgmVol").value = String(Math.round(bgmPrefs.volume * 100));
   const row = s.querySelector("#bgmAlbumRow");
   const inReader = currentScreen === "reader" && !!bgmAlbumKey(reader.folder);
   row.classList.toggle("hidden", !inReader);
   if (inReader) {
     const ref = bgmAlbumRef(reader.folder);
-    s.querySelector("#bgmAlbumChk").checked = !!ref && bgmSameTrack(ref, t || {});
-    s.querySelector("#bgmAlbumSub").textContent = (reader.folder.name || "") + (ref ? ` · 지정됨: ${ref.title}` : " · 열 때마다 이 곡을 이어 들려 드려요");
+    s.querySelector("#bgmAlbumChk").checked = !!ref && bgmAlbumMatches(ref);
+    const plc = bgm.ctx && bgm.ctx.pl ? bplGet(bgm.ctx.pl) : null;
+    s.querySelector("#bgmAlbumRow b").textContent = plc ? "이 앨범 BGM으로 지정 · 플레이리스트" : "이 앨범 BGM으로 지정";
+    s.querySelector("#bgmAlbumSub").textContent = (reader.folder.name || "") + (ref ? ` · 지정됨: ${ref.kind === "playlist" ? "플레이리스트 ‘" + ref.title + "’" : ref.title}` : plc ? ` · 열 때마다 ‘${plc.name}’ 플레이리스트를 들려 드려요` : " · 열 때마다 이 곡을 이어 들려 드려요");
   }
   s.querySelectorAll(".bgm-tabs button").forEach((b) => b.classList.toggle("on", b.dataset.tab === bgm.ui.tab));
-  s.querySelectorAll(".bgm-row").forEach((r) => r.classList.toggle("cur", !!t && r.dataset.kind === t.kind && r.dataset.id === t.id));
+  s.querySelectorAll(".bgm-row").forEach((r) => r.classList.toggle("cur", !!t && r.dataset.kind === t.kind && r.dataset.id === t.id && (!r.dataset.pl || (bgm.ctx && bgm.ctx.pl === r.dataset.pl))));
+  try { bgm17Paint(s); } catch (_) {}
   bgmPaintTime();
 }
 function bgmRenderList() {
@@ -9103,6 +9500,8 @@ function bgmRenderList() {
   const tab = bgm.ui.tab, tools = s.querySelector("#bgmTools"), list = s.querySelector("#bgmList");
   s.querySelectorAll(".bgm-tabs button").forEach((b) => b.classList.toggle("on", b.dataset.tab === tab));
   tools.innerHTML = ""; list.innerHTML = "";
+  if (tab === "playlists") { bplRender(s, tools, list); bgmTabLabels(); bgmPaint(); return; }
+  if (bgm.sel && bgm.sel.target) bplTargetBanner(tools);
   if (tab === "builtin") {
     const allB = bgmBuiltinTracks(), lang = bgm.ui.lang || "all";
     const pills = document.createElement("div"); pills.className = "bgm-langs"; pills.setAttribute("role", "tablist");
@@ -9158,6 +9557,7 @@ function bgmRenderList() {
     tools.appendChild(w);
     if (!navigator.onLine) { const p = document.createElement("p"); p.className = "bgm-note"; p.textContent = "지금 오프라인이에요 · 루네라 전체는 온라인일 때 스트리밍돼요"; tools.appendChild(p); }
   }
+  bplSelTools(tools, tab);
   bgmRenderRows();
 }
 function bgmRenderRows() {
@@ -9179,19 +9579,21 @@ function bgmRenderRows() {
     r.innerHTML = `<div class="br-cv">${t.cover ? `<img loading="lazy" alt="" src="${bgmAbs(t.cover).replace(/"/g, "&quot;")}">` : "<span>♪</span>"}</div><div class="br-tx"><b></b><small></small></div>${badge}`;
     r.querySelector("b").textContent = t.title;
     r.querySelector("small").textContent = [t.kind === "lunera" ? t.langName : t.kind === "builtin" && (bgm.ui.lang || "all") === "all" ? bgmLangName(t.lang) : "", t.genre, t.mood, bgmFmt(t.duration)].filter(Boolean).join(" · ");
-    r.addEventListener("click", () => { bgmPlayTrack(t, tracks); });
+    r.addEventListener("click", () => { if (bgm.sel) { bplToggleSel(r, t); return; } bgmSetCtx({ tab, lang: bgm.ui.lang }); bgmPlayTrack(t, tracks); });
     if (t.kind === "local") {
-      const del = document.createElement("button"); del.type = "button"; del.className = "br-del"; del.textContent = "✕"; del.setAttribute("aria-label", t.title + " 삭제");
+      const del = document.createElement("button"); del.type = "button"; del.className = "br-del"; del.innerHTML = BPL_IC.trash; del.setAttribute("aria-label", t.title + " 삭제");
       del.addEventListener("click", async (e) => { e.stopPropagation(); if (!confirm(`'${t.title}'을(를) 내 음원에서 지울까요?`)) return; await bgmDeleteLocal(t.id); toast("지웠어요", 900); bgmRenderList(); bgmPaint(); });
       r.appendChild(del);
     }
     list.appendChild(r);
   }
+  bplDecorateRows(list, shown, tracks, tab);
   if (tab === "lunera" && tracks.length > shown.length) {
     const m = document.createElement("button"); m.type = "button"; m.className = "bgm-more"; m.textContent = `더 보기 (${tracks.length - shown.length}곡 더)`;
     m.addEventListener("click", () => { bgm.ui.limit += 120; bgmRenderRows(); });
     list.appendChild(m);
   }
+  bplSelBar(list, tracks);
   bgmPaint();
 }
 
@@ -9203,16 +9605,16 @@ document.getElementById("bgmFile").addEventListener("change", async (e) => {
 });
 ["btnBgm", "btnBgmR"].forEach((id) => { const b = document.getElementById(id); if (b) b.addEventListener("click", (e) => { e.stopPropagation(); clearTimeout(readerHideTimer); openBgmPlayer(); }); });
 bgmApplyVolume();
-(async () => { try { await bgmCatalog(); } catch (_) {} if (bgmPrefs.last) { const t = await bgmResolveRef(bgmPrefs.last); if (t && !bgm.cur) { bgm.cur = t; bgm.queue = t.kind === "builtin" ? bgmBuiltinTracks() : [t]; bgm.idx = Math.max(0, bgm.queue.findIndex((x) => bgmSameTrack(x, t))); bgmUpdateMediaSession(); bgmUpdateIndicators(); } } })();
+(async () => { try { await bgmCatalog(); } catch (_) {} if (bgmPrefs.last) { const t = await bgmResolveRef(bgmPrefs.last); if (t && !bgm.cur) { bgm.cur = t; const rq = await bplRestoreQueue(t); bgm.queue = rq || (t.kind === "builtin" ? bgmBuiltinTracks() : [t]); bgm.idx = Math.max(0, bgm.queue.findIndex((x) => bgmSameTrack(x, t))); bgmUpdateMediaSession(); bgmUpdateIndicators(); } } })();
 var _openReaderV16 = openReader;
 openReader = async function () { const r = await _openReaderV16.apply(this, arguments); try { bgmOnAlbumOpen(reader.folder); } catch (_) {} return r; };
 
 /* ---------- v16.1: tab counts, mini player ---------- */
 function bgmTabLabels() {
   const s = document.getElementById("bgmSheet"); if (!s) return;
-  const n = { builtin: bgmBuiltinTracks().length, local: bgm.local.length, lunera: bgmLuneraTracks().length };
-  const L = { builtin: "기본 내장", local: "내 음원", lunera: "루네라 전체" };
-  s.querySelectorAll(".bgm-tabs button").forEach((b) => { b.textContent = n[b.dataset.tab] ? `${L[b.dataset.tab]} (${n[b.dataset.tab]})` : L[b.dataset.tab]; });
+  const n = { builtin: bgmBuiltinTracks().length, local: bgm.local.length, lunera: bgmLuneraTracks().length, playlists: bpl.lists.length };
+  const L = { builtin: "기본 내장", local: "내 음원", lunera: "루네라 전체", playlists: "플레이리스트" };
+  s.querySelectorAll(".bgm-tabs button").forEach((b) => { const k = b.dataset.tab; const h = n[k] ? `${L[k]}<small> (${n[k]})</small>` : L[k]; if (b.innerHTML !== h) b.innerHTML = h; });
 }
 function bgmMiniPaint() {
   const m = document.getElementById("bgmMini"); if (!m) return;
@@ -9228,6 +9630,7 @@ function bgmMiniPaint() {
   m.classList.toggle("show", show);
   document.body.classList.toggle("bgm-mini-on", show && !inReader);
   document.body.classList.toggle("bgm-mini-vis", show);
+  try { bgmOrbPaint(); renderMusicShelf(); } catch (_) {}
   if (show) requestAnimationFrame(() => { const r = m.getBoundingClientRect(); if (r.height) document.body.style.setProperty("--bgm-mini-off", Math.round(innerHeight - r.top) + "px"); });
   if (!t) return;
   m.querySelector(".bm-t").textContent = t.title;
@@ -9236,10 +9639,11 @@ function bgmMiniPaint() {
   const playing = !bgmAudio.paused;
   const pb = m.querySelector(".bm-play"); pb.innerHTML = playing ? BGM_ICONS.pause : BGM_ICONS.play; pb.setAttribute("aria-label", playing ? "일시정지" : "재생");
   m.classList.toggle("playing", playing);
-  const rp = m.querySelector(".bm-rep"); rp.textContent = { all: "🔁", one: "🔂", shuffle: "🔀" }[bgmPrefs.repeat]; rp.setAttribute("aria-label", BGM_REPEAT[bgmPrefs.repeat]);
+  const rp = m.querySelector(".bm-rep"); if (rp.dataset.m !== bgmPrefs.repeat) { rp.dataset.m = bgmPrefs.repeat; rp.innerHTML = BGM_REP_ICON[bgmPrefs.repeat]; rp.className = "bm-b bm-rep m-" + bgmPrefs.repeat; } rp.setAttribute("aria-label", BGM_REPEAT[bgmPrefs.repeat]);
   bgmMiniTime();
 }
 function bgmMiniTime() {
+  try { bgmOrbTime(); } catch (_) {}
   const m = document.getElementById("bgmMini"); if (!m || !m.classList.contains("show")) return;
   const d = bgmAudio.duration, c = bgmAudio.currentTime, dd = isFinite(d) && d > 0 ? d : (bgm.cur ? bgm.cur.duration : 0);
   m.querySelector(".bm-time").textContent = `${bgmFmt(c)} / ${bgmFmt(dd)}`;
@@ -9252,7 +9656,7 @@ function bgmMiniTime() {
   m.querySelector(".bm-play").addEventListener("click", (e) => { e.stopPropagation(); bgmToggle(); });
   m.querySelector(".bm-prev").addEventListener("click", (e) => { e.stopPropagation(); bgmStep(-1); });
   m.querySelector(".bm-next").addEventListener("click", (e) => { e.stopPropagation(); bgmStep(1); });
-  m.querySelector(".bm-rep").addEventListener("click", (e) => { e.stopPropagation(); bgmPrefs.repeat = { all: "one", one: "shuffle", shuffle: "all" }[bgmPrefs.repeat]; bgmSavePrefs(); bgmPaint(); toast(BGM_REPEAT[bgmPrefs.repeat], 900); });
+  m.querySelector(".bm-rep").addEventListener("click", (e) => { e.stopPropagation(); bgmPrefs.repeat = { all: "one", one: "shuffle", shuffle: "all" }[bgmPrefs.repeat]; bgmSavePrefs(); bgm.bag = null; bgmPaint(); toast(BGM_REPEAT[bgmPrefs.repeat], 900); });
   m.querySelector(".bm-info").addEventListener("click", (e) => { e.stopPropagation(); clearTimeout(readerHideTimer); openBgmPlayer(); });
   const sk = m.querySelector(".bm-seek");
   sk.addEventListener("pointerdown", (e) => { e.stopPropagation(); sk.dataset.seeking = "1"; });
@@ -9309,7 +9713,7 @@ function sheetDragEnd() {
   }
 }
 (function sheetGestures() {
-  const pick = (t) => { const sh = t && t.closest && t.closest(".sheet"); if (!sh || !overlay.contains(sh)) return null; if (t.closest("input[type=range], input[type=text], input[type=search], textarea, .pin-key")) return null; return sh; };
+  const pick = (t) => { const sh = t && t.closest && t.closest(".sheet"); if (!sh || !overlay.contains(sh)) return null; if (t.closest("input[type=range], input[type=text], input[type=search], textarea, .pin-key, .bpl-grip")) return null; return sh; };
   overlay.addEventListener("touchstart", (e) => {
     const sh = pick(e.target); if (!sh || e.touches.length !== 1) { sheetDrag = null; return; }
     sheetDragStart(sh, e.touches[0].clientY, !!e.target.closest(".sheet-head, .sheet-grab"));
@@ -9877,6 +10281,693 @@ window.__viewer = {
   },
 };
 
+/*V17JS-START*/
+/* ===== v17: 플레이리스트 · LUNERA Noir 플레이어 · 읽는 중 뮤직 오브 · 홈 뮤직 선반 ===== */
+var BPL_IC = {
+  plus: '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  addTo: '<svg viewBox="0 0 24 24"><path d="M4 7h11M4 12h11M4 17h7"/><path d="M18 14v6M15 17h6"/></svg>',
+  more: '<svg viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="18.5" cy="12" r="1.4" fill="currentColor" stroke="none"/></svg>',
+  back: '<svg viewBox="0 0 24 24"><path d="M14.5 5.5L8 12l6.5 6.5"/></svg>',
+  grip: '<svg viewBox="0 0 24 24"><path d="M5 8.5h14M5 12h14M5 15.5h14"/></svg>',
+  minus: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8 12h8"/></svg>',
+  play: '<svg viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z"/></svg>',
+  shuffle: '<svg viewBox="0 0 24 24"><path d="M4 7h3.5c2 0 3.2.9 4.3 2.6l2.4 4.8c1.1 1.7 2.3 2.6 4.3 2.6H20"/><path d="M4 17h3.5c1.2 0 2.1-.3 2.9-1M14.2 8c.8-.7 1.7-1 2.8-1H20"/><path d="M17.5 4.5L20 7l-2.5 2.5M17.5 14.5L20 17l-2.5 2.5"/></svg>',
+  edit: '<svg viewBox="0 0 24 24"><path d="M4 7h10M4 12h7M4 17h6"/><path d="M14.5 18.5l.6-2.9 4.6-4.6a1.6 1.6 0 0 1 2.3 2.3l-4.6 4.6z"/></svg>',
+  rename: '<svg viewBox="0 0 24 24"><path d="M4.5 19.5l1-4L15.8 5.2a2 2 0 0 1 2.9 2.9L8.5 18.5z"/><path d="M13.5 7.5l3 3"/></svg>',
+  down: '<svg viewBox="0 0 24 24"><path d="M12 4.5v10M7.5 10.5L12 15l4.5-4.5"/><path d="M5 19.5h14"/></svg>',
+  check: '<svg viewBox="0 0 24 24"><path d="M5.5 12.5l4 4 9-9"/></svg>',
+  trash: '<svg viewBox="0 0 24 24"><path d="M5 7h14M10 7V5h4v2M7 7l.8 12h8.4L17 7"/></svg>',
+  share: '<svg viewBox="0 0 24 24"><path d="M12 15V4.5M8 8.5l4-4 4 4"/><path d="M6 12v6.5h12V12"/></svg>',
+  import: '<svg viewBox="0 0 24 24"><path d="M12 4.5V15M8 11l4 4 4-4"/><path d="M6 12v6.5h12V12"/></svg>',
+  note: '<svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>',
+  copy: '<svg viewBox="0 0 24 24"><rect x="8" y="8" width="11" height="11" rx="2.5"/><path d="M5 15.5V7a2 2 0 0 1 2-2h8.5"/></svg>',
+  up: '<svg viewBox="0 0 24 24"><path d="M12 19V6M6.5 11.5L12 6l5.5 5.5"/></svg>',
+  dn: '<svg viewBox="0 0 24 24"><path d="M12 5v13M6.5 12.5L12 18l5.5-5.5"/></svg>',
+  top: '<svg viewBox="0 0 24 24"><path d="M6 5h12M12 19V9M7 13.5L12 8.5l5 5"/></svg>',
+  next: '<svg viewBox="0 0 24 24"><path d="M4 7h10M4 12h10M4 17h6"/><path d="M15 14.5v5l4.5-2.5z" fill="currentColor"/></svg>',
+  select: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M8.5 12.2l2.4 2.4 4.8-4.8"/></svg>',
+  disc: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.4"/><path d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5"/></svg>',
+};
+var BGM_REP_ICON = {
+  all: '<svg viewBox="0 0 24 24"><path d="M5 11V9.5A2.5 2.5 0 0 1 7.5 7H19M16 4l3 3-3 3"/><path d="M19 13v1.5a2.5 2.5 0 0 1-2.5 2.5H5M8 20l-3-3 3-3"/></svg>',
+  one: '<svg viewBox="0 0 24 24"><path d="M5 11V9.5A2.5 2.5 0 0 1 7.5 7H19M16 4l3 3-3 3"/><path d="M19 13v1.5a2.5 2.5 0 0 1-2.5 2.5H5M8 20l-3-3 3-3"/><path d="M11.2 10.8l1.3-.8v4.5" stroke-width="1.6"/></svg>',
+  shuffle: BPL_IC.shuffle,
+};
+function bplEsc(x) { return String(x == null ? "" : x).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]); }
+
+/* ---------- data (localStorage — survives app updates and reloads) ---------- */
+var BPL_KEY = "mhv-bgm-playlists-v1";
+var bpl = (function () { const v = v15Load(BPL_KEY, null); return v && Array.isArray(v.lists) ? v : { v: 1, lists: [] }; })();
+bpl.lists = bpl.lists.filter((p) => p && p.id && Array.isArray(p.items)).map((p) => ({ id: String(p.id), name: String(p.name || "플레이리스트").slice(0, 40), created: p.created || Date.now(), updated: p.updated || Date.now(), items: p.items.filter((i) => i && i.kind && i.id).map((i) => ({ kind: i.kind, id: String(i.id), title: String(i.title || "") })) }));
+bgm.ctx = bgmPrefs.ctx && typeof bgmPrefs.ctx === "object" ? bgmPrefs.ctx : null;
+bgm.ui.pl = null; bgm.ui.plEdit = false; bgm.sel = null;
+function bplSave() {
+  bpl.saved = Date.now();
+  try { localStorage.setItem(BPL_KEY, JSON.stringify(bpl)); } catch (e) { toast("저장 공간이 부족해 플레이리스트를 저장하지 못했어요", 2200); }
+  try { renderMusicShelf(); } catch (_) {}
+}
+function bplGet(id) { return bpl.lists.find((p) => p.id === id) || null; }
+function bplKey(t) { return t.kind + ":" + t.id; }
+function bplNextName() { const used = new Set(bpl.lists.map((p) => p.name)); let n = 1; while (used.has("내 플레이리스트 " + n)) n++; return "내 플레이리스트 " + n; }
+function bplCleanName(n) { return String(n || "").replace(/\s+/g, " ").trim().slice(0, 40); }
+function bplCreate(name, tracks) {
+  const p = { id: "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name: bplCleanName(name) || bplNextName(), created: Date.now(), updated: Date.now(), items: [] };
+  bpl.lists.unshift(p);
+  if (tracks && tracks.length) bplAdd(p.id, tracks, true);
+  bplSave();
+  return p;
+}
+function bplRename(id, name) { const p = bplGet(id), n = bplCleanName(name); if (!p || !n) return false; p.name = n; p.updated = Date.now(); bplSave(); return true; }
+function bplDelete(id) {
+  const i = bpl.lists.findIndex((p) => p.id === id); if (i < 0) return null;
+  const [p] = bpl.lists.splice(i, 1);
+  if (bgm.ctx && bgm.ctx.pl === id) bgmSetCtx(null);
+  for (const k in bgmPrefs.albums) if (bgmPrefs.albums[k].kind === "playlist" && bgmPrefs.albums[k].id === id) delete bgmPrefs.albums[k];
+  bgmSavePrefs(); bplSave();
+  return { p, i };
+}
+function bplAdd(id, tracks, noSave) {
+  const p = bplGet(id); if (!p) return { added: 0, dup: 0 };
+  const have = new Set(p.items.map(bplKey)); let added = 0, dup = 0;
+  for (const t of tracks) { const k = bplKey(t); if (have.has(k)) { dup++; continue; } have.add(k); p.items.push({ kind: t.kind, id: t.id, title: t.title }); added++; }
+  if (added) { p.updated = Date.now(); bplSyncQueue(p); }
+  if (!noSave) bplSave();
+  return { added, dup };
+}
+function bplRemoveAt(id, idx) { const p = bplGet(id); if (!p || idx < 0 || idx >= p.items.length) return null; const [it] = p.items.splice(idx, 1); p.updated = Date.now(); bplSyncQueue(p); bplSave(); return it; }
+function bplInsertAt(id, idx, it) { const p = bplGet(id); if (!p) return; if (p.items.some((x) => bplKey(x) === bplKey(it))) return; p.items.splice(Math.min(idx, p.items.length), 0, it); p.updated = Date.now(); bplSyncQueue(p); bplSave(); }
+function bplMove(id, from, to) { const p = bplGet(id); if (!p || from === to || from < 0 || to < 0 || from >= p.items.length || to >= p.items.length) return; const [it] = p.items.splice(from, 1); p.items.splice(to, 0, it); p.updated = Date.now(); bplSyncQueue(p); bplSave(); }
+function bplHas(p, t) { return p.items.some((i) => i.kind === t.kind && i.id === t.id); }
+
+/* ---------- resolve items to playable tracks ---------- */
+var bplIdx = { sig: "", map: new Map() };
+function bplIndex() {
+  const sig = (bgm.cat ? 1 : 0) + ":" + bgm.local.length + ":" + (bgm.local[0] ? bgm.local[0].id : "");
+  if (bplIdx.sig !== sig) {
+    const m = new Map();
+    for (const t of bgmLuneraTracks()) m.set(bplKey(t), t);
+    for (const t of bgmBuiltinTracks()) m.set(bplKey(t), t);
+    for (const t of bgmLocalTracks()) m.set(bplKey(t), t);
+    bplIdx = { sig, map: m };
+  }
+  return bplIdx.map;
+}
+function bplRows(p) { const m = bplIndex(); return p.items.map((it) => ({ it, t: m.get(bplKey(it)) || null })); }
+function bplPlayable(p) { return bplRows(p).map((r) => r.t).filter(Boolean); }
+function bplStats(p) {
+  const rows = bplRows(p); let dur = 0, off = 0, online = 0, missing = 0;
+  for (const r of rows) { if (!r.t) { missing++; continue; } dur += r.t.duration || 0; if (r.t.kind === "local" || (r.t.kind === "builtin" && bgm.cached.has(r.t.id))) off++; if (r.t.kind === "lunera") online++; }
+  return { n: rows.length, dur, off, online, missing, rows };
+}
+function bplDur(s) { s = Math.round(s || 0); const h = Math.floor(s / 3600), m = Math.round((s % 3600) / 60); return h ? `${h}시간 ${m}분` : s < 60 && s > 0 ? `${s}초` : `${m}분`; }
+function bplMeta(st, html) {
+  const a = [`${st.n}곡`]; if (st.n) a.push(bplDur(st.dur));
+  if (st.n) { const playable = st.n - st.missing - st.online; if (playable > 0) a.push(st.off >= playable && !st.online ? (html ? "<i>오프라인 ✓</i>" : "오프라인 ✓") : `오프라인 ${st.off}/${st.n - st.missing}`); else if (st.online) a.push("온라인 스트리밍"); }
+  if (st.missing) a.push(`없는 곡 ${st.missing}`);
+  return a.join(" · ");
+}
+function bplMosaic(p, cls) {
+  const covers = [];
+  for (const r of bplRows(p)) { if (r.t && r.t.cover && !covers.includes(r.t.cover)) covers.push(r.t.cover); if (covers.length >= 4) break; }
+  const d = document.createElement("div"); d.className = (cls || "bpl-mosaic") + (covers.length >= 4 ? " m4" : "");
+  if (!covers.length) d.innerHTML = `<span class="ph">${BPL_IC.note}</span>`;
+  else d.innerHTML = (covers.length >= 4 ? covers.slice(0, 4) : covers.slice(0, 1)).map((c) => `<img loading="lazy" alt="" src="${bplEsc(bgmAbs(c))}">`).join("");
+  return d;
+}
+async function bplRestoreQueue(t) {
+  const c = bgm.ctx; if (!c || !c.pl) return null;
+  const p = bplGet(c.pl); if (!p) { bgm.ctx = null; return null; }
+  if (p.items.some((i) => i.kind === "local")) await bgmLoadLocal();
+  const q = bplPlayable(p); return q.some((x) => bgmSameTrack(x, t)) ? q : null;
+}
+function bplSyncQueue(p) {
+  // the playing queue follows edits of the playlist it came from
+  if (!bgm.ctx || bgm.ctx.pl !== p.id) return;
+  const q = bplPlayable(p); bgm.queue = q; bgm.idx = bgm.cur ? q.findIndex((x) => bgmSameTrack(x, bgm.cur)) : -1; bgm.bag = null;
+}
+function bgmSetCtx(c) { bgm.ctx = c && c.pl ? { pl: c.pl } : c || null; bgmPrefs.ctx = bgm.ctx && bgm.ctx.pl ? bgm.ctx : null; bgm.bag = null; bgmSavePrefs(); }
+function bgmAlbumMatches(ref) { if (!ref) return false; if (ref.kind === "playlist") return !!(bgm.ctx && bgm.ctx.pl === ref.id); return bgmSameTrack(ref, bgm.cur || {}); }
+function bgmShuffleNext() {
+  const q = bgm.queue, key = q.length + ":" + (q[0] ? bplKey(q[0]) : "") + ":" + (q[q.length - 1] ? bplKey(q[q.length - 1]) : "");
+  if (!bgm.bag || bgm.bagKey !== key || !bgm.bag.length) {
+    const b = q.map((_, i) => i).filter((i) => i !== bgm.idx);
+    for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; }
+    bgm.bag = b; bgm.bagKey = key;
+  }
+  return bgm.bag.pop();
+}
+async function bplPlay(id, opt) {
+  opt = opt || {};
+  const p = bplGet(id); if (!p) return false;
+  if (p.items.some((i) => i.kind === "local") && !bgm.local.length) await bgmLoadLocal();
+  try { await bgmCatalog(); } catch (_) {}
+  const q = bplPlayable(p);
+  if (!q.length) { toast(p.items.length ? "재생할 수 있는 곡이 없어요" : "먼저 곡을 담아 주세요", 1500); return false; }
+  bgmSetCtx({ pl: id });
+  let i = typeof opt.start === "number" ? Math.max(0, Math.min(q.length - 1, opt.start)) : 0;
+  if (opt.shuffle) { bgmPrefs.repeat = "shuffle"; bgmSavePrefs(); i = Math.floor(Math.random() * q.length); }
+  else if (opt.all && bgmPrefs.repeat === "shuffle") { bgmPrefs.repeat = "all"; bgmSavePrefs(); }
+  if (opt.shuffle || opt.all) toast(opt.shuffle ? `‘${p.name}’ 셔플 재생` : `‘${p.name}’ 처음부터 재생`, 1100);
+  bgm.bag = null;
+  const r = await bgmPlayTrack(q[i], q);
+  if (document.getElementById("bgmSheet")) { bgmRenderList(); bgmPaint(); }
+  return r;
+}
+async function bplOfferAlbum(f, ref) {
+  const p = bplGet(ref.id); if (!p || !bplPlayable(p).length) return;
+  if (currentScreen !== "reader" || reader.folder !== f) return;
+  const o = $("bgmOffer");
+  o.querySelector("b").textContent = "플레이리스트 ‘" + p.name + "’";
+  o.querySelector(".bo-play").onclick = (e) => { e.stopPropagation(); bgmHideOffer(); bplPlay(p.id); };
+  o.querySelector(".bo-x").onclick = (e) => { e.stopPropagation(); bgmHideOffer(); };
+  o.classList.remove("hidden");
+  bgmHideOffer.t = setTimeout(bgmHideOffer, 8000);
+}
+
+/* ---------- popups: picker, prompt, confirm, menus, snackbar ---------- */
+var bplLayerEl = null;
+function bplCloseLayer() { if (bplLayerEl) { const l = bplLayerEl; bplLayerEl = null; if (l._done) l._done(null); l.remove(); } }
+function bplLayer(center) {
+  bplCloseLayer();
+  const l = document.createElement("div"); l.className = "bpl-layer" + (center ? " center" : "");
+  const pop = document.createElement("div"); pop.className = "bpl-pop"; pop.setAttribute("role", "dialog"); pop.setAttribute("aria-modal", "true");
+  l.appendChild(pop);
+  l.addEventListener("click", (e) => { if (e.target === l) bplCloseLayer(); });
+  ["pointerdown", "touchstart"].forEach((ev) => l.addEventListener(ev, (e) => e.stopPropagation(), { passive: true }));
+  document.body.appendChild(l); bplLayerEl = l;
+  return { l, pop };
+}
+function bplOpt(pop, html, fn, cls) {
+  const b = document.createElement("button"); b.type = "button"; b.className = "bpl-opt" + (cls ? " " + cls : ""); b.innerHTML = html;
+  b.addEventListener("click", (e) => { e.stopPropagation(); fn(b); });
+  pop.appendChild(b); return b;
+}
+function bplPrompt(o) {
+  return new Promise((res) => {
+    const { l, pop } = bplLayer(true);
+    pop.innerHTML = `<h4></h4><p class="sub"></p><input class="bpl-input" type="text" maxlength="40" enterkeyhint="done" autocomplete="off" autocapitalize="off" spellcheck="false"><span class="bpl-count"></span><div class="bpl-btns"><button type="button" class="c">취소</button><button type="button" class="pri ok"></button></div>`;
+    pop.querySelector("h4").textContent = o.title; pop.querySelector(".sub").textContent = o.sub || "한글·영문·이모지 모두 쓸 수 있어요 (최대 40자)";
+    const inp = pop.querySelector("input"), ok = pop.querySelector(".ok"), cnt = pop.querySelector(".bpl-count");
+    inp.value = o.value || ""; inp.placeholder = o.placeholder || ""; ok.textContent = o.ok || "확인";
+    const upd = () => { cnt.textContent = `${[...inp.value].length}/40`; ok.disabled = !bplCleanName(inp.value) && !o.allowEmpty; };
+    let composing = false;
+    inp.addEventListener("compositionstart", () => { composing = true; });
+    inp.addEventListener("compositionend", () => { composing = false; upd(); });
+    inp.addEventListener("input", upd);
+    const done = (v) => { l._done = null; bplCloseLayer(); res(v); };
+    l._done = () => res(null);
+    inp.addEventListener("keydown", (e) => { if (e.key === "Enter" && !composing && !e.isComposing) { e.preventDefault(); const v = bplCleanName(inp.value) || (o.allowEmpty ? o.placeholder : ""); if (v) done(v); } else if (e.key === "Escape") done(null); });
+    ok.addEventListener("click", () => { const v = bplCleanName(inp.value) || (o.allowEmpty ? o.placeholder : ""); if (v) done(v); });
+    pop.querySelector(".c").addEventListener("click", () => done(null));
+    upd(); inp.focus(); try { inp.select(); } catch (_) {}
+  });
+}
+function bplConfirm(title, msg, okLabel) {
+  return new Promise((res) => {
+    const { l, pop } = bplLayer(true);
+    pop.innerHTML = `<h4></h4><p class="bpl-msg"></p><div class="bpl-btns"><button type="button" class="c">취소</button><button type="button" class="danger ok"></button></div>`;
+    pop.querySelector("h4").textContent = title; pop.querySelector(".bpl-msg").textContent = msg; pop.querySelector(".ok").textContent = okLabel || "삭제";
+    const done = (v) => { l._done = null; bplCloseLayer(); res(v); };
+    l._done = () => res(false);
+    pop.querySelector(".c").addEventListener("click", () => done(false));
+    pop.querySelector(".ok").addEventListener("click", () => done(true));
+  });
+}
+var bplSnackT = 0;
+function bplSnack(msg, label, fn, ms) {
+  let el = document.getElementById("bplSnack");
+  if (!el) { el = document.createElement("div"); el.id = "bplSnack"; el.className = "bpl-snack"; el.setAttribute("role", "status"); el.innerHTML = "<span></span><button type=\"button\"></button>"; document.body.appendChild(el); ["pointerdown", "touchstart"].forEach((ev) => el.addEventListener(ev, (e) => e.stopPropagation(), { passive: true })); }
+  el.querySelector("span").textContent = msg;
+  const b = el.querySelector("button"); b.textContent = label || ""; b.style.display = label ? "" : "none";
+  b.onclick = (e) => { e.stopPropagation(); el.classList.remove("show"); clearTimeout(bplSnackT); if (fn) fn(); };
+  el.classList.add("show"); clearTimeout(bplSnackT);
+  bplSnackT = setTimeout(() => el.classList.remove("show"), ms || 4200);
+}
+function bplRefresh() { if (document.getElementById("bgmSheet")) { bgmRenderList(); bgmPaint(); } try { renderMusicShelf(); } catch (_) {} }
+
+/* add-to-playlist picker: one track or many */
+function bplPicker(tracks, after) {
+  tracks = tracks.filter(Boolean); if (!tracks.length) return;
+  const one = tracks.length === 1;
+  const { pop } = bplLayer(false);
+  pop.innerHTML = `<h4>플레이리스트에 담기</h4><p class="sub"></p>`;
+  pop.querySelector(".sub").textContent = one ? `${tracks[0].title} · ${tracks[0].kind === "local" ? "내 음원" : tracks[0].kind === "lunera" ? "루네라 · 스트리밍" : "기본 내장"}` : `선택한 ${tracks.length}곡`;
+  pop.setAttribute("aria-label", "플레이리스트에 담기");
+  bplOpt(pop, `<span class="ic">${BPL_IC.plus}</span><span class="t"><span>새 플레이리스트 만들기</span><small>이름을 정하고 바로 담아요</small></span>`, async () => {
+    const name = await bplPrompt({ title: "새 플레이리스트", value: "", placeholder: bplNextName(), ok: "만들고 담기", allowEmpty: true });
+    if (!name) return;
+    const p = bplCreate(name, tracks);
+    toast(`‘${p.name}’을(를) 만들고 ${tracks.length}곡을 담았어요`, 1800);
+    bplRefresh(); if (after) after(p);
+  }, "newp");
+  if (bpl.lists.length) pop.appendChild(Object.assign(document.createElement("div"), { className: "bpl-sep" }));
+  for (const p of bpl.lists) {
+    const inAll = tracks.every((t) => bplHas(p, t)), inSome = !inAll && tracks.some((t) => bplHas(p, t));
+    const b = bplOpt(pop, `<span class="t"><span></span><small></small></span><span class="ck"></span>`, () => {
+      if (one && inAll) {
+        const idx = p.items.findIndex((i) => bplKey(i) === bplKey(tracks[0]));
+        const it = bplRemoveAt(p.id, idx); bplCloseLayer(); bplRefresh();
+        bplSnack(`‘${p.name}’에서 뺐어요`, "되돌리기", () => { bplInsertAt(p.id, idx, it); bplRefresh(); });
+        return;
+      }
+      const r = bplAdd(p.id, tracks); bplCloseLayer(); bplRefresh();
+      if (!r.added) toast(`이미 ‘${p.name}’에 담겨 있어요`, 1400);
+      else toast(one ? `‘${p.name}’에 담았어요` : `‘${p.name}’에 ${r.added}곡 담았어요${r.dup ? ` · 이미 있던 ${r.dup}곡은 건너뛰었어요` : ""}`, 1800);
+      if (after) after(p);
+    }, inAll ? "in" : "");
+    b.insertBefore(bplMosaic(p), b.firstChild);
+    b.querySelector(".t span").textContent = p.name;
+    b.querySelector(".t small").textContent = `${p.items.length}곡` + (inAll ? (one ? " · 담김 — 누르면 빼요" : " · 모두 담김") : inSome ? " · 일부 담김" : "");
+    b.dataset.pl = p.id;
+  }
+}
+function bplMenu(title, sub, items) {
+  const { pop } = bplLayer(false);
+  pop.innerHTML = `<h4></h4><p class="sub"></p>`;
+  pop.querySelector("h4").textContent = title; pop.querySelector(".sub").textContent = sub || "";
+  for (const it of items) { if (it === "-") { pop.appendChild(Object.assign(document.createElement("div"), { className: "bpl-sep" })); continue; } if (it.hide) continue; bplOpt(pop, `${it.ic || ""}<span class="t"><span></span></span>`, () => { bplCloseLayer(); it.fn(); }, it.danger ? "danger" : "").querySelector(".t span").textContent = it.label; }
+}
+
+/* ---------- playlists tab ---------- */
+function bplTabScroll(force) {
+  // keep the tab bar in view when switching (the sheet scrolls as one page)
+  const sh = document.querySelector(".sheet.bgm-sheet-host"), tabs = document.querySelector("#bgmSheet .bgm-tabs");
+  if (!sh || !tabs) return;
+  const head = sh.querySelector(".sheet-head"), hh = head ? head.offsetHeight : 0;
+  const top = tabs.getBoundingClientRect().top - sh.getBoundingClientRect().top + sh.scrollTop - hh - 4;
+  if (sh.scrollTop > top) sh.scrollTop = top;
+  else if (force && sh.scrollTop < top - 2) { try { sh.scrollTo({ top, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); } catch (_) { sh.scrollTop = top; } }
+}
+async function bplNewFlow(openAfter) {
+  const name = await bplPrompt({ title: "새 플레이리스트", value: "", placeholder: bplNextName(), ok: "만들기", allowEmpty: true });
+  if (!name) return null;
+  const p = bplCreate(name);
+  toast(`‘${p.name}’을(를) 만들었어요 · 곡 옆 ＋로 담아 보세요`, 1800);
+  if (openAfter) { bgm.ui.tab = "playlists"; bgm.ui.pl = p.id; bgm.ui.plEdit = false; }
+  bplRefresh(); if (openAfter) setTimeout(() => bplTabScroll(true), 30);
+  return p;
+}
+function bplRender(s, tools, list) {
+  const p = bgm.ui.pl ? bplGet(bgm.ui.pl) : null;
+  if (bgm.ui.pl && !p) bgm.ui.pl = null;
+  if (p) return bplRenderDetail(p, tools, list);
+  const head = document.createElement("div"); head.className = "bpl-head";
+  head.innerHTML = `<button type="button" class="bpl-new" id="bplNew">${BPL_IC.plus}<span>새 플레이리스트</span></button><button type="button" class="bpl-ib" id="bplListMore" aria-label="가져오기·내보내기">${BPL_IC.more}</button>`;
+  head.querySelector("#bplNew").addEventListener("click", () => bplNewFlow(true));
+  head.querySelector("#bplListMore").addEventListener("click", () => bplMenu("플레이리스트 백업", "다른 기기로 옮기거나 보관할 수 있어요 (JSON 파일)", [
+    { label: "파일에서 가져오기", ic: BPL_IC.import, fn: bplImportPick },
+    { label: `모두 내보내기 (${bpl.lists.length}개)`, ic: BPL_IC.share, fn: () => bplExport(bpl.lists), hide: !bpl.lists.length },
+  ]));
+  tools.appendChild(head);
+  if (!bpl.lists.length) {
+    list.innerHTML = `<div class="bpl-emptyst"><div class="art">${BPL_IC.disc}</div><b>나만의 플레이리스트를 만들어 보세요</b><p>곡 옆 <b style="font-size:inherit;color:var(--gold)">＋</b>를 누르거나 <b style="font-size:inherit;color:var(--gold)">선택</b>으로 여러 곡을 한 번에 담을 수 있어요.<br>읽는 앨범마다 플레이리스트를 BGM으로 지정할 수도 있어요.</p></div>`;
+    return;
+  }
+  const wrap = document.createElement("div"); wrap.className = "bpl-cards";
+  for (const pl of bpl.lists) {
+    const st = bplStats(pl), cur = !!(bgm.ctx && bgm.ctx.pl === pl.id && bgm.cur);
+    const c = document.createElement("div"); c.className = "bpl-card" + (cur ? " cur" : ""); c.dataset.pl = pl.id; c.setAttribute("role", "button"); c.tabIndex = 0;
+    c.appendChild(bplMosaic(pl));
+    const ct = document.createElement("div"); ct.className = "bpl-ct"; ct.innerHTML = "<b></b><small></small>";
+    ct.querySelector("b").textContent = pl.name; ct.querySelector("small").innerHTML = (cur ? (bgmAudio.paused ? "일시정지 · " : "<i style=\"color:var(--accent)\">재생 중</i> · ") : "") + bplMeta(st, true);
+    c.appendChild(ct);
+    const pb = document.createElement("button"); pb.type = "button"; pb.className = "bpl-play"; pb.setAttribute("aria-label", pl.name + " 재생");
+    pb.innerHTML = cur && !bgmAudio.paused ? BGM_ICONS.pause : BPL_IC.play;
+    pb.addEventListener("click", (e) => { e.stopPropagation(); if (cur) { bgmToggle(); setTimeout(bplRefresh, 60); } else bplPlay(pl.id, { all: true }); });
+    c.appendChild(pb);
+    c.addEventListener("click", () => { bgm.ui.pl = pl.id; bgm.ui.plEdit = false; bgmRenderList(); bplTabScroll(true); });
+    wrap.appendChild(c);
+  }
+  list.appendChild(wrap);
+}
+function bplRenderDetail(p, tools, list) {
+  const st = bplStats(p), edit = !!bgm.ui.plEdit;
+  const top = document.createElement("div"); top.className = "bpl-dtop";
+  top.innerHTML = `<button type="button" class="bpl-back" id="bplBack">${BPL_IC.back}<span>플레이리스트</span></button><button type="button" class="bpl-ib" id="bplMore" aria-label="플레이리스트 메뉴">${BPL_IC.more}</button>`;
+  top.querySelector("#bplBack").addEventListener("click", () => { bgm.ui.pl = null; bgm.ui.plEdit = false; bgmRenderList(); bplTabScroll(); });
+  top.querySelector("#bplMore").addEventListener("click", () => bplMenu(p.name, bplMeta(st), [
+    { label: "이름 바꾸기", ic: BPL_IC.rename, fn: () => bplRenameFlow(p) },
+    { label: "곡 추가", ic: BPL_IC.addTo, fn: () => bplStartAdd(p) },
+    { label: "복제", ic: BPL_IC.copy, fn: () => { const c = bplCreate(p.name + " 사본"); c.items = p.items.map((i) => ({ ...i })); bplSave(); bgm.ui.pl = c.id; toast(`‘${c.name}’을(를) 만들었어요`, 1400); bplRefresh(); } },
+    { label: "내보내기 (JSON)", ic: BPL_IC.share, fn: () => bplExport([p]) },
+    "-",
+    { label: "플레이리스트 삭제", ic: BPL_IC.trash, danger: true, fn: () => bplDeleteFlow(p) },
+  ]));
+  tools.appendChild(top);
+  const h = document.createElement("div"); h.className = "bpl-detail-h";
+  h.appendChild(bplMosaic(p, "bpl-mosaic bpl-big"));
+  const nm = document.createElement("div"); nm.className = "bpl-dname";
+  nm.innerHTML = `<small class="k">PLAYLIST</small><b id="bplName"></b><small class="m" id="bplMeta"></small>`;
+  nm.querySelector("b").textContent = p.name; nm.querySelector(".m").innerHTML = bplMeta(st, true);
+  nm.querySelector("b").addEventListener("click", () => bplRenameFlow(p));
+  h.appendChild(nm); tools.appendChild(h);
+  const acts = document.createElement("div"); acts.className = "bpl-acts";
+  acts.innerHTML = `<button type="button" class="bpl-act pri" id="bplPlayAll">${BPL_IC.play}<span>전체 재생</span></button><button type="button" class="bpl-act" id="bplShuffle">${BPL_IC.shuffle}<span>셔플 재생</span></button>`;
+  const playable = st.n - st.missing;
+  acts.querySelectorAll("button").forEach((b) => { b.disabled = !playable; });
+  acts.querySelector("#bplPlayAll").addEventListener("click", () => bplPlay(p.id, { all: true }));
+  acts.querySelector("#bplShuffle").addEventListener("click", () => bplPlay(p.id, { shuffle: true }));
+  tools.appendChild(acts);
+  const bar = document.createElement("div"); bar.className = "bpl-bar";
+  const chip = (id, ic, label, fn, cls) => { const b = document.createElement("button"); b.type = "button"; b.className = "bpl-chip" + (cls ? " " + cls : ""); b.id = id; b.innerHTML = `${ic}<span>${label}</span>`; b.addEventListener("click", fn); bar.appendChild(b); return b; };
+  chip("bplAdd", BPL_IC.addTo, "곡 추가", () => bplStartAdd(p));
+  if (st.n) chip("bplEdit", edit ? BPL_IC.check : BPL_IC.edit, edit ? "완료" : "편집 · 순서", () => { bgm.ui.plEdit = !edit; bgmRenderList(); }, edit ? "on" : "");
+  chip("bplRename", BPL_IC.rename, "이름 변경", () => bplRenameFlow(p));
+  const bi = st.rows.filter((r) => r.t && r.t.kind === "builtin"), need = bi.filter((r) => !bgm.cached.has(r.t.id));
+  if (bi.length) {
+    const ob = chip("bplOffline", need.length ? BPL_IC.down : BPL_IC.check, need.length ? `오프라인 저장 (${need.length}곡 · 약 ${Math.max(1, Math.round(need.reduce((a, r) => a + (r.t.bytes || 0), 0) / 1048576))}MB)` : "오프라인 저장됨", () => bplSaveOffline(p, ob), need.length ? "" : "done");
+    if (bgm.pre && bgm.pre.pl === p.id) { ob.classList.add("busy"); ob.querySelector("span").textContent = `${bgm.pre[0]}/${bgm.pre[1]} 저장 중…`; ob.style.setProperty("--p", (bgm.pre[0] / bgm.pre[1] * 100) + "%"); }
+  }
+  tools.appendChild(bar);
+  if (!st.n) {
+    list.innerHTML = `<div class="bpl-emptyst"><div class="art">${BPL_IC.note}</div><b>아직 담긴 곡이 없어요</b><p>기본 내장·내 음원·루네라 전체 어디서든<br>곡 옆 ＋를 눌러 담아 보세요.</p></div>`;
+    const b = document.createElement("button"); b.type = "button"; b.className = "bpl-act pri"; b.style.cssText = "margin:4px auto 10px;padding:0 22px"; b.innerHTML = `${BPL_IC.plus}<span>곡 고르러 가기</span>`;
+    b.querySelector("svg").style.cssText = "fill:none;stroke:currentColor"; b.addEventListener("click", () => bplStartAdd(p));
+    list.querySelector(".bpl-emptyst").appendChild(b);
+    return;
+  }
+  const rows = document.createElement("div"); rows.className = "bpl-rows" + (edit ? " editing" : ""); rows.id = "bplRows";
+  const q = bplPlayable(p);
+  st.rows.forEach((r, i) => {
+    const t = r.t || { kind: r.it.kind, id: r.it.id, title: r.it.title || "(없는 곡)", duration: 0 };
+    const row = document.createElement("div"); row.className = "bgm-row" + (r.t ? "" : " missing"); row.dataset.kind = t.kind; row.dataset.id = t.id; row.dataset.pl = p.id; row.dataset.i = String(i);
+    row.setAttribute("role", "button"); row.tabIndex = 0;
+    const badge = !r.t ? '<i class="bdg">찾을 수 없음</i>' : t.kind === "lunera" ? '<i class="bdg on">스트리밍</i>' : t.kind === "local" ? '<i class="bdg ok">기기 저장</i>' : bgm.cached.has(t.id) ? '<i class="bdg ok">오프라인 ✓</i>' : '';
+    row.innerHTML = (edit ? `<button type="button" class="bpl-rm" aria-label="빼기">${BPL_IC.minus}</button>` : `<span class="bpl-idx">${i + 1}</span>`) +
+      `<div class="br-cv">${t.cover ? `<img loading="lazy" alt="" src="${bplEsc(bgmAbs(t.cover))}">` : "<span>♪</span>"}</div><div class="br-tx"><b></b><small></small></div>${edit ? "" : badge}` +
+      (edit ? `<span class="bpl-grip" role="button" aria-label="끌어서 순서 바꾸기">${BPL_IC.grip}</span>` : `<button type="button" class="br-more" aria-label="곡 메뉴">${BPL_IC.more}</button>`);
+    row.querySelector("b").textContent = t.title;
+    row.querySelector("small").textContent = !r.t ? (t.kind === "local" ? "이 기기에 없는 내 음원" : "목록에서 사라진 곡") : [t.kind === "local" ? "내 음원" : t.kind === "lunera" ? t.langName : bgmLangName(t.lang), t.genre, bgmFmt(t.duration)].filter(Boolean).join(" · ");
+    row.addEventListener("click", () => { if (edit || !r.t) return; const qi = q.findIndex((x) => bgmSameTrack(x, r.t)); bplPlay(p.id, { start: qi }); });
+    if (edit) {
+      row.querySelector(".bpl-rm").addEventListener("click", (e) => { e.stopPropagation(); bplRemoveFlow(p, i); });
+    } else {
+      row.querySelector(".br-more").addEventListener("click", (e) => { e.stopPropagation(); bplRowMenu(p, i, r); });
+    }
+    rows.appendChild(row);
+  });
+  list.appendChild(rows);
+  if (edit) { const hint = document.createElement("p"); hint.className = "bpl-hint"; hint.textContent = "≡ 를 끌어 순서를 바꾸고 ⊖ 로 빼요 · 바뀐 내용은 바로 저장돼요"; list.appendChild(hint); bplBindDrag(rows, p); }
+}
+function bplRemoveFlow(p, i) {
+  const it = bplRemoveAt(p.id, i); if (!it) return;
+  bplRefresh();
+  bplSnack(`‘${it.title || "곡"}’을(를) 뺐어요`, "되돌리기", () => { bplInsertAt(p.id, i, it); bplRefresh(); });
+}
+async function bplRenameFlow(p) {
+  const name = await bplPrompt({ title: "이름 바꾸기", value: p.name, placeholder: p.name, ok: "저장" });
+  if (!name || name === p.name) return;
+  bplRename(p.id, name); toast(`이름을 ‘${name}’(으)로 바꿨어요`, 1300); bplRefresh();
+}
+async function bplDeleteFlow(p) {
+  if (!(await bplConfirm("플레이리스트 삭제", `‘${p.name}’ (${p.items.length}곡)을(를) 지울까요? 곡 파일은 그대로 남아요.`, "삭제"))) return;
+  const r = bplDelete(p.id); bgm.ui.pl = null; bgm.ui.plEdit = false; bplRefresh();
+  bplSnack(`‘${p.name}’을(를) 지웠어요`, "되돌리기", () => { if (r) { bpl.lists.splice(Math.min(r.i, bpl.lists.length), 0, r.p); bplSave(); bplRefresh(); } });
+}
+function bplRowMenu(p, i, r) {
+  const n = p.items.length, t = r.t;
+  bplMenu(r.it.title || "곡", `${p.name} · ${i + 1}번째`, [
+    { label: "바로 다음에 재생", ic: BPL_IC.next, hide: !t || !bgm.cur, fn: () => { const q = bgm.queue.slice(), at = q.findIndex((x) => bgmSameTrack(x, t)); if (at >= 0 && at !== bgm.idx) { q.splice(at, 1); if (at < bgm.idx) bgm.idx--; } if (!bgmSameTrack(bgm.cur, t)) q.splice(bgm.idx + 1, 0, t); bgm.queue = q; bgm.bag = null; toast("다음 곡으로 넣었어요", 1100); bgmPaint(); } },
+    { label: "맨 위로", ic: BPL_IC.top, hide: i === 0, fn: () => { bplMove(p.id, i, 0); bplRefresh(); toast("맨 위로 옮겼어요", 900); } },
+    { label: "위로 이동", ic: BPL_IC.up, hide: i === 0, fn: () => { bplMove(p.id, i, i - 1); bplRefresh(); } },
+    { label: "아래로 이동", ic: BPL_IC.dn, hide: i >= n - 1, fn: () => { bplMove(p.id, i, i + 1); bplRefresh(); } },
+    { label: "다른 플레이리스트에도 담기", ic: BPL_IC.addTo, hide: !t, fn: () => bplPicker([t]) },
+    "-",
+    { label: "이 플레이리스트에서 빼기", ic: BPL_IC.minus, danger: true, fn: () => bplRemoveFlow(p, i) },
+  ]);
+}
+async function bplSaveOffline(p, btn) {
+  if (bgm.pre) return;
+  const todo = bplRows(p).map((r) => r.t).filter((t) => t && t.kind === "builtin" && !bgm.cached.has(t.id));
+  if (!todo.length) { toast("이미 모두 오프라인에 저장돼 있어요", 1300); return; }
+  bgm.pre = [0, todo.length]; bgm.pre.pl = p.id;
+  bgmRenderList();
+  await bgmPrecacheBuiltin((i, m) => {
+    bgm.pre = [i, m]; bgm.pre.pl = p.id;
+    const x = document.getElementById("bplOffline");
+    if (x) { x.classList.add("busy"); x.querySelector("span").textContent = `${i}/${m} 저장 중…`; x.style.setProperty("--p", (i / m * 100) + "%"); }
+  }, todo);
+  bgm.pre = null;
+  const left = bplRows(p).filter((r) => r.t && r.t.kind === "builtin" && !bgm.cached.has(r.t.id)).length;
+  toast(left ? "일부만 저장됐어요 · 다시 누르면 이어서 저장해요" : `‘${p.name}’을(를) 오프라인에 저장했어요 · 비행기 모드에서도 재생돼요`, 2000);
+  bplRefresh();
+}
+function bplExport(lists) {
+  const data = { format: "lunera-viewer-playlists", v: 1, exported: new Date().toISOString(), lists: lists.map((p) => ({ name: p.name, items: p.items })) };
+  const name = (lists.length === 1 ? lists[0].name.replace(/[\\/:*?"<>|]/g, "_") : "LUNERA-플레이리스트") + ".json";
+  const blob = new Blob([JSON.stringify(data, null, 1)], { type: "application/json" });
+  const f = typeof File === "function" ? new File([blob], name, { type: "application/json" }) : null;
+  if (f && navigator.canShare && navigator.canShare({ files: [f] })) { navigator.share({ files: [f], title: name }).catch(() => {}); return; }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+  toast("내보냈어요 · 파일 앱에 저장해 두세요", 1600);
+}
+function bplImportPick() {
+  let inp = document.getElementById("bplImportFile");
+  if (!inp) { inp = document.createElement("input"); inp.type = "file"; inp.id = "bplImportFile"; inp.accept = "application/json,.json"; inp.hidden = true; document.body.appendChild(inp); inp.addEventListener("change", async () => { const f = inp.files && inp.files[0]; inp.value = ""; if (f) bplImportText(await f.text()); }); }
+  inp.click();
+}
+function bplImportText(txt) {
+  let d; try { d = JSON.parse(txt); } catch (_) { toast("플레이리스트 파일이 아니에요", 1500); return 0; }
+  const lists = Array.isArray(d) ? d : d && Array.isArray(d.lists) ? d.lists : null;
+  if (!lists) { toast("플레이리스트 파일이 아니에요", 1500); return 0; }
+  let n = 0; const names = new Set(bpl.lists.map((p) => p.name));
+  for (const l of lists.slice().reverse()) {
+    if (!l || !Array.isArray(l.items)) continue;
+    let name = bplCleanName(l.name) || bplNextName(); if (names.has(name)) name = bplCleanName(name + " (가져옴)"); names.add(name);
+    const p = bplCreate(name); bplAdd(p.id, l.items.filter((i) => i && i.kind && i.id).map((i) => ({ kind: String(i.kind), id: String(i.id), title: String(i.title || "") })), true); n++;
+  }
+  bplSave(); toast(n ? `${n}개 플레이리스트를 가져왔어요` : "가져올 플레이리스트가 없어요", 1600); bplRefresh();
+  return n;
+}
+
+/* drag to reorder (pointer events: touch on iOS/iPadOS, mouse, pen) */
+function bplBindDrag(rowsEl, p) {
+  rowsEl.querySelectorAll(".bpl-grip").forEach((g) => g.addEventListener("pointerdown", (e) => {
+    if (e.button > 0) return;
+    e.preventDefault(); e.stopPropagation();
+    const row = g.closest(".bgm-row"), rows = [...rowsEl.querySelectorAll(".bgm-row")], from = rows.indexOf(row);
+    const sheet = rowsEl.closest(".sheet");
+    const slot = rows.length > 1 ? rows[1].offsetTop - rows[0].offsetTop : row.offsetHeight + 2;
+    const y0 = e.clientY, sc0 = sheet ? sheet.scrollTop : 0; let to = from, raf = 0, lastY = y0, moved = false;
+    try { g.setPointerCapture(e.pointerId); } catch (_) {}
+    rowsEl.classList.add("drag"); row.classList.add("dragging");
+    try { navigator.vibrate && navigator.vibrate(8); } catch (_) {}
+    const layout = () => {
+      const dy = lastY - y0 + ((sheet ? sheet.scrollTop : 0) - sc0);
+      row.style.transform = `translateY(${dy}px) scale(1.02)`;
+      to = Math.max(0, Math.min(rows.length - 1, from + Math.round(dy / slot)));
+      rows.forEach((r, i) => { if (r === row) return; let sh = 0; if (from < to && i > from && i <= to) sh = -slot; else if (to < from && i >= to && i < from) sh = slot; r.style.transform = sh ? `translateY(${sh}px)` : ""; });
+    };
+    const auto = () => {
+      if (sheet) { const r = sheet.getBoundingClientRect(), topEdge = r.top + 150, botEdge = r.bottom - 70; let v = 0; if (lastY < topEdge) v = -Math.ceil((topEdge - lastY) / 8); else if (lastY > botEdge) v = Math.ceil((lastY - botEdge) / 8); if (v && moved) { const b = sheet.scrollTop; sheet.scrollTop += v; if (sheet.scrollTop !== b) layout(); } }
+      raf = requestAnimationFrame(auto);
+    };
+    raf = requestAnimationFrame(auto);
+    const mv = (ev) => { lastY = ev.clientY; if (Math.abs(lastY - y0) > 3) moved = true; layout(); if (ev.cancelable) ev.preventDefault(); };
+    const up = () => {
+      cancelAnimationFrame(raf);
+      g.removeEventListener("pointermove", mv); g.removeEventListener("pointerup", up); g.removeEventListener("pointercancel", up);
+      rowsEl.classList.remove("drag"); row.classList.remove("dragging"); rows.forEach((r) => { r.style.transform = ""; });
+      if (to !== from) { bplMove(p.id, from, to); toast(`${from + 1}번째 → ${to + 1}번째로 옮겼어요`, 900); }
+      bplRefresh();
+    };
+    g.addEventListener("pointermove", mv); g.addEventListener("pointerup", up); g.addEventListener("pointercancel", up);
+  }));
+}
+
+/* ---------- other tabs: ＋ on every row, multi-select ---------- */
+function bplDecorateRows(list, shown, all, tab) {
+  const rows = list.querySelectorAll(".bgm-row");
+  rows.forEach((r, i) => {
+    const t = shown[i]; if (!t) return;
+    if (bgm.sel) {
+      const ck = document.createElement("span"); ck.className = "br-chk"; r.insertBefore(ck, r.firstChild);
+      r.classList.toggle("sel", bgm.sel.map.has(bplKey(t)));
+      const d = r.querySelector(".br-del"); if (d) d.remove();
+      return;
+    }
+    const inAny = bpl.lists.some((p) => bplHas(p, t));
+    const b = document.createElement("button"); b.type = "button"; b.className = "br-add" + (inAny ? " in" : ""); b.innerHTML = BPL_IC.plus; b.setAttribute("aria-label", t.title + " 플레이리스트에 담기");
+    b.addEventListener("click", (e) => { e.stopPropagation(); bplPicker([t]); });
+    const d = r.querySelector(".br-del"); r.insertBefore(b, d || null);
+  });
+}
+function bplSelTools(tools, tab) {
+  const btn = document.createElement("button"); btn.type = "button"; btn.className = "bpl-chip" + (bgm.sel ? " on" : ""); btn.id = "bgmSelBtn";
+  btn.innerHTML = `${BPL_IC.select}<span>${bgm.sel ? (bgm.sel.target ? "고르는 중" : "선택 끝내기") : "여러 곡 선택해서 담기"}</span>`;
+  btn.addEventListener("click", () => { if (bgm.sel && bgm.sel.target) return; bgm.sel = bgm.sel ? null : { map: new Map(), target: null }; bgmRenderRows(); bgmRenderList(); });
+  const row = document.createElement("div"); row.className = "bpl-bar"; row.appendChild(btn);
+  tools.appendChild(row);
+}
+function bplTargetBanner(tools) {
+  const p = bplGet(bgm.sel.target); if (!p) { bgm.sel = null; return; }
+  const b = document.createElement("div"); b.className = "bgm-album"; b.style.cursor = "default";
+  b.innerHTML = `<span><b></b><small>곡을 탭해서 고른 뒤 아래 ‘담기’를 누르세요 · 탭을 바꿔도 선택이 유지돼요</small></span>`;
+  b.querySelector("b").textContent = `‘${p.name}’에 담을 곡 고르기`;
+  tools.appendChild(b);
+}
+function bplToggleSel(r, t) {
+  const k = bplKey(t), m = bgm.sel.map;
+  if (m.has(k)) m.delete(k); else m.set(k, t);
+  r.classList.toggle("sel", m.has(k));
+  bplSelBarPaint();
+}
+function bplSelBar(list, tracks) {
+  if (!bgm.sel) return;
+  const bar = document.createElement("div"); bar.className = "bpl-selbar"; bar.id = "bplSelBar";
+  const tp = bgm.sel.target ? bplGet(bgm.sel.target) : null;
+  bar.innerHTML = `<b></b><button type="button" class="all">전체</button><button type="button" class="c">취소</button><button type="button" class="pri go"></button>`;
+  bar.querySelector(".all").addEventListener("click", () => { const m = bgm.sel.map, allIn = tracks.every((t) => m.has(bplKey(t))); tracks.forEach((t) => allIn ? m.delete(bplKey(t)) : m.set(bplKey(t), t)); bgmRenderRows(); });
+  bar.querySelector(".c").addEventListener("click", () => { const tg = bgm.sel.target; bgm.sel = null; if (tg) { bgm.ui.tab = "playlists"; bgm.ui.pl = tg; } bgmRenderList(); bplTabScroll(); });
+  bar.querySelector(".go").addEventListener("click", () => {
+    const sel = [...bgm.sel.map.values()]; if (!sel.length) return;
+    if (tp) {
+      const r = bplAdd(tp.id, sel); bgm.sel = null; bgm.ui.tab = "playlists"; bgm.ui.pl = tp.id;
+      toast(r.added ? `‘${tp.name}’에 ${r.added}곡 담았어요${r.dup ? ` · 중복 ${r.dup}곡은 건너뛰었어요` : ""}` : "모두 이미 담겨 있어요", 1800);
+      bplRefresh(); bplTabScroll(true);
+    } else bplPicker(sel, () => { bgm.sel = null; bplRefresh(); });
+  });
+  list.appendChild(bar);
+  bplSelBarPaint();
+}
+function bplSelBarPaint() {
+  const bar = document.getElementById("bplSelBar"); if (!bar || !bgm.sel) return;
+  const n = bgm.sel.map.size, tp = bgm.sel.target ? bplGet(bgm.sel.target) : null;
+  bar.querySelector("b").textContent = n ? `${n}곡 선택됨` : "곡을 탭해서 고르세요";
+  const go = bar.querySelector(".go"); go.textContent = tp ? `담기${n ? ` (${n})` : ""}` : "플레이리스트에 담기"; go.disabled = !n;
+}
+function bplStartAdd(p) {
+  bgm.sel = { map: new Map(), target: p.id }; bgm.ui.plEdit = false;
+  bgm.ui.tab = "builtin"; bgmRenderList(); bplTabScroll(true);
+  toast(`‘${p.name}’에 담을 곡을 골라 주세요`, 1400);
+}
+
+/* ---------- now playing: artwork hero, context, next up ---------- */
+function bgm17Bind(s) {
+  const cv = s.querySelector(".bgm-cover");
+  const tog = () => { bgmPrefs.big = !bgmPrefs.big; bgmSavePrefs(); s.querySelector(".bgm-now").classList.toggle("big", !!bgmPrefs.big); };
+  cv.addEventListener("click", tog);
+  cv.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tog(); } });
+  s.querySelector(".bgm-now").classList.toggle("big", !!bgmPrefs.big);
+}
+function bgm17Paint(s) {
+  const t = bgm.cur;
+  const bg = s.querySelector(".bgm-hero-bg"), want = t && t.cover ? `url("${bgmAbs(t.cover)}")` : "";
+  if (bg && bg.dataset.src !== want) { bg.dataset.src = want; bg.style.backgroundImage = want; }
+  const k = s.querySelector(".bgm-kick"), nx = s.querySelector(".bgm-nextup");
+  const pl = bgm.ctx && bgm.ctx.pl ? bplGet(bgm.ctx.pl) : null;
+  if (k) k.textContent = !t ? "LUNERA BGM" : pl ? `플레이리스트 · ${pl.name}${bgm.queue.length > 1 && bgm.idx >= 0 ? ` · ${bgm.idx + 1}/${bgm.queue.length}` : ""}` : t.kind === "local" ? "내 음원" : t.kind === "lunera" ? "LUNERA · 스트리밍" : `LUNERA · ${bgmLangName(t.lang)}`;
+  if (nx) {
+    const q = bgm.queue; let txt = "";
+    if (t && q.length > 1) { if (bgmPrefs.repeat === "one") txt = "한 곡 반복 중"; else if (bgmPrefs.repeat === "shuffle") txt = `셔플 · ${q.length}곡 중 무작위`; else { const n = q[(bgm.idx + 1) % q.length]; if (n) txt = "다음 · " + n.title; } }
+    nx.textContent = txt;
+  }
+  s.classList.toggle("bgm-playing", !!t && !bgmAudio.paused);
+}
+
+/* ---------- reader: floating music orb while the HUD is hidden + track banner ---------- */
+var bgmOrbEl = null, bgmOrbIdleT = 0;
+function bgmOrbInit() {
+  if (bgmOrbEl) return bgmOrbEl;
+  const o = document.createElement("button"); o.type = "button"; o.id = "bgmOrb"; o.className = "bgm-orb"; o.setAttribute("aria-label", "BGM 재생/일시정지 (길게 누르면 플레이어)");
+  o.innerHTML = '<span class="ring"></span><span class="art"></span><span class="st"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z"/></svg></span>';
+  ["pointerdown", "pointerup", "touchstart", "touchend", "mousedown", "mouseup"].forEach((ev) => o.addEventListener(ev, (e) => e.stopPropagation(), { passive: true }));
+  let lp = 0, long = false;
+  o.addEventListener("pointerdown", () => { long = false; clearTimeout(lp); lp = setTimeout(() => { long = true; try { navigator.vibrate && navigator.vibrate(10); } catch (_) {} openBgmPlayer(); }, 520); bgmOrbWake(); });
+  ["pointerup", "pointercancel", "pointerleave"].forEach((ev) => o.addEventListener(ev, () => clearTimeout(lp)));
+  o.addEventListener("click", (e) => { e.stopPropagation(); e.preventDefault(); if (long) return; bgmToggle(); bgmOrbWake(); });
+  o.addEventListener("contextmenu", (e) => e.preventDefault());
+  document.body.appendChild(o); bgmOrbEl = o;
+  return o;
+}
+function bgmOrbWake() { if (!bgmOrbEl) return; bgmOrbEl.classList.remove("idle"); clearTimeout(bgmOrbIdleT); bgmOrbIdleT = setTimeout(() => bgmOrbEl && bgmOrbEl.classList.add("idle"), 2600); }
+function bgmOrbPaint() {
+  const o = bgmOrbInit(), t = bgm.cur;
+  const show = !!t && currentScreen === "reader" && !reader.ui && !document.getElementById("bgmSheet") && overlay.classList.contains("hidden") && bgmPrefs.orb !== false && !document.body.classList.contains("pg-open");
+  const was = o.classList.contains("show");
+  o.classList.toggle("show", show);
+  if (show && !was) bgmOrbWake();
+  if (!t) return;
+  const art = o.querySelector(".art"), want = t.cover ? bgmAbs(t.cover) : "";
+  if (art.dataset.src !== want) { art.dataset.src = want; art.innerHTML = want ? `<img alt="" src="${bplEsc(want)}">` : "♪"; }
+  o.classList.toggle("playing", !bgmAudio.paused);
+  bgmOrbTime();
+}
+function bgmOrbTime() {
+  if (!bgmOrbEl || !bgmOrbEl.classList.contains("show")) return;
+  const d = bgmAudio.duration, dd = isFinite(d) && d > 0 ? d : (bgm.cur ? bgm.cur.duration : 0);
+  bgmOrbEl.style.setProperty("--op", (dd ? Math.min(100, bgmAudio.currentTime / dd * 100) : 0) + "%");
+}
+var bgmNpT = 0;
+function bgmNowBanner(t) {
+  let el = document.getElementById("bgmNp");
+  if (!el) { el = document.createElement("div"); el.id = "bgmNp"; el.className = "bgm-np"; el.setAttribute("aria-live", "polite"); el.innerHTML = '<span class="art"></span><span class="tx"><small>지금 재생</small><b></b></span>'; document.body.appendChild(el); }
+  el.querySelector(".art").innerHTML = t.cover ? `<img alt="" src="${bplEsc(bgmAbs(t.cover))}">` : "♪";
+  el.querySelector("b").textContent = t.title;
+  const pl = bgm.ctx && bgm.ctx.pl ? bplGet(bgm.ctx.pl) : null;
+  el.querySelector("small").textContent = pl ? `지금 재생 · ${pl.name}` : "지금 재생";
+  el.classList.add("show"); clearTimeout(bgmNpT); bgmNpT = setTimeout(() => el.classList.remove("show"), 2600);
+}
+bgmAudio.addEventListener("playing", () => {
+  const t = bgm.cur; if (!t) return;
+  const k = bplKey(t);
+  if (bgm.npLast === k) return;
+  const first = bgm.npLast === undefined; bgm.npLast = k;
+  if (first && !bgm.endedCount) return;
+  const mini = document.getElementById("bgmMini");
+  if (!document.getElementById("bgmSheet") && !(mini && mini.classList.contains("show")) && document.visibilityState === "visible") bgmNowBanner(t);
+});
+
+/* ---------- home: LUNERA music shelf ---------- */
+function renderMusicShelf() {
+  const el = $("musicShelf"); if (!el) return;
+  const lt = $("libTools"), ls = $("libSearch");
+  const atHome = currentScreen === "explorer" && (cwd === homeNode || (cwd && cwd.id === "home")) && !explorerUI.selecting && lt && !lt.classList.contains("hidden") && !(ls && ls.value.trim()) && (typeof libView === "undefined" || !libView.tab || libView.tab === "all");
+  if (!atHome) { el.classList.add("hidden"); return; }
+  el.classList.remove("hidden");
+  const t = bgm.cur, playing = !!t && !bgmAudio.paused;
+  const sig = JSON.stringify([bpl.saved || 0, bpl.lists.length, t ? bplKey(t) : "", playing, bgm.ctx && bgm.ctx.pl, !!bgm.cat, bgm.cached.size]);
+  if (el.dataset.sig === sig) return; el.dataset.sig = sig;
+  el.innerHTML = `<div class="mshelf-h"><div><small>LUNERA MUSIC</small><b>읽으면서 듣기</b></div><button type="button" class="ms-all">플레이어 ›</button></div><div class="mshelf-row"></div>`;
+  el.querySelector(".ms-all").addEventListener("click", () => openBgmPlayer());
+  const row = el.querySelector(".mshelf-row");
+  const card = (cls, artEl, title, sub, onTap, onPlay) => {
+    const c = document.createElement("div"); c.className = "ms-card " + cls; c.setAttribute("role", "button"); c.tabIndex = 0;
+    c.appendChild(artEl);
+    const b = document.createElement("b"); b.textContent = title; const sm = document.createElement("small"); sm.textContent = sub; c.appendChild(b); c.appendChild(sm);
+    c.addEventListener("click", onTap);
+    if (onPlay) { const pb = document.createElement("button"); pb.type = "button"; pb.className = "ms-play"; pb.setAttribute("aria-label", title + " 재생"); pb.innerHTML = BPL_IC.play.replace("<svg", '<svg style="fill:currentColor;stroke:none"'); pb.addEventListener("click", (e) => { e.stopPropagation(); onPlay(); }); artEl.appendChild(pb); }
+    row.appendChild(c); return c;
+  };
+  const artImg = (src) => { const a = document.createElement("div"); a.className = "ms-art"; a.innerHTML = src ? `<img loading="lazy" alt="" src="${bplEsc(bgmAbs(src))}">` : `<span class="ph">${BPL_IC.note}</span>`; return a; };
+  if (t) {
+    const a = artImg(t.cover); a.insertAdjacentHTML("beforeend", `<span class="ms-eq${playing ? "" : " paused"}"><i></i><i></i><i></i></span>`);
+    const c = card("now", a, t.title, playing ? "지금 재생 중" : "일시정지됨 · 탭해서 열기", () => openBgmPlayer(), null);
+    const pb = document.createElement("button"); pb.type = "button"; pb.className = "ms-play"; pb.setAttribute("aria-label", playing ? "일시정지" : "재생"); pb.innerHTML = playing ? BGM_ICONS.pause : BPL_IC.play.replace("<svg", '<svg style="fill:currentColor;stroke:none"');
+    pb.addEventListener("click", (e) => { e.stopPropagation(); bgmToggle(); }); a.appendChild(pb);
+  }
+  for (const p of bpl.lists.slice(0, 12)) {
+    const a = bplMosaic(p, "ms-art");
+    card("pl", a, p.name, `플레이리스트 · ${p.items.length}곡`, () => { bgm.ui.tab = "playlists"; bgm.ui.pl = p.id; bgm.ui.plEdit = false; openBgmPlayer("playlists").then(() => setTimeout(() => bplTabScroll(true), 60)); }, p.items.length ? () => bplPlay(p.id, { all: true }) : null);
+  }
+  const B = bgmBuiltinTracks();
+  if (B.length) {
+    const lang = bgm.ui.lang || "all", L = lang === "all" ? B : B.filter((x) => x.lang === lang);
+    card("bi", artImg((L[0] || B[0]).cover), "LUNERA 기본 내장", `${L.length}곡 · ${lang === "all" ? "한·일·영" : bgmLangName(lang)} · 오프라인`, () => { bgm.ui.tab = "builtin"; openBgmPlayer("builtin"); }, () => { bgmSetCtx({ tab: "builtin", lang }); bgmPlayTrack(L[0], L); });
+  }
+  const na = document.createElement("div"); na.className = "ms-art"; na.innerHTML = `<span class="ph">${BPL_IC.plus}</span>`;
+  card("new", na, "새 플레이리스트", "이름 짓고 곡 담기", () => bplNewFlow(true).then((p) => { if (p) openBgmPlayer("playlists").then(() => setTimeout(() => bplTabScroll(true), 60)); }), null);
+}
+(function v17Init() {
+  const rh = renderHero;
+  renderHero = function () { const r = rh.apply(this, arguments); Promise.resolve().then(() => { try { renderMusicShelf(); } catch (_) {} }); return r; };
+  bgmCatalog().then(() => { try { renderMusicShelf(); } catch (_) {} }).catch(() => {});
+  bgmLoadLocal().then(() => bgmRefreshCached()).then(() => { try { renderMusicShelf(); } catch (_) {} }).catch(() => {});
+  const ls = $("libSearch"); if (ls) ls.addEventListener("input", () => setTimeout(renderMusicShelf, 0));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && bplLayerEl) { e.stopPropagation(); bplCloseLayer(); } }, true);
+  bgmOrbInit();
+})();
+/*V17JS-END*/
 window.addEventListener("pagehide", () => { saveVideoPos(); saveReaderPos(); });
 </script>
 </body>
