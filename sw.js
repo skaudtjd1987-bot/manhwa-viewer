@@ -1,5 +1,7 @@
 /* 만화뷰어 service worker: cache-first, versioned, engine precache with progress */
-const CACHE_VERSION = "mhv-pwa-v15";
+const CACHE_VERSION = "mhv-pwa-v16";
+// BGM files live in their own cache that survives app updates (no 19MB re-download per version)
+const BGM_CACHE = "mhv-bgm-v1";
 // Engine files that did not change since the previous version can be copied from the old cache
 // (fast update, works even on a weak connection). Files listed here are always re-downloaded.
 const ENGINE_CHANGED = new Set(["./vendor/ffmpeg-worker.js"]);
@@ -8,6 +10,7 @@ const APP_ASSETS = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
+  "./lunera-catalog.json",
   "./icons/apple-touch-icon.png",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
@@ -154,7 +157,7 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter((k) => k !== CACHE_VERSION).map((k) => caches.delete(k)));
+    await Promise.all(keys.filter((k) => k !== CACHE_VERSION && k !== BGM_CACHE).map((k) => caches.delete(k)));
     await self.clients.claim();
     await broadcast({ type: "sw-activated", cache: CACHE_VERSION });
   })());
@@ -164,6 +167,8 @@ self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
+
+  if (/\/bgm\/[^/]+\.(mp3|jpg)$/i.test(url.pathname)) { event.respondWith(bgmResponse(event)); return; }
 
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_VERSION);
@@ -191,3 +196,37 @@ self.addEventListener("fetch", (event) => {
     }
   })());
 });
+
+/* v16: built-in BGM — cache-first with Range support (audio elements ask for byte ranges), cached on first play */
+async function sliceRange(req, res) {
+  const range = req.headers.get("range");
+  if (!range) return res;
+  const blob = await res.blob();
+  const size = blob.size;
+  const m = /bytes=(\d*)-(\d*)/.exec(range);
+  let start = 0, end = size - 1;
+  if (m) {
+    if (m[1] !== "") { start = +m[1]; if (m[2] !== "") end = Math.min(+m[2], size - 1); }
+    else if (m[2] !== "") start = Math.max(0, size - +m[2]);
+  }
+  if (start >= size) return new Response(null, { status: 416, headers: { "Content-Range": `bytes */${size}` } });
+  return new Response(blob.slice(start, end + 1), { status: 206, statusText: "Partial Content", headers: {
+    "Content-Type": res.headers.get("content-type") || "audio/mpeg",
+    "Content-Range": `bytes ${start}-${end}/${size}`,
+    "Content-Length": String(end - start + 1),
+    "Accept-Ranges": "bytes",
+  } });
+}
+async function bgmResponse(event) {
+  const req = event.request;
+  const key = new URL(req.url); key.search = "";
+  const cache = await caches.open(BGM_CACHE);
+  const hit = await cache.match(key.href);
+  if (hit) return sliceRange(req, hit);
+  // not cached yet: stream from the network now, and store the whole file in the background
+  event.waitUntil((async () => {
+    try { const full = await fetch(key.href); if (full.ok && full.status === 200) await cache.put(key.href, full); } catch (_) {}
+  })());
+  try { return await fetch(req); }
+  catch (e) { return new Response("", { status: 504, statusText: "offline" }); }
+}

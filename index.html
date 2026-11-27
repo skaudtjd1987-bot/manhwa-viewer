@@ -1045,6 +1045,82 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
 .settings-note { margin: -4px 12px 8px; font-size: 12px; color: rgba(255,255,255,.5); }
 .settings-ver { text-align: center; font-size: 11.5px; color: rgba(255,255,255,.35); margin: 12px 0 2px; }
 
+/* ===== v16: LUNERA BGM ===== */
+.bgm-btn { position: relative; }
+.bgm-btn svg { transition: opacity .2s; }
+.bgm-btn .eq { position: absolute; right: 5px; bottom: 6px; display: none; gap: 1.5px; align-items: flex-end; height: 9px; }
+.bgm-btn .eq i { width: 2px; height: 3px; border-radius: 1px; background: #ffb4d0; }
+.bgm-btn.loaded { color: #ffb4d0; }
+.bgm-btn.playing { color: #ff8fbd; }
+.bgm-btn.playing svg { filter: drop-shadow(0 0 6px rgba(255,120,180,.7)); }
+.bgm-btn.playing .eq { display: flex; }
+.bgm-btn.playing .eq i { animation: bgmeq .9s ease-in-out infinite; }
+.bgm-btn.playing .eq i:nth-child(2) { animation-delay: -.3s; }
+.bgm-btn.playing .eq i:nth-child(3) { animation-delay: -.6s; }
+@keyframes bgmeq { 0%,100% { height: 3px; } 50% { height: 9px; } }
+.sheet.bgm-sheet-host { max-width: 560px; padding-left: 14px; padding-right: 14px; }
+.bgm-sheet { display: flex; flex-direction: column; gap: 10px; }
+.bgm-now { display: flex; gap: 14px; align-items: center; padding: 4px 4px 0; }
+.bgm-cover { width: 64px; height: 64px; border-radius: 12px; overflow: hidden; flex: none; background: linear-gradient(135deg, #3a1f4d, #1b2340); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(0,0,0,.45); }
+.bgm-cover img, .br-cv img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bgm-cover span, .br-cv span { color: #ffb4d0; font-size: 26px; }
+.bgm-meta { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.bgm-title { font-size: 17px; letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bgm-sub { font-size: 12px; color: rgba(255,255,255,.55); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bgm-prog { display: flex; align-items: center; gap: 10px; font-size: 11.5px; color: rgba(255,255,255,.6); font-variant-numeric: tabular-nums; padding: 0 4px; }
+.bgm-prog input { flex: 1; min-width: 0; }
+.bgm-ctrl { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.bgm-c { width: 46px; height: 46px; border-radius: 23px; display: flex; align-items: center; justify-content: center; color: #fff; background: rgba(255,255,255,.07); }
+.bgm-c svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; }
+.bgm-c.big { width: 62px; height: 62px; border-radius: 31px; background: #fff; color: #0b0c10; box-shadow: 0 8px 22px rgba(0,0,0,.4); }
+.bgm-c.big.on { background: linear-gradient(135deg, #ffb4d0, #b9a0ff); }
+.bgm-c.big svg { width: 28px; height: 28px; }
+.bgm-c.on:not(.big) { color: #ff8fa3; }
+.bgm-c:active { transform: scale(.94); }
+.bgm-rep { height: 34px; padding: 0 10px; border-radius: 17px; font-size: 12px; font-weight: 700; color: #e9dcff; background: rgba(185,160,255,.14); border: .5px solid rgba(185,160,255,.35); white-space: nowrap; }
+.bgm-vol { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; padding: 0 4px; font-size: 12.5px; color: rgba(255,255,255,.7); }
+.bgm-vol input { flex: 1; min-width: 140px; }
+.bgm-vol small { flex-basis: 100%; font-size: 11px; color: rgba(255,255,255,.4); }
+.bgm-album { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border-radius: 14px; background: rgba(255,180,208,.08); border: .5px solid rgba(255,180,208,.3); cursor: pointer; }
+.bgm-album span { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.bgm-album b { font-size: 14px; }
+.bgm-album small { font-size: 11.5px; color: rgba(255,255,255,.55); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bgm-album input { -webkit-appearance: none; appearance: none; width: 48px; height: 28px; border-radius: 14px; background: rgba(255,255,255,.18); position: relative; flex: none; transition: background .2s; margin: 0; }
+.bgm-album input::after { content: ""; position: absolute; left: 3px; top: 3px; width: 22px; height: 22px; border-radius: 11px; background: #fff; transition: transform .2s; }
+.bgm-album input:checked { background: #ff8fbd; }
+.bgm-album input:checked::after { transform: translateX(20px); }
+.bgm-tabs { display: flex; gap: 6px; padding: 3px; border-radius: 12px; background: rgba(255,255,255,.06); }
+.bgm-tabs button { flex: 1; height: 34px; border-radius: 9px; font-size: 13.5px; font-weight: 700; color: rgba(255,255,255,.7); }
+.bgm-tabs button.on { background: #fff; color: #0b0c10; }
+.bgm-pre { width: 100%; height: 40px; border-radius: 12px; font-size: 13.5px; font-weight: 700; color: #ffe1ee; background: linear-gradient(100deg, rgba(255,143,189,.22), rgba(185,160,255,.2)); border: .5px solid rgba(255,180,208,.4); }
+.bgm-pre.done { color: #c9f5d9; background: rgba(60,180,110,.14); border-color: rgba(110,220,150,.4); }
+.bgm-pre.add { color: #dce8ff; background: rgba(138,180,255,.14); border-color: rgba(138,180,255,.4); }
+.bgm-search { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px; border-radius: 12px; background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.12); }
+.bgm-search input { flex: 1; min-width: 0; background: transparent; border: 0; outline: 0; color: #fff; font-size: 16px; -webkit-appearance: none; appearance: none; }
+.bgm-search span { font-size: 12px; color: rgba(255,255,255,.5); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.bgm-note { margin: 6px 2px 0; font-size: 12px; color: #ffcf8a; }
+.bgm-list { display: flex; flex-direction: column; gap: 2px; max-height: 38vh; overflow-y: auto; -webkit-overflow-scrolling: touch; margin: 0 -4px; padding: 0 4px; }
+.bgm-row { display: flex; align-items: center; gap: 11px; padding: 7px 6px; border-radius: 12px; cursor: pointer; }
+.bgm-row:active { background: rgba(255,255,255,.08); }
+.bgm-row.cur { background: rgba(255,143,189,.12); }
+.bgm-row.cur b { color: #ffb4d0; }
+.br-cv { width: 42px; height: 42px; border-radius: 8px; overflow: hidden; flex: none; background: #22263a; display: flex; align-items: center; justify-content: center; }
+.br-tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.br-tx b { font-size: 14px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.br-tx small { font-size: 11.5px; color: rgba(255,255,255,.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bdg { font-style: normal; flex: none; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 8px; color: rgba(255,255,255,.6); background: rgba(255,255,255,.08); }
+.bdg.ok { color: #c9f5d9; background: rgba(60,180,110,.18); }
+.bdg.on { color: #dce8ff; background: rgba(138,180,255,.18); }
+.br-del { width: 32px; height: 32px; border-radius: 16px; color: rgba(255,255,255,.6); font-size: 14px; flex: none; }
+.br-del:active { background: rgba(255,80,100,.2); color: #ff8a9e; }
+.bgm-empty { text-align: center; color: rgba(255,255,255,.5); font-size: 13px; line-height: 1.6; padding: 24px 0; margin: 0; }
+.bgm-more { margin: 6px auto 4px; height: 34px; padding: 0 16px; border-radius: 17px; font-size: 13px; color: #dce8ff; background: rgba(138,180,255,.14); }
+.bgm-offer { position: absolute; left: 50%; top: calc(var(--safe-t) + 72px); transform: translateX(-50%); z-index: 40; display: flex; align-items: center; gap: 8px; max-width: calc(100% - 32px); padding: 7px 8px 7px 14px; border-radius: 20px; background: rgba(30,18,36,.78); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: .5px solid rgba(255,180,208,.4); box-shadow: 0 10px 26px rgba(0,0,0,.45); font-size: 13px; color: #fff; }
+.bgm-offer span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.bgm-offer b { color: #ffb4d0; }
+.bgm-offer .bo-play { height: 30px; padding: 0 12px; border-radius: 15px; background: #ff8fbd; color: #24071a; font-weight: 800; font-size: 12.5px; flex: none; }
+.bgm-offer .bo-x { width: 26px; height: 26px; border-radius: 13px; color: rgba(255,255,255,.6); flex: none; }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
@@ -1070,6 +1146,7 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
           <div id="crumb" class="crumb"></div>
           <h1 id="exTitle">만화뷰어</h1>
         </div>
+        <button type="button" id="btnBgm" class="icon-btn bgm-btn" aria-label="루네라 BGM" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5" fill="currentColor" stroke="none"/><circle cx="16.5" cy="16" r="2.5" fill="currentColor" stroke="none"/></svg><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span></button>
         <button type="button" id="btnLock" class="icon-btn" aria-label="시크릿 서재"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9.5" rx="2.2"/><path class="shackle" d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>
         <button type="button" id="btnPlaylist" class="icon-btn" aria-label="재생목록">
           <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/><path d="M16 16l5 3-5 3v-6z" fill="currentColor" stroke="none"/></svg>
@@ -1100,7 +1177,7 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
       <div id="prefixFix" class="prefix-fix hidden"><span></span><button type="button" id="btnPrefixFix">이름 앞 날짜 빼기</button></div>
       <p class="ex-hint" id="photoHint">사진 앱에서 손가락을 밀어 여러 장을 한 번에 선택할 수 있습니다.</p>
       <div id="storageMeter" class="storage-meter"></div>
-      <div class="app-ver" id="appVer">만화뷰어 v15 · 오프라인</div>
+      <div class="app-ver" id="appVer">만화뷰어 v16 · 오프라인</div>
     </div>
     <div id="exSelectBar" class="ex-select hidden">
       <button type="button" id="btnSelectAll">전체 선택</button>
@@ -1179,6 +1256,7 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
       <div id="dimLayer"></div>
       <div id="readProg" class="read-prog" aria-hidden="true"><i></i></div>
     </div>
+    <div id="bgmOffer" class="bgm-offer hidden"><span>♪ 이 앨범 BGM · <b></b></span><button type="button" class="bo-play">재생</button><button type="button" class="bo-x" aria-label="닫기">✕</button></div>
     <div id="autoInd" class="auto-ind" role="button" aria-label="자동 넘김 멈추기"><b>자동 넘김</b><div class="ai-bar"><i></i></div></div>
     <div id="readerChrome">
       <header class="topbar">
@@ -1190,7 +1268,7 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
             <div class="crumb" id="readerCrumb">이미지</div>
             <h1 id="readerTitle">뷰어</h1>
           </div>
-          <button type="button" id="btnSwapHalf" class="swap-pill hidden" aria-label="쪽 반전"></button><button type="button" id="btnBmAlbum" class="text-btn hidden" aria-label="원래 앨범에서 보기">앨범</button><button type="button" id="btnAuto" class="icon-btn" aria-label="자동 넘김 시작" aria-pressed="false"><svg viewBox="0 0 24 24"><path class="ic-play" d="M8 5.5v13l10.5-6.5z" fill="currentColor" stroke="none"/><g class="ic-pause" fill="currentColor" stroke="none"><rect x="7" y="5.5" width="3.6" height="13" rx="1"/><rect x="13.4" y="5.5" width="3.6" height="13" rx="1"/></g></svg></button><button type="button" id="btnBookmark" class="icon-btn" aria-label="책갈피(★) · 길게 누르면 메모" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3.6l2.6 5.3 5.8.85-4.2 4.1 1 5.8L12 16.9l-5.2 2.75 1-5.8-4.2-4.1 5.8-.85z"/></svg></button><button type="button" id="btnReaderSettings" class="text-btn">보기</button>
+          <button type="button" id="btnSwapHalf" class="swap-pill hidden" aria-label="쪽 반전"></button><button type="button" id="btnBmAlbum" class="text-btn hidden" aria-label="원래 앨범에서 보기">앨범</button><button type="button" id="btnBgmR" class="icon-btn bgm-btn" aria-label="루네라 BGM" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5" fill="currentColor" stroke="none"/><circle cx="16.5" cy="16" r="2.5" fill="currentColor" stroke="none"/></svg><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span></button><button type="button" id="btnAuto" class="icon-btn" aria-label="자동 넘김 시작" aria-pressed="false"><svg viewBox="0 0 24 24"><path class="ic-play" d="M8 5.5v13l10.5-6.5z" fill="currentColor" stroke="none"/><g class="ic-pause" fill="currentColor" stroke="none"><rect x="7" y="5.5" width="3.6" height="13" rx="1"/><rect x="13.4" y="5.5" width="3.6" height="13" rx="1"/></g></svg></button><button type="button" id="btnBookmark" class="icon-btn" aria-label="책갈피(★) · 길게 누르면 메모" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 3.6l2.6 5.3 5.8.85-4.2 4.1 1 5.8L12 16.9l-5.2 2.75 1-5.8-4.2-4.1 5.8-.85z"/></svg></button><button type="button" id="btnReaderSettings" class="text-btn">보기</button>
         </div>
       </header>
       <div class="bottombar rbar">
@@ -1363,6 +1441,8 @@ input[type=range]::-webkit-slider-thumb { box-shadow: 0 2px 10px rgba(0,0,0,.5),
 </div>
 <div id="loading" class="loading hidden"><div class="spinner"></div><div id="loadingText">불러오는 중…</div><div id="loadingBarWrap" class="sw-bar hidden"><div class="sw-bar-fill" id="loadingBar"></div></div></div>
 <div id="overlay" class="overlay hidden"></div>
+<audio id="bgmAudio" preload="none" playsinline webkit-playsinline></audio>
+<input type="file" id="bgmFile" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.oga,.opus,.flac" multiple hidden>
 
 <script>
 "use strict";
@@ -4220,7 +4300,7 @@ function applyReaderLook() {
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v15";
+const PWA_CACHE = "mhv-pwa-v16";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
@@ -4878,6 +4958,7 @@ $("btnResumeX").addEventListener("click", hideResumeBar);
 
 function closeReader() {
   autoStop();
+  bgmHideOffer();
   const wasBm = reader.bmMode;
   reader.bmMode = false;
   hideVolCard();
@@ -8081,7 +8162,7 @@ function updateReadProg() {
 }
 
 /* ===== v15: 시리즈·태그/검색, 시크릿 서재(PIN), 자동 넘김, 책갈피 메모 ===== */
-var APP_VER = "v15";
+var APP_VER = "v16";
 var META_KEY = "mhv-albummeta-v1", SECRET_KEY = "mhv-secret-v1", RECENT_KEY = "mhv-recent-v1";
 function v15Load(k, d) { try { const v = JSON.parse(localStorage.getItem(k) || "null"); return v && typeof v === "object" ? v : d; } catch (_) { return d; } }
 function v15Save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} }
@@ -8585,6 +8666,424 @@ function coverSolo() {
 /* bindings */
 bindLibTools();
 document.getElementById("btnAuto").addEventListener("click", (e) => { e.stopPropagation(); autoToggle(); });
+
+/* ===== v16: 루네라 BGM — 기본 내장 8곡 · 내 음원(IndexedDB) · 루네라 전체 스트리밍 ===== */
+var BGM_PREF_KEY = "mhv-bgm-v1", BGM_CACHE = "mhv-bgm-v1", BGM_ARTIST = "LUNERA · The Clown Art";
+var bgmAudio = document.getElementById("bgmAudio");
+var bgm = { cat: null, catP: null, queue: [], idx: -1, cur: null, local: [], cached: new Set(), ui: { tab: "builtin", q: "", limit: 60 }, objUrl: "", loadingId: "" };
+var bgmPrefs = v15Load(BGM_PREF_KEY, {});
+if (!bgmPrefs.albums) bgmPrefs.albums = {};
+if (!["all", "one", "shuffle"].includes(bgmPrefs.repeat)) bgmPrefs.repeat = "all";
+if (typeof bgmPrefs.volume !== "number") bgmPrefs.volume = 0.8;
+function bgmSavePrefs() { v15Save(BGM_PREF_KEY, bgmPrefs); }
+function bgmFmt(s) { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+function bgmAbs(u) { try { return new URL(u, location.href).href; } catch (_) { return u; } }
+
+/* ---------- catalog ---------- */
+function bgmCatalog() {
+  if (bgm.cat) return Promise.resolve(bgm.cat);
+  if (!bgm.catP) bgm.catP = fetch("lunera-catalog.json").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }).then((c) => { bgm.cat = c; return c; }).catch((e) => { bgm.catP = null; throw e; });
+  return bgm.catP;
+}
+function bgmBuiltinTracks() {
+  return ((bgm.cat && bgm.cat.builtin) || []).map((b) => ({ kind: "builtin", id: b.id, title: b.title, album: b.album, genre: b.genre, src: b.src, cover: b.cover, duration: b.duration }));
+}
+function bgmLuneraTracks() {
+  const L = (bgm.cat && bgm.cat.langNames) || {};
+  return ((bgm.cat && bgm.cat.tracks) || []).map((t) => ({ kind: "lunera", id: t.id, title: t.title, album: t.album, genre: t.genre, mood: t.mood, tags: t.tags || [], lang: t.lang, langName: L[t.lang] || t.lang, src: t.audio, cover: t.cover, duration: t.duration }));
+}
+
+/* ---------- 내 음원: IndexedDB (meta store "bgm" + data store "bgmData") ---------- */
+var bgmDbP = null;
+function bgmDb() {
+  if (!bgmDbP) bgmDbP = new Promise((res, rej) => {
+    const r = indexedDB.open("mhv-bgm", 1);
+    r.onupgradeneeded = () => { const db = r.result; if (!db.objectStoreNames.contains("bgm")) db.createObjectStore("bgm", { keyPath: "id" }); if (!db.objectStoreNames.contains("bgmData")) db.createObjectStore("bgmData", { keyPath: "id" }); };
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => { bgmDbP = null; rej(r.error); };
+  });
+  return bgmDbP;
+}
+function bgmReq(stores, mode, fn) {
+  return bgmDb().then((db) => new Promise((res, rej) => {
+    const tx = db.transaction(stores, mode);
+    let out;
+    const r = fn(tx);
+    if (r && "onsuccess" in r) r.onsuccess = () => { out = r.result; };
+    tx.oncomplete = () => res(out);
+    tx.onerror = () => rej(tx.error);
+    tx.onabort = () => rej(tx.error || new Error("abort"));
+  }));
+}
+async function bgmLoadLocal() {
+  try { bgm.local = ((await bgmReq(["bgm"], "readonly", (tx) => tx.objectStore("bgm").getAll())) || []).sort((a, b) => b.added - a.added); } catch (_) { bgm.local = []; }
+  return bgm.local;
+}
+function bgmLocalTracks() { return bgm.local.map((m) => ({ kind: "local", id: m.id, title: m.name, album: "내 음원", genre: (m.ext || "").toUpperCase(), duration: m.duration || 0, size: m.size })); }
+function bgmProbeDuration(blob) {
+  return new Promise((res) => {
+    const a = new Audio(), u = URL.createObjectURL(blob);
+    const done = (d) => { URL.revokeObjectURL(u); res(isFinite(d) ? d : 0); };
+    const t = setTimeout(() => done(0), 5000);
+    a.preload = "metadata";
+    a.onloadedmetadata = () => { clearTimeout(t); done(a.duration); };
+    a.onerror = () => { clearTimeout(t); done(0); };
+    a.src = u;
+  });
+}
+async function bgmImportFiles(files) {
+  const list = [...(files || [])].filter((f) => /^audio\//.test(f.type) || /\.(mp3|m4a|aac|wav|ogg|oga|opus|flac)$/i.test(f.name));
+  if (!list.length) { toast("오디오 파일(MP3·M4A·WAV·OGG)을 골라 주세요", 1600); return 0; }
+  let n = 0;
+  for (const f of list) {
+    try {
+      const buf = await f.arrayBuffer();
+      const type = f.type || ({ mp3: "audio/mpeg", m4a: "audio/mp4", aac: "audio/aac", wav: "audio/wav", ogg: "audio/ogg", oga: "audio/ogg", opus: "audio/ogg", flac: "audio/flac" })[(f.name.split(".").pop() || "").toLowerCase()] || "audio/mpeg";
+      const duration = await bgmProbeDuration(new Blob([buf], { type }));
+      const id = "l" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      const meta = { id, name: f.name.replace(/\.[^.]+$/, ""), file: f.name, ext: (f.name.split(".").pop() || "").toLowerCase(), type, size: buf.byteLength, duration, added: Date.now() + n };
+      await bgmReq(["bgm", "bgmData"], "readwrite", (tx) => { tx.objectStore("bgmData").put({ id, buf, type }); tx.objectStore("bgm").put(meta); });
+      n++;
+    } catch (e) {
+      toast(isQuotaError && isQuotaError(e) ? "저장 공간이 부족해요" : "가져오지 못한 파일이 있어요: " + f.name, 2200);
+    }
+  }
+  await bgmLoadLocal();
+  if (n) toast(`${n}곡을 내 음원에 담았어요 · 오프라인 재생 가능`, 1600);
+  return n;
+}
+async function bgmDeleteLocal(id) {
+  await bgmReq(["bgm", "bgmData"], "readwrite", (tx) => { tx.objectStore("bgm").delete(id); tx.objectStore("bgmData").delete(id); });
+  if (bgm.cur && bgm.cur.kind === "local" && bgm.cur.id === id) { bgmAudio.pause(); bgmAudio.removeAttribute("src"); bgmAudio.load(); bgm.cur = null; bgm.idx = -1; bgmUpdateIndicators(); }
+  for (const k in bgmPrefs.albums) if (bgmPrefs.albums[k].kind === "local" && bgmPrefs.albums[k].id === id) delete bgmPrefs.albums[k];
+  bgmSavePrefs();
+  await bgmLoadLocal();
+}
+async function bgmLocalUrl(id) {
+  const d = await bgmReq(["bgmData"], "readonly", (tx) => tx.objectStore("bgmData").get(id));
+  if (!d) throw new Error("missing");
+  if (bgm.objUrl) URL.revokeObjectURL(bgm.objUrl);
+  bgm.objUrl = URL.createObjectURL(new Blob([d.buf], { type: d.type || "audio/mpeg" }));
+  return bgm.objUrl;
+}
+
+/* ---------- offline cache for built-in tracks ---------- */
+async function bgmRefreshCached() {
+  bgm.cached = new Set();
+  if (!window.caches) return bgm.cached;
+  try { const c = await caches.open(BGM_CACHE); for (const t of bgmBuiltinTracks()) if (await c.match(bgmAbs(t.src))) bgm.cached.add(t.id); } catch (_) {}
+  return bgm.cached;
+}
+async function bgmPrecacheBuiltin(onProgress) {
+  if (!window.caches) { toast("이 브라우저는 오프라인 저장을 지원하지 않아요", 1600); return 0; }
+  if (!navigator.onLine) { toast("인터넷에 연결된 상태에서 저장할 수 있어요", 1600); return 0; }
+  const c = await caches.open(BGM_CACHE), list = bgmBuiltinTracks();
+  let done = 0;
+  for (const t of list) {
+    try {
+      const u = bgmAbs(t.src);
+      if (!(await c.match(u))) { const r = await fetch(u, { cache: "no-cache" }); if (!r.ok) throw new Error(r.status); await c.put(u, r); }
+      if (t.cover) { const cu = bgmAbs(t.cover); if (!(await c.match(cu))) { const r = await fetch(cu); if (r.ok) await c.put(cu, r); } }
+      bgm.cached.add(t.id);
+    } catch (_) {}
+    done++;
+    if (onProgress) onProgress(done, list.length);
+  }
+  return bgm.cached.size;
+}
+
+/* ---------- playback ---------- */
+function bgmSameTrack(a, b) { return !!a && !!b && a.kind === b.kind && a.id === b.id; }
+function bgmRef(t) { return t ? { kind: t.kind, id: t.id, title: t.title } : null; }
+async function bgmResolveRef(ref) {
+  if (!ref) return null;
+  if (ref.kind === "local") { await bgmLoadLocal(); return bgmLocalTracks().find((t) => t.id === ref.id) || null; }
+  try { await bgmCatalog(); } catch (_) { return null; }
+  return (ref.kind === "builtin" ? bgmBuiltinTracks() : bgmLuneraTracks()).find((t) => t.id === ref.id) || null;
+}
+async function bgmPlayTrack(t, queue) {
+  if (!t) return false;
+  if (queue) { bgm.queue = queue; bgm.idx = queue.findIndex((x) => bgmSameTrack(x, t)); }
+  else if (!bgm.queue.some((x) => bgmSameTrack(x, t))) { bgm.queue = [t]; bgm.idx = 0; }
+  else bgm.idx = bgm.queue.findIndex((x) => bgmSameTrack(x, t));
+  if (t.kind === "lunera" && !navigator.onLine) { toast("오프라인이에요 · 루네라 전체는 온라인 스트리밍이라 지금은 못 들어요. 기본 내장이나 내 음원을 들어 보세요", 2600); return false; }
+  const changed = !bgmSameTrack(bgm.cur, t);
+  bgm.cur = t;
+  bgmPrefs.last = bgmRef(t); bgmSavePrefs();
+  // keep play() inside the user's tap where possible (iOS): set src synchronously for streams/built-ins
+  if (changed || !bgmAudio.src) {
+    if (t.kind === "local") { try { bgmAudio.src = await bgmLocalUrl(t.id); } catch (_) { toast("내 음원 파일을 찾을 수 없어요", 1500); return false; } }
+    else bgmAudio.src = bgmAbs(t.src);
+  }
+  bgmApplyVolume();
+  bgmUpdateMediaSession();
+  bgmPaint();
+  try { await bgmAudio.play(); return true; }
+  catch (e) {
+    if (e && e.name === "NotAllowedError") toast("♪ 버튼을 눌러 재생해 주세요", 1400);
+    else if (t.kind === "lunera") toast("스트리밍을 불러오지 못했어요 · 연결을 확인해 주세요", 1800);
+    bgmPaint();
+    return false;
+  }
+}
+function bgmToggle() {
+  if (!bgm.cur) { const q = bgm.queue.length ? bgm.queue : bgmBuiltinTracks(); if (q.length) bgmPlayTrack(q[0], q); return; }
+  if (bgmAudio.paused) { if (!bgmAudio.src) bgmPlayTrack(bgm.cur); else bgmAudio.play().catch(() => toast("♪ 버튼을 눌러 재생해 주세요", 1400)); }
+  else bgmAudio.pause();
+}
+function bgmStep(d, auto) {
+  const q = bgm.queue;
+  if (!q.length) return;
+  let i;
+  if (bgmPrefs.repeat === "shuffle" && q.length > 1) { do { i = Math.floor(Math.random() * q.length); } while (i === bgm.idx); }
+  else i = (bgm.idx + d + q.length) % q.length;
+  if (!auto && d < 0 && bgmAudio.currentTime > 4) { bgmAudio.currentTime = 0; return; }
+  bgmPlayTrack(q[i]);
+}
+function bgmApplyVolume() { bgmAudio.volume = Math.max(0, Math.min(1, bgmPrefs.volume)); bgmAudio.muted = !!bgmPrefs.muted; }
+function bgmUpdateMediaSession() {
+  const t = bgm.cur;
+  if (!t || !("mediaSession" in navigator)) return;
+  try {
+    const art = t.cover ? [{ src: bgmAbs(t.cover), sizes: t.kind === "builtin" ? "256x256" : "512x512", type: /\.png/i.test(t.cover) ? "image/png" : "image/jpeg" }] : [{ src: bgmAbs("icons/icon-512.png"), sizes: "512x512", type: "image/png" }];
+    navigator.mediaSession.metadata = new MediaMetadata({ title: t.title, artist: t.kind === "local" ? "내 음원" : BGM_ARTIST, album: t.album || "만화뷰어 BGM", artwork: art });
+  } catch (_) {}
+}
+(function bgmBindMediaSession() {
+  if (!("mediaSession" in navigator)) return;
+  const set = (a, f) => { try { navigator.mediaSession.setActionHandler(a, f); } catch (_) {} };
+  set("play", () => bgmAudio.play().catch(() => {}));
+  set("pause", () => bgmAudio.pause());
+  set("previoustrack", () => bgmStep(-1));
+  set("nexttrack", () => bgmStep(1));
+  set("seekto", (e) => { if (e && typeof e.seekTime === "number") bgmAudio.currentTime = e.seekTime; });
+})();
+function bgmUpdateIndicators() {
+  const on = !!bgm.cur && !bgmAudio.paused;
+  document.querySelectorAll(".bgm-btn").forEach((b) => { b.classList.toggle("playing", on); b.classList.toggle("loaded", !!bgm.cur); b.setAttribute("aria-pressed", on ? "true" : "false"); });
+  if ("mediaSession" in navigator) try { navigator.mediaSession.playbackState = bgm.cur ? (on ? "playing" : "paused") : "none"; } catch (_) {}
+}
+bgmAudio.addEventListener("play", () => { bgmUpdateIndicators(); bgmPaint(); });
+bgmAudio.addEventListener("pause", () => { bgmUpdateIndicators(); bgmPaint(); });
+bgmAudio.addEventListener("loadedmetadata", () => bgmPaint());
+bgmAudio.addEventListener("timeupdate", () => bgmPaintTime());
+bgmAudio.addEventListener("ended", () => { if (bgmPrefs.repeat === "one") { bgmAudio.currentTime = 0; bgmAudio.play().catch(() => {}); } else bgmStep(1, true); });
+bgmAudio.addEventListener("error", () => { if (!bgm.cur) return; toast(bgm.cur.kind === "lunera" ? "스트리밍을 불러오지 못했어요 · 온라인 상태를 확인해 주세요" : "이 곡을 재생할 수 없어요", 1800); bgmUpdateIndicators(); bgmPaint(); });
+// never clash with the video player: a video starting pauses the BGM
+document.addEventListener("play", (e) => { if (e.target && e.target !== bgmAudio && e.target.tagName === "VIDEO" && !bgmAudio.paused) { bgmAudio.pause(); toast("영상을 재생해서 BGM을 잠시 멈췄어요", 1400); } }, true);
+// built-ins cached on first play (the service worker also does this)
+bgmAudio.addEventListener("playing", () => { const t = bgm.cur; if (t && t.kind === "builtin" && !bgm.cached.has(t.id) && window.caches) caches.open(BGM_CACHE).then((c) => c.match(bgmAbs(t.src)).then((h) => h || fetch(bgmAbs(t.src)).then((r) => r.ok && c.put(bgmAbs(t.src), r)))).then(() => { bgm.cached.add(t.id); bgmPaint(); }).catch(() => {}); });
+
+/* ---------- per-album BGM ---------- */
+function bgmAlbumKey(f) { return f && !f.virtual && !reader.bmMode ? albumKey(f) : ""; }
+function bgmAlbumRef(f) { const k = bgmAlbumKey(f); return k ? bgmPrefs.albums[k] || null : null; }
+function bgmSetAlbum(f, on) {
+  const k = bgmAlbumKey(f); if (!k) return;
+  if (on && bgm.cur) bgmPrefs.albums[k] = bgmRef(bgm.cur); else delete bgmPrefs.albums[k];
+  bgmSavePrefs();
+}
+function bgmHideOffer() { const o = $("bgmOffer"); if (o) o.classList.add("hidden"); clearTimeout(bgmHideOffer.t); }
+async function bgmOnAlbumOpen(f) {
+  bgmHideOffer();
+  const ref = bgmAlbumRef(f);
+  if (!ref) return;
+  if (bgmSameTrack(bgm.cur, ref) && !bgmAudio.paused) return; // already playing its BGM: keep going
+  const t = await bgmResolveRef(ref);
+  if (!t || currentScreen !== "reader" || reader.folder !== f) return;
+  const o = $("bgmOffer");
+  o.querySelector("b").textContent = t.title;
+  o.querySelector(".bo-play").onclick = (e) => { e.stopPropagation(); bgmHideOffer(); bgmPlayTrack(t, bgm.queue.some((x) => bgmSameTrack(x, t)) ? bgm.queue : null); };
+  o.querySelector(".bo-x").onclick = (e) => { e.stopPropagation(); bgmHideOffer(); };
+  o.classList.remove("hidden");
+  bgmHideOffer.t = setTimeout(bgmHideOffer, 8000);
+}
+
+/* ---------- 루네라 BGM 플레이어 (bottom sheet) ---------- */
+var BGM_ICONS = {
+  play: '<svg viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor" stroke="none"/></svg>',
+  pause: '<svg viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><rect x="6.5" y="5.5" width="4" height="13" rx="1"/><rect x="13.5" y="5.5" width="4" height="13" rx="1"/></g></svg>',
+  prev: '<svg viewBox="0 0 24 24"><path d="M7 6v12" /><path d="M18 6.5v11L9.5 12z" fill="currentColor" stroke="none"/></svg>',
+  next: '<svg viewBox="0 0 24 24"><path d="M17 6v12"/><path d="M6 6.5v11L14.5 12z" fill="currentColor" stroke="none"/></svg>',
+  vol: '<svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="currentColor" stroke="none"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>',
+  mute: '<svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="currentColor" stroke="none"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>',
+};
+var BGM_REPEAT = { all: "🔁 전체 반복", one: "🔂 한 곡 반복", shuffle: "🔀 셔플" };
+function bgmTabTracks(tab) {
+  if (tab === "local") return bgmLocalTracks();
+  if (tab === "lunera") {
+    const q = bgm.ui.q.trim().toLowerCase();
+    const all = bgmLuneraTracks();
+    if (!q) return all;
+    const words = q.split(/\s+/);
+    return all.filter((t) => { const hay = [t.title, t.album, t.genre, t.mood, t.lang, t.langName, ...(t.tags || [])].join(" ").toLowerCase(); return words.every((w) => hay.includes(w.replace(/^#/, ""))); });
+  }
+  return bgmBuiltinTracks();
+}
+async function openBgmPlayer(tab) {
+  if (tab) bgm.ui.tab = tab;
+  showSheet("루네라 BGM 플레이어", null, { custom: true, build(body) {
+    body.classList.add("bgm-sheet-wrap");
+    const s = document.createElement("div");
+    s.id = "bgmSheet"; s.className = "bgm-sheet";
+    s.innerHTML = `
+      <div class="bgm-now"><div class="bgm-cover"></div><div class="bgm-meta"><b class="bgm-title">곡을 골라 주세요</b><span class="bgm-sub">LUNERA · The Clown Art</span></div></div>
+      <div class="bgm-prog"><span class="bgm-t0">0:00</span><input type="range" id="bgmSeek" min="0" max="1000" value="0" step="1" aria-label="재생 위치"><span class="bgm-t1">0:00</span></div>
+      <div class="bgm-ctrl">
+        <button type="button" id="bgmRepeat" class="bgm-rep"></button>
+        <button type="button" id="bgmPrev" class="bgm-c" aria-label="이전 곡">${BGM_ICONS.prev}</button>
+        <button type="button" id="bgmPlay" class="bgm-c big" aria-label="재생">${BGM_ICONS.play}</button>
+        <button type="button" id="bgmNext" class="bgm-c" aria-label="다음 곡">${BGM_ICONS.next}</button>
+        <button type="button" id="bgmMute" class="bgm-c" aria-label="음소거">${BGM_ICONS.vol}</button>
+      </div>
+      <div class="bgm-vol"><span>음량</span><input type="range" id="bgmVol" min="0" max="100" step="1" aria-label="음량"><small>iPhone·iPad는 기기 음량 버튼으로 조절돼요</small></div>
+      <label class="bgm-album hidden" id="bgmAlbumRow"><span><b>이 앨범 BGM으로 지정</b><small id="bgmAlbumSub"></small></span><input type="checkbox" id="bgmAlbumChk" role="switch"></label>
+      <div class="bgm-tabs" role="tablist"><button type="button" data-tab="builtin">기본 내장</button><button type="button" data-tab="local">내 음원</button><button type="button" data-tab="lunera">루네라 전체</button></div>
+      <div class="bgm-tools" id="bgmTools"></div>
+      <div class="bgm-list" id="bgmList"></div>`;
+    body.appendChild(s);
+    const seek = s.querySelector("#bgmSeek");
+    let seeking = false;
+    seek.addEventListener("input", () => { seeking = true; const d = bgmAudio.duration; if (isFinite(d)) s.querySelector(".bgm-t0").textContent = bgmFmt(d * seek.value / 1000); });
+    seek.addEventListener("change", () => { const d = bgmAudio.duration; if (isFinite(d)) bgmAudio.currentTime = d * seek.value / 1000; seeking = false; });
+    seek.dataset.seeking = "";
+    seek.addEventListener("pointerdown", () => { seek.dataset.seeking = "1"; });
+    seek.addEventListener("pointerup", () => { seek.dataset.seeking = ""; });
+    s.querySelector("#bgmPlay").addEventListener("click", bgmToggle);
+    s.querySelector("#bgmPrev").addEventListener("click", () => bgmStep(-1));
+    s.querySelector("#bgmNext").addEventListener("click", () => bgmStep(1));
+    s.querySelector("#bgmMute").addEventListener("click", () => { bgmPrefs.muted = !bgmPrefs.muted; bgmApplyVolume(); bgmSavePrefs(); bgmPaint(); });
+    s.querySelector("#bgmRepeat").addEventListener("click", () => { bgmPrefs.repeat = { all: "one", one: "shuffle", shuffle: "all" }[bgmPrefs.repeat]; bgmSavePrefs(); bgmPaint(); toast(BGM_REPEAT[bgmPrefs.repeat], 900); });
+    const vol = s.querySelector("#bgmVol");
+    vol.value = String(Math.round(bgmPrefs.volume * 100));
+    vol.addEventListener("input", () => { bgmPrefs.volume = +vol.value / 100; if (bgmPrefs.muted && bgmPrefs.volume > 0) bgmPrefs.muted = false; bgmApplyVolume(); bgmPaint(); });
+    vol.addEventListener("change", bgmSavePrefs);
+    s.querySelector("#bgmAlbumChk").addEventListener("change", (e) => {
+      if (!bgm.cur) { e.target.checked = false; toast("먼저 곡을 재생해 주세요", 1200); return; }
+      bgmSetAlbum(reader.folder, e.target.checked);
+      toast(e.target.checked ? `이 앨범을 열면 '${bgm.cur.title}'을(를) 이어 들려 드려요` : "이 앨범 BGM 지정을 풀었어요", 1600);
+      bgmPaint();
+    });
+    s.querySelectorAll(".bgm-tabs button").forEach((b) => b.addEventListener("click", () => { bgm.ui.tab = b.dataset.tab; bgm.ui.limit = 60; bgmRenderList(); }));
+    bgmPaint();
+    bgmRenderList();
+  } });
+  const sh = document.querySelector(".sheet"); if (sh) sh.classList.add("bgm-sheet-host");
+  try { await bgmCatalog(); } catch (_) {}
+  await Promise.all([bgmLoadLocal(), bgmRefreshCached()]);
+  if (document.getElementById("bgmSheet")) { bgmPaint(); bgmRenderList(); }
+}
+function bgmPaintTime() {
+  const s = document.getElementById("bgmSheet"); if (!s) return;
+  const d = bgmAudio.duration, c = bgmAudio.currentTime;
+  const seek = s.querySelector("#bgmSeek");
+  if (seek.dataset.seeking !== "1") seek.value = String(isFinite(d) && d > 0 ? Math.round(c / d * 1000) : 0);
+  s.querySelector(".bgm-t0").textContent = bgmFmt(c);
+  s.querySelector(".bgm-t1").textContent = isFinite(d) && d > 0 ? bgmFmt(d) : (bgm.cur ? bgmFmt(bgm.cur.duration) : "0:00");
+}
+function bgmPaint() {
+  bgmUpdateIndicators();
+  const s = document.getElementById("bgmSheet"); if (!s) return;
+  const t = bgm.cur;
+  s.querySelector(".bgm-title").textContent = t ? t.title : "곡을 골라 주세요";
+  s.querySelector(".bgm-sub").textContent = t ? [t.kind === "local" ? "내 음원 · 오프라인" : BGM_ARTIST, t.kind === "lunera" ? "온라인 스트리밍" : t.kind === "builtin" ? (bgm.cached.has(t.id) ? "기본 내장 · 오프라인 ✓" : "기본 내장") : ""].filter(Boolean).join(" · ") : "아래에서 곡을 탭하면 바로 재생돼요";
+  const cv = s.querySelector(".bgm-cover");
+  const want = t && t.cover ? bgmAbs(t.cover) : "";
+  if (cv.dataset.src !== want) { cv.dataset.src = want; cv.innerHTML = want ? `<img alt="" src="${want.replace(/"/g, "&quot;")}">` : "<span>♪</span>"; }
+  const playing = !!t && !bgmAudio.paused;
+  const pb = s.querySelector("#bgmPlay"); pb.innerHTML = playing ? BGM_ICONS.pause : BGM_ICONS.play; pb.setAttribute("aria-label", playing ? "일시정지" : "재생"); pb.classList.toggle("on", playing);
+  s.querySelector("#bgmMute").innerHTML = bgmPrefs.muted || bgmPrefs.volume === 0 ? BGM_ICONS.mute : BGM_ICONS.vol;
+  s.querySelector("#bgmMute").classList.toggle("on", !!bgmPrefs.muted);
+  s.querySelector("#bgmRepeat").textContent = BGM_REPEAT[bgmPrefs.repeat];
+  s.querySelector("#bgmVol").value = String(Math.round(bgmPrefs.volume * 100));
+  const row = s.querySelector("#bgmAlbumRow");
+  const inReader = currentScreen === "reader" && !!bgmAlbumKey(reader.folder);
+  row.classList.toggle("hidden", !inReader);
+  if (inReader) {
+    const ref = bgmAlbumRef(reader.folder);
+    s.querySelector("#bgmAlbumChk").checked = !!ref && bgmSameTrack(ref, t || {});
+    s.querySelector("#bgmAlbumSub").textContent = (reader.folder.name || "") + (ref ? ` · 지정됨: ${ref.title}` : " · 열 때마다 이 곡을 이어 들려 드려요");
+  }
+  s.querySelectorAll(".bgm-tabs button").forEach((b) => b.classList.toggle("on", b.dataset.tab === bgm.ui.tab));
+  s.querySelectorAll(".bgm-row").forEach((r) => r.classList.toggle("cur", !!t && r.dataset.kind === t.kind && r.dataset.id === t.id));
+  bgmPaintTime();
+}
+function bgmRenderList() {
+  const s = document.getElementById("bgmSheet"); if (!s) return;
+  const tab = bgm.ui.tab, tools = s.querySelector("#bgmTools"), list = s.querySelector("#bgmList");
+  s.querySelectorAll(".bgm-tabs button").forEach((b) => b.classList.toggle("on", b.dataset.tab === tab));
+  tools.innerHTML = ""; list.innerHTML = "";
+  if (tab === "builtin") {
+    const n = bgmBuiltinTracks().length, have = bgm.cached.size;
+    const b = document.createElement("button"); b.type = "button"; b.id = "bgmPrecache"; b.className = "bgm-pre" + (have >= n && n ? " done" : "");
+    b.textContent = have >= n && n ? `✓ ${n}곡 오프라인 저장됨` : `⤓ ${n}곡 오프라인 미리 저장 (약 19MB)`;
+    b.addEventListener("click", async () => {
+      if (b.classList.contains("done") || b.disabled) return;
+      b.disabled = true;
+      const got = await bgmPrecacheBuiltin((i, m) => { b.textContent = `저장 중… ${i}/${m}`; });
+      b.disabled = false;
+      if (got >= n) { toast(`기본 BGM ${n}곡을 오프라인에 저장했어요 · 비행기 모드에서도 재생돼요`, 2000); }
+      bgmRenderList(); bgmPaint();
+    });
+    tools.appendChild(b);
+  } else if (tab === "local") {
+    const b = document.createElement("button"); b.type = "button"; b.id = "bgmAddLocal"; b.className = "bgm-pre add"; b.textContent = "+ 내 음원 추가 (MP3 · M4A · WAV · OGG)";
+    b.addEventListener("click", () => $("bgmFile").click());
+    tools.appendChild(b);
+  } else {
+    const w = document.createElement("div"); w.className = "bgm-search";
+    w.innerHTML = '<input type="search" id="bgmSearch" placeholder="제목 · 무드 · 장르 · 언어 검색" enterkeyhint="search" autocomplete="off"><span id="bgmCount"></span>';
+    const inp = w.querySelector("input"); inp.value = bgm.ui.q;
+    let tm = 0;
+    inp.addEventListener("input", () => { bgm.ui.q = inp.value; bgm.ui.limit = 60; clearTimeout(tm); tm = setTimeout(() => bgmRenderRows(), 80); });
+    tools.appendChild(w);
+    if (!navigator.onLine) { const p = document.createElement("p"); p.className = "bgm-note"; p.textContent = "지금 오프라인이에요 · 루네라 전체는 온라인일 때 스트리밍돼요"; tools.appendChild(p); }
+  }
+  bgmRenderRows();
+}
+function bgmRenderRows() {
+  const s = document.getElementById("bgmSheet"); if (!s) return;
+  const tab = bgm.ui.tab, list = s.querySelector("#bgmList");
+  const tracks = bgmTabTracks(tab);
+  const cnt = s.querySelector("#bgmCount");
+  if (cnt) cnt.textContent = bgm.ui.q.trim() ? `${tracks.length} / ${bgmLuneraTracks().length}곡` : `${tracks.length}곡`;
+  list.innerHTML = "";
+  if (!bgm.cat && tab !== "local") { list.innerHTML = '<p class="bgm-empty">곡 목록을 불러오는 중…</p>'; return; }
+  if (!tracks.length) { list.innerHTML = tab === "local" ? '<p class="bgm-empty">아직 담은 음원이 없어요.<br>파일 앱에서 MP3·M4A·WAV·OGG를 골라 담으면<br>비행기 모드에서도 들을 수 있어요.</p>' : '<p class="bgm-empty">맞는 곡이 없어요</p>'; return; }
+  const shown = tab === "lunera" ? tracks.slice(0, bgm.ui.limit) : tracks;
+  for (const t of shown) {
+    const r = document.createElement("div");
+    r.className = "bgm-row"; r.dataset.kind = t.kind; r.dataset.id = t.id; r.setAttribute("role", "button"); r.tabIndex = 0;
+    const badge = t.kind === "lunera" ? '<i class="bdg on">온라인 스트리밍</i>' : t.kind === "builtin" ? (bgm.cached.has(t.id) ? '<i class="bdg ok">오프라인 ✓</i>' : '<i class="bdg">첫 재생 때 저장</i>') : '<i class="bdg ok">기기 저장</i>';
+    r.innerHTML = `<div class="br-cv">${t.cover ? `<img loading="lazy" alt="" src="${bgmAbs(t.cover).replace(/"/g, "&quot;")}">` : "<span>♪</span>"}</div><div class="br-tx"><b></b><small></small></div>${badge}`;
+    r.querySelector("b").textContent = t.title;
+    r.querySelector("small").textContent = [t.kind === "lunera" ? t.langName : "", t.genre, t.mood, bgmFmt(t.duration)].filter(Boolean).join(" · ");
+    r.addEventListener("click", () => { bgmPlayTrack(t, tracks); });
+    if (t.kind === "local") {
+      const del = document.createElement("button"); del.type = "button"; del.className = "br-del"; del.textContent = "✕"; del.setAttribute("aria-label", t.title + " 삭제");
+      del.addEventListener("click", async (e) => { e.stopPropagation(); if (!confirm(`'${t.title}'을(를) 내 음원에서 지울까요?`)) return; await bgmDeleteLocal(t.id); toast("지웠어요", 900); bgmRenderList(); bgmPaint(); });
+      r.appendChild(del);
+    }
+    list.appendChild(r);
+  }
+  if (tab === "lunera" && tracks.length > shown.length) {
+    const m = document.createElement("button"); m.type = "button"; m.className = "bgm-more"; m.textContent = `더 보기 (${tracks.length - shown.length}곡 더)`;
+    m.addEventListener("click", () => { bgm.ui.limit += 120; bgmRenderRows(); });
+    list.appendChild(m);
+  }
+  bgmPaint();
+}
+
+/* ---------- bindings ---------- */
+document.getElementById("bgmFile").addEventListener("change", async (e) => {
+  const files = e.target.files; await bgmImportFiles(files); e.target.value = "";
+  bgm.ui.tab = "local";
+  if (document.getElementById("bgmSheet")) bgmRenderList(); else openBgmPlayer("local");
+});
+["btnBgm", "btnBgmR"].forEach((id) => { const b = document.getElementById(id); if (b) b.addEventListener("click", (e) => { e.stopPropagation(); clearTimeout(readerHideTimer); openBgmPlayer(); }); });
+bgmApplyVolume();
+(async () => { try { await bgmCatalog(); } catch (_) {} if (bgmPrefs.last) { const t = await bgmResolveRef(bgmPrefs.last); if (t && !bgm.cur) { bgm.cur = t; bgm.queue = t.kind === "builtin" ? bgmBuiltinTracks() : [t]; bgm.idx = Math.max(0, bgm.queue.findIndex((x) => bgmSameTrack(x, t))); bgmUpdateMediaSession(); bgmUpdateIndicators(); } } })();
+var _openReaderV16 = openReader;
+openReader = async function () { const r = await _openReaderV16.apply(this, arguments); try { bgmOnAlbumOpen(reader.folder); } catch (_) {} return r; };
 
 function clickPhotoPick() { quickPickPhotos(); }
 $("btnAddPhotos") && $("btnAddPhotos").addEventListener("click", clickPhotoPick);
