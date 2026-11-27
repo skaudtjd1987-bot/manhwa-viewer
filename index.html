@@ -1153,6 +1153,28 @@ body.bgm-mini-on #exScroll { padding-bottom: calc(96px + var(--safe-b)); }
 body.bgm-mini-on .toast { bottom: calc(24px + var(--safe-b) + 78px); }
 body.bgm-mini-vis:not(:has(#overlay:not(.hidden))) .toast { bottom: calc(var(--bgm-mini-off, 90px) + 10px) !important; }
 
+/* v16c: sheet header with ✕, swipe-down, roomy backdrop */
+.overlay { padding-top: calc(var(--safe-t) + 56px) !important; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.overlay > * { cursor: auto; }
+.sheet { overscroll-behavior: contain; will-change: transform; max-height: calc(100dvh - var(--safe-t) - 56px); }
+.sheet.has-head { padding-top: 0; }
+.sheet.has-head::before { display: none; }
+.sheet-head { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 8px; margin: 0 -12px 6px; padding: 18px 8px 6px 12px;
+  background: rgba(26,28,35,.97); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); border-radius: 22px 22px 0 0; touch-action: none; cursor: grab; }
+.sheet.bgm-sheet-host .sheet-head { margin-left: -14px; margin-right: -14px; padding-left: 14px; }
+.sheet-head::before { content: ""; position: absolute; top: 7px; left: 50%; width: 40px; height: 5px; margin-left: -20px; border-radius: 3px; background: rgba(255,255,255,.3); }
+.sheet-head h3 { flex: 1; min-width: 0; margin: 0 0 0 12px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sheet-x { width: 44px; height: 44px; flex: none; border-radius: 22px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,.12); color: #fff; cursor: pointer; }
+.sheet-x svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; fill: none; }
+.sheet-x:active { background: rgba(255,255,255,.24); transform: scale(.94); }
+.bgm-langs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 2px 0; -webkit-overflow-scrolling: touch; }
+.bgm-langs::-webkit-scrollbar { display: none; }
+.bgm-lang { flex: 1 0 auto; height: 34px; padding: 0 10px; border-radius: 17px; font-size: 13.5px; font-weight: 650; color: rgba(255,255,255,.75); background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.12); font-variant-numeric: tabular-nums; }
+.bgm-lang.on { background: linear-gradient(135deg, #ffb4d0, #b9a0ff); color: #15101c; border-color: transparent; }
+.bgm-lang:active { transform: scale(.96); }
+.sheet.bgm-sheet-host { background: rgba(22,20,28,.97); }
+.sheet.bgm-sheet-host .sheet-head { background: rgba(22,20,28,.99); }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
@@ -4333,7 +4355,7 @@ function applyReaderLook() {
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v16b";
+const PWA_CACHE = "mhv-pwa-v16c";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
@@ -7032,6 +7054,7 @@ function showScreen(name) {
 
 const overlay = $("overlay");
 function closeSheet() {
+  sheetDrag = null; overlay.style.backgroundColor = "";
   overlay.classList.add("hidden");
   overlay.innerHTML = "";
 }
@@ -7061,6 +7084,7 @@ function showSheet(title, items, opts) {
   cancel.addEventListener("click", closeSheet);
   sheet.appendChild(cancel);
   overlay.appendChild(sheet);
+  sheetAddHead(sheet);
   overlay.onclick = (e) => { if (e.target === overlay) closeSheet(); };
 }
 
@@ -8705,10 +8729,11 @@ document.getElementById("btnAuto").addEventListener("click", (e) => { e.stopProp
 var BGM_PREF_KEY = "mhv-bgm-v1", BGM_CACHE = "mhv-bgm-v1", BGM_ARTIST = "LUNERA · The Clown Art";
 var bgmAudio = document.getElementById("bgmAudio");
 var bgmMsHandlers = [], bgmPosT = 0;
-var bgm = { cat: null, catP: null, queue: [], idx: -1, cur: null, local: [], cached: new Set(), ui: { tab: "builtin", q: "", bq: "", limit: 60 }, objUrl: "", loadingId: "", pre: null };
+var bgm = { cat: null, catP: null, queue: [], idx: -1, cur: null, local: [], cached: new Set(), ui: { tab: "builtin", q: "", bq: "", limit: 60, lang: "all" }, objUrl: "", loadingId: "", pre: null };
 var bgmPrefs = v15Load(BGM_PREF_KEY, {});
 if (!bgmPrefs.albums) bgmPrefs.albums = {};
 if (!["all", "one", "shuffle"].includes(bgmPrefs.repeat)) bgmPrefs.repeat = "all";
+if (["all", "ko", "ja", "en"].includes(bgmPrefs.lang)) bgm.ui.lang = bgmPrefs.lang;
 if (typeof bgmPrefs.volume !== "number") bgmPrefs.volume = 0.8;
 function bgmSavePrefs() { v15Save(BGM_PREF_KEY, bgmPrefs); }
 function bgmFmt(s) { s = Math.max(0, Math.floor(s || 0)); return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); }
@@ -8721,8 +8746,11 @@ function bgmCatalog() {
   return bgm.catP;
 }
 function bgmBuiltinTracks() {
-  return ((bgm.cat && bgm.cat.builtin) || []).map((b) => ({ kind: "builtin", id: b.id, title: b.title, album: b.album, genre: b.genre, src: b.src, cover: b.cover, duration: b.duration }));
+  return ((bgm.cat && bgm.cat.builtin) || []).map((b) => ({ kind: "builtin", id: b.id, title: b.title, album: b.album, genre: b.genre, lang: b.lang || (/-ja$/.test(b.id) ? "ja" : /-en$/.test(b.id) ? "en" : "ko"), src: b.src, cover: b.cover, duration: b.duration, bytes: b.bytes || 0 }));
 }
+var BGM_LANGS = [["all", "전체"], ["ko", "한국어"], ["ja", "일본어"], ["en", "영어"]];
+function bgmLangName(l) { const f = BGM_LANGS.find((x) => x[0] === l); return f ? f[1] : l; }
+function bgmLangTracks() { const all = bgmBuiltinTracks(), l = bgm.ui.lang || "all"; return l === "all" ? all : all.filter((t) => t.lang === l); }
 function bgmLuneraTracks() {
   const L = (bgm.cat && bgm.cat.langNames) || {};
   return ((bgm.cat && bgm.cat.tracks) || []).map((t) => ({ kind: "lunera", id: t.id, title: t.title, album: t.album, genre: t.genre, mood: t.mood, tags: t.tags || [], lang: t.lang, langName: L[t.lang] || t.lang, src: t.audio, cover: t.cover, duration: t.duration }));
@@ -8815,10 +8843,10 @@ async function bgmRefreshCached() {
   } catch (_) {}
   return bgm.cached;
 }
-async function bgmPrecacheBuiltin(onProgress) {
+async function bgmPrecacheBuiltin(onProgress, only) {
   if (!window.caches) { toast("이 브라우저는 오프라인 저장을 지원하지 않아요", 1600); return 0; }
   if (!navigator.onLine) { toast("인터넷에 연결된 상태에서 저장할 수 있어요", 1600); return 0; }
-  const c = await caches.open(BGM_CACHE), list = bgmBuiltinTracks();
+  const c = await caches.open(BGM_CACHE), list = only || bgmBuiltinTracks();
   let done = 0, next = 0, failed = 0;
   const one = async (t) => {
     try {
@@ -8976,7 +9004,7 @@ function bgmTabTracks(tab) {
     return all.filter((t) => { const hay = [t.title, t.album, t.genre, t.mood, t.lang, t.langName, ...(t.tags || [])].join(" ").toLowerCase(); return words.every((w) => hay.includes(w.replace(/^#/, ""))); });
   }
   const bq = bgm.ui.bq.trim().toLowerCase();
-  const all = bgmBuiltinTracks();
+  const all = bgmLangTracks();
   if (!bq) return all;
   return all.filter((t) => bq.split(/\s+/).every((w) => [t.title, t.album, t.genre].join(" ").toLowerCase().includes(w)));
 }
@@ -9076,23 +9104,38 @@ function bgmRenderList() {
   s.querySelectorAll(".bgm-tabs button").forEach((b) => b.classList.toggle("on", b.dataset.tab === tab));
   tools.innerHTML = ""; list.innerHTML = "";
   if (tab === "builtin") {
-    const n = bgmBuiltinTracks().length, have = bgm.cached.size;
+    const allB = bgmBuiltinTracks(), lang = bgm.ui.lang || "all";
+    const pills = document.createElement("div"); pills.className = "bgm-langs"; pills.setAttribute("role", "tablist");
+    for (const [k, nm] of BGM_LANGS) {
+      const c = k === "all" ? allB.length : allB.filter((t) => t.lang === k).length;
+      if (k !== "all" && !c) continue;
+      const pb = document.createElement("button"); pb.type = "button"; pb.dataset.lang = k; pb.className = "bgm-lang" + (k === lang ? " on" : ""); pb.setAttribute("role", "tab"); pb.setAttribute("aria-selected", k === lang ? "true" : "false");
+      pb.textContent = `${nm} (${c})`;
+      pb.addEventListener("click", () => { if (bgm.ui.lang === k) return; bgm.ui.lang = k; bgmPrefs.lang = k; bgmSavePrefs(); bgmRenderList(); const l = document.getElementById("bgmList"); if (l) l.scrollTop = 0; });
+      pills.appendChild(pb);
+    }
+    tools.appendChild(pills);
+    const L = bgmLangTracks(), n = L.length, have = L.filter((t) => bgm.cached.has(t.id)).length, lname = bgmLangName(lang);
+    const mb = Math.round(L.filter((t) => !bgm.cached.has(t.id)).reduce((a, t) => a + t.bytes, 0) / 1048576);
     const b = document.createElement("button"); b.type = "button"; b.id = "bgmPrecache"; b.className = "bgm-pre" + (have >= n && n ? " done" : "");
-    b.textContent = have >= n && n ? `✓ ${n}곡 오프라인 저장됨` : `⤓ ${n}곡 오프라인 미리 저장 (약 ${Math.round(((bgm.cat && bgm.cat.builtin) || []).reduce((a, b) => a + (b.bytes || 0), 0) / 1048576)}MB)`;
-    if (have && have < n && !bgm.pre) b.textContent = `⤓ 나머지 ${n - have}곡 오프라인 저장 (${have}/${n} 저장됨)`;
+    b.textContent = have >= n && n ? `✓ ${lname} ${n}곡 오프라인 저장됨` : `⤓ ${lname} ${n}곡 오프라인 저장 (약 ${mb}MB)`;
+    if (have && have < n && !bgm.pre) b.textContent = `⤓ ${lname} 나머지 ${n - have}곡 오프라인 저장 (${have}/${n} 저장됨 · 약 ${mb}MB)`;
     if (bgm.pre) { b.disabled = true; b.textContent = `${bgm.pre[0]}/${bgm.pre[1]} 저장 중…`; b.style.setProperty("--p", (bgm.pre[0] / bgm.pre[1] * 100) + "%"); b.classList.add("busy"); }
     b.addEventListener("click", async () => {
       if (b.classList.contains("done") || b.disabled || bgm.pre) return;
-      bgm.pre = [bgm.cached.size, n];
+      const todo = L.filter((t) => !bgm.cached.has(t.id)), m = todo.length;
+      bgm.pre = [0, m];
       bgmRenderList();
-      const got = await bgmPrecacheBuiltin((i, m) => {
-        bgm.pre = [i, m];
+      const before = bgm.cached.size;
+      await bgmPrecacheBuiltin((i, mm) => {
+        bgm.pre = [i, mm];
         const x = document.getElementById("bgmPrecache");
-        if (x) { x.textContent = `${i}/${m} 저장 중…`; x.style.setProperty("--p", (i / m * 100) + "%"); }
+        if (x) { x.textContent = `${i}/${mm} 저장 중…`; x.style.setProperty("--p", (i / mm * 100) + "%"); }
         if (document.getElementById("bgmSheet")) document.querySelectorAll(".bgm-row").forEach((r) => { if (r.dataset.kind === "builtin" && bgm.cached.has(r.dataset.id)) { const g = r.querySelector(".bdg"); if (g && !g.classList.contains("ok")) { g.className = "bdg ok"; g.textContent = "오프라인 ✓"; } } });
-      });
+      }, todo);
       bgm.pre = null;
-      if (got >= n) { toast(`기본 BGM ${n}곡을 오프라인에 저장했어요 · 비행기 모드에서도 재생돼요`, 2000); }
+      if (L.every((t) => bgm.cached.has(t.id))) toast(`${lname} ${n}곡을 오프라인에 저장했어요 · 비행기 모드에서도 재생돼요`, 2000);
+      else if (bgm.cached.size > before) toast("일부만 저장됐어요 · 다시 누르면 남은 곡부터 이어서 저장해요", 2000);
       bgmRenderList(); bgmPaint();
     });
     tools.appendChild(b);
@@ -9122,7 +9165,7 @@ function bgmRenderRows() {
   const tab = bgm.ui.tab, list = s.querySelector("#bgmList");
   const tracks = bgmTabTracks(tab);
   const cnt = s.querySelector("#bgmCount");
-  const qq = tab === "builtin" ? bgm.ui.bq : bgm.ui.q, tot = tab === "builtin" ? bgmBuiltinTracks().length : bgmLuneraTracks().length;
+  const qq = tab === "builtin" ? bgm.ui.bq : bgm.ui.q, tot = tab === "builtin" ? bgmLangTracks().length : bgmLuneraTracks().length;
   if (cnt) cnt.textContent = qq.trim() ? `${tracks.length} / ${tot}곡` : `${tracks.length}곡`;
   bgmTabLabels();
   list.innerHTML = "";
@@ -9135,7 +9178,7 @@ function bgmRenderRows() {
     const badge = t.kind === "lunera" ? '<i class="bdg on">온라인 스트리밍</i>' : t.kind === "builtin" ? (bgm.cached.has(t.id) ? '<i class="bdg ok">오프라인 ✓</i>' : '<i class="bdg">첫 재생 때 저장</i>') : '<i class="bdg ok">기기 저장</i>';
     r.innerHTML = `<div class="br-cv">${t.cover ? `<img loading="lazy" alt="" src="${bgmAbs(t.cover).replace(/"/g, "&quot;")}">` : "<span>♪</span>"}</div><div class="br-tx"><b></b><small></small></div>${badge}`;
     r.querySelector("b").textContent = t.title;
-    r.querySelector("small").textContent = [t.kind === "lunera" ? t.langName : "", t.genre, t.mood, bgmFmt(t.duration)].filter(Boolean).join(" · ");
+    r.querySelector("small").textContent = [t.kind === "lunera" ? t.langName : t.kind === "builtin" && (bgm.ui.lang || "all") === "all" ? bgmLangName(t.lang) : "", t.genre, t.mood, bgmFmt(t.duration)].filter(Boolean).join(" · ");
     r.addEventListener("click", () => { bgmPlayTrack(t, tracks); });
     if (t.kind === "local") {
       const del = document.createElement("button"); del.type = "button"; del.className = "br-del"; del.textContent = "✕"; del.setAttribute("aria-label", t.title + " 삭제");
@@ -9219,6 +9262,71 @@ function bgmMiniTime() {
   new MutationObserver(bgmMiniPaint).observe(document.getElementById("readerChrome"), { attributes: true, attributeFilter: ["class"] });
   new MutationObserver(() => bgmMiniPaint()).observe(overlay, { attributes: true, attributeFilter: ["class"] });
   window.addEventListener("resize", () => bgmMiniPaint());
+})();
+
+// v16c: sheets — sticky header ✕, swipe-down-to-dismiss, roomy backdrop
+function sheetDismiss(sheet) {
+  if (!sheet || !sheet.isConnected) return;
+  const c = sheet.querySelectorAll(".sheet-cancel");
+  if (c.length) c[c.length - 1].click(); else closeSheet();
+}
+function sheetAddHead(sheet) {
+  const h = sheet.querySelector(":scope > h3"); if (!h || sheet.querySelector(".sheet-head")) return;
+  const head = document.createElement("div"); head.className = "sheet-head";
+  h.replaceWith(head); head.appendChild(h);
+  const x = document.createElement("button"); x.type = "button"; x.className = "sheet-x"; x.setAttribute("aria-label", "닫기");
+  x.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+  x.addEventListener("click", (e) => { e.stopPropagation(); sheetDismiss(sheet); });
+  head.appendChild(x);
+  sheet.classList.add("has-head");
+}
+var sheetDrag = null;
+function sheetDragStart(sheet, y, fromHead) { sheetDrag = { sheet, y0: y, dy: 0, t0: performance.now(), fromHead, live: fromHead, lastY: y, lastT: performance.now(), v: 0 }; }
+function sheetDragMove(y, e) {
+  const d = sheetDrag; if (!d) return;
+  const dy = y - d.y0;
+  if (!d.live) {
+    if (dy < -4) { sheetDrag = null; return; }              // scrolling up the list → let it scroll
+    if (dy > 4 && d.sheet.scrollTop <= 0) { d.live = true; d.y0 = y; }
+    else return;
+  }
+  const now = performance.now(); d.v = (y - d.lastY) / Math.max(1, now - d.lastT); d.lastY = y; d.lastT = now;
+  d.dy = Math.max(0, y - d.y0);
+  if (e && e.cancelable) e.preventDefault();
+  d.sheet.style.transition = "none";
+  d.sheet.style.transform = `translateY(${d.dy}px)`;
+  overlay.style.backgroundColor = `rgba(0,0,0,${Math.max(0.08, 0.42 * (1 - d.dy / 400))})`;
+}
+function sheetDragEnd() {
+  const d = sheetDrag; sheetDrag = null; if (!d || !d.live) return;
+  const sh = d.sheet;
+  if (d.dy > 70 || (d.v > 0.5 && d.dy > 12)) {
+    sh.style.transition = "transform .2s ease-in"; sh.style.transform = "translateY(110%)";
+    setTimeout(() => { overlay.style.backgroundColor = ""; sheetDismiss(sh); }, 190);
+  } else {
+    sh.style.transition = "transform .25s cubic-bezier(.2,.8,.2,1)"; sh.style.transform = "";
+    overlay.style.backgroundColor = "";
+  }
+}
+(function sheetGestures() {
+  const pick = (t) => { const sh = t && t.closest && t.closest(".sheet"); if (!sh || !overlay.contains(sh)) return null; if (t.closest("input[type=range], input[type=text], input[type=search], textarea, .pin-key")) return null; return sh; };
+  overlay.addEventListener("touchstart", (e) => {
+    const sh = pick(e.target); if (!sh || e.touches.length !== 1) { sheetDrag = null; return; }
+    sheetDragStart(sh, e.touches[0].clientY, !!e.target.closest(".sheet-head, .sheet-grab"));
+  }, { passive: true });
+  overlay.addEventListener("touchmove", (e) => { if (sheetDrag && e.touches.length === 1) sheetDragMove(e.touches[0].clientY, e); }, { passive: false });
+  overlay.addEventListener("touchend", sheetDragEnd);
+  overlay.addEventListener("touchcancel", sheetDragEnd);
+  // mouse / pen: drag by the header only
+  overlay.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "touch") return;
+    const sh = pick(e.target); if (!sh || !e.target.closest(".sheet-head")) return;
+    if (e.target.closest(".sheet-x")) return;
+    sheetDragStart(sh, e.clientY, true);
+    const mv = (ev) => sheetDragMove(ev.clientY, ev);
+    const up = () => { window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); const was = sheetDrag && sheetDrag.dy > 5; sheetDragEnd(); if (was) { const sw = (ev) => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener("click", sw, { capture: true, once: true }); setTimeout(() => window.removeEventListener("click", sw, true), 50); } };
+    window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up);
+  });
 })();
 
 function clickPhotoPick() { quickPickPhotos(); }
