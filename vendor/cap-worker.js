@@ -316,10 +316,16 @@ self.onmessage = async (ev) => {
     }
     if (m.type === "transcribe") {
       cancelled = false;
-      const cues = m.progressive
-        ? await transcribeProgressive(m.audio, m.sampleRate || 16000, m.language || "auto", m.task || "transcribe", m.tier || "accurate", m.vocab || "", m.kind || "orig")
-        : await transcribeFull(m.audio, m.sampleRate || 16000, m.language || "auto", m.task || "transcribe", m.tier || "accurate", m.vocab || "");
-      self.postMessage({ type: "cues", kind: m.kind || "orig", cues, device: asrDevice, model: (ASR[m.tier || "accurate"] || ASR.accurate).id });
+      const off = Number(m.offset) || 0;
+      let cues;
+      if (m.progressive) {
+        cues = await transcribeProgressive(m.audio, m.sampleRate || 16000, m.language || "auto", m.task || "transcribe", m.tier || "accurate", m.vocab || "", m.kind || "orig");
+        if (off) cues = cues.map((c) => ({ start: c.start + off, end: c.end + off, text: c.text }));
+      } else {
+        cues = await transcribeFull(m.audio, m.sampleRate || 16000, m.language || "auto", m.task || "transcribe", m.tier || "accurate", m.vocab || "");
+        if (off) cues = cues.map((c) => ({ start: c.start + off, end: c.end + off, text: c.text }));
+      }
+      self.postMessage({ type: "cues", kind: m.kind || "orig", cues, device: asrDevice, model: (ASR[m.tier || "accurate"] || ASR.accurate).id, offset: off });
       return;
     }
     if (m.type === "translate") {

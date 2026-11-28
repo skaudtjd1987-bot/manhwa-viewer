@@ -1,5 +1,5 @@
 /* 만화뷰어 service worker: cache-first, versioned, engine precache with progress */
-const CACHE_VERSION = "mhv-pwa-v21";
+const CACHE_VERSION = "mhv-pwa-v21b";
 // BGM files live in their own cache that survives app updates (no 19MB re-download per version)
 const BGM_CACHE = "mhv-bgm-v1";
 // Caption / translation models (transformers.js + ONNX) survive app updates
@@ -174,6 +174,8 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
   if (url.protocol !== "http:" && url.protocol !== "https:") return;
   if (url.origin !== self.location.origin) return;
+  // Bare UUID paths are not app assets (WebKit/Playwright file routes). Let the browser handle them.
+  if (/^\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/?$/i.test(url.pathname)) return;
 
   if (/\/bgm\/[^/]+\.(mp3|jpg)$/i.test(url.pathname)) { event.respondWith(bgmResponse(event)); return; }
 
