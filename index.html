@@ -2213,6 +2213,46 @@ body.v19-focus #bgmNp { opacity: 0; }
 #dlAdv[open] > summary::after { content: "▴"; }
 .cap-src-lab { display: block; margin: 8px 0 6px; font-size: 12.5px; font-weight: 700; color: var(--text2); }
 
+/* ===== v21.3 polish ===== */
+/* ===== v21.3 polish + offline + download errors ===== */
+:root { --accent: #d6455a; }
+#btnDlAll { letter-spacing: -0.02em; }
+#btnDlAll small { display: block; font-size: 12px; font-weight: 600; opacity: .92; margin-top: 2px; }
+#dlAllErr {
+  margin: 10px 0 0; padding: 12px 14px; border-radius: 14px;
+  background: rgba(214, 69, 90, 0.12); border: .5px solid rgba(214, 69, 90, 0.45);
+  color: #f3dfe2; font-size: 13.5px; line-height: 1.45;
+}
+#dlAllErr b { color: #fff6ec; font-weight: 700; }
+#dlAllRetry {
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-top: 10px; min-height: 44px; min-width: 44px; padding: 0 16px;
+  border: 0; border-radius: 12px; background: var(--accent); color: #fff6ec;
+  font-weight: 700; font-size: 14px;
+}
+.mhv-offline {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  top: calc(8px + env(safe-area-inset-top, 0px)); z-index: 80;
+  padding: 8px 14px; min-height: 36px; border-radius: 999px;
+  background: #141414; color: #f3e6c8; border: .5px solid rgba(243, 230, 200, .28);
+  font-size: 12.5px; font-weight: 650; letter-spacing: -0.02em;
+  box-shadow: 0 8px 24px rgba(0,0,0,.45); pointer-events: none;
+}
+.mhv-offline.hidden { display: none; }
+html.is-offline #btnDlAll { opacity: .9; }
+.sheet, .lib-grid, #libGrid, .grid, .thumbs, .bgm-list {
+  -webkit-overflow-scrolling: touch;
+}
+.card, .thumb, .dl-card, .dl-bundle, .bgm-row {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 120px;
+}
+button, .chip, .seg button, .lib-tab { touch-action: manipulation; }
+.sheet { overscroll-behavior: contain; }
+.dl-sheet h3 { letter-spacing: -0.03em; color: #fff6ec; }
+.dl-bundle, .dl-card { border-color: rgba(243, 230, 200, 0.10); }
+
+/*V21DCSS-END*/
 /*V21CCSS-END*/
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
@@ -2271,7 +2311,7 @@ body.v19-focus #bgmNp { opacity: 0; }
       <div id="prefixFix" class="prefix-fix hidden"><span></span><button type="button" id="btnPrefixFix">이름 앞 날짜 빼기</button></div>
       <p class="ex-hint" id="photoHint">사진 앱에서 손가락을 밀어 여러 장을 한 번에 선택할 수 있습니다.</p>
       <div id="storageMeter" class="storage-meter"></div>
-      <div class="app-ver" id="appVer">만화뷰어 v21.2 · 오프라인</div>
+      <div class="app-ver" id="appVer">만화뷰어 v21.3 · 오프라인</div>
     </div>
     <div id="exSelectBar" class="ex-select hidden">
       <button type="button" id="btnSelectAll">전체 선택</button>
@@ -2319,7 +2359,7 @@ body.v19-focus #bgmNp { opacity: 0; }
           <li>음악 <b>잠들기 타이머</b>(15·30·60분 또는 이 곡 끝)는 끝나기 전 소리를 천천히 줄여 꺼 드려요. 플레이어에서 시각화를 켜면 앨범 아트 색에 맞춰 파형이 움직여요(잠금 화면 재생은 그대로).</li>
           <li>보기 설정에서 <b>포토북 슬라이드쇼</b>를 시작하면 그림이 살며시 움직이며 넘어가고, 읽는 동안 화면이 꺼지지 않게 유지할 수 있어요. 홈 화면 앱의 바로가기로 이어 읽기·음악·검색을 바로 열 수 있어요.</li>
           <li>영상 <b>자동 자막</b>: 재생 화면의 <b>CC</b>를 눌러 자막을 켜거나, 길게 눌러 설정을 엽니다. <b>자동 자막 만들기</b>는 이 기기 안에서만 소리를 받아적고(첫 사용 시 약 45MB 모델을 받음), 번역 자막은 항상 한국어로 나와요. 영상은 밖으로 보내지 않아요. 받아적기 모델이 있으면 <b>영상 틀면 자동 자막</b>으로, CC를 누르지 않아도 지금 장면부터 자막이 올라와요. 번역 결과는 항상 한국어로 나와요. SRT/VTT를 가져오거나 만든 자막을 SRT로 저장할 수도 있어요.</li>
-          <li><b>다운로드 관리</b>: 보기 설정 또는 자막 시트의 <b>모델 미리 받기</b>에서 음성 인식·번역 언어 팩·만화 글자 인식·LUNERA 음악을 미리 받을 수 있어요. <b>필요한 것 한 번에 받기</b>로 받아적기·한국어 번역·만화 글자 인식을 한꺼번에 받을 수 있어요. Wi-Fi를 권장해요.</li>
+          <li><b>다운로드 관리</b>: 보기 설정 또는 자막 시트의 <b>모델 미리 받기</b>에서 음성 인식·번역 언어 팩·만화 글자 인식·LUNERA 음악을 미리 받을 수 있어요. <b>필요한 것 한 번에 받기</b>로 받아적기·한국어 번역·만화 글자 인식을 한꺼번에 받을 수 있어요. 중간에 끊어져도 <b>다시 시도</b>하면 받은 곳부터 이어요. 아이폰에서는 용량을 줄여 영어·일본어 번역과 한·영·일 글자 인식부터 받아요. Wi-Fi를 권장해요.</li>
           <li>자막을 <b>고치기</b>하고, <b>따라 읽기</b>로 현재 줄을 따라가며, 모양(기본·영화관·크게·노란 자막)과 학습 모드(원문+번역)를 고를 수 있어요. 여러 영상을 대기열에 넣어 뒤에서 만들 수도 있어요.</li>
           <li>읽는 화면의 <b>번역</b>으로 만화 말풍선을 이 기기 안에서 읽어 번역할 수 있어요. 원문/번역/나란히를 바꾸고, 말풍선을 길게 누르면 원문과 번역을 같이 봐요. 글자 인식은 틀릴 수 있어 직접 고칠 수 있어요.</li>
           </ul>
@@ -5429,7 +5469,7 @@ function applyReaderLook() {
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v21c";
+const PWA_CACHE = "mhv-pwa-v21d";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
@@ -9313,7 +9353,7 @@ function updateReadProg() {
 }
 
 /* ===== v15: 시리즈·태그/검색, 시크릿 서재(PIN), 자동 넘김, 책갈피 메모 ===== */
-var APP_VER = "v21.2";
+var APP_VER = "v21.3";
 var META_KEY = "mhv-albummeta-v1", SECRET_KEY = "mhv-secret-v1", RECENT_KEY = "mhv-recent-v1";
 function v15Load(k, d) { try { const v = JSON.parse(localStorage.getItem(k) || "null"); return v && typeof v === "object" ? v : d; } catch (_) { return d; } }
 function v15Save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} }
@@ -15206,6 +15246,7 @@ window.__viewer.manga = {
     { id: "bun-es-ko", name: "스페인어→한국어", purpose: "스페인어를 한국어로 옮깁니다. 필요한 모델을 한 번에 받아요.", parts: ["mt-es-en", "mt-en-ko"] },
   ];
   const OCR_NEEDED = ["ocr-eng", "ocr-kor", "ocr-jpn", "ocr-chi", "ocr-spa"];
+  const OCR_CORE = ["ocr-eng", "ocr-kor", "ocr-jpn"];
 
   cap.autoTo = "ko";
 
@@ -15221,7 +15262,14 @@ window.__viewer.manga = {
     return dlLowMem() ? "asr-base" : "asr-small";
   }
   function dlNeededIds() {
-    const ids = [dlSpeechPackId(), "mt-en-ko", "mt-ja-en", "mt-zh-en", "mt-es-en"].concat(OCR_NEEDED);
+    // iPhone / low-memory: smaller, reliable set. zh/es bundles and chi/spa OCR stay in the list
+    // and are downloaded on first use or from the language bundles below.
+    const ids = [dlSpeechPackId(), "mt-en-ko", "mt-ja-en"];
+    if (dlLowMem()) ids.push.apply(ids, OCR_CORE);
+    else {
+      ids.push("mt-zh-en", "mt-es-en");
+      ids.push.apply(ids, OCR_NEEDED);
+    }
     return ids.filter((id, i) => ids.indexOf(id) === i && dlPack(id));
   }
   async function dlPartsStatus(ids) {
@@ -15255,21 +15303,59 @@ window.__viewer.manga = {
     const key = jobKey || ids.join("+");
     if (dl.jobs[key] && dl.jobs[key].state === "run") return dl.jobs[key].prom;
     const run = (async () => {
-      const job = { state: "run", got: 0, total: 0, ids: ids.slice(), idx: 0, ctrl: new AbortController() };
+      const job = { state: "run", got: 0, total: 0, ids: ids.slice(), idx: 0, ctrl: new AbortController(), failed: [], doneIds: [], skipIds: [] };
       dl.jobs[key] = job;
       dlEmit();
+      try { if (navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch (_) {}
+      if (typeof navigator !== "undefined" && navigator.onLine === false) {
+        job.state = "error";
+        job.error = "지금은 오프라인이에요. 이미 받은 파일은 그대로 쓸 수 있어요. 인터넷에 연결한 뒤 다시 시도해 주세요.";
+        dlEmit();
+        toast(job.error, 2200);
+        return;
+      }
       try {
         for (let i = 0; i < ids.length; i++) {
           if (job.state !== "run") throw new Error(job.state === "cancel" ? "cancelled" : "paused");
           job.idx = i;
-          const st = await dlPackStatus(ids[i]);
-          if (st.state === "done") { dlEmit(); continue; }
-          await dlDownload(ids[i]);
+          const id = ids[i];
+          const pack = dlPack(id);
+          try {
+            const st = await dlPackStatus(id);
+            if (st.state === "done") { job.skipIds.push(id); dlEmit(); continue; }
+            await dlDownload(id);
+            const st2 = await dlPackStatus(id);
+            const sub = dl.jobs[id];
+            if (sub && sub.state === "error") {
+              job.failed.push({ id, name: pack && pack.name, error: sub.error || "실패" });
+            } else if (st2.state === "done" || st2.state === "partial") {
+              if (st2.state === "done") job.doneIds.push(id);
+              else job.failed.push({ id, name: pack && pack.name, error: "일부만 받았어요. 다시 시도하면 이어서 받아요." });
+            } else {
+              job.failed.push({ id, name: pack && pack.name, error: (sub && sub.error) || "받지 못했어요" });
+            }
+          } catch (e) {
+            const msg = String(e && e.message || e);
+            if (msg === "paused" || msg === "cancelled") throw e;
+            job.failed.push({ id, name: pack && pack.name, error: msg });
+          }
           dlEmit();
         }
-        delete dl.jobs[key];
-        dlEmit();
-        toast("필요한 파일을 받아 두었어요", 1600);
+        const failN = job.failed.length;
+        const okN = job.doneIds.length + job.skipIds.length;
+        if (!failN) {
+          delete dl.jobs[key];
+          dlEmit();
+          toast("필요한 파일을 받아 두었어요", 1600);
+        } else {
+          const first = job.failed[0];
+          const detail = (first && first.error) || "받는 중 문제가 생겼어요";
+          job.state = "error";
+          job.error = okN + "개 완료, " + failN + "개 실패 — 다시 시도. " + detail;
+          job.summary = okN + "개 완료, " + failN + "개 실패 — 다시 시도";
+          dlEmit();
+          toast(job.summary, 2400);
+        }
       } catch (e) {
         const msg = String(e && e.message || e);
         if (msg === "paused") { job.state = "pause"; dlEmit(); return; }
@@ -15534,6 +15620,7 @@ window.__viewer.manga = {
         + "<button type=\"button\" id=\"btnDlAll\">필요한 것 한 번에 받기</button>"
         + "<p class=\"note\" id=\"dlAllMeta\">크기를 세는 중…</p>"
         + "<div id=\"dlAllProg\" class=\"hidden\"><div class=\"bar\"><i></i></div><div class=\"dl-all-st\" id=\"dlAllSt\"></div></div>"
+        + "<div id=\"dlAllErr\" class=\"hidden\"></div>"
         + "<div class=\"dl-head\" style=\"margin-top:10px\"><button type=\"button\" id=\"btnDlPersist2\">이 기기에 유지</button></div>";
       body.appendChild(head);
       const bun = document.createElement("div"); bun.id = "dlBundles"; bun.className = "dl-bundles"; body.appendChild(bun);
@@ -15566,15 +15653,16 @@ window.__viewer.manga = {
       const speech = dlPack(dlSpeechPackId());
       const low = dlLowMem();
       const sizeTxt = all.remain > 0 ? ("남은 용량 약 " + dlFmt(all.remain)) : ("모두 받음 · " + dlFmt(all.bytes));
-      const speechTxt = low ? "아이폰·메모리가 적은 기기에서는 균형 받아적기(약 81MB)로 받아요. " : ((speech && speech.name) ? (speech.name + " 포함. ") : "");
+      const speechTxt = low ? "아이폰·메모리가 적은 기기에서는 균형 받아적기(약 81MB)와 영어·일본어→한국어, 한·영·일 글자 인식만 먼저 받아요. 중국어·스페인어는 아래에서 따로, 또는 처음 쓸 때 받으면 돼요. " : ((speech && speech.name) ? (speech.name + " 포함. ") : "");
       meta.innerHTML = speechTxt + sizeTxt + " · 같은 한국어 번역 모델은 한 번만 받습니다. <b>Wi-Fi를 권장</b>해요.";
     }
     if (btn) {
       const job = dl.jobs["all-needed"];
       if (all.done) { btn.innerHTML = "필요한 것 다 받았어요"; btn.disabled = true; }
       else if (job && job.state === "run") { btn.innerHTML = "받는 중…"; btn.disabled = true; }
+      else if (job && job.state === "error") { btn.innerHTML = "다시 시도<small>" + (job.summary || "멈춘 곳부터 이어서 받아요") + "</small>"; btn.disabled = false; }
       else if (all.partial || (job && job.state === "pause")) { btn.innerHTML = "필요한 것 이어 받기<small>멈춘 곳부터 이어서 받아요</small>"; btn.disabled = false; }
-      else { btn.innerHTML = "필요한 것 한 번에 받기<small>" + (all.remain ? dlFmt(all.remain) : dlFmt(all.bytes)) + " · Wi-Fi 권장</small>"; btn.disabled = false; }
+      else { btn.innerHTML = "필요한 것 한 번에 받기<small>" + (all.remain ? dlFmt(all.remain) + " · " : "") + "Wi-Fi 권장</small>"; btn.disabled = false; }
     }
     if (prog && stEl) {
       const job = dl.jobs["all-needed"];
@@ -15583,8 +15671,21 @@ window.__viewer.manga = {
       const pct = all.bytes ? Math.round(((all.bytes - all.remain) / all.bytes) * 100) : (all.done ? 100 : 0);
       const bar = prog.querySelector(".bar i");
       if (bar) bar.style.width = Math.max(0, Math.min(100, pct)) + "%";
-      stEl.textContent = all.done ? "완료" : ((job && job.state === "run" ? "받는 중 " : (all.partial ? "일부 받음 " : "")) + pct + "% · " + all.have + "/" + all.need + "개");
+      stEl.textContent = all.done ? "완료" : ((job && job.state === "run" ? "받는 중 " : (job && job.state === "error" ? "중단됨 " : (all.partial ? "일부 받음 " : ""))) + pct + "% · " + all.have + "/" + all.need + "개" + (job && job.fileName ? " · " + job.fileName : ""));
       if (!job && all.have === 0) prog.classList.add("hidden");
+    }
+    const errBox = document.getElementById("dlAllErr");
+    if (errBox) {
+      const job = dl.jobs["all-needed"];
+      if (job && job.state === "error" && job.error) {
+        errBox.classList.remove("hidden");
+        errBox.innerHTML = "<b>" + (job.summary || "받는 중 문제가 생겼어요") + "</b><div>" + job.error + "</div><button type=\"button\" id=\"dlAllRetry\">다시 시도</button>";
+        const rb = errBox.querySelector("#dlAllRetry");
+        if (rb) rb.addEventListener("click", () => dlDownloadAllNeeded());
+      } else {
+        errBox.classList.add("hidden");
+        errBox.innerHTML = "";
+      }
     }
     if (bun) {
       const html = ["<h3>한국어 번역 묶음</h3>"];
@@ -15696,6 +15797,344 @@ window.__viewer.manga = {
 })();
 
 /*V21CJS-END*/
+/* ===== v21.3: 받기 안정화 · 오프라인 · 가벼운 화면 ===== */
+(function v21dSolidDl() {
+  const CHUNK = 4 * 1024 * 1024;
+  const STALL_MS = 25000;
+  const MAX_TRY = 3;
+
+  try {
+    const p = dlPack("ocr-chi");
+    if (p) p.files = [{ url: TESS_PATH + "/chi_sim.traineddata.gz", optional: false }];
+  } catch (_) {}
+  try {
+    const p = dlPack("mt-en-ko");
+    if (p && p.files) p.files = p.files.filter((f) => !/source\.spm|target\.spm|vocab\.json$/.test(f.url));
+  } catch (_) {}
+
+  function dlFileName(url) {
+    try {
+      const u = new URL(url, location.href);
+      const parts = u.pathname.split("/").filter(Boolean);
+      return decodeURIComponent(parts[parts.length - 1] || url);
+    } catch (_) {
+      const i = String(url).lastIndexOf("/");
+      return i >= 0 ? String(url).slice(i + 1) : String(url);
+    }
+  }
+  function dlSleep(ms, job) {
+    return new Promise((res, rej) => {
+      const t = setTimeout(res, ms);
+      if (job && job.ctrl && job.ctrl.signal) {
+        const on = () => { clearTimeout(t); rej(new Error(job.state === "cancel" ? "cancelled" : "paused")); };
+        if (job.ctrl.signal.aborted) return on();
+        job.ctrl.signal.addEventListener("abort", on, { once: true });
+      }
+    });
+  }
+  function dlIsQuota(e) {
+    const m = String((e && e.message) || e || "");
+    const n = (e && (e.name || e.code)) || "";
+    return /quota|저장 공간|exceeded/i.test(m) || n === "QuotaExceededError" || n === 22;
+  }
+  function dlIsNet(e) {
+    const m = String((e && e.message) || e || "");
+    const n = (e && e.name) || "";
+    return n === "TypeError" || n === "NetworkError" || n === "AbortError"
+      || /failed to fetch|load failed|network|internet|offline|connection|lost|timeout|stall|인터넷|접속|연결|중단/i.test(m);
+  }
+  function dlFriendlyErr(e, file, pack) {
+    const name = file ? dlFileName(file.url || file) : "";
+    const packName = (pack && pack.name) || "";
+    if (dlIsQuota(e)) return "저장 공간이 부족해요. 사용하지 않는 앨범이나 이미 받은 파일을 지운 뒤 다시 시도해 주세요.";
+    const m = String((e && e.message) || e || "");
+    if (/404/.test(m)) return (name || "파일") + "을 서버에서 찾지 못했어요. 주소가 바뀌었을 수 있어요.";
+    if (/403|401/.test(m)) return (name || "파일") + "에 접근하지 못했어요.";
+    if (/416/.test(m)) return (name || "파일") + "을 이어 받는 위치가 맞지 않아 처음부터 다시 받을게요.";
+    const where = [packName, name].filter(Boolean).join(" · ");
+    if (dlIsNet(e) || /받기 실패|status/i.test(m)) {
+      return "인터넷이 끊겼거나 연결이 불안정해요. " + (where ? where + "에서 멈췄어요. " : "") + "Wi-Fi를 확인하고 다시 시도하면 받은 곳부터 이어서 받아요.";
+    }
+    return (where ? where + "을 받지 못했어요. " : "받지 못했어요. ") + m;
+  }
+
+  const _dlIdb = dlIdb;
+  dlIdb = function () {
+    return new Promise((res, rej) => {
+      const r = indexedDB.open(DL_IDB, 2);
+      r.onupgradeneeded = () => {
+        const db = r.result;
+        if (!db.objectStoreNames.contains(DL_STORE)) db.createObjectStore(DL_STORE, { keyPath: "url" });
+        if (!db.objectStoreNames.contains("chunks")) db.createObjectStore("chunks", { keyPath: "key" });
+      };
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    });
+  };
+
+  async function dlChunkList(url) {
+    try {
+      const db = await dlIdb();
+      const rows = await new Promise((res, rej) => {
+        if (!db.objectStoreNames.contains("chunks")) return res([]);
+        const q = db.transaction("chunks", "readonly").objectStore("chunks").getAll();
+        q.onsuccess = () => res(q.result || []);
+        q.onerror = () => rej(q.error);
+      });
+      return (rows || []).filter((x) => x.url === url).sort((a, b) => a.index - b.index);
+    } catch (_) { return []; }
+  }
+  async function dlChunkBytes(url) {
+    const rows = await dlChunkList(url);
+    return rows.reduce((s, r) => s + ((r.buf && r.buf.byteLength) || r.size || 0), 0);
+  }
+  async function dlChunkPut(url, index, buf, total) {
+    const db = await dlIdb();
+    if (!db.objectStoreNames.contains("chunks")) return;
+    const rec = { key: url + "::" + index, url, index, buf, size: buf.byteLength, total: total || 0 };
+    await new Promise((res, rej) => {
+      const q = db.transaction("chunks", "readwrite").objectStore("chunks").put(rec);
+      q.onsuccess = () => res();
+      q.onerror = () => rej(q.error);
+    });
+  }
+  async function dlChunkClear(url) {
+    try {
+      const rows = await dlChunkList(url);
+      if (!rows.length) return;
+      const db = await dlIdb();
+      await new Promise((res, rej) => {
+        const tx = db.transaction("chunks", "readwrite");
+        const st = tx.objectStore("chunks");
+        rows.forEach((r) => st.delete(r.key));
+        tx.oncomplete = () => res();
+        tx.onerror = () => rej(tx.error);
+      });
+    } catch (_) {}
+  }
+  async function dlChunkBlob(url) {
+    const rows = await dlChunkList(url);
+    return new Blob(rows.map((r) => r.buf), { type: "application/octet-stream" });
+  }
+
+  async function dlFlushBatch(url, index, batch, total) {
+    if (!batch.length) return index;
+    const buf = await new Blob(batch).arrayBuffer();
+    await dlChunkPut(url, index, buf, total);
+    batch.length = 0;
+    return index + 1;
+  }
+
+  async function dlFetchOnce(file, job, start) {
+    const headers = {};
+    if (start > 0) headers.Range = "bytes=" + start + "-";
+    const ctrl = new AbortController();
+    const onJobAbort = () => { try { ctrl.abort(); } catch (_) {} };
+    if (job && job.ctrl && job.ctrl.signal) {
+      if (job.ctrl.signal.aborted) onJobAbort();
+      else job.ctrl.signal.addEventListener("abort", onJobAbort, { once: true });
+    }
+    let r;
+    try {
+      r = await fetch(file.url, { headers, signal: ctrl.signal, credentials: "omit", referrerPolicy: "no-referrer", mode: "cors" });
+    } catch (e) {
+      if (job && (job.state === "pause" || job.state === "cancel")) throw new Error(job.state === "cancel" ? "cancelled" : "paused");
+      throw e;
+    }
+    if (r.status === 404 && file.optional) return 0;
+    if (r.status === 416) {
+      await dlChunkClear(file.url);
+      await dlPartDel(file.url);
+      throw new Error("416");
+    }
+    if (!r.ok && r.status !== 206) throw new Error("받기 실패 " + r.status);
+    if (start > 0 && r.status !== 206) {
+      await dlChunkClear(file.url);
+      start = 0;
+    }
+    const cr = r.headers.get("Content-Range") || "";
+    const crm = /\/(\d+)\s*$/.exec(cr);
+    const cl = r.headers.get("Content-Length");
+    const total = crm ? parseInt(crm[1], 10) : (start + (cl ? parseInt(cl, 10) : 0));
+    const reader = r.body && r.body.getReader();
+    let got = start;
+    let index = (await dlChunkList(file.url)).length;
+    const batch = [];
+    let batchBytes = 0;
+    let mark = performance.now(), markBytes = got, lastData = mark;
+    const tick = () => {
+      if (!job) return;
+      job.got = (job.baseGot || 0) + got;
+      const now = performance.now();
+      if (now - mark > 400) {
+        const dt = (now - mark) / 1000;
+        job.speed = (got - markBytes) / dt;
+        const remain = Math.max(0, (job.total || total) - job.got);
+        job.eta = job.speed > 0 ? remain / job.speed : 0;
+        job.pct = job.total ? Math.round((job.got / job.total) * 100) : 0;
+        job.fileName = dlFileName(file.url);
+        mark = now; markBytes = got;
+        dlEmit();
+      }
+    };
+    const bump = async (value) => {
+      batch.push(value);
+      batchBytes += value.byteLength;
+      got += value.byteLength;
+      lastData = performance.now();
+      tick();
+      if (batchBytes >= CHUNK) {
+        index = await dlFlushBatch(file.url, index, batch, total);
+        batchBytes = 0;
+      }
+    };
+    let stalled = false;
+    let stallTimer = 0;
+    const armStall = () => {
+      if (stallTimer) clearTimeout(stallTimer);
+      stallTimer = setTimeout(() => { stalled = true; try { ctrl.abort(); } catch (_) {} }, STALL_MS);
+    };
+    armStall();
+    const bump2 = async (value) => { await bump(value); armStall(); };
+    try {
+    if (!reader) {
+      const blob = await r.blob();
+      if (blob && blob.size) await bump2(new Uint8Array(await blob.arrayBuffer()));
+    } else {
+      while (true) {
+        if (job && (job.state === "pause" || job.state === "cancel")) throw new Error(job.state === "cancel" ? "cancelled" : "paused");
+        let step;
+        try { step = await reader.read(); }
+        catch (e) {
+          if (stalled) throw new Error("stall");
+          if (job && (job.state === "pause" || job.state === "cancel")) throw new Error(job.state === "cancel" ? "cancelled" : "paused");
+          throw e;
+        }
+        if (step.done) break;
+        await bump2(step.value);
+      }
+    }
+    } finally { if (stallTimer) clearTimeout(stallTimer); }
+    if (batchBytes) index = await dlFlushBatch(file.url, index, batch, total);
+    const buf = await dlChunkBlob(file.url);
+    const type = (r.headers.get("Content-Type") || "application/octet-stream");
+    try {
+      await dlPutCache(file.url, new Response(buf, { headers: { "Content-Type": type } }));
+    } catch (e) {
+      if (dlIsQuota(e)) throw e;
+      try { await dlPutCache(file.url, new Response(buf, { headers: { "Content-Type": type } })); }
+      catch (e2) { throw e2; }
+    }
+    await dlChunkClear(file.url);
+    try { await dlPartDel(file.url); } catch (_) {}
+    return buf.size;
+  }
+
+  const _dlFetchFile = dlFetchFile;
+  dlFetchFile = async function (file, job) {
+    const hit = await dlCached(file.url);
+    if (hit) {
+      try { return (await hit.clone().blob()).size; } catch (_) {}
+    }
+    let start = await dlChunkBytes(file.url);
+    if (!start) {
+      try {
+        const part = await dlPartGet(file.url);
+        if (part && (part.buf || part.blob)) {
+          const blob = part.blob || new Blob([part.buf]);
+          if (blob.size) {
+            await dlChunkPut(file.url, 0, await blob.arrayBuffer(), part.total || 0);
+            start = blob.size;
+            try { await dlPartDel(file.url); } catch (_) {}
+          }
+        }
+      } catch (_) {}
+    }
+    let last;
+    for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+      try {
+        if (job && (job.state === "pause" || job.state === "cancel")) throw new Error(job.state === "cancel" ? "cancelled" : "paused");
+        return await dlFetchOnce(file, job, start);
+      } catch (e) {
+        last = e;
+        const msg = String((e && e.message) || e || "");
+        if (msg === "paused" || msg === "cancelled") throw e;
+        if (file.optional && (/404/.test(msg) || /받기 실패 404/.test(msg))) return 0;
+        if (dlIsQuota(e)) throw new Error(dlFriendlyErr(e, file));
+        try { start = await dlChunkBytes(file.url); } catch (_) {}
+        if (attempt < MAX_TRY) {
+          try { await dlSleep(1000 * Math.pow(2, attempt - 1), job); } catch (e2) { throw e2; }
+          continue;
+        }
+        throw new Error(dlFriendlyErr(e, file));
+      }
+    }
+    throw new Error(dlFriendlyErr(last, file));
+  };
+
+  const _dlRun = dlRun;
+  dlRun = async function (id) {
+    if (navigator.storage && navigator.storage.persist) {
+      try { await navigator.storage.persist(); } catch (_) {}
+    }
+    const p = await _dlRun.apply(this, arguments);
+    return p;
+  };
+
+  /* ----- offline indicator + quieter errors when cached ----- */
+  function dlOfflineChip(on) {
+    let el = document.getElementById("mhvOffline");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "mhvOffline";
+      el.className = "mhv-offline hidden";
+      el.setAttribute("role", "status");
+      document.body.appendChild(el);
+    }
+    if (on) {
+      el.textContent = "오프라인 · 이미 받은 파일은 그대로 쓸 수 있어요";
+      el.classList.remove("hidden");
+    } else {
+      el.classList.add("hidden");
+    }
+  }
+  function dlSyncOffline() {
+    const off = (typeof navigator !== "undefined" && navigator.onLine === false);
+    document.documentElement.classList.toggle("is-offline", off);
+    dlOfflineChip(off);
+  }
+  window.addEventListener("online", () => {
+    dlSyncOffline();
+    try { toast("인터넷에 다시 연결됐어요", 1200); } catch (_) {}
+    const job = dl.jobs && (dl.jobs["all-needed"] || Object.values(dl.jobs).find((j) => j && j.state === "pause" && j._netPause));
+    if (job && job._netPause) {
+      job._netPause = false;
+      try { if (typeof dlDownloadAllNeeded === "function") dlDownloadAllNeeded(); else if (window.__viewer && window.__viewer.dl && window.__viewer.dl.downloadAll) window.__viewer.dl.downloadAll(); } catch (_) {}
+    }
+  });
+  window.addEventListener("offline", dlSyncOffline);
+  dlSyncOffline();
+
+  const _toast = typeof toast === "function" ? toast : null;
+  if (_toast) {
+    toast = function (msg, ms) {
+      const m = String(msg || "");
+      if (navigator.onLine === false && /스트리밍을 불러오지|인터넷에 연결된 상태에서 저장|연결을 확인해/i.test(m)) {
+        if (/루네라|스트리밍/.test(m)) return _toast("오프라인이에요. 이미 저장된 곡과 작품은 그대로 볼 수 있어요", ms || 2000);
+      }
+      return _toast.apply(this, arguments);
+    };
+  }
+
+  window.__viewer = window.__viewer || {};
+  window.__viewer.dl = Object.assign(window.__viewer.dl || {}, {
+    friendlyError: dlFriendlyErr,
+    fileName: dlFileName,
+    chunkBytes: dlChunkBytes,
+  });
+})();
+/*V21DJS-END*/
+
 /*V21BJS-END*/
 window.addEventListener("pagehide", () => { saveVideoPos(); saveReaderPos(); });
 </script>
