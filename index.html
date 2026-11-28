@@ -1944,6 +1944,67 @@ body.v19-focus #bgmNp { opacity: 0; }
 }
 
 /*V19CSS-END*/
+/* ===== v20: on-device captions + translation ===== */
+#vCap {
+  position: absolute; left: 16px; right: 16px; z-index: 6; pointer-events: none;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  text-align: center;
+}
+#vCap.hidden { display: none; }
+#vCap.pos-bottom { bottom: calc(var(--safe-b) + 18px + var(--cap-clear, 0px)); top: auto; }
+#vCap.pos-mid { top: 50%; bottom: auto; transform: translateY(-50%); }
+#vCap.pos-top { top: calc(var(--safe-t) + 64px); bottom: auto; }
+#screen-video:fullscreen #vCap.pos-bottom,
+#screen-video:-webkit-full-screen #vCap.pos-bottom { bottom: calc(var(--safe-b) + 24px + var(--cap-clear, 0px)); }
+#vCap .cap-line {
+  display: inline-block; max-width: 100%;
+  padding: 6px 14px; border-radius: 12px;
+  color: var(--ivory); font-weight: 750; letter-spacing: -.02em;
+  line-height: 1.4; word-break: keep-all; overflow-wrap: break-word;
+  text-shadow: 0 1px 10px rgba(0,0,0,.7);
+  font-size: var(--cap-size, 17px);
+}
+#vCap.size-sm { --cap-size: 14px; }
+#vCap.size-md { --cap-size: 17px; }
+#vCap.size-lg { --cap-size: 21px; }
+#vCap.bg-off .cap-line { background: transparent; padding: 2px 4px; }
+#vCap.bg-soft .cap-line { background: rgba(12,10,12,.55); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+#vCap.bg-solid .cap-line { background: rgba(12,10,12,.86); }
+#vCap .cap-src { font-size: .82em; font-weight: 600; color: rgba(243,233,218,.82); }
+
+#btnCC.on { background: var(--accent-deep); color: var(--accent-ink); }
+#btnCC b { font-size: 12px; font-weight: 860; letter-spacing: .02em; }
+
+.cap-sheet { display: flex; flex-direction: column; gap: 14px; padding-bottom: 8px; }
+.cap-sheet h3 { margin: 0; font-size: 15px; font-weight: 800; color: var(--ivory); letter-spacing: -.02em; }
+.cap-sheet .note { margin: 0; font-size: 12px; color: var(--text2); line-height: 1.45; word-break: keep-all; }
+.cap-seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.cap-seg button, .cap-actions button, #btnCapMake, #btnCapCancel, #btnCapImport, #btnCapExport {
+  height: 44px; min-width: 44px; padding: 0 12px; border-radius: 22px;
+  background: rgba(255,240,225,.06); color: var(--ivory);
+  border: .5px solid var(--hair2); font-size: 13px; font-weight: 700;
+}
+.cap-seg button.on, #btnCapMake {
+  background: var(--accent); color: #fff; border-color: transparent;
+  box-shadow: 0 6px 16px rgba(214,69,90,.35);
+}
+#btnCapMake { font-weight: 800; }
+#btnCapCancel { background: rgba(255,240,225,.08); }
+.cap-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.cap-prog {
+  display: none; flex-direction: column; gap: 8px;
+  padding: 12px; border-radius: 14px; background: rgba(255,240,225,.05);
+  border: .5px solid var(--hair);
+}
+.cap-prog.show { display: flex; }
+.cap-prog .bar { height: 6px; border-radius: 3px; background: rgba(255,240,225,.12); overflow: hidden; }
+.cap-prog .bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--ivory)); transition: width .25s; }
+.cap-prog b { font-size: 13px; font-weight: 750; color: var(--ivory); }
+.cap-prog span { font-size: 12px; color: var(--text2); }
+.cap-sizes { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; }
+#capFile { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none; }
+
+/*V20CSS-END*/
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
@@ -2001,7 +2062,7 @@ body.v19-focus #bgmNp { opacity: 0; }
       <div id="prefixFix" class="prefix-fix hidden"><span></span><button type="button" id="btnPrefixFix">이름 앞 날짜 빼기</button></div>
       <p class="ex-hint" id="photoHint">사진 앱에서 손가락을 밀어 여러 장을 한 번에 선택할 수 있습니다.</p>
       <div id="storageMeter" class="storage-meter"></div>
-      <div class="app-ver" id="appVer">만화뷰어 v19 · 오프라인</div>
+      <div class="app-ver" id="appVer">만화뷰어 v20 · 오프라인</div>
     </div>
     <div id="exSelectBar" class="ex-select hidden">
       <button type="button" id="btnSelectAll">전체 선택</button>
@@ -2048,6 +2109,7 @@ body.v19-focus #bgmNp { opacity: 0; }
           <li><b>이어서 읽기</b>: 마지막으로 보던 쪽과 스크롤 위치를 기억하고, 홈의 큰 카드에서 바로 이어 봅니다. 앨범 카드에는 읽은 만큼 고리가 채워져요.</li>
           <li>음악 <b>잠들기 타이머</b>(15·30·60분 또는 이 곡 끝)는 끝나기 전 소리를 천천히 줄여 꺼 드려요. 플레이어에서 시각화를 켜면 앨범 아트 색에 맞춰 파형이 움직여요(잠금 화면 재생은 그대로).</li>
           <li>보기 설정에서 <b>포토북 슬라이드쇼</b>를 시작하면 그림이 살며시 움직이며 넘어가고, 읽는 동안 화면이 꺼지지 않게 유지할 수 있어요. 홈 화면 앱의 바로가기로 이어 읽기·음악·검색을 바로 열 수 있어요.</li>
+          <li>영상 <b>자동 자막</b>: 재생 화면의 <b>CC</b>를 눌러 자막을 켜거나, 길게 눌러 설정을 엽니다. <b>자동 자막 만들기</b>는 이 기기 안에서만 소리를 받아적고(첫 사용 시 약 45MB 모델을 받음), 한국어·영어·일본어로 번역 자막을 만들 수 있어요. 영상은 밖으로 보내지 않아요. SRT/VTT를 가져오거나 만든 자막을 SRT로 저장할 수도 있어요.</li>
           </ul>
           <h3 class="warn">알아두면 좋은 제한</h3>
           <ul>
@@ -2133,6 +2195,7 @@ body.v19-focus #bgmNp { opacity: 0; }
 
   <section id="screen-video" class="screen hidden" data-screen="video">
     <video id="videoEl" playsinline webkit-playsinline preload="auto"></video>
+    <div id="vCap" class="hidden pos-bottom bg-soft size-md" aria-live="off"></div>
     <div id="vHit" class="v-hit" aria-hidden="true"></div>
     <div id="vSkipLayer" class="v-skip-layer" aria-hidden="true"></div>
     <button type="button" id="btnBgmResume" class="v-bgm-resume hidden">♪ BGM 이어서 듣기</button>
@@ -2196,6 +2259,7 @@ body.v19-focus #bgmNp { opacity: 0; }
           </div>
           <button type="button" id="btnSpeed" class="v-chip" aria-label="배속">1×</button>
           <button type="button" id="btnMuteVid" class="v-chip v-ico" aria-label="음소거" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="currentColor" stroke="none"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg></button>
+          <button type="button" id="btnCC" class="v-chip v-ico" aria-label="자막" aria-pressed="false"><b>CC</b></button>
           <button type="button" id="btnPip" class="v-chip v-ico hidden" aria-label="화면 속 화면"><svg viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><rect x="12" y="11" width="7" height="5.5" rx="1" fill="currentColor" stroke="none"/></svg></button>
           <button type="button" id="btnVideoFs" class="v-chip v-ico" aria-label="전체화면"><svg viewBox="0 0 24 24"><path d="M8 5H5v3M16 5h3v3M8 19H5v-3M16 19h3v-3"/></svg></button>
         </div>
@@ -5153,7 +5217,7 @@ function applyReaderLook() {
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v19";
+const PWA_CACHE = "mhv-pwa-v20";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
@@ -9037,7 +9101,7 @@ function updateReadProg() {
 }
 
 /* ===== v15: 시리즈·태그/검색, 시크릿 서재(PIN), 자동 넘김, 책갈피 메모 ===== */
-var APP_VER = "v19";
+var APP_VER = "v20";
 var META_KEY = "mhv-albummeta-v1", SECRET_KEY = "mhv-secret-v1", RECENT_KEY = "mhv-recent-v1";
 function v15Load(k, d) { try { const v = JSON.parse(localStorage.getItem(k) || "null"); return v && typeof v === "object" ? v : d; } catch (_) { return d; } }
 function v15Save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} }
@@ -12421,6 +12485,640 @@ window.__viewer.v19 = {
 };
 
 /*V19JS-END*/
+/* ===== v20: 자동 자막 · 번역 (기기 안에서만, 업로드 없음) ===== */
+var CAP_DB = "mhv-subs-v1", CAP_STORE = "tracks";
+var CAP_SIZES = { sm: 14, md: 17, lg: 21 };
+var cap = {
+  on: true,
+  track: "ko",
+  size: "md",
+  pos: "bottom",
+  bg: "soft",
+  rec: null,
+  worker: null,
+  busy: false,
+  cancelled: false,
+};
+
+(function capLoadPrefs() {
+  try {
+    const p = JSON.parse(localStorage.getItem(PREFS_KEY) || "{}");
+    if (typeof p.capOn === "boolean") cap.on = p.capOn;
+    if (["orig", "ko", "en", "ja", "dual"].includes(p.capTrack)) cap.track = p.capTrack;
+    if (["sm", "md", "lg"].includes(p.capSize)) cap.size = p.capSize;
+    if (["top", "mid", "bottom"].includes(p.capPos)) cap.pos = p.capPos;
+    if (["off", "soft", "solid"].includes(p.capBg)) cap.bg = p.capBg;
+  } catch (_) {}
+})();
+function capMergePrefs() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(PREFS_KEY) || "{}");
+    raw.capOn = cap.on; raw.capTrack = cap.track; raw.capSize = cap.size;
+    raw.capPos = cap.pos; raw.capBg = cap.bg;
+    localStorage.setItem(PREFS_KEY, JSON.stringify(raw));
+  } catch (_) {}
+}
+function capSavePrefs() {
+  capMergePrefs();
+  try { savePrefs(); } catch (_) {}
+  capMergePrefs();
+}
+const _v20savePrefs = savePrefs;
+savePrefs = function () {
+  _v20savePrefs();
+  capMergePrefs();
+};
+
+function capItem() { return videoState.queue && videoState.queue[videoState.index] || null; }
+function capKey(item) {
+  item = item || capItem();
+  if (!item) return "";
+  return String(item.storeId || item.id || [item.name, item.size || "", Math.round(item.duration || 0)].join(":"));
+}
+
+/* ---------- VTT / SRT ---------- */
+function capParseTime(s) {
+  s = String(s || "").trim().replace(",", ".");
+  const m = s.match(/(?:(\d+):)?(\d+):(\d+(?:\.\d+)?)/) || s.match(/^(\d+(?:\.\d+)?)$/);
+  if (!m) return 0;
+  if (m.length === 2) return parseFloat(m[1]) || 0;
+  const h = m[1] ? parseInt(m[1], 10) : 0;
+  return h * 3600 + parseInt(m[2], 10) * 60 + parseFloat(m[3]);
+}
+function capFmtVtt(t) {
+  t = Math.max(0, t || 0);
+  const h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), s = t % 60;
+  const ss = s.toFixed(3).padStart(6, "0");
+  return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0") + ":" + ss;
+}
+function capFmtSrt(t) { return capFmtVtt(t).replace(".", ","); }
+function capParseVtt(text) {
+  const src = String(text || "").replace(/^\uFEFF/, "").replace(/\r\n/g, "\n");
+  const blocks = src.split(/\n\n+/);
+  const cues = [];
+  for (const b of blocks) {
+    const lines = b.split("\n").map((l) => l.trimEnd()).filter((l) => l !== "" && l !== "WEBVTT" && !/^NOTE\b/.test(l) && !/^STYLE\b/.test(l) && !/^KIND\b/.test(l));
+    if (!lines.length) continue;
+    let i = 0;
+    if (/^\d+$/.test(lines[0])) i = 1;
+    const tm = lines[i] && lines[i].match(/([0-9:.,]+)\s*-->\s*([0-9:.,]+)/);
+    if (!tm) continue;
+    const body = lines.slice(i + 1).join("\n").replace(/<[^>]+>/g, "").trim();
+    if (!body) continue;
+    const start = capParseTime(tm[1]), end = capParseTime(tm[2]);
+    if (end > start) cues.push({ start, end, text: body });
+  }
+  return cues;
+}
+function capParseSrt(text) { return capParseVtt(String(text || "").replace(/^\uFEFF/, "")); }
+function capParseAuto(text, name) {
+  const s = String(text || "");
+  if (/^\s*WEBVTT/i.test(s) || /\.vtt$/i.test(name || "")) return capParseVtt(s);
+  return capParseSrt(s);
+}
+function capToVtt(cues, lang) {
+  let out = "WEBVTT\n";
+  if (lang) out += "Language: " + lang + "\n";
+  out += "\n";
+  (cues || []).forEach((c, i) => {
+    out += (i + 1) + "\n" + capFmtVtt(c.start) + " --> " + capFmtVtt(c.end) + "\n" + (c.text || "") + "\n\n";
+  });
+  return out;
+}
+function capToSrt(cues) {
+  return (cues || []).map((c, i) => (i + 1) + "\n" + capFmtSrt(c.start) + " --> " + capFmtSrt(c.end) + "\n" + (c.text || "") + "\n").join("\n");
+}
+function capCueAt(cues, t) {
+  if (!cues || !cues.length) return null;
+  for (let i = 0; i < cues.length; i++) {
+    if (t >= cues[i].start && t < cues[i].end) return cues[i];
+  }
+  return null;
+}
+
+/* ---------- IndexedDB ---------- */
+function capDb() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open(CAP_DB, 1);
+    r.onupgradeneeded = () => { if (!r.result.objectStoreNames.contains(CAP_STORE)) r.result.createObjectStore(CAP_STORE, { keyPath: "key" }); };
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+}
+async function capGet(key) {
+  if (!key) return null;
+  try {
+    const db = await capDb();
+    return await new Promise((res, rej) => {
+      const q = db.transaction(CAP_STORE, "readonly").objectStore(CAP_STORE).get(key);
+      q.onsuccess = () => res(q.result || null);
+      q.onerror = () => rej(q.error);
+    });
+  } catch (_) { return null; }
+}
+async function capPut(rec) {
+  const db = await capDb();
+  rec.updatedAt = Date.now();
+  await new Promise((res, rej) => {
+    const q = db.transaction(CAP_STORE, "readwrite").objectStore(CAP_STORE).put(rec);
+    q.onsuccess = () => res();
+    q.onerror = () => rej(q.error);
+  });
+  return rec;
+}
+
+/* ---------- overlay + native tracks (iOS fullscreen) ---------- */
+function capEnsureDom() {
+  const root = $("screen-video"); if (!root) return null;
+  let el = $("vCap");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "vCap";
+    el.className = "hidden pos-bottom bg-soft size-md";
+    el.setAttribute("aria-live", "off");
+    root.appendChild(el);
+  }
+  return el;
+}
+function capActiveCues() {
+  const rec = cap.rec; if (!rec || !rec.tracks) return { src: null, tr: null };
+  const orig = rec.tracks.orig && rec.tracks.orig.cues;
+  const ko = rec.tracks.ko && rec.tracks.ko.cues;
+  const en = rec.tracks.en && rec.tracks.en.cues;
+  const ja = rec.tracks.ja && rec.tracks.ja.cues;
+  const t = cap.track;
+  if (t === "dual") {
+    const tr = ko || en || ja;
+    return { src: orig, tr, mode: "dual" };
+  }
+  if (t === "ko") return { src: ko || orig, tr: null };
+  if (t === "en") return { src: en || orig, tr: null };
+  if (t === "ja") return { src: ja || orig, tr: null };
+  return { src: orig, tr: null };
+}
+function capHasAny(rec) {
+  rec = rec || cap.rec;
+  if (!rec || !rec.tracks) return false;
+  return Object.keys(rec.tracks).some((k) => rec.tracks[k] && rec.tracks[k].cues && rec.tracks[k].cues.length);
+}
+function capSyncClearance() {
+  try {
+    const root = $("screen-video");
+    const chrome = $("videoChrome");
+    const bar = chrome && chrome.querySelector(".vbar, .bottombar");
+    const dim = !chrome || chrome.classList.contains("dim") || chrome.classList.contains("hidden");
+    const h = (!dim && bar) ? Math.ceil(bar.getBoundingClientRect().height) + 12 : 0;
+    if (root) root.style.setProperty("--cap-clear", h + "px");
+  } catch (_) {}
+}
+function capPaint() {
+  const el = capEnsureDom(); if (!el) return;
+  capSyncClearance();
+  el.className = "pos-" + cap.pos + " size-" + cap.size + " bg-" + cap.bg + (cap.on && capHasAny() ? "" : " hidden");
+  const t = videoEl && isFinite(videoEl.currentTime) ? videoEl.currentTime : 0;
+  const { src, tr, mode } = capActiveCues();
+  const a = capCueAt(src, t);
+  const b = mode === "dual" ? capCueAt(tr, t) : null;
+  if (!cap.on || (!a && !b)) { el.innerHTML = ""; return; }
+  if (mode === "dual") {
+    el.innerHTML = (a ? `<span class="cap-line cap-src"></span>` : "") + (b ? `<span class="cap-line cap-tr"></span>` : "");
+    const s = el.querySelector(".cap-src"); if (s && a) s.textContent = a.text;
+    const d = el.querySelector(".cap-tr"); if (d && b) d.textContent = b.text;
+  } else {
+    el.innerHTML = `<span class="cap-line cap-tr"></span>`;
+    el.querySelector(".cap-tr").textContent = (a && a.text) || "";
+  }
+}
+function capIsNativeFs() {
+  try { return !!(videoEl && videoEl.webkitDisplayingFullscreen); } catch (_) { return false; }
+}
+function capSyncTextTrack() {
+  try {
+    const list = videoEl.textTracks;
+    for (let i = list.length - 1; i >= 0; i--) {
+      try { list[i].mode = "disabled"; } catch (_) {}
+    }
+    const old = videoEl.querySelectorAll("track[data-v20]");
+    old.forEach((n) => n.remove());
+    if (!cap.on || !capHasAny() || !capIsNativeFs()) return;
+    const { src, tr, mode } = capActiveCues();
+    const cues = [];
+    const pack = (sC, tC) => {
+      const times = new Set();
+      (sC || []).forEach((c) => { times.add(c.start); times.add(c.end); });
+      (tC || []).forEach((c) => { times.add(c.start); times.add(c.end); });
+      const pts = [...times].sort((a, b) => a - b);
+      for (let i = 0; i < pts.length - 1; i++) {
+        const a = capCueAt(sC, (pts[i] + pts[i + 1]) / 2);
+        const b = capCueAt(tC, (pts[i] + pts[i + 1]) / 2);
+        const text = mode === "dual" ? [a && a.text, b && b.text].filter(Boolean).join("\n") : ((a && a.text) || (b && b.text) || "");
+        if (text) cues.push({ start: pts[i], end: pts[i + 1], text });
+      }
+    };
+    if (mode === "dual") pack(src, tr); else pack(src, null);
+    if (!cues.length) return;
+    const blob = new Blob([capToVtt(cues)], { type: "text/vtt" });
+    const url = URL.createObjectURL(blob);
+    const track = document.createElement("track");
+    track.kind = "subtitles";
+    track.label = "v20";
+    track.default = true;
+    track.dataset.v20 = "1";
+    track.src = url;
+    videoEl.appendChild(track);
+    track.addEventListener("load", () => {
+      try { if (track.track) track.track.mode = "showing"; } catch (_) {}
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    });
+  } catch (_) {}
+}
+function capTick() { if (currentScreen === "video") capPaint(); }
+if (typeof videoEl !== "undefined" && videoEl) {
+  videoEl.addEventListener("timeupdate", capTick);
+  videoEl.addEventListener("seeked", capTick);
+  videoEl.addEventListener("play", capTick);
+  videoEl.addEventListener("webkitbeginfullscreen", () => { capSyncTextTrack(); });
+  videoEl.addEventListener("webkitendfullscreen", () => { capSyncTextTrack(); capPaint(); });
+}
+
+function capPaintBtn() {
+  const b = $("btnCC"); if (!b) return;
+  const has = capHasAny();
+  b.classList.toggle("on", !!(cap.on && has));
+  b.setAttribute("aria-pressed", cap.on && has ? "true" : "false");
+  b.setAttribute("aria-label", has ? (cap.on ? "자막 끄기" : "자막 켜기") : "자막 · 자동 자막 만들기");
+}
+
+async function capLoadFor(item) {
+  const key = capKey(item);
+  cap.rec = key ? await capGet(key) : null;
+  if (cap.rec && cap.track === "ko" && !(cap.rec.tracks && cap.rec.tracks.ko)) {
+    cap.track = cap.rec.tracks && cap.rec.tracks.orig ? "orig" : cap.track;
+  }
+  capPaint(); capPaintBtn(); capSyncTextTrack();
+}
+
+/* ---------- audio extract (decodeAudioData → 16 kHz mono; ffmpeg fallback) ---------- */
+function capDownmix(buf, rate) {
+  const n = buf.numberOfChannels, len = buf.length;
+  const mono = new Float32Array(len);
+  if (n === 1) mono.set(buf.getChannelData(0));
+  else {
+    const ch = [];
+    for (let i = 0; i < n; i++) ch.push(buf.getChannelData(i));
+    for (let i = 0; i < len; i++) {
+      let s = 0; for (let c = 0; c < n; c++) s += ch[c][i];
+      mono[i] = s / n;
+    }
+  }
+  if (rate === 16000) return mono;
+  const outLen = Math.max(1, Math.round(len * 16000 / rate));
+  const out = new Float32Array(outLen);
+  const ratio = len / outLen;
+  for (let i = 0; i < outLen; i++) {
+    const x = i * ratio, i0 = Math.floor(x), i1 = Math.min(len - 1, i0 + 1), f = x - i0;
+    out[i] = mono[i0] * (1 - f) + mono[i1] * f;
+  }
+  return out;
+}
+async function capDecodePcm(blob) {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) throw new Error("이 브라우저는 오디오를 풀 수 없어요");
+  const ctx = new AC();
+  try {
+    const ab = await blob.arrayBuffer();
+    const buf = await new Promise((res, rej) => {
+      const p = ctx.decodeAudioData(ab.slice(0), res, rej);
+      if (p && typeof p.then === "function") p.then(res, rej);
+    });
+    return capDownmix(buf, buf.sampleRate);
+  } finally {
+    try { ctx.close(); } catch (_) {}
+  }
+}
+
+/* ---------- worker ---------- */
+function capWorker() {
+  if (cap.worker) return cap.worker;
+  const url = new URL("vendor/cap-worker.js", document.baseURI);
+  cap.worker = new Worker(url, { type: "module", name: "mhv-cap" });
+  return cap.worker;
+}
+function capAsk(msg, transfer) {
+  return new Promise((res, rej) => {
+    const w = capWorker();
+    const on = (ev) => {
+      const d = ev.data || {};
+      if (d.type === "progress") { capOnProgress(d); return; }
+      if (d.type === "cancelled") { w.removeEventListener("message", on); rej(new Error("cancelled")); return; }
+      if (d.type === "error") { w.removeEventListener("message", on); rej(new Error(d.message || "오류")); return; }
+      if (d.type === "cues" || d.type === "ready" || d.type === "info") { w.removeEventListener("message", on); res(d); }
+    };
+    w.addEventListener("message", on);
+    if (transfer) w.postMessage(msg, transfer); else w.postMessage(msg);
+  });
+}
+function capOnProgress(d) {
+  const box = $("capProg"); if (!box) return;
+  box.classList.add("show");
+  const bar = box.querySelector(".bar i");
+  if (bar && typeof d.pct === "number") bar.style.width = d.pct + "%";
+  const b = box.querySelector("b");
+  const phase = { model: "모델을 받는 중", asr: "받아적는 중", mt: "번역하는 중" }[d.phase] || "작업 중";
+  if (b) b.textContent = phase;
+  const s = box.querySelector("span");
+  if (s) s.textContent = d.detail || "";
+}
+function capHideProg() { const box = $("capProg"); if (box) box.classList.remove("show"); }
+
+/* ---------- generate ---------- */
+async function capGenerate(opts) {
+  opts = opts || {};
+  const item = capItem();
+  if (!item) throw new Error("재생 중인 영상이 없어요");
+  if (cap.busy) throw new Error("이미 자막을 만들고 있어요");
+  cap.busy = true; cap.cancelled = false;
+  try {
+    capOnProgress({ phase: "model", pct: 1, detail: "영상에서 소리를 꺼내는 중" });
+    const blob = await nodeToBlob(item);
+    const pcm = await capDecodePcm(blob);
+    if (cap.cancelled) throw new Error("cancelled");
+    capOnProgress({ phase: "asr", pct: 8, detail: "받아적기 준비" });
+    const lang = opts.lang && opts.lang !== "auto" ? opts.lang : "auto";
+    const orig = await capAsk({ type: "transcribe", audio: pcm, sampleRate: 16000, language: lang, task: "transcribe", kind: "orig" }, [pcm.buffer]);
+    if (cap.cancelled) throw new Error("cancelled");
+    const rec = {
+      key: capKey(item),
+      name: item.name,
+      duration: videoEl.duration || 0,
+      model: "Xenova/whisper-tiny",
+      tracks: { orig: { lang: lang === "auto" ? "und" : lang, cues: orig.cues || [] } },
+    };
+    const want = opts.targets || { ko: true, en: true, ja: false };
+    // English via the same Whisper model (task=translate) — no extra download
+    if (want.en) {
+      capOnProgress({ phase: "asr", pct: 40, detail: "영어로 옮기는 중" });
+      const pcm2 = await capDecodePcm(blob);
+      const en = await capAsk({ type: "transcribe", audio: pcm2, sampleRate: 16000, language: lang, task: "translate", kind: "en" }, [pcm2.buffer]);
+      rec.tracks.en = { lang: "en", cues: en.cues || [] };
+    }
+    if (want.ja && rec.tracks.en && rec.tracks.en.cues.length) {
+      capOnProgress({ phase: "mt", pct: 10, detail: "일본어 번역 모델을 준비하는 중" });
+      const ja = await capAsk({ type: "translate", cues: rec.tracks.en.cues, pair: "ja", kind: "ja" });
+      rec.tracks.ja = { lang: "ja", cues: ja.cues || [] };
+    }
+    if (want.ko) {
+      const srcLang = lang;
+      const origLooksKo = (rec.tracks.orig.cues || []).slice(0, 4).some((c) => /[가-힣]/.test(c.text));
+      if (origLooksKo || srcLang === "ko") {
+        rec.tracks.ko = { lang: "ko", cues: rec.tracks.orig.cues };
+      } else if (rec.tracks.en && rec.tracks.en.cues.length) {
+        const okKo = opts.forceKo === true || (opts.confirmKo !== false && typeof confirm === "function" && confirm("한국어 번역 모델은 약 280MB예요. 이 기기에서 받을까요? 아이폰에서는 메모리가 부족할 수 있어요."));
+        if (!okKo) {
+          toast("원문과 영어 자막은 저장했어요 · 한국어는 나중에 다시 만들 수 있어요", 2000);
+        } else {
+          capOnProgress({ phase: "mt", pct: 10, detail: "한국어 번역 모델은 약 280MB예요" });
+          try {
+            const ko = await capAsk({ type: "translate", cues: rec.tracks.en.cues, pair: "ko", kind: "ko" });
+            rec.tracks.ko = { lang: "ko", cues: ko.cues || [] };
+          } catch (e) {
+            if (String(e.message) === "cancelled") throw e;
+            toast("한국어 번역 모델을 불러오지 못했어요. 원문과 영어 자막은 저장했어요", 2200);
+          }
+        }
+      }
+    }
+    await capPut(rec);
+    cap.rec = rec;
+    if (cap.track === "ko" && !rec.tracks.ko) cap.track = rec.tracks.en ? "en" : "orig";
+    cap.on = true;
+    capSavePrefs();
+    capPaint(); capPaintBtn(); capSyncTextTrack();
+    capHideProg();
+    toast("자막을 만들었어요 · 이 기기에만 저장돼요", 1800);
+    return rec;
+  } finally {
+    cap.busy = false;
+    capHideProg();
+  }
+}
+function capCancel() {
+  cap.cancelled = true;
+  try { if (cap.worker) cap.worker.postMessage({ type: "cancel" }); } catch (_) {}
+}
+
+/* ---------- import / export ---------- */
+async function capImportText(text, name) {
+  const item = capItem(); if (!item) throw new Error("재생 중인 영상이 없어요");
+  const cues = capParseAuto(text, name);
+  if (!cues.length) throw new Error("자막 파일에서 줄을 찾지 못했어요");
+  const key = capKey(item);
+  const rec = (await capGet(key)) || { key, name: item.name, duration: videoEl.duration || 0, tracks: {} };
+  rec.tracks = rec.tracks || {};
+  rec.tracks.orig = { lang: "und", cues };
+  await capPut(rec);
+  cap.rec = rec; cap.on = true; cap.track = "orig";
+  capSavePrefs(); capPaint(); capPaintBtn(); capSyncTextTrack();
+  toast(`${cues.length}줄 자막을 넣었어요`, 1400);
+  return rec;
+}
+function capExportSrt(kind) {
+  const rec = cap.rec; if (!rec || !rec.tracks) return "";
+  const k = kind || (cap.track === "dual" ? (rec.tracks.ko ? "ko" : "orig") : cap.track);
+  const cues = rec.tracks[k] && rec.tracks[k].cues;
+  if (!cues || !cues.length) return "";
+  const srt = capToSrt(cues);
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([srt], { type: "text/plain" }));
+  a.download = ((capItem() && capItem().name) || "subtitles").replace(/\.[^.]+$/, "") + "." + k + ".srt";
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+  return srt;
+}
+
+/* ---------- sheet ---------- */
+function capOpenSheet() {
+  showSheet("자막", null, { custom: true, build(body) {
+    body.classList.add("cap-sheet");
+    const has = capHasAny();
+    const tracks = (cap.rec && cap.rec.tracks) || {};
+    const row = (title, html) => { const d = document.createElement("div"); d.innerHTML = `<h3>${title}</h3>` + html; body.appendChild(d); return d; };
+    row("트랙", `<div class="cap-seg" id="capTrackSeg">
+      <button type="button" data-tr="orig"${tracks.orig ? "" : " disabled"}>원문</button>
+      <button type="button" data-tr="ko"${tracks.ko ? "" : " disabled"}>한국어</button>
+      <button type="button" data-tr="en"${tracks.en ? "" : " disabled"}>영어</button>
+      <button type="button" data-tr="ja"${tracks.ja ? "" : " disabled"}>일본어</button>
+      <button type="button" data-tr="dual"${(tracks.orig && (tracks.ko || tracks.en || tracks.ja)) ? "" : " disabled"}>원문+번역</button>
+    </div><p class="note">${has ? "재생 중에 바로 바꿔 볼 수 있어요." : "아직 이 영상의 자막이 없어요. 아래에서 만들거나 파일을 넣을 수 있어요."}</p>`);
+    row("글자 크기", `<div class="cap-seg" id="capSizeSeg">
+      <button type="button" data-sz="sm">작게</button><button type="button" data-sz="md">보통</button><button type="button" data-sz="lg">크게</button>
+    </div>`);
+    row("위치", `<div class="cap-seg" id="capPosSeg">
+      <button type="button" data-ps="top">위</button><button type="button" data-ps="mid">가운데</button><button type="button" data-ps="bottom">아래</button>
+    </div>`);
+    row("배경", `<div class="cap-seg" id="capBgSeg">
+      <button type="button" data-bg="off">없음</button><button type="button" data-bg="soft">살짝</button><button type="button" data-bg="solid">진하게</button>
+    </div>`);
+    row("자동 자막 만들기", `
+      <p class="note">소리가 이 기기 안에서만 처리되고, 영상은 어디에도 올라가지 않아요. 처음 한 번만 음성 인식 모델(약 45MB)을 받고, 그다음부터는 오프라인으로 쓸 수 있어요. 영어 번역은 같은 모델로 되고, 일본어는 약 100MB, 한국어는 약 280MB 번역 모델을 추가로 받습니다. 아주 작은 모델이라 발음이 뭉개지거나 고유명사는 틀릴 수 있어요.</p>
+      <div class="cap-seg" id="capLangSeg" style="margin:8px 0">
+        <button type="button" data-lang="auto" class="on">언어 자동</button>
+        <button type="button" data-lang="ko">한국어</button>
+        <button type="button" data-lang="en">영어</button>
+        <button type="button" data-lang="ja">일본어</button>
+      </div>
+      <div class="cap-seg" id="capTgtSeg">
+        <button type="button" data-tgt="ko" class="on">한국어</button>
+        <button type="button" data-tgt="en" class="on">영어</button>
+        <button type="button" data-tgt="ja">일본어</button>
+      </div>
+      <div class="cap-actions" style="margin-top:10px">
+        <button type="button" id="btnCapMake">자동 자막 만들기</button>
+        <button type="button" id="btnCapCancel" class="hidden">취소</button>
+      </div>
+      <div class="cap-prog" id="capProg"><b>준비 중</b><div class="bar"><i></i></div><span></span></div>
+    `);
+    row("파일", `<div class="cap-actions">
+      <button type="button" id="btnCapImport">SRT / VTT 가져오기</button>
+      <button type="button" id="btnCapExport"${has ? "" : " disabled"}>SRT로 보내기</button>
+      <input id="capFile" type="file" accept=".srt,.vtt,text/vtt,text/plain">
+    </div>`);
+    const mark = (sel, key, val) => body.querySelectorAll(sel).forEach((b) => b.classList.toggle("on", b.dataset[key] === val));
+    mark("#capTrackSeg button", "tr", cap.track);
+    mark("#capSizeSeg button", "sz", cap.size);
+    mark("#capPosSeg button", "ps", cap.pos);
+    mark("#capBgSeg button", "bg", cap.bg);
+    body.querySelectorAll("#capTrackSeg button").forEach((b) => b.addEventListener("click", () => {
+      if (b.disabled) return;
+      cap.track = b.dataset.tr; cap.on = true; capSavePrefs(); capPaint(); capPaintBtn(); capSyncTextTrack(); mark("#capTrackSeg button", "tr", cap.track);
+    }));
+    body.querySelectorAll("#capSizeSeg button").forEach((b) => b.addEventListener("click", () => { cap.size = b.dataset.sz; capSavePrefs(); capPaint(); mark("#capSizeSeg button", "sz", cap.size); }));
+    body.querySelectorAll("#capPosSeg button").forEach((b) => b.addEventListener("click", () => { cap.pos = b.dataset.ps; capSavePrefs(); capPaint(); mark("#capPosSeg button", "ps", cap.pos); }));
+    body.querySelectorAll("#capBgSeg button").forEach((b) => b.addEventListener("click", () => { cap.bg = b.dataset.bg; capSavePrefs(); capPaint(); mark("#capBgSeg button", "bg", cap.bg); }));
+    body.querySelectorAll("#capLangSeg button").forEach((b) => b.addEventListener("click", () => {
+      body.querySelectorAll("#capLangSeg button").forEach((x) => x.classList.toggle("on", x === b));
+    }));
+    body.querySelectorAll("#capTgtSeg button").forEach((b) => b.addEventListener("click", () => b.classList.toggle("on")));
+    body.querySelector("#btnCapMake").addEventListener("click", async () => {
+      const langBtn = body.querySelector("#capLangSeg button.on");
+      const lang = langBtn ? langBtn.dataset.lang : "auto";
+      const targets = { ko: false, en: false, ja: false };
+      body.querySelectorAll("#capTgtSeg button.on").forEach((b) => { targets[b.dataset.tgt] = true; });
+      if (!targets.ko && !targets.en && !targets.ja) targets.ko = true;
+      body.querySelector("#btnCapCancel").classList.remove("hidden");
+      body.querySelector("#btnCapMake").disabled = true;
+      try { await capGenerate({ lang, targets }); capOpenSheetRefresh(body); }
+      catch (e) {
+        if (String(e.message) !== "cancelled") toast("자막을 만들지 못했어요 · " + (e.message || "다시 시도해 주세요"), 2000);
+      } finally {
+        body.querySelector("#btnCapMake").disabled = false;
+        body.querySelector("#btnCapCancel").classList.add("hidden");
+      }
+    });
+    body.querySelector("#btnCapCancel").addEventListener("click", () => capCancel());
+    body.querySelector("#btnCapImport").addEventListener("click", () => body.querySelector("#capFile").click());
+    body.querySelector("#capFile").addEventListener("change", async () => {
+      const f = body.querySelector("#capFile").files && body.querySelector("#capFile").files[0]; if (!f) return;
+      try { await capImportText(await f.text(), f.name); capOpenSheetRefresh(body); }
+      catch (e) { toast(e.message || "가져오지 못했어요", 1600); }
+      body.querySelector("#capFile").value = "";
+    });
+    body.querySelector("#btnCapExport").addEventListener("click", () => { if (!capExportSrt()) toast("내보낼 자막이 없어요", 1200); });
+  }});
+}
+function capOpenSheetRefresh() { try { closeSheet(); } catch (_) {} capOpenSheet(); }
+
+/* ---------- buttons / hooks ---------- */
+(function capBind() {
+  const host = $("btnMuteVid") && $("btnMuteVid").parentNode;
+  if (host && !$("btnCC")) {
+    const b = document.createElement("button");
+    b.type = "button"; b.id = "btnCC"; b.className = "v-chip v-ico";
+    b.setAttribute("aria-label", "자막");
+    b.innerHTML = "<b>CC</b>";
+    host.insertBefore(b, $("btnPip") || $("btnVideoFs") || null);
+  }
+  const b = $("btnCC");
+  if (b && !b.dataset.boundV20) {
+    b.dataset.boundV20 = "1";
+    let t = 0, long = false;
+    b.addEventListener("pointerdown", () => { long = false; t = setTimeout(() => { long = true; capOpenSheet(); }, 420); });
+    b.addEventListener("pointerup", () => clearTimeout(t));
+    b.addEventListener("pointerleave", () => clearTimeout(t));
+    b.addEventListener("pointercancel", () => clearTimeout(t));
+    b.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (long) return;
+      if (!capHasAny()) { capOpenSheet(); return; }
+      cap.on = !cap.on; capSavePrefs(); capPaint(); capPaintBtn(); capSyncTextTrack();
+    });
+  }
+  capEnsureDom();
+  capPaintBtn();
+})();
+
+const _v20setVideoUI = typeof setVideoUI === "function" ? setVideoUI : null;
+if (_v20setVideoUI) {
+  setVideoUI = function () {
+    const r = _v20setVideoUI.apply(this, arguments);
+    try { capSyncClearance(); capPaint(); } catch (_) {}
+    return r;
+  };
+}
+window.addEventListener("resize", () => { try { capSyncClearance(); capPaint(); } catch (_) {} });
+const _v20loadQueueItem = loadQueueItem;
+loadQueueItem = async function (i, autoplay) {
+  const r = await _v20loadQueueItem(i, autoplay);
+  try { await capLoadFor(capItem()); } catch (_) { cap.rec = null; capPaint(); capPaintBtn(); }
+  return r;
+};
+const _v20closeVideo = closeVideo;
+closeVideo = function () {
+  cap.rec = null; capPaint();
+  return _v20closeVideo();
+};
+
+/* help */
+(function capHelp() {
+  const ul = document.querySelector("#helpSheet ul, .help ul, #helpBox ul");
+})();
+
+function capState() {
+  return { on: cap.on, track: cap.track, size: cap.size, pos: cap.pos, bg: cap.bg, has: capHasAny(), busy: cap.busy };
+}
+window.__viewer.cap = {
+  parseVtt: capParseVtt,
+  parseSrt: capParseSrt,
+  parse: capParseAuto,
+  toVtt: capToVtt,
+  toSrt: capToSrt,
+  cueAt: capCueAt,
+  key: capKey,
+  get: capGet,
+  put: capPut,
+  load: capLoadFor,
+  rec: () => cap.rec,
+  state: capState,
+  set: (o) => {
+    if (!o) return capState();
+    if (typeof o.on === "boolean") cap.on = o.on;
+    if (o.track) cap.track = o.track;
+    if (o.size) cap.size = o.size;
+    if (o.pos) cap.pos = o.pos;
+    if (o.bg) cap.bg = o.bg;
+    capSavePrefs(); capPaint(); capPaintBtn(); capSyncTextTrack();
+    return capState();
+  },
+  paint: capPaint,
+  generate: capGenerate,
+  cancel: capCancel,
+  importText: capImportText,
+  exportSrt: capExportSrt,
+  openSheet: capOpenSheet,
+  decodePcm: capDecodePcm,
+};
+
+/*V20JS-END*/
 window.addEventListener("pagehide", () => { saveVideoPos(); saveReaderPos(); });
 </script>
 </body>

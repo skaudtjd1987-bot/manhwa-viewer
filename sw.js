@@ -1,7 +1,9 @@
 /* 만화뷰어 service worker: cache-first, versioned, engine precache with progress */
-const CACHE_VERSION = "mhv-pwa-v19";
+const CACHE_VERSION = "mhv-pwa-v20";
 // BGM files live in their own cache that survives app updates (no 19MB re-download per version)
 const BGM_CACHE = "mhv-bgm-v1";
+// Caption / translation models (transformers.js + ONNX) survive app updates
+const ML_CACHE_PREFIXES = ["mhv-ml-", "transformers", "huggingface"];
 // Engine files that did not change since the previous version can be copied from the old cache
 // (fast update, works even on a weak connection). Files listed here are always re-downloaded.
 const ENGINE_CHANGED = new Set(["./vendor/ffmpeg-worker.js"]);
@@ -15,6 +17,7 @@ const APP_ASSETS = [
   "./icons/apple-touch-icon.png",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
+  "./vendor/cap-worker.js",
 ];
 
 const ENGINE_ASSETS = [
@@ -158,7 +161,8 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter((k) => k !== CACHE_VERSION && k !== BGM_CACHE).map((k) => caches.delete(k)));
+    const keepCache = (k) => k === CACHE_VERSION || k === BGM_CACHE || ML_CACHE_PREFIXES.some((p) => k === p || k.startsWith(p));
+    await Promise.all(keys.filter((k) => !keepCache(k)).map((k) => caches.delete(k)));
     await self.clients.claim();
     await broadcast({ type: "sw-activated", cache: CACHE_VERSION });
   })());
