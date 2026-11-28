@@ -1,5 +1,5 @@
 /* 만화뷰어 service worker: cache-first, versioned, engine precache with progress */
-const CACHE_VERSION = "mhv-pwa-v21b";
+const CACHE_VERSION = "mhv-pwa-v21c";
 // BGM files live in their own cache that survives app updates (no 19MB re-download per version)
 const BGM_CACHE = "mhv-bgm-v1";
 // Caption / translation models (transformers.js + ONNX) survive app updates

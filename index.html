@@ -2171,6 +2171,49 @@ body.v19-focus #bgmNp { opacity: 0; }
 #capAutoRow .seg button, #capAutoToSeg button { height: 44px; min-width: 44px; }
 
 /*V21BCSS-END*/
+/* ===== v21.2 always Korean + one-click dl ===== */
+/* v21.2: always-Korean translation + one-click downloads */
+#btnDlAll {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px; width: 100%; min-height: 52px; padding: 10px 16px; border-radius: 26px;
+  background: var(--accent); color: #fff; border: 0;
+  font-size: 16px; font-weight: 800; letter-spacing: -.02em;
+}
+#btnDlAll[disabled] { opacity: .65; }
+#btnDlAll small { font-size: 12px; font-weight: 650; opacity: .92; }
+#dlAllMeta, #dlAllNote { margin: 8px 0 0; font-size: 12.5px; color: var(--text2); line-height: 1.45; word-break: keep-all; }
+#dlAllProg { margin-top: 10px; }
+#dlAllProg.hidden { display: none; }
+#dlAllProg .bar { height: 8px; border-radius: 4px; background: rgba(255,240,225,.12); overflow: hidden; }
+#dlAllProg .bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--ivory)); }
+#dlAllProg .dl-all-st { margin-top: 6px; font-size: 12.5px; font-weight: 700; color: var(--ivory); }
+.dl-bundles { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.dl-bundle {
+  padding: 12px; border-radius: 16px; background: rgba(255,240,225,.05);
+  border: .5px solid var(--hair); display: flex; flex-direction: column; gap: 8px;
+}
+.dl-bundle .dl-name { font-size: 14.5px; font-weight: 800; color: var(--ivory); }
+.dl-bundle .dl-meta { font-size: 12px; color: var(--text2); line-height: 1.4; word-break: keep-all; }
+.dl-bundle .dl-acts button, #btnDlAdv, #btnDlPersist2 {
+  height: 44px; min-width: 44px; padding: 0 12px; border-radius: 22px;
+  background: rgba(255,240,225,.06); color: var(--ivory);
+  border: .5px solid var(--hair2); font-size: 13px; font-weight: 700;
+}
+.dl-bundle .dl-acts button.primary { background: var(--accent); color: #fff; border-color: transparent; }
+#dlAdv {
+  margin-top: 16px; border: .5px solid var(--hair); border-radius: 16px;
+  background: rgba(255,240,225,.03); padding: 4px 10px 10px;
+}
+#dlAdv > summary {
+  list-style: none; cursor: pointer; min-height: 44px; display: flex; align-items: center;
+  font-size: 14px; font-weight: 800; color: var(--ivory);
+}
+#dlAdv > summary::-webkit-details-marker { display: none; }
+#dlAdv > summary::after { content: "▾"; margin-left: auto; opacity: .6; }
+#dlAdv[open] > summary::after { content: "▴"; }
+.cap-src-lab { display: block; margin: 8px 0 6px; font-size: 12.5px; font-weight: 700; color: var(--text2); }
+
+/*V21CCSS-END*/
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
@@ -2228,7 +2271,7 @@ body.v19-focus #bgmNp { opacity: 0; }
       <div id="prefixFix" class="prefix-fix hidden"><span></span><button type="button" id="btnPrefixFix">이름 앞 날짜 빼기</button></div>
       <p class="ex-hint" id="photoHint">사진 앱에서 손가락을 밀어 여러 장을 한 번에 선택할 수 있습니다.</p>
       <div id="storageMeter" class="storage-meter"></div>
-      <div class="app-ver" id="appVer">만화뷰어 v21.1 · 오프라인</div>
+      <div class="app-ver" id="appVer">만화뷰어 v21.2 · 오프라인</div>
     </div>
     <div id="exSelectBar" class="ex-select hidden">
       <button type="button" id="btnSelectAll">전체 선택</button>
@@ -2275,8 +2318,8 @@ body.v19-focus #bgmNp { opacity: 0; }
           <li><b>이어서 읽기</b>: 마지막으로 보던 쪽과 스크롤 위치를 기억하고, 홈의 큰 카드에서 바로 이어 봅니다. 앨범 카드에는 읽은 만큼 고리가 채워져요.</li>
           <li>음악 <b>잠들기 타이머</b>(15·30·60분 또는 이 곡 끝)는 끝나기 전 소리를 천천히 줄여 꺼 드려요. 플레이어에서 시각화를 켜면 앨범 아트 색에 맞춰 파형이 움직여요(잠금 화면 재생은 그대로).</li>
           <li>보기 설정에서 <b>포토북 슬라이드쇼</b>를 시작하면 그림이 살며시 움직이며 넘어가고, 읽는 동안 화면이 꺼지지 않게 유지할 수 있어요. 홈 화면 앱의 바로가기로 이어 읽기·음악·검색을 바로 열 수 있어요.</li>
-          <li>영상 <b>자동 자막</b>: 재생 화면의 <b>CC</b>를 눌러 자막을 켜거나, 길게 눌러 설정을 엽니다. <b>자동 자막 만들기</b>는 이 기기 안에서만 소리를 받아적고(첫 사용 시 약 45MB 모델을 받음), 한국어·영어·일본어로 번역 자막을 만들 수 있어요. 영상은 밖으로 보내지 않아요. 받아적기 모델이 있으면 <b>영상 틀면 자동 자막</b>으로, CC를 누르지 않아도 지금 장면부터 자막이 올라와요. SRT/VTT를 가져오거나 만든 자막을 SRT로 저장할 수도 있어요.</li>
-          <li><b>다운로드 관리</b>: 보기 설정 또는 자막 시트의 <b>모델 미리 받기</b>에서 음성 인식·번역 언어 팩·만화 글자 인식·LUNERA 음악을 미리 받을 수 있어요. 추천 팩은 정확한 받아적기(약 253MB)입니다. Wi-Fi를 권장해요.</li>
+          <li>영상 <b>자동 자막</b>: 재생 화면의 <b>CC</b>를 눌러 자막을 켜거나, 길게 눌러 설정을 엽니다. <b>자동 자막 만들기</b>는 이 기기 안에서만 소리를 받아적고(첫 사용 시 약 45MB 모델을 받음), 번역 자막은 항상 한국어로 나와요. 영상은 밖으로 보내지 않아요. 받아적기 모델이 있으면 <b>영상 틀면 자동 자막</b>으로, CC를 누르지 않아도 지금 장면부터 자막이 올라와요. 번역 결과는 항상 한국어로 나와요. SRT/VTT를 가져오거나 만든 자막을 SRT로 저장할 수도 있어요.</li>
+          <li><b>다운로드 관리</b>: 보기 설정 또는 자막 시트의 <b>모델 미리 받기</b>에서 음성 인식·번역 언어 팩·만화 글자 인식·LUNERA 음악을 미리 받을 수 있어요. <b>필요한 것 한 번에 받기</b>로 받아적기·한국어 번역·만화 글자 인식을 한꺼번에 받을 수 있어요. Wi-Fi를 권장해요.</li>
           <li>자막을 <b>고치기</b>하고, <b>따라 읽기</b>로 현재 줄을 따라가며, 모양(기본·영화관·크게·노란 자막)과 학습 모드(원문+번역)를 고를 수 있어요. 여러 영상을 대기열에 넣어 뒤에서 만들 수도 있어요.</li>
           <li>읽는 화면의 <b>번역</b>으로 만화 말풍선을 이 기기 안에서 읽어 번역할 수 있어요. 원문/번역/나란히를 바꾸고, 말풍선을 길게 누르면 원문과 번역을 같이 봐요. 글자 인식은 틀릴 수 있어 직접 고칠 수 있어요.</li>
           </ul>
@@ -5386,7 +5429,7 @@ function applyReaderLook() {
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v21b";
+const PWA_CACHE = "mhv-pwa-v21c";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
@@ -9270,7 +9313,7 @@ function updateReadProg() {
 }
 
 /* ===== v15: 시리즈·태그/검색, 시크릿 서재(PIN), 자동 넘김, 책갈피 메모 ===== */
-var APP_VER = "v21.1";
+var APP_VER = "v21.2";
 var META_KEY = "mhv-albummeta-v1", SECRET_KEY = "mhv-secret-v1", RECENT_KEY = "mhv-recent-v1";
 function v15Load(k, d) { try { const v = JSON.parse(localStorage.getItem(k) || "null"); return v && typeof v === "object" ? v : d; } catch (_) { return d; } }
 function v15Save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} }
@@ -14570,7 +14613,6 @@ window.__viewer.manga = {
 
 /*V21JS-END*/
 /* ===== v21.1: 영상 틀면 자동 자막 (기기 안, 초저노력) ===== */
-/* ===== v21.1: 영상 틀면 자동 자막 (기기 안, 초저노력) ===== */
 (function v21bAutoCap() {
   const AUTO_WIN = 16;
   const AUTO_HOP = 14;
@@ -14831,6 +14873,14 @@ window.__viewer.manga = {
   }
   async function capAutoTranslateChunk(cues) {
     if (!cues || !cues.length) return;
+    if (window.__viewer && window.__viewer.cap && typeof window.__viewer.cap.toKorean === "function") {
+      const lang = (cap.lang && cap.lang !== "auto") ? cap.lang : "auto";
+      const lookKo = cues.some((c) => /[가-힣]/.test(c.text)) || lang === "ko";
+      if (lookKo) { capMergeCuesInto("ko", cues, "ko"); return "ko"; }
+      const ko = await window.__viewer.cap.toKorean(cues, lang);
+      if (ko) { capMergeCuesInto("ko", ko, "ko"); return "ko"; }
+      return null;
+    }
     const to = cap.autoTo || "ko";
     const origLooksKo = cues.some((c) => /[가-힣]/.test(c.text));
     const srcLang = cap.lang || "auto";
@@ -14952,7 +15002,14 @@ window.__viewer.manga = {
     if (!item) return { ok: false, reason: "no-item" };
     if (!capAutoWanted()) { capOfferHide(); return { ok: false, reason: "off" }; }
     const key = capKey(item);
+    if (!(cap.rec && cap.rec.key === key && capCoverageOk(cap.rec, (videoEl && videoEl.duration) || cap.rec.duration))) {
+      try {
+        const got = await capGet(key);
+        if (got && got.key === key) cap.rec = got;
+      } catch (_) {}
+    }
     if (cap.rec && cap.rec.key === key && capCoverageOk(cap.rec, (videoEl && videoEl.duration) || cap.rec.duration)) {
+      if (cap.autoRun) { cap.autoRun.gen++; cap.autoRun = null; }
       cap.on = true;
       cap.track = capPickAutoTrack(cap.rec);
       capPaint(); capPaintBtn(); capSyncTextTrack();
@@ -15005,11 +15062,16 @@ window.__viewer.manga = {
     capAutoChip(false);
     try {
       if (!cap.rec || cap.rec.key !== capKey(item) || !capHasAny()) {
+        try {
+          const got = await capGet(capKey(item));
+          if (got) cap.rec = got;
+        } catch (_) {}
         const side = await capReadSidecar(item);
         if (side) await capApplySidecar(item, side);
       }
     } catch (_) {}
     if (cap.rec && capCoverageOk(cap.rec)) {
+      if (cap.autoRun) { cap.autoRun.gen++; cap.autoRun = null; }
       cap.on = true;
       cap.track = capPickAutoTrack(cap.rec);
       capPaint(); capPaintBtn(); capSyncTextTrack();
@@ -15134,6 +15196,506 @@ window.__viewer.manga = {
   });
 })();
 
+/* ===== v21.2: 번역 결과는 항상 한국어, 받기 한 번에 ===== */
+(function v21cKorean() {
+  const HIDDEN_MT = new Set(["mt-ko-en", "mt-en-ja", "mt-en-zh", "mt-en-es"]);
+  const DL_BUNDLES = [
+    { id: "bun-en-ko", name: "영어→한국어", purpose: "영어 말과 자막을 한국어로 옮깁니다.", parts: ["mt-en-ko"] },
+    { id: "bun-ja-ko", name: "일본어→한국어", purpose: "일본어를 한국어로 옮깁니다. 필요한 모델을 한 번에 받아요.", parts: ["mt-ja-en", "mt-en-ko"] },
+    { id: "bun-zh-ko", name: "중국어→한국어", purpose: "중국어를 한국어로 옮깁니다. 필요한 모델을 한 번에 받아요.", parts: ["mt-zh-en", "mt-en-ko"] },
+    { id: "bun-es-ko", name: "스페인어→한국어", purpose: "스페인어를 한국어로 옮깁니다. 필요한 모델을 한 번에 받아요.", parts: ["mt-es-en", "mt-en-ko"] },
+  ];
+  const OCR_NEEDED = ["ocr-eng", "ocr-kor", "ocr-jpn", "ocr-chi", "ocr-spa"];
+
+  cap.autoTo = "ko";
+
+  function dlIsIphone() {
+    const ua = navigator.userAgent || "";
+    return /iPhone/.test(ua) && !/iPad/.test(ua);
+  }
+  function dlLowMem() {
+    const mem = navigator.deviceMemory;
+    return dlIsIphone() || (typeof mem === "number" && mem > 0 && mem <= 4);
+  }
+  function dlSpeechPackId() {
+    return dlLowMem() ? "asr-base" : "asr-small";
+  }
+  function dlNeededIds() {
+    const ids = [dlSpeechPackId(), "mt-en-ko", "mt-ja-en", "mt-zh-en", "mt-es-en"].concat(OCR_NEEDED);
+    return ids.filter((id, i) => ids.indexOf(id) === i && dlPack(id));
+  }
+  async function dlPartsStatus(ids) {
+    let bytes = 0, remain = 0, have = 0, need = 0, running = false, partial = false;
+    const items = [];
+    for (const id of ids) {
+      const p = dlPack(id); if (!p) continue;
+      const st = await dlPackStatus(id);
+      const size = p.size || 0;
+      need++;
+      bytes += size;
+      if (st.state === "done") { have++; }
+      else {
+        remain += Math.max(0, size - (st.bytes || st.got || 0));
+        if (st.state === "run") running = true;
+        if (st.state === "partial" || st.state === "pause") partial = true;
+      }
+      items.push({ id, st, size, name: p.name });
+    }
+    return { bytes, remain, have, need, running, partial, done: need > 0 && have >= need, items };
+  }
+  async function dlBundleStatus(b) {
+    return dlPartsStatus(b.parts);
+  }
+  async function dlAllStatus() {
+    return dlPartsStatus(dlNeededIds());
+  }
+
+  async function dlDownloadIds(ids, jobKey) {
+    ids = (ids || []).filter((id, i, a) => a.indexOf(id) === i);
+    const key = jobKey || ids.join("+");
+    if (dl.jobs[key] && dl.jobs[key].state === "run") return dl.jobs[key].prom;
+    const run = (async () => {
+      const job = { state: "run", got: 0, total: 0, ids: ids.slice(), idx: 0, ctrl: new AbortController() };
+      dl.jobs[key] = job;
+      dlEmit();
+      try {
+        for (let i = 0; i < ids.length; i++) {
+          if (job.state !== "run") throw new Error(job.state === "cancel" ? "cancelled" : "paused");
+          job.idx = i;
+          const st = await dlPackStatus(ids[i]);
+          if (st.state === "done") { dlEmit(); continue; }
+          await dlDownload(ids[i]);
+          dlEmit();
+        }
+        delete dl.jobs[key];
+        dlEmit();
+        toast("필요한 파일을 받아 두었어요", 1600);
+      } catch (e) {
+        const msg = String(e && e.message || e);
+        if (msg === "paused") { job.state = "pause"; dlEmit(); return; }
+        if (msg === "cancelled") { delete dl.jobs[key]; dlEmit(); return; }
+        job.state = "error"; job.error = msg; dlEmit();
+        toast("받는 중 문제가 생겼어요 · " + msg, 2000);
+      }
+    })();
+    dl.jobs[key] = dl.jobs[key] || { state: "run" };
+    dl.jobs[key].prom = run;
+    return run;
+  }
+  function dlDownloadBundle(id) {
+    const b = DL_BUNDLES.find((x) => x.id === id);
+    if (!b) return Promise.resolve();
+    toast(b.name + " 묶음을 받기 시작해요 · Wi-Fi를 권장해요", 1600);
+    return dlDownloadIds(b.parts, id);
+  }
+  function dlDownloadAllNeeded() {
+    const ids = dlNeededIds();
+    const speech = dlPack(dlSpeechPackId());
+    const hint = dlLowMem() ? "아이폰·메모리가 적은 기기에서는 균형 받아적기로 받아요. " : "";
+    toast(hint + "필요한 것을 한 번에 받기 시작해요 · Wi-Fi를 권장해요", 2000);
+    return dlDownloadIds(ids, "all-needed");
+  }
+
+  const _v21cRec = typeof dlDownloadRecommended === "function" ? dlDownloadRecommended : null;
+  dlDownloadRecommended = function () { return dlDownloadAllNeeded(); };
+
+  function capDetectLang(cues, hint) {
+    if (hint && hint !== "auto") return hint;
+    const t = (cues || []).map((c) => c.text || c).join(" ");
+    if (/[가-힣]/.test(t)) return "ko";
+    if (/[\u3040-\u30ff]/.test(t)) return "ja";
+    if (/[\u3400-\u9fff]/.test(t)) return "zh";
+    return "en";
+  }
+  function capKoPairs(src) {
+    if (!src || src === "ko") return [];
+    if (src === "en") return ["en-ko"];
+    if (src === "ja") return ["ja-en", "en-ko"];
+    if (src === "zh") return ["zh-en", "en-ko"];
+    if (src === "es") return ["es-en", "en-ko"];
+    return ["en-ko"];
+  }
+  async function capMtReady(pair) {
+    const map = { "en-ko": "mt-en-ko", "ja-en": "mt-ja-en", "zh-en": "mt-zh-en", "es-en": "mt-es-en" };
+    const id = map[pair];
+    if (!id) return false;
+    try { const st = await dlPackStatus(id); return !!(st && st.state === "done"); }
+    catch (_) { return false; }
+  }
+  async function capToKorean(cues, hint) {
+    if (!cues || !cues.length) return cues || [];
+    const src = capDetectLang(cues, hint);
+    if (src === "ko") return cues.map((c) => Object.assign({}, c));
+    const pairs = capKoPairs(src);
+    let cur = cues;
+    for (const pair of pairs) {
+      if (!(await capMtReady(pair))) {
+        toast("한국어로 옮기려면 다운로드 관리에서 해당 언어 묶음을 받아 주세요", 2200);
+        return null;
+      }
+      const r = await capAsk({ type: "translate", cues: cur, pair, kind: "ko" });
+      cur = (r && r.cues) || cur;
+    }
+    return cur;
+  }
+
+  const _v21cGen = capGenerate;
+  capGenerate = async function (opts) {
+    opts = opts || {};
+    if (!opts.targets) {
+      opts = Object.assign({}, opts, { targets: { ko: true, en: false, ja: false }, confirmKo: false, forceKo: true });
+      const rec = await _v21cGen(opts);
+      try {
+        const orig = rec && rec.tracks && rec.tracks.orig && rec.tracks.orig.cues;
+        const lang = (opts.lang && opts.lang !== "auto") ? opts.lang : (cap.lang || "auto");
+        if (orig && orig.length) {
+          const src = capDetectLang(orig, lang);
+          if (src === "ko") rec.tracks.ko = { lang: "ko", cues: orig };
+          else {
+            const ko = await capToKorean(orig, lang);
+            if (ko) rec.tracks.ko = { lang: "ko", cues: ko };
+          }
+          if (rec.tracks.en && !opts.keepEn) delete rec.tracks.en;
+          if (rec.tracks.ja && !opts.keepJa) delete rec.tracks.ja;
+          cap.rec = rec;
+          cap.track = rec.tracks.ko ? "ko" : "orig";
+          cap.on = true;
+          try { await capPut(rec); } catch (_) {}
+          capPaint(); capPaintBtn(); capSyncTextTrack();
+        }
+      } catch (e) {
+        if (String(e && e.message) === "cancelled") throw e;
+      }
+      return rec;
+    }
+    return _v21cGen(opts);
+  };
+
+  async function capAutoToKo(cues) {
+    const lang = (cap.lang && cap.lang !== "auto") ? cap.lang : "auto";
+    const src = capDetectLang(cues, lang);
+    if (src === "ko") {
+      capMergeCuesInto && capMergeCuesInto("ko", cues, "ko");
+      if (cap.rec && cap.rec.tracks) cap.rec.tracks.ko = { lang: "ko", cues: ((cap.rec.tracks.ko && cap.rec.tracks.ko.cues) || []).concat([]) };
+      capMergeKo(cues);
+      return "ko";
+    }
+    const ko = await capToKorean(cues, lang);
+    if (ko) { capMergeKo(ko); return "ko"; }
+    return null;
+  }
+  function capMergeKo(cues) {
+    if (!cap.rec) return;
+    cap.rec.tracks = cap.rec.tracks || {};
+    const prev = (cap.rec.tracks.ko && cap.rec.tracks.ko.cues) || [];
+    const map = new Map(prev.map((c) => [c.start.toFixed(2) + "|" + c.text, c]));
+    (cues || []).forEach((c) => map.set(c.start.toFixed(2) + "|" + c.text, c));
+    cap.rec.tracks.ko = { lang: "ko", cues: [...map.values()].sort((a, b) => a.start - b.start) };
+  }
+
+  // Intercept auto chunk translation: v21b already called capAutoTranslateChunk internally.
+  // Replace the later paint track pick by wrapping capPaint and watching rec.
+  const _v21cPaint = capPaint;
+  capPaint = function () {
+    if (cap.track === "en" || cap.track === "ja") cap.track = cap.rec && cap.rec.tracks && cap.rec.tracks.ko ? "ko" : (cap.track === "dual" ? "dual" : "orig");
+    if (cap.learn && cap.track !== "dual") cap.track = "dual";
+    return _v21cPaint.apply(this, arguments);
+  };
+
+  function capStripTargetUi(body) {
+    if (!body) return;
+    const tgt = body.querySelector("#capTgtSeg");
+    if (tgt) tgt.remove();
+    body.querySelectorAll("#capTrackSeg [data-tr='en'], #capTrackSeg [data-tr='ja']").forEach((b) => b.remove());
+    const dual = body.querySelector("#capTrackSeg [data-tr='dual']");
+    if (dual) dual.textContent = "원문+한국어";
+    const autoTo = body.querySelector("#capAutoToSeg");
+    if (autoTo) autoTo.remove();
+    const learn = body.querySelector("#btnCapLearn");
+    if (learn) learn.textContent = "학습 모드 (원문+한국어)";
+    // Source language: label 원어, add zh/es
+    function upgradeSrc(seg) {
+      if (!seg || seg.dataset.v21cSrc) return;
+      seg.dataset.v21cSrc = "1";
+      const lab = document.createElement("span");
+      lab.className = "cap-src-lab";
+      lab.textContent = "원어";
+      seg.parentNode && seg.parentNode.insertBefore(lab, seg);
+      const have = new Set([...seg.querySelectorAll("button")].map((b) => b.dataset.lang || b.dataset.s || b.dataset.l));
+      const add = (code, label) => {
+        if (have.has(code)) return;
+        const b = document.createElement("button");
+        b.type = "button";
+        if (seg.id === "mgSrc") b.dataset.s = code;
+        else b.dataset.lang = code;
+        b.textContent = label;
+        seg.appendChild(b);
+        b.addEventListener("click", () => {
+          if (b.dataset.lang) { cap.lang = b.dataset.lang; capSavePrefs(); }
+          seg.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
+        });
+      };
+      add("zh", "중국어");
+      add("es", "스페인어");
+      // Relabel auto
+      const autoBtn = seg.querySelector("[data-lang='auto'], [data-s='auto']");
+      if (autoBtn) autoBtn.textContent = "자동";
+    }
+    upgradeSrc(body.querySelector("#capLangSeg"));
+    const seg2 = body.querySelector("#capLangSeg2");
+    if (body.querySelector("#capLangSeg") && seg2) seg2.style.display = "none";
+    else upgradeSrc(seg2);
+    upgradeSrc(body.querySelector("#mgSrc"));
+    const mgTgt = body.querySelector("#mgTgt");
+    if (mgTgt) mgTgt.remove();
+    // Notes: always Korean
+    body.querySelectorAll(".note").forEach((n) => {
+      if (/일본어는 약|한국어는 약 280|영어로 옮기|일본어로/.test(n.textContent) && /번역/.test(n.textContent)) {
+        n.textContent = "받아적기와 번역은 이 기기 안에서만 이뤄져요. 번역 결과는 항상 한국어로 나와요. 이미 한국어인 말은 그대로 둡니다.";
+      }
+    });
+    const autoNote = body.querySelector("#capAutoRow .note");
+    if (autoNote) autoNote.textContent = "받아적기 모델이 이 기기에 있으면, 재생만 해도 지금 장면부터 자막이 올라와요. 번역은 항상 한국어로 나와요. 없으면 한 번에 받을 수 있어요.";
+  }
+
+  const _v21cCapSheet = capOpenSheet;
+  capOpenSheet = function () {
+    const r = _v21cCapSheet.apply(this, arguments);
+    const run = () => capStripTargetUi(document.querySelector(".sheet"));
+    requestAnimationFrame(() => { run(); requestAnimationFrame(run); });
+    return r;
+  };
+  const _v21cMgSheet = mgOpenSheet;
+  mgOpenSheet = function () {
+    const r = _v21cMgSheet.apply(this, arguments);
+    requestAnimationFrame(() => {
+      const body = document.querySelector(".sheet");
+      capStripTargetUi(body);
+      if (!body) return;
+      const srcOf = () => (body.querySelector("#mgSrc button.on") || {}).dataset.s || "auto";
+      const go = body.querySelector("#btnMgGo");
+      const alb = body.querySelector("#btnMgAlbum");
+      if (go && !go.dataset.v21c) {
+        go.dataset.v21c = "1";
+        const fresh = go.cloneNode(true);
+        go.parentNode.replaceChild(fresh, go);
+        fresh.addEventListener("click", () => mgTranslatePage({ src: srcOf(), tgt: "ko", force: true }));
+      }
+      if (alb && !alb.dataset.v21c) {
+        alb.dataset.v21c = "1";
+        const fresh = alb.cloneNode(true);
+        alb.parentNode.replaceChild(fresh, alb);
+        fresh.addEventListener("click", () => mgTranslateAlbum({ src: srcOf(), tgt: "ko" }));
+      }
+    });
+    return r;
+  };
+
+  const _v21cMgPair = mgPair;
+  mgPair = function (src, tgt) {
+    tgt = "ko";
+    src = src || "auto";
+    if (src === "auto") return capKoPairs("en");
+    return capKoPairs(src);
+  };
+  const _v21cMgTr = mgTranslateBubbles;
+  mgTranslateBubbles = async function (bubbles, src, tgt) {
+    tgt = "ko";
+    const detected = src && src !== "auto" ? src : mgDetectSrc(bubbles);
+    if (detected === "ko") return bubbles.map((b) => Object.assign({}, b, { tr: b.text }));
+    return _v21cMgTr(bubbles, detected, "ko");
+  };
+
+  const _v21cDlOpen = dlOpenSheet;
+  const _v21cDlPaint = dlPaintIfOpen;
+
+  function dlCardHtml(p, st, acts) {
+    const pct = st.pct || (st.state === "done" ? 100 : 0);
+    return "<div class=\"dl-card\" data-id=\"" + p.id + "\">"
+      + "<div class=\"dl-name\">" + p.name + "</div>"
+      + "<div class=\"dl-meta\">" + (p.purpose || "") + " · " + (p.sizeLabel || dlFmt(p.size || 0)) + (p.tier ? " · " + p.tier : "") + "</div>"
+      + "<div class=\"dl-status\">" + (st.label || "") + "</div>"
+      + "<div class=\"bar\"><i style=\"width:" + pct + "%\"></i></div>"
+      + "<div class=\"dl-acts\">" + (acts || "") + "</div></div>";
+  }
+  function dlActsFor(st, id) {
+    if (st.state === "run") return "<button type=\"button\" data-a=\"pause\" data-id=\"" + id + "\">일시정지</button><button type=\"button\" data-a=\"cancel\" data-id=\"" + id + "\">취소</button>";
+    if (st.state === "pause" || st.state === "partial") return "<button type=\"button\" data-a=\"go\" data-id=\"" + id + "\" class=\"primary\">이어 받기</button><button type=\"button\" data-a=\"cancel\" data-id=\"" + id + "\">취소</button>";
+    if (st.state === "done") return "<button type=\"button\" data-a=\"del\" data-id=\"" + id + "\">삭제</button><button type=\"button\" data-a=\"retry\" data-id=\"" + id + "\">다시 받기</button>";
+    return "<button type=\"button\" data-a=\"go\" data-id=\"" + id + "\" class=\"primary\">받기</button>";
+  }
+
+  dlOpenSheet = function () {
+    showSheet("다운로드 관리", null, { custom: true, build(body) {
+      body.classList.add("dl-sheet");
+      const head = document.createElement("div");
+      head.innerHTML = "<h3>한 번에 받기</h3>"
+        + "<p class=\"note\">번역 결과는 항상 한국어로 나와요. 영상 받아적기, 한국어 번역, 만화 글자 인식을 한꺼번에 받을 수 있어요. 이미 있는 파일은 건너뛰고, 중간에 멈춰도 이어서 받을 수 있어요. 큰 파일이라 <b>Wi-Fi를 권장</b>해요.</p>"
+        + "<button type=\"button\" id=\"btnDlAll\">필요한 것 한 번에 받기</button>"
+        + "<p class=\"note\" id=\"dlAllMeta\">크기를 세는 중…</p>"
+        + "<div id=\"dlAllProg\" class=\"hidden\"><div class=\"bar\"><i></i></div><div class=\"dl-all-st\" id=\"dlAllSt\"></div></div>"
+        + "<div class=\"dl-head\" style=\"margin-top:10px\"><button type=\"button\" id=\"btnDlPersist2\">이 기기에 유지</button></div>";
+      body.appendChild(head);
+      const bun = document.createElement("div"); bun.id = "dlBundles"; bun.className = "dl-bundles"; body.appendChild(bun);
+      const adv = document.createElement("details");
+      adv.id = "dlAdv";
+      adv.innerHTML = "<summary>세부 항목(고급)</summary><div id=\"dlList\"></div>";
+      body.appendChild(adv);
+      head.querySelector("#btnDlAll").addEventListener("click", () => dlDownloadAllNeeded());
+      head.querySelector("#btnDlPersist2").addEventListener("click", async () => {
+        let ok = false;
+        try { ok = navigator.storage && await navigator.storage.persist(); } catch (_) {}
+        toast(ok ? "이 기기에 모델을 유지해 달라고 요청했어요" : "유지 요청을 이 브라우저가 받지 않았어요", 1600);
+        dlPaintIfOpen();
+      });
+      dl._body = body;
+    }});
+    dlPaintIfOpen();
+  };
+
+  dlPaintIfOpen = async function () {
+    const host = document.getElementById("dlList");
+    const bun = document.getElementById("dlBundles");
+    const meta = document.getElementById("dlAllMeta");
+    const prog = document.getElementById("dlAllProg");
+    const stEl = document.getElementById("dlAllSt");
+    const btn = document.getElementById("btnDlAll");
+    if (!host && !bun && !meta) return _v21cDlPaint && _v21cDlPaint();
+    const all = await dlAllStatus();
+    if (meta) {
+      const speech = dlPack(dlSpeechPackId());
+      const low = dlLowMem();
+      const sizeTxt = all.remain > 0 ? ("남은 용량 약 " + dlFmt(all.remain)) : ("모두 받음 · " + dlFmt(all.bytes));
+      const speechTxt = low ? "아이폰·메모리가 적은 기기에서는 균형 받아적기(약 81MB)로 받아요. " : ((speech && speech.name) ? (speech.name + " 포함. ") : "");
+      meta.innerHTML = speechTxt + sizeTxt + " · 같은 한국어 번역 모델은 한 번만 받습니다. <b>Wi-Fi를 권장</b>해요.";
+    }
+    if (btn) {
+      const job = dl.jobs["all-needed"];
+      if (all.done) { btn.innerHTML = "필요한 것 다 받았어요"; btn.disabled = true; }
+      else if (job && job.state === "run") { btn.innerHTML = "받는 중…"; btn.disabled = true; }
+      else if (all.partial || (job && job.state === "pause")) { btn.innerHTML = "필요한 것 이어 받기<small>멈춘 곳부터 이어서 받아요</small>"; btn.disabled = false; }
+      else { btn.innerHTML = "필요한 것 한 번에 받기<small>" + (all.remain ? dlFmt(all.remain) : dlFmt(all.bytes)) + " · Wi-Fi 권장</small>"; btn.disabled = false; }
+    }
+    if (prog && stEl) {
+      const job = dl.jobs["all-needed"];
+      const show = !!(job && (job.state === "run" || job.state === "pause")) || (all.have > 0 && !all.done);
+      prog.classList.toggle("hidden", !job && all.done);
+      const pct = all.bytes ? Math.round(((all.bytes - all.remain) / all.bytes) * 100) : (all.done ? 100 : 0);
+      const bar = prog.querySelector(".bar i");
+      if (bar) bar.style.width = Math.max(0, Math.min(100, pct)) + "%";
+      stEl.textContent = all.done ? "완료" : ((job && job.state === "run" ? "받는 중 " : (all.partial ? "일부 받음 " : "")) + pct + "% · " + all.have + "/" + all.need + "개");
+      if (!job && all.have === 0) prog.classList.add("hidden");
+    }
+    if (bun) {
+      const html = ["<h3>한국어 번역 묶음</h3>"];
+      for (const b of DL_BUNDLES) {
+        const st = await dlBundleStatus(b);
+        const job = dl.jobs[b.id];
+        let acts = "";
+        if (job && job.state === "run") acts = "<button type=\"button\" data-bun-a=\"pause\" data-id=\"" + b.id + "\">일시정지</button>";
+        else if (st.done) acts = "<button type=\"button\" data-bun-a=\"del\" data-id=\"" + b.id + "\">삭제</button>";
+        else if (st.partial || (job && job.state === "pause")) acts = "<button type=\"button\" data-bun-a=\"go\" data-id=\"" + b.id + "\" class=\"primary\">이어 받기</button>";
+        else acts = "<button type=\"button\" data-bun-a=\"go\" data-id=\"" + b.id + "\" class=\"primary\">받기</button>";
+        const sizeTxt = st.done ? ("받음 · " + dlFmt(st.bytes)) : ("약 " + dlFmt(st.bytes) + (st.remain && st.remain < st.bytes ? " · 남은 용량 " + dlFmt(st.remain) : ""));
+        html.push("<div class=\"dl-bundle\" data-id=\"" + b.id + "\"><div class=\"dl-name\">" + b.name + "</div>"
+          + "<div class=\"dl-meta\">" + b.purpose + " · " + sizeTxt + "</div>"
+          + "<div class=\"dl-status\">" + (st.done ? "완료 ✓" : (st.have ? st.have + "/" + st.need + "개 모델" : "받지 않음")) + "</div>"
+          + "<div class=\"dl-acts\">" + acts + "</div></div>");
+      }
+      bun.innerHTML = html.join("");
+      bun.querySelectorAll("[data-bun-a]").forEach((b) => b.addEventListener("click", async () => {
+        const id = b.dataset.id, a = b.dataset.bunA;
+        const bunDef = DL_BUNDLES.find((x) => x.id === id);
+        if (a === "go") dlDownloadBundle(id);
+        else if (a === "pause" && dl.jobs[id]) { dl.jobs[id].state = "pause"; try { (bunDef.parts || []).forEach((p) => dlPause(p)); } catch (_) {} }
+        else if (a === "del" && bunDef) {
+          for (const p of bunDef.parts) {
+            try { await dlDelete(p); } catch (_) {}
+          }
+          dlPaintIfOpen();
+        }
+      }));
+    }
+    if (host) {
+      const groups = [
+        ["speech", "음성 인식 (받아적기)"],
+        ["mt", "번역 모델 (하나씩)"],
+        ["ocr", "만화 글자 인식"],
+        ["bgm", "LUNERA 음악 (오프라인)"],
+      ];
+      const html = [];
+      for (const g of groups) {
+        const packs = DL_PACKS.filter((p) => p.group === g[0] && (!HIDDEN_MT.has(p.id) || true));
+        const visible = [];
+        for (const p of packs) {
+          if (HIDDEN_MT.has(p.id)) {
+            const st = await dlPackStatus(p.id);
+            if (st.state === "idle" || st.state === "missing") continue; // hide unused leftover packs
+          }
+          visible.push(p);
+        }
+        if (!visible.length) continue;
+        html.push("<div class=\"dl-sec\" data-g=\"" + g[0] + "\"><h3>" + g[1] + "</h3>");
+        for (const p of visible) {
+          const st = await dlPackStatus(p.id);
+          html.push(dlCardHtml(p, st, dlActsFor(st, p.id)));
+        }
+        html.push("</div>");
+      }
+      host.innerHTML = html.join("");
+      host.querySelectorAll("[data-a]").forEach((b) => b.addEventListener("click", async () => {
+        const id = b.dataset.id, a = b.dataset.a;
+        if (a === "go") dlDownload(id);
+        else if (a === "pause") dlPause(id);
+        else if (a === "cancel") dlCancel(id);
+        else if (a === "del") await dlDelete(id);
+        else if (a === "retry") { await dlDelete(id); dlDownload(id); }
+        dlPaintIfOpen();
+      }));
+    }
+    const stat = document.getElementById("dlStat");
+    if (stat) {
+      try {
+        const est = await dlEstimate();
+        const free = Math.max(0, (est.quota || 0) - (est.usage || 0));
+        stat.textContent = "모델 약 " + dlFmt(est.models) + " · 이 앱 " + dlFmt(est.usage) + " / 할당 " + dlFmt(est.quota) + " · 여유 " + dlFmt(free) + (est.persist ? " · 유지됨" : "");
+      } catch (_) {}
+    }
+  };
+
+  // Speed sheet / auto row also gets target strip
+  const _v21cSpeed = typeof openSpeedSheet === "function" ? openSpeedSheet : null;
+  if (_v21cSpeed) {
+    openSpeedSheet = function () {
+      const r = _v21cSpeed.apply(this, arguments);
+      requestAnimationFrame(() => capStripTargetUi(document.querySelector(".sheet")));
+      return r;
+    };
+  }
+
+  window.__viewer.dl = Object.assign(window.__viewer.dl || {}, {
+    openSheet: dlOpenSheet,
+    recommend: dlDownloadAllNeeded,
+    needed: dlNeededIds,
+    allStatus: dlAllStatus,
+    bundles: () => DL_BUNDLES.map((b) => ({ id: b.id, name: b.name, parts: b.parts.slice() })),
+    bundleStatus: dlBundleStatus,
+    downloadAll: dlDownloadAllNeeded,
+    downloadBundle: dlDownloadBundle,
+    lowMem: dlLowMem,
+    speechPack: dlSpeechPackId,
+    hiddenMt: () => [...HIDDEN_MT],
+  });
+  window.__viewer.cap = Object.assign(window.__viewer.cap || {}, {
+    detectLang: capDetectLang,
+    koPairs: capKoPairs,
+    toKorean: capToKorean,
+    openSheet: capOpenSheet,
+  });
+  if (window.__viewer.manga) window.__viewer.manga.openSheet = mgOpenSheet;
+})();
+
+/*V21CJS-END*/
 /*V21BJS-END*/
 window.addEventListener("pagehide", () => { saveVideoPos(); saveReaderPos(); });
 </script>
