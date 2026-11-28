@@ -2005,6 +2005,131 @@ body.v19-focus #bgmNp { opacity: 0; }
 #capFile { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none; }
 
 /*V20CSS-END*/
+/* ===== v21: 다운로드 관리 · 자막 특화 · 만화 번역 ===== */
+#vCap.preset-cinema .cap-line {
+  padding: 7px 18px; border-radius: 4px;
+  background: rgba(0,0,0,.72); font-weight: 700; letter-spacing: .01em;
+  text-shadow: 0 0 2px #000, 0 1px 8px rgba(0,0,0,.85);
+}
+#vCap.preset-large { --cap-size: 24px; }
+#vCap.preset-large .cap-line { padding: 8px 16px; font-weight: 800; }
+#vCap.preset-yellow .cap-line {
+  color: #ffe566; font-weight: 800;
+  text-shadow: 0 0 3px #000, 0 1px 2px #000, 1px 1px 0 #000, -1px -1px 0 #000;
+  background: transparent; padding: 2px 6px;
+}
+#vCap.outline .cap-line {
+  -webkit-text-stroke: .6px rgba(0,0,0,.9);
+  text-shadow: 0 0 3px #000, 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+}
+#vCap.learn .cap-src { font-size: .78em; opacity: .9; }
+#vCap.learn .cap-tr { font-size: 1em; font-weight: 800; }
+#vCap.learn.hide-tr .cap-tr { opacity: 0; }
+#vCap.size-xl { --cap-size: 24px; }
+
+#vTrans {
+  position: absolute; left: 10px; right: 10px; bottom: calc(var(--safe-b) + 12px + var(--cap-clear, 0px));
+  z-index: 7; max-height: 38%; overflow: auto; -webkit-overflow-scrolling: touch;
+  padding: 10px 10px 8px; border-radius: 16px;
+  background: rgba(12,10,12,.88); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  border: .5px solid var(--hair);
+}
+#vTrans.hidden { display: none; }
+#vTrans .vt-search { display: flex; gap: 8px; margin-bottom: 8px; }
+#vTrans .vt-search input {
+  flex: 1; height: 44px; border-radius: 22px; border: .5px solid var(--hair2);
+  background: rgba(255,240,225,.06); color: var(--ivory); padding: 0 14px; font-size: 14px;
+}
+#vTrans .vt-row {
+  width: 100%; text-align: left; padding: 10px 12px; min-height: 44px;
+  border-radius: 12px; background: transparent; color: var(--ivory);
+  border: 0; font-size: 13.5px; line-height: 1.4;
+}
+#vTrans .vt-row.on { background: rgba(214,69,90,.28); }
+#vTrans .vt-row mark { background: rgba(255,229,102,.45); color: inherit; border-radius: 3px; }
+#vTrans .vt-t { color: var(--text2); font-size: 11px; margin-right: 8px; }
+
+.dl-sheet, .ed-sheet, .mg-sheet { display: flex; flex-direction: column; gap: 12px; padding-bottom: 8px; }
+.dl-sheet h3, .ed-sheet h3, .mg-sheet h3 { margin: 0; font-size: 15px; font-weight: 800; color: var(--ivory); letter-spacing: -.02em; }
+.dl-sheet .note, .ed-sheet .note, .mg-sheet .note { margin: 0; font-size: 12px; color: var(--text2); line-height: 1.45; word-break: keep-all; }
+.dl-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+.dl-stat { font-size: 12px; color: var(--text2); line-height: 1.4; }
+.dl-sec { display: flex; flex-direction: column; gap: 8px; }
+.dl-card {
+  padding: 12px; border-radius: 16px; background: rgba(255,240,225,.05);
+  border: .5px solid var(--hair); display: flex; flex-direction: column; gap: 8px;
+}
+.dl-card .dl-name { font-size: 14.5px; font-weight: 800; color: var(--ivory); }
+.dl-card .dl-meta { font-size: 12px; color: var(--text2); line-height: 1.4; word-break: keep-all; }
+.dl-card .dl-status { font-size: 12.5px; font-weight: 700; color: var(--ivory); }
+.dl-card .bar { height: 6px; border-radius: 3px; background: rgba(255,240,225,.12); overflow: hidden; }
+.dl-card .bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--ivory)); }
+.dl-acts { display: flex; flex-wrap: wrap; gap: 6px; }
+.dl-acts button, #btnDlRec, #btnDlPersist, .ed-acts button, .mg-acts button, #btnCapModels, #btnCapEditor, #btnCapTrans, #btnCapShare {
+  height: 44px; min-width: 44px; padding: 0 12px; border-radius: 22px;
+  background: rgba(255,240,225,.06); color: var(--ivory);
+  border: .5px solid var(--hair2); font-size: 13px; font-weight: 700;
+}
+#btnDlRec, .dl-acts button.primary, #btnMgGo {
+  background: var(--accent); color: #fff; border-color: transparent;
+  box-shadow: 0 6px 16px rgba(214,69,90,.35); font-weight: 800;
+}
+.dl-card.done .dl-status { color: #c8f0c4; }
+.ed-row {
+  display: flex; flex-direction: column; gap: 6px; padding: 10px 0;
+  border-bottom: .5px solid var(--hair);
+}
+.ed-row textarea {
+  width: 100%; min-height: 52px; border-radius: 12px; border: .5px solid var(--hair2);
+  background: rgba(255,240,225,.06); color: var(--ivory); padding: 8px 10px;
+  font-size: 14px; line-height: 1.4; resize: vertical;
+}
+.ed-time { font-size: 11px; color: var(--text2); }
+.cap-vocab {
+  width: 100%; min-height: 44px; border-radius: 12px; border: .5px solid var(--hair2);
+  background: rgba(255,240,225,.06); color: var(--ivory); padding: 8px 12px; font-size: 13px;
+}
+
+#mangaOv {
+  position: absolute; inset: 0; pointer-events: none; z-index: 4;
+}
+#mangaOv .mg-b {
+  position: absolute; pointer-events: auto; display: flex; align-items: center; justify-content: center;
+  text-align: center; padding: 4px; color: #141210; font-weight: 800; line-height: 1.25;
+  word-break: keep-all; overflow: hidden; border-radius: 40%;
+  background: rgba(255,255,255,.94);
+  font-family: "Pretendard LUNERA", Pretendard, system-ui, sans-serif;
+}
+#mangaOv .mg-b.vert { writing-mode: vertical-rl; text-orientation: mixed; }
+#mangaOv.mode-orig .mg-b { background: transparent; color: transparent; }
+#mangaSplit {
+  position: absolute; inset: 0; z-index: 5; display: flex; background: #0c0a0c;
+}
+#mangaSplit.hidden { display: none; }
+#mangaSplit .mg-pane { flex: 1; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+#mangaSplit .mg-pane img, #mangaSplit .mg-pane canvas { max-width: 100%; max-height: 100%; object-fit: contain; }
+#mangaSplit .mg-lab {
+  position: absolute; top: 8px; left: 8px; z-index: 2;
+  height: 28px; padding: 0 10px; border-radius: 14px;
+  background: rgba(12,10,12,.7); color: var(--ivory); font-size: 11px; font-weight: 700;
+  display: flex; align-items: center;
+}
+#mgPop {
+  position: absolute; z-index: 8; min-width: 160px; max-width: 80%;
+  padding: 12px 14px; border-radius: 14px;
+  background: rgba(12,10,12,.94); color: var(--ivory);
+  border: .5px solid var(--hair); box-shadow: 0 12px 32px rgba(0,0,0,.45);
+  font-size: 13px; line-height: 1.45; word-break: keep-all;
+}
+#mgPop.hidden { display: none; }
+#mgPop b { display: block; font-size: 11px; color: var(--text2); margin-bottom: 2px; }
+#btnMangaTr { min-width: 44px; height: 44px; min-height: 44px; }
+#btnMangaTr.on { color: var(--accent); }
+
+#capQueue { font-size: 12px; color: var(--text2); }
+.cap-q-item { display: flex; justify-content: space-between; align-items: center; min-height: 44px; gap: 8px; }
+
+/*V21CSS-END*/
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
@@ -2062,7 +2187,7 @@ body.v19-focus #bgmNp { opacity: 0; }
       <div id="prefixFix" class="prefix-fix hidden"><span></span><button type="button" id="btnPrefixFix">이름 앞 날짜 빼기</button></div>
       <p class="ex-hint" id="photoHint">사진 앱에서 손가락을 밀어 여러 장을 한 번에 선택할 수 있습니다.</p>
       <div id="storageMeter" class="storage-meter"></div>
-      <div class="app-ver" id="appVer">만화뷰어 v20 · 오프라인</div>
+      <div class="app-ver" id="appVer">만화뷰어 v21 · 오프라인</div>
     </div>
     <div id="exSelectBar" class="ex-select hidden">
       <button type="button" id="btnSelectAll">전체 선택</button>
@@ -2110,6 +2235,9 @@ body.v19-focus #bgmNp { opacity: 0; }
           <li>음악 <b>잠들기 타이머</b>(15·30·60분 또는 이 곡 끝)는 끝나기 전 소리를 천천히 줄여 꺼 드려요. 플레이어에서 시각화를 켜면 앨범 아트 색에 맞춰 파형이 움직여요(잠금 화면 재생은 그대로).</li>
           <li>보기 설정에서 <b>포토북 슬라이드쇼</b>를 시작하면 그림이 살며시 움직이며 넘어가고, 읽는 동안 화면이 꺼지지 않게 유지할 수 있어요. 홈 화면 앱의 바로가기로 이어 읽기·음악·검색을 바로 열 수 있어요.</li>
           <li>영상 <b>자동 자막</b>: 재생 화면의 <b>CC</b>를 눌러 자막을 켜거나, 길게 눌러 설정을 엽니다. <b>자동 자막 만들기</b>는 이 기기 안에서만 소리를 받아적고(첫 사용 시 약 45MB 모델을 받음), 한국어·영어·일본어로 번역 자막을 만들 수 있어요. 영상은 밖으로 보내지 않아요. SRT/VTT를 가져오거나 만든 자막을 SRT로 저장할 수도 있어요.</li>
+          <li><b>다운로드 관리</b>: 보기 설정 또는 자막 시트의 <b>모델 미리 받기</b>에서 음성 인식·번역 언어 팩·만화 글자 인식·LUNERA 음악을 미리 받을 수 있어요. 추천 팩은 정확한 받아적기(약 253MB)입니다. Wi-Fi를 권장해요.</li>
+          <li>자막을 <b>고치기</b>하고, <b>따라 읽기</b>로 현재 줄을 따라가며, 모양(기본·영화관·크게·노란 자막)과 학습 모드(원문+번역)를 고를 수 있어요. 여러 영상을 대기열에 넣어 뒤에서 만들 수도 있어요.</li>
+          <li>읽는 화면의 <b>번역</b>으로 만화 말풍선을 이 기기 안에서 읽어 번역할 수 있어요. 원문/번역/나란히를 바꾸고, 말풍선을 길게 누르면 원문과 번역을 같이 봐요. 글자 인식은 틀릴 수 있어 직접 고칠 수 있어요.</li>
           </ul>
           <h3 class="warn">알아두면 좋은 제한</h3>
           <ul>
@@ -5217,7 +5345,7 @@ function applyReaderLook() {
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v20";
+const PWA_CACHE = "mhv-pwa-v21";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
@@ -9101,7 +9229,7 @@ function updateReadProg() {
 }
 
 /* ===== v15: 시리즈·태그/검색, 시크릿 서재(PIN), 자동 넘김, 책갈피 메모 ===== */
-var APP_VER = "v20";
+var APP_VER = "v21";
 var META_KEY = "mhv-albummeta-v1", SECRET_KEY = "mhv-secret-v1", RECENT_KEY = "mhv-recent-v1";
 function v15Load(k, d) { try { const v = JSON.parse(localStorage.getItem(k) || "null"); return v && typeof v === "object" ? v : d; } catch (_) { return d; } }
 function v15Save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} }
@@ -13119,6 +13247,1278 @@ window.__viewer.cap = {
 };
 
 /*V20JS-END*/
+/* ===== v21: 다운로드 관리 · 자막 특화 · 만화 번역 (기기 안, 업로드 없음) ===== */
+var DL_CACHE = "transformers-cache";
+var DL_IDB = "mhv-dl-v1";
+var DL_STORE = "parts";
+var MG_DB = "mhv-manga-tr-v1", MG_STORE = "pages";
+var HF = "https://huggingface.co";
+var TESS_PATH = "https://tessdata.projectnaptha.com/4.0.0";
+
+cap.tier = cap.tier || "accurate";
+cap.lang = cap.lang || "auto";
+cap.preset = cap.preset || "default";
+cap.outline = !!cap.outline;
+cap.learn = !!cap.learn;
+cap.learnHide = !!cap.learnHide;
+cap.vocab = cap.vocab || "";
+cap.jobs = cap.jobs || [];
+cap.jobRun = false;
+
+(function v21LoadPrefs() {
+  try {
+    const p = JSON.parse(localStorage.getItem(PREFS_KEY) || "{}");
+    if (["fast", "balanced", "accurate", "max"].includes(p.capTier)) cap.tier = p.capTier;
+    if (["auto", "ko", "ja", "en"].includes(p.capLang)) cap.lang = p.capLang;
+    if (["default", "cinema", "large", "yellow"].includes(p.capPreset)) cap.preset = p.capPreset;
+    if (typeof p.capOutline === "boolean") cap.outline = p.capOutline;
+    if (typeof p.capLearn === "boolean") cap.learn = p.capLearn;
+    if (typeof p.capVocab === "string") cap.vocab = p.capVocab;
+  } catch (_) {}
+})();
+
+const _v21merge = capMergePrefs;
+capMergePrefs = function () {
+  try {
+    const raw = JSON.parse(localStorage.getItem(PREFS_KEY) || "{}");
+    raw.capTier = cap.tier; raw.capLang = cap.lang; raw.capPreset = cap.preset;
+    raw.capOutline = cap.outline; raw.capLearn = cap.learn; raw.capVocab = cap.vocab;
+    localStorage.setItem(PREFS_KEY, JSON.stringify(raw));
+  } catch (_) {}
+  _v21merge();
+  try {
+    const raw = JSON.parse(localStorage.getItem(PREFS_KEY) || "{}");
+    raw.capTier = cap.tier; raw.capLang = cap.lang; raw.capPreset = cap.preset;
+    raw.capOutline = cap.outline; raw.capLearn = cap.learn; raw.capVocab = cap.vocab;
+    localStorage.setItem(PREFS_KEY, JSON.stringify(raw));
+  } catch (_) {}
+};
+
+function hfUrl(repo, file) { return HF + "/" + repo + "/resolve/main/" + file; }
+function whisperFiles(repo, enc, dec) {
+  const req = ["config.json", "generation_config.json", "preprocessor_config.json", "tokenizer.json", "tokenizer_config.json", "vocab.json", enc, dec];
+  const opt = ["special_tokens_map.json", "added_tokens.json", "normalizer.json"];
+  return req.map((f) => ({ url: hfUrl(repo, f), optional: false })).concat(opt.map((f) => ({ url: hfUrl(repo, f), optional: true })));
+}
+function mtFiles(repo) {
+  const req = ["config.json", "generation_config.json", "tokenizer.json", "tokenizer_config.json", "onnx/encoder_model_quantized.onnx", "onnx/decoder_model_merged_quantized.onnx"];
+  const opt = ["special_tokens_map.json", "source.spm", "target.spm", "vocab.json"];
+  return req.map((f) => ({ url: hfUrl(repo, f), optional: false })).concat(opt.map((f) => ({ url: hfUrl(repo, f), optional: true })));
+}
+
+var DL_PACKS = [
+  { id: "asr-tiny", group: "speech", name: "빠른 받아적기", purpose: "영상 소리를 빠르게 자막으로 만듭니다. 짧은 영상·미리보기에 좋아요.", size: 45000000, sizeLabel: "약 45MB", tier: "빠름 · 정확도는 낮음", rec: "Xenova/whisper-tiny", files: whisperFiles("Xenova/whisper-tiny", "onnx/encoder_model_quantized.onnx", "onnx/decoder_model_merged_quantized.onnx"), kind: "asr", asrTier: "fast" },
+  { id: "asr-base", group: "speech", name: "균형 받아적기", purpose: "속도와 정확도의 가운데입니다.", size: 81000000, sizeLabel: "약 81MB", tier: "균형", rec: "Xenova/whisper-base", files: whisperFiles("Xenova/whisper-base", "onnx/encoder_model_quantized.onnx", "onnx/decoder_model_merged_quantized.onnx"), kind: "asr", asrTier: "balanced" },
+  { id: "asr-small", group: "speech", name: "정확한 받아적기 (추천)", purpose: "한국어와 입말에 가장 현실적인 기본 추천입니다. Wi-Fi를 권장해요.", size: 253000000, sizeLabel: "약 253MB", tier: "정확 · 한국어 추천", rec: "Xenova/whisper-small", files: whisperFiles("Xenova/whisper-small", "onnx/encoder_model_quantized.onnx", "onnx/decoder_model_merged_quantized.onnx"), kind: "asr", asrTier: "accurate", recommended: true },
+  { id: "asr-turbo", group: "speech", name: "최고 정확 받아적기 (무거움)", purpose: "가장 정확한 선택입니다. 약 760MB라 아이패드와 WebGPU를 권장하고, 아이폰에서는 메모리가 부족할 수 있어요.", size: 763000000, sizeLabel: "약 763MB", tier: "최고 정확 · 무거움", rec: "onnx-community/whisper-large-v3-turbo", files: whisperFiles("onnx-community/whisper-large-v3-turbo", "onnx/encoder_model_q4.onnx", "onnx/decoder_model_merged_q4.onnx"), kind: "asr", asrTier: "max" }
+];
+
+DL_PACKS = DL_PACKS.concat([
+  { id: "mt-en-ko", group: "mt", name: "영어 → 한국어", purpose: "영어 자막을 한국어로 옮깁니다. 큰 편이라 미리 받아 두세요.", size: 281000000, sizeLabel: "약 281MB", tier: "번역", rec: "teamwon/opus-mt-en-ko-onnx", files: mtFiles("teamwon/opus-mt-en-ko-onnx"), kind: "mt", pair: "en-ko" },
+  { id: "mt-ko-en", group: "mt", name: "한국어 → 영어", purpose: "한국어를 영어로 옮깁니다.", size: 120000000, sizeLabel: "약 120MB", tier: "번역", rec: "Xenova/opus-mt-ko-en", files: mtFiles("Xenova/opus-mt-ko-en"), kind: "mt", pair: "ko-en" },
+  { id: "mt-en-ja", group: "mt", name: "영어 → 일본어", purpose: "영어를 일본어로 옮깁니다.", size: 101000000, sizeLabel: "약 101MB", tier: "번역", rec: "Xenova/opus-mt-en-jap", files: mtFiles("Xenova/opus-mt-en-jap"), kind: "mt", pair: "en-ja" },
+  { id: "mt-ja-en", group: "mt", name: "일본어 → 영어", purpose: "일본어를 영어로 옮깁니다. 만화 번역에도 쓰여요.", size: 101000000, sizeLabel: "약 101MB", tier: "번역", rec: "Xenova/opus-mt-jap-en", files: mtFiles("Xenova/opus-mt-jap-en"), kind: "mt", pair: "ja-en" },
+  { id: "mt-en-zh", group: "mt", name: "영어 → 중국어", purpose: "영어를 중국어로 옮깁니다.", size: 120000000, sizeLabel: "약 120MB", tier: "번역", rec: "Xenova/opus-mt-en-zh", files: mtFiles("Xenova/opus-mt-en-zh"), kind: "mt", pair: "en-zh" },
+  { id: "mt-zh-en", group: "mt", name: "중국어 → 영어", purpose: "중국어를 영어로 옮깁니다.", size: 120000000, sizeLabel: "약 120MB", tier: "번역", rec: "Xenova/opus-mt-zh-en", files: mtFiles("Xenova/opus-mt-zh-en"), kind: "mt", pair: "zh-en" },
+  { id: "mt-en-es", group: "mt", name: "영어 → 스페인어", purpose: "영어를 스페인어로 옮깁니다.", size: 120000000, sizeLabel: "약 120MB", tier: "번역", rec: "Xenova/opus-mt-en-es", files: mtFiles("Xenova/opus-mt-en-es"), kind: "mt", pair: "en-es" },
+  { id: "mt-es-en", group: "mt", name: "스페인어 → 영어", purpose: "스페인어를 영어로 옮깁니다.", size: 120000000, sizeLabel: "약 120MB", tier: "번역", rec: "Xenova/opus-mt-es-en", files: mtFiles("Xenova/opus-mt-es-en"), kind: "mt", pair: "es-en" },
+  { id: "ocr-eng", group: "ocr", name: "영어 글자 인식", purpose: "만화·사진 속 영어를 읽습니다.", size: 10923060, sizeLabel: "약 11MB", tier: "OCR", files: [{ url: TESS_PATH + "/eng.traineddata.gz", optional: false }], kind: "ocr", lang: "eng" },
+  { id: "ocr-kor", group: "ocr", name: "한국어 글자 인식", purpose: "만화·사진 속 한글을 읽습니다.", size: 6951378, sizeLabel: "약 7MB", tier: "OCR", files: [{ url: TESS_PATH + "/kor.traineddata.gz", optional: false }], kind: "ocr", lang: "kor" },
+  { id: "ocr-jpn", group: "ocr", name: "일본어 글자 인식", purpose: "만화 말풍선 속 일본어를 읽습니다.", size: 16163676, sizeLabel: "약 16MB", tier: "OCR", files: [{ url: TESS_PATH + "/jpn.traineddata.gz", optional: false }, { url: TESS_PATH + "/jpn_vert.traineddata.gz", optional: true }], kind: "ocr", lang: "jpn" },
+  { id: "ocr-chi", group: "ocr", name: "중국어 글자 인식", purpose: "만화·사진 속 중국어를 읽습니다.", size: 20159757, sizeLabel: "약 20MB", tier: "OCR", files: [{ url: TESS_PATH + "/chi_sim.traineddata.gz", optional: true }, { url: TESS_PATH + "/chi_sim.traineddata", optional: true }], kind: "ocr", lang: "chi_sim" },
+  { id: "ocr-spa", group: "ocr", name: "스페인어 글자 인식", purpose: "만화·사진 속 스페인어를 읽습니다.", size: 8362819, sizeLabel: "약 8MB", tier: "OCR", files: [{ url: TESS_PATH + "/spa.traineddata.gz", optional: false }], kind: "ocr", lang: "spa" },
+  { id: "bgm-ko", group: "bgm", name: "LUNERA 한국어 음악", purpose: "기본 내장 한국어 곡을 오프라인으로 둡니다.", size: 0, sizeLabel: "음악 팩", tier: "음악", kind: "bgm", lang: "ko" },
+  { id: "bgm-ja", group: "bgm", name: "LUNERA 일본어 음악", purpose: "기본 내장 일본어 곡을 오프라인으로 둡니다.", size: 0, sizeLabel: "음악 팩", tier: "음악", kind: "bgm", lang: "ja" },
+  { id: "bgm-en", group: "bgm", name: "LUNERA 영어 음악", purpose: "기본 내장 영어 곡을 오프라인으로 둡니다.", size: 0, sizeLabel: "음악 팩", tier: "음악", kind: "bgm", lang: "en" },
+  { id: "bgm-all", group: "bgm", name: "LUNERA 음악 전체", purpose: "기본 내장 한·일·영 곡을 한 번에 오프라인으로 둡니다.", size: 0, sizeLabel: "음악 팩", tier: "음악", kind: "bgm", lang: "all" }
+]);
+
+var dl = { jobs: {}, listeners: [], lastEst: null };
+function dlPack(id) { return DL_PACKS.find((p) => p.id === id) || null; }
+function dlOn(fn) { dl.listeners.push(fn); }
+function dlEmit() { dl.listeners.forEach((f) => { try { f(); } catch (_) {} }); dlPaintIfOpen(); }
+function dlIdb() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open(DL_IDB, 1);
+    r.onupgradeneeded = () => { if (!r.result.objectStoreNames.contains(DL_STORE)) r.result.createObjectStore(DL_STORE, { keyPath: "url" }); };
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+}
+async function dlPartGet(url) {
+  try {
+    const db = await dlIdb();
+    return await new Promise((res, rej) => {
+      const q = db.transaction(DL_STORE, "readonly").objectStore(DL_STORE).get(url);
+      q.onsuccess = () => res(q.result || null);
+      q.onerror = () => rej(q.error);
+    });
+  } catch (_) { return null; }
+}
+async function dlPartPut(rec) {
+  const db = await dlIdb();
+  await new Promise((res, rej) => {
+    const q = db.transaction(DL_STORE, "readwrite").objectStore(DL_STORE).put(rec);
+    q.onsuccess = () => res(); q.onerror = () => rej(q.error);
+  });
+}
+async function dlPartDel(url) {
+  try {
+    const db = await dlIdb();
+    await new Promise((res, rej) => {
+      const q = db.transaction(DL_STORE, "readwrite").objectStore(DL_STORE).delete(url);
+      q.onsuccess = () => res(); q.onerror = () => rej(q.error);
+    });
+  } catch (_) {}
+}
+async function dlCached(url) {
+  try {
+    const c = await caches.open(DL_CACHE);
+    const m = await c.match(url);
+    if (m) return m;
+    const c2 = await caches.open("mhv-ml-v1");
+    return await c2.match(url);
+  } catch (_) { return null; }
+}
+async function dlPutCache(url, resp) {
+  const c = await caches.open(DL_CACHE);
+  await c.put(url, resp.clone());
+  try { const c2 = await caches.open("mhv-ml-v1"); await c2.put(url, resp.clone()); } catch (_) {}
+}
+async function dlFileInfo(file) {
+  const hit = await dlCached(file.url);
+  if (hit) { const buf = await hit.clone().blob(); return { have: true, bytes: buf.size }; }
+  const part = await dlPartGet(file.url);
+  if (part && part.blob) return { have: false, partial: part.blob.size, bytes: part.blob.size, total: part.total || 0 };
+  return { have: false, bytes: 0 };
+}
+async function dlPackStatus(id) {
+  const p = dlPack(id);
+  if (!p) return { id, state: "missing" };
+  const job = dl.jobs[id];
+  if (p.kind === "bgm") {
+    try { await bgmCatalog(); } catch (_) {}
+    const list = p.lang === "all" ? bgmBuiltinTracks() : bgmBuiltinTracks().filter((t) => t.lang === p.lang);
+    const have = list.filter((t) => bgm.cached && bgm.cached.has(t.id)).length;
+    const bytes = list.reduce((s, t) => s + (t.bytes || 0), 0);
+    const state = list.length && have >= list.length ? "done" : (have ? "partial" : "idle");
+    return { id, state, have, total: list.length, bytes, size: bytes, label: have >= list.length ? "완료 ✓" : (have ? have + "/" + list.length + "곡" : "받지 않음") };
+  }
+  if (job && (job.state === "run" || job.state === "pause")) {
+    const pct = job.total ? Math.round((job.got / job.total) * 100) : job.pct || 0;
+    return { id, state: job.state, pct, got: job.got, total: job.total, speed: job.speed, eta: job.eta, label: job.state === "pause" ? "일시정지" : ("받는 중 " + pct + "%") };
+  }
+  if (!p.files || !p.files.length) return { id, state: "idle", label: "받지 않음" };
+  let have = 0, need = 0, bytes = 0;
+  for (const f of p.files) {
+    if (f.optional) continue;
+    need++;
+    const inf = await dlFileInfo(f);
+    if (inf.have) { have++; bytes += inf.bytes; }
+  }
+  if (need && have >= need) return { id, state: "done", have, need, bytes, label: "완료 ✓" };
+  if (have) return { id, state: "partial", have, need, bytes, label: have + "/" + need + "개 파일" };
+  return { id, state: "idle", have: 0, need, bytes: 0, label: "받지 않음" };
+}
+async function dlEstimate() {
+  const out = { usage: 0, quota: 0, models: 0, persist: false };
+  try {
+    if (navigator.storage && navigator.storage.estimate) {
+      const e = await navigator.storage.estimate();
+      out.usage = e.usage || 0; out.quota = e.quota || 0;
+    }
+    if (navigator.storage && navigator.storage.persisted) out.persist = await navigator.storage.persisted();
+  } catch (_) {}
+  try {
+    for (const name of [DL_CACHE, "mhv-ml-v1"]) {
+      const c = await caches.open(name);
+      const keys = await c.keys();
+      for (const req of keys) {
+        try { const r = await c.match(req); if (r) out.models += (await r.clone().blob()).size; } catch (_) {}
+      }
+    }
+  } catch (_) {}
+  dl.lastEst = out;
+  return out;
+}
+function dlFmt(n) {
+  n = Math.max(0, n || 0);
+  if (n < 1024) return n + "B";
+  if (n < 1048576) return (n / 1024).toFixed(0) + "KB";
+  if (n < 1073741824) return (n / 1048576).toFixed(1) + "MB";
+  return (n / 1073741824).toFixed(2) + "GB";
+}
+function dlEta(sec) {
+  if (!isFinite(sec) || sec < 0) return "";
+  if (sec < 60) return Math.ceil(sec) + "초 남음";
+  return Math.floor(sec / 60) + "분 " + Math.ceil(sec % 60) + "초 남음";
+}
+async function dlFetchFile(file, job) {
+  const hit = await dlCached(file.url);
+  if (hit) return (await hit.clone().blob()).size;
+  let part = await dlPartGet(file.url);
+  let start = part && part.blob ? part.blob.size : 0;
+  const headers = {};
+  if (start > 0) headers.Range = "bytes=" + start + "-";
+  const ctrl = job.ctrl;
+  let r;
+  try { r = await fetch(file.url, { headers, signal: ctrl.signal, cache: "no-store" }); }
+  catch (e) {
+    if (job.state === "pause" || (e && e.name === "AbortError")) throw new Error("paused");
+    throw e;
+  }
+  if (r.status === 404 && file.optional) return 0;
+  if (r.status === 416) { await dlPartDel(file.url); start = 0; r = await fetch(file.url, { signal: ctrl.signal, cache: "no-store" }); }
+  if (!r.ok && r.status !== 206) throw new Error("받기 실패 " + r.status);
+  if (start > 0 && r.status !== 206) { start = 0; part = null; }
+  const totalHdr = r.headers.get("Content-Length");
+  const total = start + (totalHdr ? parseInt(totalHdr, 10) : (part && part.total) || 0);
+  const reader = r.body && r.body.getReader();
+  const chunks = [];
+  if (start > 0 && part && part.blob) chunks.push(part.blob);
+  let got = start;
+  let mark = performance.now(), markBytes = got;
+  if (!reader) {
+    const blob = await r.blob();
+    const buf = start ? new Blob([part.blob, blob]) : blob;
+    await dlPutCache(file.url, new Response(buf, { headers: { "Content-Type": r.headers.get("Content-Type") || "application/octet-stream" } }));
+    await dlPartDel(file.url);
+    return buf.size;
+  }
+  while (true) {
+    if (job.state === "pause" || job.state === "cancel") throw new Error(job.state === "cancel" ? "cancelled" : "paused");
+    const step = await reader.read();
+    if (step.done) break;
+    chunks.push(new Blob([step.value]));
+    got += step.value.byteLength;
+    job.got = (job.baseGot || 0) + got;
+    const now = performance.now();
+    if (now - mark > 400) {
+      const dt = (now - mark) / 1000;
+      job.speed = (got - markBytes) / dt;
+      const remain = Math.max(0, (job.total || total) - job.got);
+      job.eta = job.speed > 0 ? remain / job.speed : 0;
+      job.pct = job.total ? Math.round((job.got / job.total) * 100) : 0;
+      mark = now; markBytes = got;
+      dlEmit();
+    }
+    if (got - start > 1048576) await dlPartPut({ url: file.url, blob: new Blob(chunks), total: total || (part && part.total) || 0 });
+  }
+  const buf = new Blob(chunks);
+  await dlPutCache(file.url, new Response(buf, { headers: { "Content-Type": r.headers.get("Content-Type") || "application/octet-stream" } }));
+  await dlPartDel(file.url);
+  return buf.size;
+}
+async function dlRun(id) {
+  const p = dlPack(id); if (!p) throw new Error("없는 팩");
+  if (p.kind === "bgm") {
+    await bgmCatalog();
+    const list = p.lang === "all" ? bgmBuiltinTracks() : bgmBuiltinTracks().filter((t) => t.lang === p.lang);
+    dl.jobs[id] = { state: "run", got: 0, total: list.length, ctrl: { signal: { aborted: false } }, speed: 0, eta: 0 };
+    dlEmit();
+    await bgmPrecacheBuiltin((i, n) => { const j = dl.jobs[id]; if (j) { j.got = i; j.total = n; j.pct = n ? Math.round(i / n * 100) : 0; dlEmit(); } }, list);
+    delete dl.jobs[id];
+    dlEmit();
+    toast(p.name + "을 저장했어요", 1400);
+    return;
+  }
+  if (navigator.storage && navigator.storage.persist) { try { await navigator.storage.persist(); } catch (_) {} }
+  const files = p.files || [];
+  const job = dl.jobs[id] || { state: "run", got: 0, total: p.size, ctrl: new AbortController(), speed: 0, eta: 0, idx: 0 };
+  job.state = "run"; job.ctrl = new AbortController();
+  dl.jobs[id] = job;
+  dlEmit();
+  try {
+    let acc = 0;
+    for (let i = job.idx || 0; i < files.length; i++) {
+      if (job.state !== "run") throw new Error(job.state === "cancel" ? "cancelled" : "paused");
+      job.idx = i; job.baseGot = acc;
+      try { acc += await dlFetchFile(files[i], job); }
+      catch (e) {
+        if (files[i].optional && !/paused|cancelled/.test(String(e.message))) continue;
+        throw e;
+      }
+    }
+    delete dl.jobs[id];
+    dlEmit();
+    toast(p.name + " 받기가 끝났어요", 1600);
+  } catch (e) {
+    const msg = String(e && e.message || e);
+    if (msg === "paused") { job.state = "pause"; dlEmit(); return; }
+    if (msg === "cancelled") { delete dl.jobs[id]; dlEmit(); return; }
+    job.state = "error"; job.error = msg; dlEmit();
+    toast(p.name + "을 받지 못했어요 · " + msg, 2000);
+  }
+}
+function dlDownload(id) { if (dl.jobs[id] && dl.jobs[id].state === "run") return dl.jobs[id].prom; const p = dlRun(id); dl.jobs[id] = dl.jobs[id] || { state: "run" }; dl.jobs[id].prom = p; return p; }
+function dlPause(id) { const j = dl.jobs[id]; if (!j) return; j.state = "pause"; try { j.ctrl.abort(); } catch (_) {} }
+function dlCancel(id) { const j = dl.jobs[id]; if (!j) return; j.state = "cancel"; try { j.ctrl.abort(); } catch (_) {} }
+async function dlResume(id) { return dlDownload(id); }
+async function dlDelete(id) {
+  const p = dlPack(id); if (!p) return;
+  if (p.kind === "bgm") {
+    await bgmCatalog();
+    const list = p.lang === "all" ? bgmBuiltinTracks() : bgmBuiltinTracks().filter((t) => t.lang === p.lang);
+    const c = await caches.open("mhv-bgm-v1");
+    for (const t of list) {
+      try { await c.delete(bgmAbs(t.src)); } catch (_) {}
+      if (bgm.cached) bgm.cached.delete(t.id);
+    }
+    dlEmit(); toast(p.name + "을 지웠어요", 1200); return;
+  }
+  for (const f of (p.files || [])) {
+    try { const c = await caches.open(DL_CACHE); await c.delete(f.url); } catch (_) {}
+    try { const c2 = await caches.open("mhv-ml-v1"); await c2.delete(f.url); } catch (_) {}
+    await dlPartDel(f.url);
+  }
+  dlEmit(); toast(p.name + "을 지웠어요", 1200);
+}
+async function dlDownloadRecommended() {
+  toast("추천 팩(정확한 받아적기 · 약 253MB)을 받기 시작해요 · Wi-Fi를 권장해요", 1800);
+  return dlDownload("asr-small");
+}
+async function dlVerify(id) {
+  const p = dlPack(id); if (!p) return { ok: false, reason: "없는 팩" };
+  const st = await dlPackStatus(id);
+  if (st.state !== "done") return { ok: false, reason: "아직 다 받지 않았어요", status: st };
+  if (p.kind === "asr" || p.kind === "mt") {
+    try {
+      const d = await capAsk({ type: "verify", kind: p.kind, tier: p.asrTier, pair: p.pair, id: p.id });
+      return { ok: !!d.ok, status: st, message: d.message || "" };
+    } catch (e) { return { ok: false, status: st, message: String(e && e.message || e) }; }
+  }
+  return { ok: true, status: st, offlineReady: true };
+}
+function dlOpenSheet() {
+  showSheet("다운로드 관리", null, { custom: true, build(body) {
+    body.classList.add("dl-sheet");
+    const head = document.createElement("div");
+    head.innerHTML = "<h3>자막 모델 미리 받기</h3>"
+      + "<p class=\"note\">영상과 만화는 이 기기 안에서만 처리되고, 밖으로 올라가지 않아요. 큰 파일은 <b>Wi-Fi 권장</b>이에요. 받는 동안 다른 화면을 보아도 이어지고, 중간에 멈추거나 다음에 이어서 받을 수 있어요.</p>"
+      + "<div class=\"dl-head\"><button type=\"button\" id=\"btnDlRec\">추천 팩 한 번에 받기</button><button type=\"button\" id=\"btnDlPersist\">이 기기에 유지</button></div>"
+      + "<div class=\"dl-stat\" id=\"dlStat\">저장 공간을 세는 중…</div>";
+    body.appendChild(head);
+    const host = document.createElement("div"); host.id = "dlList"; body.appendChild(host);
+    head.querySelector("#btnDlRec").addEventListener("click", () => dlDownloadRecommended());
+    head.querySelector("#btnDlPersist").addEventListener("click", async () => {
+      let ok = false;
+      try { ok = navigator.storage && await navigator.storage.persist(); } catch (_) {}
+      toast(ok ? "이 기기에 모델을 유지해 달라고 요청했어요" : "유지 요청을 이 브라우저가 받지 않았어요", 1600);
+      dlPaintIfOpen();
+    });
+    dl._body = body;
+  }});
+  dlPaintIfOpen();
+}
+async function dlPaintIfOpen() {
+  const host = document.getElementById("dlList"); if (!host) return;
+  const groups = [
+    ["speech", "음성 인식 (받아적기)"],
+    ["mt", "번역 · 통역 언어 팩"],
+    ["ocr", "만화 글자 인식 (OCR)"],
+    ["bgm", "LUNERA 음악 (오프라인)"],
+  ];
+  const est = await dlEstimate();
+  const stat = document.getElementById("dlStat");
+  if (stat) {
+    const free = Math.max(0, (est.quota || 0) - (est.usage || 0));
+    stat.textContent = "모델 약 " + dlFmt(est.models) + " · 이 앱 " + dlFmt(est.usage) + " / 할당 " + dlFmt(est.quota) + " · 여유 " + dlFmt(free) + (est.persist ? " · 유지됨" : "");
+  }
+  const html = [];
+  for (const g of groups) {
+    html.push("<div class=\"dl-sec\" data-g=\"" + g[0] + "\"><h3>" + g[1] + "</h3>");
+    for (const p of DL_PACKS.filter((x) => x.group === g[0])) {
+      const st = await dlPackStatus(p.id);
+      const job = dl.jobs[p.id];
+      const pct = st.pct || (st.state === "done" ? 100 : 0);
+      const spd = job && job.speed ? dlFmt(job.speed) + "/s" : "";
+      const eta = job && job.eta ? dlEta(job.eta) : "";
+      let acts = "";
+      if (st.state === "run") acts = "<button type=\"button\" data-a=\"pause\" data-id=\"" + p.id + "\">일시정지</button><button type=\"button\" data-a=\"cancel\" data-id=\"" + p.id + "\">취소</button>";
+      else if (st.state === "pause" || st.state === "partial") acts = "<button type=\"button\" data-a=\"go\" data-id=\"" + p.id + "\" class=\"primary\">이어 받기</button><button type=\"button\" data-a=\"cancel\" data-id=\"" + p.id + "\">취소</button>";
+      else if (st.state === "done") acts = "<button type=\"button\" data-a=\"del\" data-id=\"" + p.id + "\">삭제</button><button type=\"button\" data-a=\"redo\" data-id=\"" + p.id + "\">다시 받기</button><button type=\"button\" data-a=\"verify\" data-id=\"" + p.id + "\">오프라인 확인</button>";
+      else acts = "<button type=\"button\" data-a=\"go\" data-id=\"" + p.id + "\" class=\"primary\">받기</button>";
+      const size = p.kind === "bgm" && st.size ? "약 " + dlFmt(st.size) : p.sizeLabel;
+      html.push("<div class=\"dl-card " + st.state + "\" data-id=\"" + p.id + "\">"
+        + "<div class=\"dl-name\">" + p.name + "</div>"
+        + "<div class=\"dl-meta\">" + p.purpose + " · " + size + " · " + p.tier + "</div>"
+        + "<div class=\"dl-status\">" + st.label + (spd ? " · " + spd : "") + (eta ? " · " + eta : "") + "</div>"
+        + "<div class=\"bar\"><i style=\"width:" + pct + "%\"></i></div>"
+        + "<div class=\"dl-acts\">" + acts + "</div></div>");
+    }
+    html.push("</div>");
+  }
+  host.innerHTML = html.join("");
+  host.querySelectorAll("button[data-a]").forEach((b) => b.addEventListener("click", async () => {
+    const id = b.dataset.id, a = b.dataset.a;
+    if (a === "go") dlDownload(id);
+    else if (a === "pause") dlPause(id);
+    else if (a === "cancel") dlCancel(id);
+    else if (a === "del") { if (confirm("이 팩을 기기에서 지울까요?")) await dlDelete(id); }
+    else if (a === "redo") { await dlDelete(id); dlDownload(id); }
+    else if (a === "verify") {
+      const r = await dlVerify(id);
+      toast(r.ok ? "오프라인에서도 이 팩을 열 수 있어요" : ("확인하지 못했어요 · " + (r.reason || r.message || "")), 1800);
+    }
+  }));
+}
+
+/* ---------- caption upgrades ---------- */
+const _v21capPaint = capPaint;
+capPaint = function () {
+  _v21capPaint();
+  const el = $("vCap"); if (!el) return;
+  el.classList.toggle("preset-cinema", cap.preset === "cinema");
+  el.classList.toggle("preset-large", cap.preset === "large");
+  el.classList.toggle("preset-yellow", cap.preset === "yellow");
+  el.classList.toggle("outline", !!cap.outline || cap.preset === "cinema" || cap.preset === "yellow");
+  el.classList.toggle("learn", !!cap.learn || cap.track === "learn");
+  el.classList.toggle("hide-tr", !!(cap.learn && cap.learnHide));
+  capPaintTranscript();
+};
+const _v21capState = capState;
+capState = function () {
+  const s = _v21capState();
+  s.tier = cap.tier; s.lang = cap.lang; s.preset = cap.preset; s.outline = cap.outline;
+  s.learn = cap.learn; s.vocab = cap.vocab; s.jobs = cap.jobs.length; s.busy = cap.busy;
+  return s;
+};
+const _v21capSet = window.__viewer.cap.set;
+window.__viewer.cap.set = function (o) {
+  if (!o) return capState();
+  if (["fast", "balanced", "accurate", "max"].includes(o.tier)) cap.tier = o.tier;
+  if (["auto", "ko", "ja", "en"].includes(o.lang)) cap.lang = o.lang;
+  if (["default", "cinema", "large", "yellow"].includes(o.preset)) cap.preset = o.preset;
+  if (typeof o.outline === "boolean") cap.outline = o.outline;
+  if (typeof o.learn === "boolean") { cap.learn = o.learn; if (o.learn) cap.track = "dual"; }
+  if (typeof o.learnHide === "boolean") cap.learnHide = o.learnHide;
+  if (typeof o.vocab === "string") cap.vocab = o.vocab;
+  return _v21capSet(o);
+};
+capAsk = function (msg, transfer) {
+  return new Promise((res, rej) => {
+    const w = capWorker();
+    const on = (ev) => {
+      const d = ev.data || {};
+      if (d.type === "progress") { capOnProgress(d); return; }
+      if (d.type === "chunk") { capOnChunk(d); return; }
+      if (d.type === "cancelled") { w.removeEventListener("message", on); rej(new Error("cancelled")); return; }
+      if (d.type === "error") { w.removeEventListener("message", on); rej(new Error(d.message || "오류")); return; }
+      if (d.type === "cues" || d.type === "ready" || d.type === "info" || d.type === "verified" || d.type === "texts") {
+        w.removeEventListener("message", on); res(d);
+      }
+    };
+    w.addEventListener("message", on);
+    if (transfer) w.postMessage(msg, transfer); else w.postMessage(msg);
+  });
+};
+function capOnChunk(d) {
+  if (!cap.rec) return;
+  cap.rec.tracks = cap.rec.tracks || {};
+  const kind = d.kind || "orig";
+  const prev = (cap.rec.tracks[kind] && cap.rec.tracks[kind].cues) || [];
+  const map = new Map(prev.map((c) => [c.start.toFixed(2) + c.text, c]));
+  (d.cues || []).forEach((c) => map.set(c.start.toFixed(2) + c.text, c));
+  const cues = [...map.values()].sort((a, b) => a.start - b.start);
+  cap.rec.tracks[kind] = { lang: kind === "orig" ? (cap.lang === "auto" ? "und" : cap.lang) : kind, cues };
+  cap.on = true;
+  capPaint(); capPaintBtn();
+};
+const _v21capGenerate = capGenerate;
+capGenerate = async function (opts) {
+  opts = opts || {};
+  const item = opts.item || capItem();
+  if (!item) throw new Error("재생 중인 영상이 없어요");
+  if (cap.busy && !opts.queued) {
+    cap.jobs.push({ item, opts, name: item.name || "영상" });
+    toast("대기열에 넣었어요 · 지금 작업이 끝나면 이어서 만들어요", 1600);
+    capPaintQueue();
+    return { queued: true };
+  }
+  cap.busy = true; cap.cancelled = false;
+  try {
+    capOnProgress({ phase: "model", pct: 1, detail: "영상에서 소리를 꺼내는 중" });
+    const blob = await nodeToBlob(item);
+    const pcm = await capDecodePcm(blob);
+    if (cap.cancelled) throw new Error("cancelled");
+    const lang = opts.lang && opts.lang !== "auto" ? opts.lang : (cap.lang || "auto");
+    const tier = opts.tier || cap.tier || "accurate";
+    const vocab = opts.vocab != null ? opts.vocab : (cap.vocab || "");
+    const want = opts.targets || { ko: true, en: true, ja: false };
+    const rec = {
+      key: capKey(item),
+      name: item.name,
+      duration: (item === capItem() && videoEl && videoEl.duration) || 0,
+      model: tier,
+      tracks: { orig: { lang: lang === "auto" ? "und" : lang, cues: [] } },
+    };
+    cap.rec = rec;
+    const orig = await capAsk({ type: "transcribe", audio: pcm, sampleRate: 16000, language: lang, task: "transcribe", kind: "orig", tier, vocab, progressive: opts.progressive !== false }, [pcm.buffer]);
+    rec.tracks.orig = { lang: lang === "auto" ? "und" : lang, cues: orig.cues || rec.tracks.orig.cues || [] };
+    rec.model = orig.model || rec.model;
+    if (want.en) {
+      capOnProgress({ phase: "asr", pct: 50, detail: "영어로 옮기는 중" });
+      const pcm2 = await capDecodePcm(blob);
+      const en = await capAsk({ type: "transcribe", audio: pcm2, sampleRate: 16000, language: lang, task: "translate", kind: "en", tier, vocab, progressive: false }, [pcm2.buffer]);
+      rec.tracks.en = { lang: "en", cues: en.cues || [] };
+    }
+    async function addMt(pair, kind) {
+      if (!(rec.tracks.en && rec.tracks.en.cues.length)) return;
+      try {
+        const r = await capAsk({ type: "translate", cues: rec.tracks.en.cues, pair, kind });
+        rec.tracks[kind] = { lang: kind, cues: r.cues || [] };
+      } catch (e) {
+        if (String(e.message) === "cancelled") throw e;
+        toast((kind === "ko" ? "한국어" : kind === "ja" ? "일본어" : kind) + " 번역 모델을 열지 못했어요", 1800);
+      }
+    }
+    if (want.ja) await addMt("en-ja", "ja");
+    if (want.ko) {
+      const origLooksKo = (rec.tracks.orig.cues || []).slice(0, 6).some((c) => /[가-힣]/.test(c.text));
+      if (origLooksKo || lang === "ko") rec.tracks.ko = { lang: "ko", cues: rec.tracks.orig.cues };
+      else if (rec.tracks.en && rec.tracks.en.cues.length) {
+        const okKo = opts.forceKo === true || (opts.confirmKo !== false && typeof confirm === "function" && confirm("한국어 번역 모델은 약 281MB예요. 미리 받지 않았다면 지금 받을까요? 아이폰에서는 메모리가 부족할 수 있어요."));
+        if (okKo) await addMt("en-ko", "ko");
+        else toast("원문과 영어 자막은 저장했어요 · 한국어는 나중에 언어 팩으로 받을 수 있어요", 2000);
+      }
+    }
+    await capPut(rec);
+    cap.rec = rec;
+    if (cap.track === "ko" && !rec.tracks.ko) cap.track = rec.tracks.en ? "en" : "orig";
+    if (cap.learn) cap.track = "dual";
+    cap.on = true;
+    capSavePrefs();
+    capPaint(); capPaintBtn(); capSyncTextTrack();
+    capHideProg();
+    toast("자막을 만들었어요 · 이 기기에만 저장돼요", 1800);
+    return rec;
+  } finally {
+    cap.busy = false;
+    capHideProg();
+    capPumpQueue();
+  }
+};
+function capEnqueue(item, opts) {
+  item = item || capItem();
+  if (!item) throw new Error("영상이 없어요");
+  cap.jobs.push({ item, opts: opts || {}, name: item.name || "영상" });
+  capPaintQueue();
+  capPumpQueue();
+  return cap.jobs.length;
+}
+async function capPumpQueue() {
+  if (cap.busy || cap.jobRun || !cap.jobs.length) return;
+  const job = cap.jobs.shift();
+  capPaintQueue();
+  cap.jobRun = true;
+  try {
+    await capGenerate(Object.assign({}, job.opts, { item: job.item, queued: true, confirmKo: false }));
+    toast((job.name || "영상") + " 자막을 만들었어요", 1800);
+  } catch (e) {
+    if (String(e.message) !== "cancelled") toast((job.name || "영상") + " 자막을 만들지 못했어요", 1800);
+  } finally {
+    cap.jobRun = false;
+    capPaintQueue();
+    if (cap.jobs.length) capPumpQueue();
+  }
+}
+function capPaintQueue() {
+  const el = document.getElementById("capQueue");
+  if (!el) return;
+  if (!cap.jobs.length && !cap.busy) { el.innerHTML = "<p class='note'>대기 중인 영상이 없어요.</p>"; return; }
+  el.innerHTML = (cap.busy ? "<div class='cap-q-item'><span>지금 만드는 중</span></div>" : "")
+    + cap.jobs.map((j, i) => "<div class=\"cap-q-item\"><span>" + (i + 1) + ". " + j.name + "</span><button type=\"button\" data-qi=\"" + i + "\">빼기</button></div>").join("");
+  el.querySelectorAll("button[data-qi]").forEach((b) => b.addEventListener("click", () => { cap.jobs.splice(+b.dataset.qi, 1); capPaintQueue(); }));
+}
+function capActiveList() {
+  const rec = capActiveCues();
+  if (rec.mode === "dual") return rec.src || rec.tr || [];
+  return rec.src || [];
+}
+function capNudgeCue(i, field, delta) {
+  const rec = cap.rec; if (!rec || !rec.tracks) return;
+  const kind = cap.track === "dual" ? "orig" : (cap.track || "orig");
+  const cues = rec.tracks[kind] && rec.tracks[kind].cues;
+  if (!cues || !cues[i]) return;
+  cues[i][field] = Math.max(0, +(cues[i][field] + delta).toFixed(3));
+  if (cues[i].end <= cues[i].start) cues[i].end = cues[i].start + 0.2;
+  capPaint();
+  return cues[i];
+}
+function capOffsetAll(delta) {
+  const rec = cap.rec; if (!rec || !rec.tracks) return;
+  Object.keys(rec.tracks).forEach((k) => {
+    (rec.tracks[k].cues || []).forEach((c) => {
+      c.start = Math.max(0, +(c.start + delta).toFixed(3));
+      c.end = Math.max(c.start + 0.05, +(c.end + delta).toFixed(3));
+    });
+  });
+  capPaint(); capSyncTextTrack();
+}
+function capEditCue(i, text) {
+  const rec = cap.rec; if (!rec) return;
+  const kind = cap.track === "dual" ? "orig" : (cap.track || "orig");
+  const cues = rec.tracks[kind] && rec.tracks[kind].cues;
+  if (!cues || !cues[i]) return;
+  cues[i].text = String(text);
+  capPaint();
+  return cues[i];
+}
+function capMergeCues(i) {
+  const kind = cap.track === "dual" ? "orig" : (cap.track || "orig");
+  const cues = cap.rec && cap.rec.tracks && cap.rec.tracks[kind] && cap.rec.tracks[kind].cues;
+  if (!cues || i < 0 || i >= cues.length - 1) return;
+  cues[i].end = Math.max(cues[i].end, cues[i + 1].end);
+  cues[i].text = (cues[i].text + " " + cues[i + 1].text).replace(/\s+/g, " ").trim();
+  cues.splice(i + 1, 1);
+  capPaint();
+}
+function capSplitCue(i, at) {
+  const kind = cap.track === "dual" ? "orig" : (cap.track || "orig");
+  const cues = cap.rec && cap.rec.tracks && cap.rec.tracks[kind] && cap.rec.tracks[kind].cues;
+  if (!cues || !cues[i]) return;
+  const c = cues[i];
+  at = at == null ? (c.start + c.end) / 2 : at;
+  if (at <= c.start + 0.05 || at >= c.end - 0.05) return;
+  const mid = Math.max(1, Math.floor((c.text || "").length / 2));
+  const a = (c.text || "").slice(0, mid).trim(), b = (c.text || "").slice(mid).trim();
+  cues.splice(i, 1, { start: c.start, end: at, text: a || c.text }, { start: at, end: c.end, text: b || c.text });
+  capPaint();
+}
+async function capSaveEdits() {
+  if (!cap.rec) return null;
+  await capPut(cap.rec);
+  capSyncTextTrack();
+  toast("자막 고친 내용을 저장했어요", 1200);
+  return cap.rec;
+}
+function capOpenEditor() {
+  if (!capHasAny()) { toast("먼저 자막을 만들거나 가져와 주세요", 1400); return; }
+  showSheet("자막 고치기", null, { custom: true, build(body) {
+    body.classList.add("ed-sheet");
+    const kind = cap.track === "dual" ? "orig" : (cap.track || "orig");
+    body.innerHTML = "<h3>줄 고치기</h3><p class=\"note\">줄을 누르면 그 장면으로 이동해요. 글자를 고치고, 시간을 0.1초씩 밀거나, 전체를 한꺼번에 밀 수 있어요. 거친 말이나 사투리는 그대로 두는 것이 기본이에요.</p>"
+      + "<div class=\"ed-acts\"><button type=\"button\" id=\"btnEdOffM\">전체 −0.1초</button><button type=\"button\" id=\"btnEdOffP\">전체 +0.1초</button><button type=\"button\" id=\"btnEdSave\">저장</button></div><div id=\"edList\"></div>";
+    const list = body.querySelector("#edList");
+    const render = () => {
+      const cs = (cap.rec.tracks[kind] && cap.rec.tracks[kind].cues) || [];
+      list.innerHTML = cs.map((c, i) => "<div class=\"ed-row\" data-i=\"" + i + "\">"
+        + "<div class=\"ed-time\">" + capFmtVtt(c.start) + " → " + capFmtVtt(c.end) + "</div>"
+        + "<textarea data-i=\"" + i + "\">" + String(c.text || "").replace(/</g, "&lt;") + "</textarea>"
+        + "<div class=\"ed-acts\">"
+        + "<button type=\"button\" data-a=\"seek\" data-i=\"" + i + "\">이동</button>"
+        + "<button type=\"button\" data-a=\"ns\" data-i=\"" + i + "\">시작 −0.1</button>"
+        + "<button type=\"button\" data-a=\"ps\" data-i=\"" + i + "\">시작 +0.1</button>"
+        + "<button type=\"button\" data-a=\"ne\" data-i=\"" + i + "\">끝 −0.1</button>"
+        + "<button type=\"button\" data-a=\"pe\" data-i=\"" + i + "\">끝 +0.1</button>"
+        + "<button type=\"button\" data-a=\"split\" data-i=\"" + i + "\">나누기</button>"
+        + "<button type=\"button\" data-a=\"merge\" data-i=\"" + i + "\">다음 줄과 합치기</button>"
+        + "</div></div>").join("");
+      list.querySelectorAll("textarea").forEach((t) => t.addEventListener("input", () => capEditCue(+t.dataset.i, t.value)));
+      list.querySelectorAll("button[data-a]").forEach((b) => b.addEventListener("click", () => {
+        const i = +b.dataset.i, a = b.dataset.a;
+        if (a === "seek") { try { videoEl.currentTime = cap.rec.tracks[kind].cues[i].start; } catch (_) {} capPaint(); }
+        if (a === "ns") capNudgeCue(i, "start", -0.1);
+        if (a === "ps") capNudgeCue(i, "start", 0.1);
+        if (a === "ne") capNudgeCue(i, "end", -0.1);
+        if (a === "pe") capNudgeCue(i, "end", 0.1);
+        if (a === "split") capSplitCue(i, videoEl && videoEl.currentTime);
+        if (a === "merge") capMergeCues(i);
+        render();
+      }));
+    };
+    render();
+    body.querySelector("#btnEdOffM").addEventListener("click", () => { capOffsetAll(-0.1); render(); });
+    body.querySelector("#btnEdOffP").addEventListener("click", () => { capOffsetAll(0.1); render(); });
+    body.querySelector("#btnEdSave").addEventListener("click", () => capSaveEdits());
+  }});
+}
+function capEnsureTrans() {
+  const root = $("screen-video"); if (!root) return null;
+  let el = $("vTrans");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "vTrans";
+    el.className = "hidden";
+    el.innerHTML = "<div class=\"vt-search\"><input id=\"vTransQ\" type=\"search\" placeholder=\"자막에서 찾기\" enterkeyhint=\"search\"><button type=\"button\" id=\"vTransX\" aria-label=\"닫기\">닫기</button></div><div id=\"vTransList\"></div>";
+    root.appendChild(el);
+    el.querySelector("#vTransX").addEventListener("click", () => { cap.transOn = false; el.classList.add("hidden"); });
+    el.querySelector("#vTransQ").addEventListener("input", () => capPaintTranscript());
+  }
+  return el;
+}
+function capOpenTranscript(on) {
+  cap.transOn = on !== false;
+  const el = capEnsureTrans(); if (!el) return;
+  el.classList.toggle("hidden", !cap.transOn);
+  capPaintTranscript();
+  if (cap.transOn) { const q = $("vTransQ"); if (q) q.focus(); }
+}
+function capSearch(q) {
+  cap.transQ = String(q || "");
+  const inp = $("vTransQ"); if (inp) inp.value = cap.transQ;
+  capOpenTranscript(true);
+  capPaintTranscript();
+  return cap.transHits || [];
+}
+function capPaintTranscript() {
+  if (!cap.transOn) return;
+  const el = capEnsureTrans(); if (!el) return;
+  const list = $("vTransList"); if (!list) return;
+  const cues = capActiveList() || [];
+  const q = (($("vTransQ") && $("vTransQ").value) || cap.transQ || "").trim();
+  const t = videoEl && isFinite(videoEl.currentTime) ? videoEl.currentTime : 0;
+  cap.transHits = [];
+  const esc = (s) => String(s || "").replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  list.innerHTML = cues.map((c, i) => {
+    const hit = q && c.text && c.text.toLowerCase().includes(q.toLowerCase());
+    if (hit) cap.transHits.push(i);
+    if (q && !hit) return "";
+    const on = t >= c.start && t < c.end;
+    let tx = esc(c.text);
+    if (q) tx = tx.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "ig"), (m) => "<mark>" + m + "</mark>");
+    return "<button type=\"button\" class=\"vt-row" + (on ? " on" : "") + "\" data-i=\"" + i + "\"><span class=\"vt-t\">" + capFmtVtt(c.start) + "</span>" + tx + "</button>";
+  }).join("");
+  list.querySelectorAll(".vt-row").forEach((b) => b.addEventListener("click", () => {
+    const c = cues[+b.dataset.i]; if (!c) return;
+    try { videoEl.currentTime = c.start; videoEl.play().catch(() => {}); } catch (_) {}
+    capPaint();
+  }));
+  const onEl = list.querySelector(".vt-row.on");
+  if (onEl && onEl.scrollIntoView) onEl.scrollIntoView({ block: "nearest" });
+}
+function capExportVtt(kind) {
+  const rec = cap.rec; if (!rec || !rec.tracks) return "";
+  const k = kind || (cap.track === "dual" ? (rec.tracks.ko ? "ko" : "orig") : cap.track);
+  const cues = rec.tracks[k] && rec.tracks[k].cues;
+  if (!cues) return "";
+  return capToVtt(cues, k);
+}
+async function capShareSrt(kind) {
+  const srt = capExportSrt(kind);
+  if (!srt) { toast("내보낼 자막이 없어요", 1200); return ""; }
+  const name = ((capItem() && capItem().name) || "subtitles").replace(/\.[^.]+$/, "") + ".srt";
+  try {
+    const file = new File([srt], name, { type: "text/plain" });
+    if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
+      await navigator.share({ files: [file], title: name, text: "자막" });
+      return srt;
+    }
+  } catch (e) {
+    if (e && e.name === "AbortError") return srt;
+  }
+  return srt;
+}
+const _v21capOpenSheet = capOpenSheet;
+capOpenSheet = function () {
+  _v21capOpenSheet();
+  requestAnimationFrame(() => {
+    const body = document.querySelector(".sheet");
+    if (!body || body.querySelector("#btnCapModels")) return;
+    const extra = document.createElement("div");
+    extra.className = "cap-sheet";
+    extra.innerHTML = "<h3>특화 설정</h3>"
+      + "<p class=\"note\">받아적기 품질과 말의 언어를 고를 수 있어요. 정확(추천)은 한국어와 입말에 가장 현실적입니다. 거친 말과 유행어는 들린 그대로 남겨요.</p>"
+      + "<div class=\"cap-seg\" id=\"capTierSeg\">"
+      + "<button type=\"button\" data-tier=\"fast\">빠름</button>"
+      + "<button type=\"button\" data-tier=\"balanced\">균형</button>"
+      + "<button type=\"button\" data-tier=\"accurate\">정확(추천)</button>"
+      + "<button type=\"button\" data-tier=\"max\">최고(무거움)</button></div>"
+      + "<div class=\"cap-seg\" id=\"capLangSeg2\" style=\"margin-top:8px\">"
+      + "<button type=\"button\" data-lang=\"auto\">언어 자동</button>"
+      + "<button type=\"button\" data-lang=\"ko\">한국어</button>"
+      + "<button type=\"button\" data-lang=\"en\">영어</button>"
+      + "<button type=\"button\" data-lang=\"ja\">일본어</button></div>"
+      + "<h3 style=\"margin-top:10px\">자주 나오는 단어·이름</h3>"
+      + "<textarea class=\"cap-vocab\" id=\"capVocab\" placeholder=\"작품 이름, 등장인물, 자주 쓰는 말\">" + String(cap.vocab || "").replace(/</g, "&lt;") + "</textarea>"
+      + "<h3>자막 모양</h3>"
+      + "<div class=\"cap-seg\" id=\"capPresetSeg\">"
+      + "<button type=\"button\" data-pr=\"default\">기본</button>"
+      + "<button type=\"button\" data-pr=\"cinema\">영화관</button>"
+      + "<button type=\"button\" data-pr=\"large\">크게</button>"
+      + "<button type=\"button\" data-pr=\"yellow\">노란 자막</button></div>"
+      + "<div class=\"cap-seg\" style=\"margin-top:8px\">"
+      + "<button type=\"button\" id=\"btnCapOutline\">테두리·그림자</button>"
+      + "<button type=\"button\" id=\"btnCapLearn\">학습 모드 (원문+번역)</button></div>"
+      + "<div class=\"cap-actions\" style=\"margin-top:10px\">"
+      + "<button type=\"button\" id=\"btnCapModels\">모델 미리 받기</button>"
+      + "<button type=\"button\" id=\"btnCapEditor\">자막 고치기</button>"
+      + "<button type=\"button\" id=\"btnCapTrans\">따라 읽기</button>"
+      + "<button type=\"button\" id=\"btnCapShare\">SRT 보내기</button>"
+      + "<button type=\"button\" id=\"btnCapVtt\">VTT로 보내기</button>"
+      + "<button type=\"button\" id=\"btnCapQueue\">대기열에 넣기</button></div>"
+      + "<div id=\"capQueue\"></div>";
+    const cancel = body.querySelector(".sheet-cancel");
+    body.insertBefore(extra, cancel);
+    const mark = (sel, key, val) => extra.querySelectorAll(sel).forEach((b) => b.classList.toggle("on", b.dataset[key] === val));
+    mark("#capTierSeg button", "tier", cap.tier);
+    mark("#capLangSeg2 button", "lang", cap.lang);
+    mark("#capPresetSeg button", "pr", cap.preset);
+    extra.querySelectorAll("#capTierSeg button").forEach((b) => b.addEventListener("click", () => { cap.tier = b.dataset.tier; capSavePrefs(); mark("#capTierSeg button", "tier", cap.tier); }));
+    extra.querySelectorAll("#capLangSeg2 button").forEach((b) => b.addEventListener("click", () => { cap.lang = b.dataset.lang; capSavePrefs(); mark("#capLangSeg2 button", "lang", cap.lang); }));
+    extra.querySelectorAll("#capPresetSeg button").forEach((b) => b.addEventListener("click", () => { cap.preset = b.dataset.pr; capSavePrefs(); capPaint(); mark("#capPresetSeg button", "pr", cap.preset); }));
+    const vo = extra.querySelector("#capVocab");
+    if (vo) vo.addEventListener("input", () => { cap.vocab = vo.value; capSavePrefs(); });
+    const ol = extra.querySelector("#btnCapOutline"); ol.classList.toggle("on", cap.outline); ol.addEventListener("click", () => { cap.outline = !cap.outline; capSavePrefs(); capPaint(); ol.classList.toggle("on", cap.outline); });
+    const ln = extra.querySelector("#btnCapLearn"); ln.classList.toggle("on", cap.learn); ln.addEventListener("click", () => { cap.learn = !cap.learn; if (cap.learn) cap.track = "dual"; capSavePrefs(); capPaint(); ln.classList.toggle("on", cap.learn); });
+    extra.querySelector("#btnCapModels").addEventListener("click", () => { closeSheet(); dlOpenSheet(); });
+    extra.querySelector("#btnCapEditor").addEventListener("click", () => { closeSheet(); capOpenEditor(); });
+    extra.querySelector("#btnCapTrans").addEventListener("click", () => { closeSheet(); capOpenTranscript(true); setVideoUI(true); });
+    extra.querySelector("#btnCapShare").addEventListener("click", () => capShareSrt());
+    extra.querySelector("#btnCapVtt").addEventListener("click", () => {
+      const v = capExportVtt(); if (!v) { toast("내보낼 자막이 없어요", 1200); return; }
+      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([v], { type: "text/vtt" }));
+      a.download = ((capItem() && capItem().name) || "subtitles").replace(/\.[^.]+$/, "") + ".vtt";
+      document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    });
+    extra.querySelector("#btnCapQueue").addEventListener("click", () => { try { capEnqueue(); toast("대기열에 넣었어요", 1200); } catch (e) { toast(e.message, 1400); } });
+    capPaintQueue();
+  });
+};
+document.addEventListener("click", (e) => {
+  if (!cap.learn || !cap.learnHide) return;
+  if (e.target && e.target.closest && e.target.closest("#vCap")) { cap.learnHide = false; capPaint(); }
+}, true);
+/* ---------- manga translation ---------- */
+var manga = { mode: "tr", rec: null, busy: false, worker: null };
+function mgKey(index) {
+  const i = index == null ? reader.index : index;
+  const p = reader.pages && reader.pages[i];
+  const folder = reader.folder;
+  const fid = folder && (folder.storeId || folder.id || folder.name) || "";
+  const pid = p && (p.storeId || p.id || p.name) || String(i);
+  return fid + "::" + pid;
+}
+function mgDb() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open(MG_DB, 1);
+    r.onupgradeneeded = () => { if (!r.result.objectStoreNames.contains(MG_STORE)) r.result.createObjectStore(MG_STORE, { keyPath: "key" }); };
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+}
+async function mgGet(key) {
+  try {
+    const db = await mgDb();
+    return await new Promise((res, rej) => {
+      const q = db.transaction(MG_STORE, "readonly").objectStore(MG_STORE).get(key);
+      q.onsuccess = () => res(q.result || null); q.onerror = () => rej(q.error);
+    });
+  } catch (_) { return null; }
+}
+async function mgPut(rec) {
+  const db = await mgDb();
+  rec.updatedAt = Date.now();
+  await new Promise((res, rej) => {
+    const q = db.transaction(MG_STORE, "readwrite").objectStore(MG_STORE).put(rec);
+    q.onsuccess = () => res(); q.onerror = () => rej(q.error);
+  });
+  return rec;
+}
+function mgWorker() {
+  if (manga.worker) return manga.worker;
+  manga.worker = new Worker(new URL("vendor/ocr-worker.js", document.baseURI), { type: "module", name: "mhv-ocr" });
+  return manga.worker;
+}
+function mgAsk(msg, transfer) {
+  return new Promise((res, rej) => {
+    const w = mgWorker();
+    const on = (ev) => {
+      const d = ev.data || {};
+      if (d.type === "progress") { capOnProgress(d); return; }
+      if (d.type === "cancelled") { w.removeEventListener("message", on); rej(new Error("cancelled")); return; }
+      if (d.type === "error") { w.removeEventListener("message", on); rej(new Error(d.message || "오류")); return; }
+      if (d.type === "bubbles" || d.type === "ready") { w.removeEventListener("message", on); res(d); }
+    };
+    w.addEventListener("message", on);
+    if (transfer) w.postMessage(msg, transfer); else w.postMessage(msg);
+  });
+}
+async function mgPageBlob(index) {
+  const i = index == null ? reader.index : index;
+  const p = reader.pages[i];
+  if (!p) throw new Error("페이지가 없어요");
+  if (typeof nodeToBlob === "function") {
+    try { return await nodeToBlob(p); } catch (_) {}
+  }
+  const url = await getPageUrl(i);
+  const r = await fetch(url);
+  return await r.blob();
+}
+function mgGuessLangs(srcLang) {
+  if (srcLang === "ja") return "jpn";
+  if (srcLang === "ko") return "kor";
+  if (srcLang === "zh") return "chi_sim";
+  if (srcLang === "es") return "spa";
+  if (srcLang === "en") return "eng";
+  return "eng+jpn+kor";
+}
+function mgPair(src, tgt) {
+  src = src || "auto"; tgt = tgt || "ko";
+  if (src === tgt) return null;
+  const p = src + "-" + tgt;
+  const direct = ["en-ko","ko-en","en-ja","ja-en","en-zh","zh-en","en-es","es-en"];
+  if (direct.includes(p)) return [p];
+  if (src === "auto" || src === "ja") return tgt === "en" ? ["ja-en"] : ["ja-en", "en-" + tgt];
+  if (src === "zh") return tgt === "en" ? ["zh-en"] : ["zh-en", "en-" + tgt];
+  if (src === "es") return tgt === "en" ? ["es-en"] : ["es-en", "en-" + tgt];
+  if (src === "ko") return tgt === "en" ? ["ko-en"] : ["ko-en", "en-" + tgt];
+  if (src === "en") return ["en-" + tgt];
+  return ["ja-en", "en-" + tgt];
+}
+async function mgTranslateBubbles(bubbles, src, tgt) {
+  const texts = bubbles.map((b) => b.text);
+  const pairs = mgPair(src, tgt);
+  if (!pairs || !pairs.length || tgt === "orig") return bubbles.map((b) => Object.assign({}, b, { tr: b.text }));
+  let cur = texts.slice();
+  for (const pair of pairs) {
+    if (!pair || pair.endsWith("-undefined")) continue;
+    try {
+      const r = await capAsk({ type: "translateTexts", texts: cur, pair, kind: pair });
+      cur = r.texts || cur;
+    } catch (e) {
+      toast("번역 팩을 열지 못했어요 · 다운로드 관리에서 " + pair + " 팩을 받아 주세요", 2000);
+      throw e;
+    }
+  }
+  return bubbles.map((b, i) => Object.assign({}, b, { tr: cur[i] || b.text }));
+}
+function mgDetectSrc(bubbles) {
+  const t = (bubbles || []).map((b) => b.text).join(" ");
+  if (/[\u3040-\u30ff]/.test(t)) return "ja";
+  if (/[가-힣]/.test(t)) return "ko";
+  if (/[\u3400-\u9fff]/.test(t)) return "zh";
+  return "en";
+}
+async function mgTranslatePage(opts) {
+  opts = opts || {};
+  const index = opts.index != null ? opts.index : reader.index;
+  const key = mgKey(index);
+  if (!key) throw new Error("페이지가 없어요");
+  manga.busy = true;
+  try {
+    if (!opts.force) {
+      const hit = await mgGet(key);
+      if (hit && hit.bubbles && hit.bubbles.length && !opts.reocr) {
+        manga.rec = hit; manga.mode = opts.mode || manga.mode || "tr";
+        mgPaint(); return hit;
+      }
+    }
+    capOnProgress({ phase: "ocr", pct: 4, detail: "페이지 글자를 읽는 중" });
+    let bubbles;
+    if (opts.bubbles) bubbles = opts.bubbles;
+    else {
+      const blob = await mgPageBlob(index);
+      const bmp = await createImageBitmap(blob);
+      const canvas = document.createElement("canvas");
+      canvas.width = bmp.width; canvas.height = bmp.height;
+      canvas.getContext("2d").drawImage(bmp, 0, 0);
+      const r = await mgAsk({ type: "ocr", image: canvas, langs: opts.langs || mgGuessLangs(opts.src || "auto") });
+      bubbles = r.bubbles || [];
+    }
+    const src = opts.src || mgDetectSrc(bubbles);
+    const tgt = opts.tgt || "ko";
+    const done = opts.skipMt ? bubbles.map((b) => Object.assign({}, b, { tr: b.tr || b.text })) : await mgTranslateBubbles(bubbles, src, tgt);
+    const rec = { key, index, name: (reader.pages[index] && reader.pages[index].name) || "", src, tgt, bubbles: done };
+    await mgPut(rec);
+    manga.rec = rec;
+    manga.mode = opts.mode || manga.mode || "tr";
+    mgPaint();
+    toast(done.length ? (done.length + "개 말풍선을 번역했어요") : "글자를 찾지 못했어요 · 직접 고칠 수 있어요", 1800);
+    return rec;
+  } finally {
+    manga.busy = false;
+    capHideProg();
+  }
+}
+async function mgTranslateAlbum(opts) {
+  opts = opts || {};
+  const n = (reader.pages || []).length;
+  let ok = 0;
+  for (let i = 0; i < n; i++) {
+    try { await mgTranslatePage(Object.assign({}, opts, { index: i, force: false })); ok++; }
+    catch (e) { if (String(e.message) === "cancelled") break; }
+    toast("만화 번역 " + (i + 1) + "/" + n, 800);
+  }
+  toast(ok + "쪽 번역을 저장했어요", 1600);
+  return ok;
+}
+function mgEnsureOv() {
+  const host = document.querySelector("#viewCur .slot") || $("viewCur");
+  if (!host) return null;
+  host.style.position = host.style.position || "relative";
+  let ov = host.querySelector("#mangaOv");
+  if (!ov) {
+    ov = document.createElement("div");
+    ov.id = "mangaOv";
+    host.appendChild(ov);
+    ov.addEventListener("pointerdown", mgPointerDown);
+  }
+  return ov;
+}
+function mgImgRect() {
+  const host = document.querySelector("#viewCur .slot") || $("viewCur");
+  const img = host && host.querySelector("img, canvas");
+  if (!host || !img) return null;
+  const hr = host.getBoundingClientRect(), ir = img.getBoundingClientRect();
+  return { x: ir.left - hr.left, y: ir.top - hr.top, w: ir.width, h: ir.height, img };
+}
+function mgPaint() {
+  const ov = mgEnsureOv(); if (!ov) return;
+  const rec = manga.rec;
+  ov.className = "mode-" + (manga.mode || "tr");
+  ov.innerHTML = "";
+  const split = $("mangaSplit");
+  if (split) split.classList.toggle("hidden", manga.mode !== "split");
+  if (!rec || !rec.bubbles) return;
+  const r = mgImgRect(); if (!r) return;
+  ov.style.left = r.x + "px"; ov.style.top = r.y + "px"; ov.style.width = r.w + "px"; ov.style.height = r.h + "px";
+  rec.bubbles.forEach((b, i) => {
+    const el = document.createElement("button");
+    el.type = "button";
+    el.className = "mg-b" + (b.dir === "v" ? " vert" : "");
+    el.dataset.i = String(i);
+    el.style.left = (b.x * 100) + "%";
+    el.style.top = (b.y * 100) + "%";
+    el.style.width = (b.w * 100) + "%";
+    el.style.height = (b.h * 100) + "%";
+    const text = manga.mode === "orig" ? (b.text || "") : (b.tr || b.text || "");
+    el.textContent = manga.mode === "orig" ? "" : text;
+    el.setAttribute("aria-label", "말풍선");
+    const side = Math.max(24, Math.min(r.w * b.w, r.h * b.h));
+    el.style.fontSize = Math.max(8, Math.min(28, side / Math.max(4, Math.sqrt((text || "").length) * 1.8))) + "px";
+    ov.appendChild(el);
+  });
+  if (manga.mode === "split") mgPaintSplit();
+}
+function mgPaintSplit() {
+  let box = $("mangaSplit");
+  const stage = $("stage"); if (!stage) return;
+  if (!box) {
+    box = document.createElement("div"); box.id = "mangaSplit"; box.className = "hidden";
+    box.innerHTML = "<div class=\"mg-pane\" id=\"mgPaneL\"><span class=\"mg-lab\">원문</span></div><div class=\"mg-pane\" id=\"mgPaneR\"><span class=\"mg-lab\">번역</span></div>";
+    stage.appendChild(box);
+  }
+  box.classList.toggle("hidden", manga.mode !== "split");
+  if (manga.mode !== "split") return;
+  const r = mgImgRect(); if (!r || !r.img) return;
+  const L = $("mgPaneL"), R = $("mgPaneR");
+  L.innerHTML = "<span class=\"mg-lab\">원문</span>";
+  R.innerHTML = "<span class=\"mg-lab\">번역</span>";
+  L.appendChild(r.img.cloneNode(true));
+  const c = document.createElement("canvas");
+  const nw = r.img.naturalWidth || r.img.width, nh = r.img.naturalHeight || r.img.height;
+  c.width = nw; c.height = nh;
+  const ctx = c.getContext("2d");
+  ctx.drawImage(r.img, 0, 0, nw, nh);
+  (manga.rec && manga.rec.bubbles || []).forEach((b) => {
+    const x = b.x * nw, y = b.y * nh, w = b.w * nw, h = b.h * nh;
+    ctx.fillStyle = "rgba(255,255,255,0.96)";
+    ctx.beginPath(); ctx.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, Math.PI * 2); ctx.fill();
+    const text = b.tr || b.text || "";
+    ctx.fillStyle = "#141210";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    let size = Math.min(h * 0.32, 36);
+    ctx.font = "800 " + size + "px \"Pretendard LUNERA\", sans-serif";
+    while (size > 8 && ctx.measureText(text).width > w * 0.9) { size -= 1; ctx.font = "800 " + size + "px \"Pretendard LUNERA\", sans-serif"; }
+    ctx.fillText(text, x + w / 2, y + h / 2, w * 0.92);
+  });
+  R.appendChild(c);
+}
+var _mgPress = 0, _mgLong = false;
+function mgPointerDown(e) {
+  const t = e.target.closest && e.target.closest(".mg-b");
+  if (!t) return;
+  _mgLong = false;
+  const i = +t.dataset.i;
+  const tm = setTimeout(() => { _mgLong = true; mgShowPop(i, t); }, 420);
+  const up = () => {
+    clearTimeout(tm);
+    window.removeEventListener("pointerup", up);
+    window.removeEventListener("pointercancel", up);
+  };
+  window.addEventListener("pointerup", up);
+  window.addEventListener("pointercancel", up);
+}
+function mgShowPop(i, anchor) {
+  const b = manga.rec && manga.rec.bubbles && manga.rec.bubbles[i];
+  if (!b) return;
+  let pop = $("mgPop");
+  if (!pop) { pop = document.createElement("div"); pop.id = "mgPop"; ($("stage") || document.body).appendChild(pop); }
+  pop.innerHTML = "<b>원문</b><div></div><b>번역</b><div></div>";
+  const divs = pop.querySelectorAll("div");
+  divs[0].textContent = b.text || "";
+  divs[1].textContent = b.tr || "";
+  pop.classList.remove("hidden");
+  const r = (anchor || $("stage")).getBoundingClientRect();
+  const st = ($("stage") || document.body).getBoundingClientRect();
+  pop.style.left = Math.max(8, r.left - st.left) + "px";
+  pop.style.top = Math.min(st.height - 80, r.bottom - st.top + 6) + "px";
+  const hide = (ev) => { if (pop.contains(ev.target)) return; pop.classList.add("hidden"); document.removeEventListener("pointerdown", hide, true); };
+  setTimeout(() => document.addEventListener("pointerdown", hide, true), 0);
+}
+function mgSetMode(mode) {
+  manga.mode = mode;
+  const b = $("btnMangaTr"); if (b) b.classList.toggle("on", mode !== "orig" && !!(manga.rec && manga.rec.bubbles && manga.rec.bubbles.length));
+  mgPaint();
+}
+function mgEditBubble(i, field, text) {
+  if (!manga.rec || !manga.rec.bubbles || !manga.rec.bubbles[i]) return;
+  manga.rec.bubbles[i][field] = String(text);
+  mgPaint();
+  return manga.rec.bubbles[i];
+}
+async function mgSave() { if (manga.rec) return mgPut(manga.rec); }
+function mgOpenSheet() {
+  showSheet("만화 번역", null, { custom: true, build(body) {
+    body.classList.add("mg-sheet");
+    body.innerHTML = "<h3>이 페이지 · 앨범 번역</h3>"
+      + "<p class=\"note\">글자 인식과 번역은 이 기기 안에서만 이뤄져요. 손글씨·효과 글자·세로 쓰기·후리가나는 자주 틀릴 수 있어요. 말풍선을 길게 누르면 원문과 번역을 같이 보고, 아래에서 고칠 수 있어요. 거친 말과 사투리는 순화하지 않아요.</p>"
+      + "<div class=\"cap-seg\" id=\"mgSrc\">"
+      + "<button type=\"button\" data-s=\"auto\" class=\"on\">언어 자동</button>"
+      + "<button type=\"button\" data-s=\"ja\">일본어</button>"
+      + "<button type=\"button\" data-s=\"en\">영어</button>"
+      + "<button type=\"button\" data-s=\"ko\">한국어</button>"
+      + "<button type=\"button\" data-s=\"zh\">중국어</button></div>"
+      + "<div class=\"cap-seg\" id=\"mgTgt\">"
+      + "<button type=\"button\" data-t=\"ko\" class=\"on\">한국어로</button>"
+      + "<button type=\"button\" data-t=\"en\">영어로</button>"
+      + "<button type=\"button\" data-t=\"ja\">일본어로</button></div>"
+      + "<div class=\"cap-seg\" style=\"margin-top:8px\">"
+      + "<button type=\"button\" data-m=\"orig\"" + (manga.mode==="orig"?" class='on'":"") + ">원문</button>"
+      + "<button type=\"button\" data-m=\"tr\"" + (manga.mode!=="split"&&manga.mode!=="orig"?" class='on'":"") + ">번역</button>"
+      + "<button type=\"button\" data-m=\"split\"" + (manga.mode==="split"?" class='on'":"") + ">나란히</button></div>"
+      + "<div class=\"mg-acts\">"
+      + "<button type=\"button\" id=\"btnMgGo\" class=\"primary\">이 페이지 번역</button>"
+      + "<button type=\"button\" id=\"btnMgAlbum\">앨범 전체 번역</button>"
+      + "<button type=\"button\" id=\"btnMgModels\">모델 미리 받기</button></div>"
+      + "<div class=\"cap-prog\" id=\"capProg\"><b>준비 중</b><div class=\"bar\"><i></i></div><span></span></div>"
+      + "<div id=\"mgFix\"></div>";
+    const srcOf = () => (body.querySelector("#mgSrc button.on") || {}).dataset.s || "auto";
+    const tgtOf = () => (body.querySelector("#mgTgt button.on") || {}).dataset.t || "ko";
+    body.querySelectorAll("#mgSrc button").forEach((b) => b.addEventListener("click", () => body.querySelectorAll("#mgSrc button").forEach((x) => x.classList.toggle("on", x === b))));
+    body.querySelectorAll("#mgTgt button").forEach((b) => b.addEventListener("click", () => body.querySelectorAll("#mgTgt button").forEach((x) => x.classList.toggle("on", x === b))));
+    body.querySelectorAll("button[data-m]").forEach((b) => b.addEventListener("click", () => { mgSetMode(b.dataset.m); body.querySelectorAll("button[data-m]").forEach((x) => x.classList.toggle("on", x === b)); }));
+    body.querySelector("#btnMgGo").addEventListener("click", async () => {
+      try { await mgTranslatePage({ src: srcOf(), tgt: tgtOf(), force: true }); mgRenderFix(body); }
+      catch (e) { if (String(e.message) !== "cancelled") toast("번역하지 못했어요 · " + (e.message || ""), 1800); }
+    });
+    body.querySelector("#btnMgAlbum").addEventListener("click", async () => {
+      try { await mgTranslateAlbum({ src: srcOf(), tgt: tgtOf() }); }
+      catch (e) { toast(e.message || "중단했어요", 1400); }
+    });
+    body.querySelector("#btnMgModels").addEventListener("click", () => { closeSheet(); dlOpenSheet(); });
+    mgRenderFix(body);
+  }});
+}
+function mgRenderFix(body) {
+  const box = (body || document).querySelector("#mgFix"); if (!box) return;
+  const rec = manga.rec;
+  if (!rec || !rec.bubbles || !rec.bubbles.length) { box.innerHTML = "<p class='note'>아직 이 페이지의 말풍선이 없어요.</p>"; return; }
+  box.innerHTML = "<h3>말풍선 고치기</h3>" + rec.bubbles.map((b, i) => "<div class=\"ed-row\" data-i=\"" + i + "\">"
+    + "<textarea data-f=\"text\" data-i=\"" + i + "\" placeholder=\"원문\">" + String(b.text || "").replace(/</g, "&lt;") + "</textarea>"
+    + "<textarea data-f=\"tr\" data-i=\"" + i + "\" placeholder=\"번역\">" + String(b.tr || "").replace(/</g, "&lt;") + "</textarea></div>").join("")
+    + "<div class=\"mg-acts\"><button type=\"button\" id=\"btnMgSave\">저장</button></div>";
+  box.querySelectorAll("textarea").forEach((t) => t.addEventListener("input", () => { mgEditBubble(+t.dataset.i, t.dataset.f, t.value); }));
+  const sv = box.querySelector("#btnMgSave"); if (sv) sv.addEventListener("click", async () => { await mgSave(); toast("말풍선을 저장했어요", 1200); });
+}
+async function mgLoadCurrent() {
+  const key = mgKey();
+  manga.rec = key ? await mgGet(key) : null;
+  mgPaint();
+}
+const _v21fillView = fillView;
+fillView = async function (el, index, g) {
+  const r = await _v21fillView(el, index, g);
+  if (el && el.id === "viewCur") {
+    try { await mgLoadCurrent(); } catch (_) { manga.rec = null; mgPaint(); }
+  }
+  return r;
+};
+function mgBind() {
+  const host = $("btnReaderSettings") && $("btnReaderSettings").parentNode;
+  if (host && !$("btnMangaTr")) {
+    const b = document.createElement("button");
+    b.type = "button"; b.id = "btnMangaTr"; b.className = "text-btn"; b.textContent = "번역";
+    b.setAttribute("aria-label", "만화 번역");
+    host.insertBefore(b, $("btnReaderSettings"));
+    b.addEventListener("click", (e) => { e.stopPropagation(); mgOpenSheet(); });
+  }
+}
+mgBind();
+const _v21showReaderSettings = showReaderSettings;
+showReaderSettings = function () {
+  _v21showReaderSettings();
+  requestAnimationFrame(() => {
+    const body = document.querySelector(".sheet .settings-row") && document.querySelector(".sheet .settings-row").parentNode;
+    if (!body || body.querySelector("#btnDlManage")) return;
+    const row = document.createElement("div");
+    row.className = "settings-row";
+    row.innerHTML = "<label>다운로드 관리</label><button type=\"button\" id=\"btnDlManage\">자막·번역 모델 미리 받기</button><p class=\"note\">음성 인식, 언어 팩, 만화 글자 인식, LUNERA 음악을 미리 받아 오프라인으로 쓸 수 있어요. Wi-Fi를 권장해요.</p>";
+    const ver = body.querySelector(".settings-ver");
+    body.insertBefore(row, ver || null);
+    row.querySelector("#btnDlManage").addEventListener("click", () => { closeSheet(); dlOpenSheet(); });
+    const row2 = document.createElement("div");
+    row2.className = "settings-row";
+    row2.innerHTML = "<label>만화 번역</label><button type=\"button\" id=\"btnMgSettings\">이 작품 번역</button>";
+    body.insertBefore(row2, ver || null);
+    row2.querySelector("#btnMgSettings").addEventListener("click", () => { closeSheet(); mgOpenSheet(); });
+  });
+};
+
+window.__viewer.dl = {
+  packs: () => DL_PACKS.map((p) => ({ id: p.id, group: p.group, name: p.name, purpose: p.purpose, size: p.size, sizeLabel: p.sizeLabel, tier: p.tier, kind: p.kind, recommended: !!p.recommended })),
+  pack: dlPack,
+  status: dlPackStatus,
+  download: dlDownload,
+  pause: dlPause,
+  cancel: dlCancel,
+  resume: dlResume,
+  remove: dlDelete,
+  retry: async (id) => { await dlDelete(id); return dlDownload(id); },
+  recommend: dlDownloadRecommended,
+  verify: dlVerify,
+  estimate: dlEstimate,
+  openSheet: dlOpenSheet,
+  registerPack: (p) => { const i = DL_PACKS.findIndex((x) => x.id === p.id); if (i >= 0) DL_PACKS[i] = p; else DL_PACKS.push(p); return p; },
+};
+window.__viewer.cap = Object.assign(window.__viewer.cap, {
+  state: capState,
+  generate: capGenerate,
+  openSheet: capOpenSheet,
+  openEditor: capOpenEditor,
+  openTranscript: capOpenTranscript,
+  search: capSearch,
+  enqueue: capEnqueue,
+  queue: () => cap.jobs.slice(),
+  editCue: capEditCue,
+  nudge: capNudgeCue,
+  offset: capOffsetAll,
+  merge: capMergeCues,
+  split: capSplitCue,
+  save: capSaveEdits,
+  exportVtt: capExportVtt,
+  shareSrt: capShareSrt,
+  cues: capActiveList,
+  paint: capPaint,
+  rec: () => cap.rec,
+  put: capPut,
+});
+window.__viewer.manga = {
+  translatePage: mgTranslatePage,
+  translateAlbum: mgTranslateAlbum,
+  setMode: mgSetMode,
+  mode: () => manga.mode,
+  rec: () => manga.rec,
+  edit: mgEditBubble,
+  save: mgSave,
+  paint: mgPaint,
+  openSheet: mgOpenSheet,
+  ingest: async (bubbles, opts) => mgTranslatePage(Object.assign({ bubbles, force: true, skipMt: !(opts && opts.translate) }, opts || {})),
+  key: mgKey,
+};
+
+/*V21JS-END*/
 window.addEventListener("pagehide", () => { saveVideoPos(); saveReaderPos(); });
 </script>
 </body>

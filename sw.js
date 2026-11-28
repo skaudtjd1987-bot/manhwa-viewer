@@ -1,9 +1,9 @@
 /* 만화뷰어 service worker: cache-first, versioned, engine precache with progress */
-const CACHE_VERSION = "mhv-pwa-v20";
+const CACHE_VERSION = "mhv-pwa-v21";
 // BGM files live in their own cache that survives app updates (no 19MB re-download per version)
 const BGM_CACHE = "mhv-bgm-v1";
 // Caption / translation models (transformers.js + ONNX) survive app updates
-const ML_CACHE_PREFIXES = ["mhv-ml-", "transformers", "huggingface"];
+const ML_CACHE_PREFIXES = ["mhv-ml-", "transformers", "huggingface", "tesseract"];
 // Engine files that did not change since the previous version can be copied from the old cache
 // (fast update, works even on a weak connection). Files listed here are always re-downloaded.
 const ENGINE_CHANGED = new Set(["./vendor/ffmpeg-worker.js"]);
@@ -18,6 +18,7 @@ const APP_ASSETS = [
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./vendor/cap-worker.js",
+  "./vendor/ocr-worker.js",
 ];
 
 const ENGINE_ASSETS = [
