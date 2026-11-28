@@ -8,7 +8,10 @@
   "scope": "./",
   "id": "./",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
   "background_color": "#0c0b0d",
   "theme_color": "#0c0b0d",
   "orientation": "any",
@@ -30,6 +33,47 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "이어서 읽기",
+      "short_name": "이어 읽기",
+      "description": "마지막으로 보던 작품의 그 쪽부터 이어 봅니다",
+      "url": "./?go=continue",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "음악",
+      "short_name": "음악",
+      "description": "BGM 플레이어를 엽니다",
+      "url": "./?go=music",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "검색",
+      "short_name": "검색",
+      "description": "작품·곡·플레이리스트를 찾습니다",
+      "url": "./?go=search",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }

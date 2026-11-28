@@ -1743,12 +1743,214 @@ body:has(#screen-video:not(.hidden) #videoChrome.dim) .toast {
   bottom: calc(var(--safe-b) + 70px);
 }
 /*V18CSS-END*/
+/* ===== v19: cinematic resume, rings, theme, slideshow, search, sleep, viz ===== */
+:root {
+  --v19-accent: var(--accent);
+  --v19-glow: rgba(214, 69, 90, .35);
+  --v19-ink: #f3e9da;
+  transition: --v19-accent .6s ease, --v19-glow .6s ease;
+}
+#v19Splash {
+  position: fixed; inset: 0; z-index: 80; display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 14px;
+  background: radial-gradient(120% 80% at 50% 20%, #241016, #0c0b0d 62%);
+  color: var(--ivory); pointer-events: none;
+  transition: opacity .55s var(--ease), visibility .55s;
+}
+#v19Splash.out { opacity: 0; visibility: hidden; }
+#v19Splash .mark {
+  width: 72px; height: 72px; border-radius: 22px;
+  background: linear-gradient(160deg, #3a151c, #1a1012);
+  border: .5px solid var(--gold-line);
+  box-shadow: 0 18px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,240,225,.12);
+  display: grid; place-items: center;
+}
+#v19Splash .mark b {
+  font-size: 28px; font-weight: 800; letter-spacing: -.06em;
+  background: linear-gradient(180deg, #f6ead8, #d6455a);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+#v19Splash small { font-size: 11px; font-weight: 750; letter-spacing: .22em; color: var(--gold); text-transform: uppercase; }
+
+/* continue hero — more cinematic */
+#heroCard.hero {
+  margin-top: 10px; min-height: 148px;
+  border: .5px solid var(--gold-line);
+  box-shadow: 0 16px 40px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,240,225,.08);
+}
+#heroCard .hero-bg { animation: v19bgdrift 18s ease-in-out infinite alternate; }
+@keyframes v19bgdrift { from { transform: scale(1.12) translate(0,0); } to { transform: scale(1.22) translate(-2%, 1.5%); } }
+#heroCard .hero-in { padding: 16px 16px 16px 18px; gap: 16px; }
+#heroCard .hero-cover {
+  width: 104px; aspect-ratio: 3 / 4; border-radius: 8px 12px 12px 8px;
+  transform: perspective(700px) rotateY(-6deg);
+  box-shadow: 12px 16px 28px rgba(0,0,0,.5);
+  transform-style: preserve-3d; will-change: transform;
+}
+#heroCard .hero-cover.v19-flat { transform: none; }
+#heroCard .hero-kick { display: flex; align-items: center; gap: 8px; }
+#heroCard .hero-go { height: 44px; min-width: 44px; padding: 0 18px; font-size: 14px; }
+#heroCard .hero-eta { font-size: 12px; color: var(--ivory); opacity: .78; font-weight: 600; }
+#heroCard .hero-ringwrap {
+  position: relative; flex: none; width: 56px; height: 56px; margin-left: auto;
+}
+#heroCard .hero-ringwrap b {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-size: 10px; font-weight: 800; letter-spacing: -.02em; color: var(--ivory);
+  font-variant-numeric: tabular-nums;
+}
+.v19-ring { width: 56px; height: 56px; transform: rotate(-90deg); }
+.v19-ring .bg { fill: none; stroke: rgba(255,240,225,.16); stroke-width: 3.2; }
+.v19-ring .fg { fill: none; stroke: var(--v19-accent); stroke-width: 3.2; stroke-linecap: round;
+  stroke-dasharray: 150.8; stroke-dashoffset: 150.8;
+  transition: stroke-dashoffset .6s var(--ease), stroke .6s;
+  filter: drop-shadow(0 0 6px var(--v19-glow));
+}
+
+/* album card progress ring */
+.book-ring {
+  position: absolute; left: 7px; bottom: 7px; z-index: 4;
+  width: 36px; height: 36px; pointer-events: none;
+}
+.book-ring svg { width: 36px; height: 36px; transform: rotate(-90deg); }
+.book-ring .bg { fill: rgba(12,10,12,.45); stroke: rgba(255,240,225,.2); stroke-width: 2.6; }
+.book-ring .fg { fill: none; stroke: var(--v19-accent); stroke-width: 2.6; stroke-linecap: round; }
+.book-ring b {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-size: 8.5px; font-weight: 800; color: var(--ivory); font-variant-numeric: tabular-nums;
+  transform: none;
+}
+.grid .thumb .book-prog { display: none; }
+
+/* unified search results */
+#qResults {
+  margin: 0 calc(16px + var(--safe-r)) 8px calc(16px + var(--safe-l));
+  border-radius: 16px; overflow: hidden;
+  background: rgba(20,16,18,.92); border: .5px solid var(--hair2);
+  -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+}
+#qResults.hidden { display: none; }
+#qResults .qg { padding: 8px 4px 4px; }
+#qResults .qg-h {
+  padding: 4px 14px 6px; font-size: 10.5px; font-weight: 750;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--gold);
+}
+#qResults button.qr {
+  width: 100%; min-height: 44px; display: flex; align-items: center; gap: 12px;
+  padding: 6px 14px; text-align: left; color: var(--ivory); background: transparent;
+  border: 0; border-radius: 0;
+}
+#qResults button.qr:active { background: rgba(255,240,225,.06); }
+#qResults .qr-art {
+  width: 36px; height: 36px; border-radius: 8px; flex: none; object-fit: cover;
+  background: #1a1517; border: .5px solid var(--hair);
+}
+#qResults .qr b { display: block; font-size: 14px; font-weight: 700; letter-spacing: -.02em; }
+#qResults .qr small { display: block; font-size: 11.5px; color: var(--text2); }
+#qResults .qr-empty { padding: 14px; text-align: center; color: var(--muted); font-size: 13px; }
+
+.lib-search { height: 44px; }
+
+/* sleep timer */
+.v19-sleep, .v19-vizrow { padding: 2px 2px 0; }
+.v19-sleep label, .v19-vizrow label { font-size: 12.5px; font-weight: 700; color: var(--text2); }
+.v19-sleep-seg { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.v19-sleep-seg button, #bgmVizBtn {
+  height: 44px; min-width: 44px; padding: 0 12px; border-radius: 22px;
+  background: rgba(255,240,225,.06); color: var(--ivory);
+  border: .5px solid var(--hair2); font-size: 13px; font-weight: 700;
+}
+.v19-sleep-seg button.on, #bgmVizBtn.on {
+  background: var(--accent); color: #fff; border-color: transparent;
+  box-shadow: 0 6px 16px var(--v19-glow);
+}
+#bgmSleepLeft {
+  display: inline-flex; align-items: center; height: 28px; margin-top: 8px;
+  padding: 0 10px; border-radius: 14px; font-size: 12px; font-weight: 750;
+  color: var(--ivory); background: rgba(214,69,90,.22); letter-spacing: -.01em;
+}
+#bgmSleepLeft.hidden { display: none; }
+#v19SleepChip {
+  position: absolute; right: 10px; top: -18px; z-index: 4;
+  height: 24px; padding: 0 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 750; color: var(--ivory);
+  background: rgba(20,14,16,.9); border: .5px solid var(--gold-line);
+  letter-spacing: -.01em; pointer-events: none;
+}
+#v19SleepChip.hidden { display: none; }
+
+/* cinematic player backdrop + visualizer */
+.bgm-hero { position: relative; overflow: hidden; border-radius: 20px; }
+.bgm-hero-bg { animation: v19bgdrift 22s ease-in-out infinite alternate; }
+#bgmVizCv {
+  position: absolute; left: 12px; right: 12px; bottom: 8px; height: 44px;
+  z-index: 2; pointer-events: none; opacity: 0; transition: opacity .3s;
+}
+#bgmVizCv.show { opacity: 1; }
+.bgm-cover { transition: transform .35s var(--ease), box-shadow .35s; }
+.bgm-now.big .bgm-cover { box-shadow: 0 22px 48px rgba(0,0,0,.5), 0 0 0 1px rgba(255,240,225,.12); }
+body.v19-playing .bgm-now.big .bgm-cover { animation: v19breathe 4.8s ease-in-out infinite; }
+@keyframes v19breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.025); } }
+
+/* Ken Burns slideshow */
+#stage.v19-slides #viewCur img,
+#stage.v19-slides #viewCur canvas,
+#stage.v19-slides .view img {
+  animation: v19kb 12s ease-in-out alternate infinite;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+#stage.v19-slides.v19-kb2 #viewCur img,
+#stage.v19-slides.v19-kb2 #viewCur canvas { animation-name: v19kb2; }
+@keyframes v19kb { from { transform: scale(1) translate(0,0); } to { transform: scale(1.1) translate(-1.6%, 1.2%); } }
+@keyframes v19kb2 { from { transform: scale(1.08) translate(1.2%, -1%); } to { transform: scale(1) translate(0,0); } }
+#v19SlideChip {
+  position: absolute; top: calc(var(--safe-t) + 14px); left: 50%; transform: translateX(-50%);
+  z-index: 8; height: 36px; padding: 0 14px; border-radius: 18px;
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(16,12,14,.78); color: var(--ivory); border: .5px solid var(--gold-line);
+  font-size: 12.5px; font-weight: 750; -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+}
+#v19SlideChip.hidden { display: none; }
+#v19SlideChip button {
+  height: 28px; min-width: 44px; padding: 0 10px; border-radius: 14px;
+  background: var(--ivory); color: #17120e; font-weight: 800; font-size: 12px;
+}
+
+/* settings extras */
+#btnSlideStart {
+  height: 44px; padding: 0 16px; border-radius: 22px;
+  background: var(--accent); color: #fff; font-weight: 800; font-size: 14px;
+  box-shadow: 0 8px 20px var(--v19-glow);
+}
+
+/* 3D tilt cards on the music shelf */
+.mshelf-row .ms-card, .mshelf-row > button, .mshelf-row > div {
+  transform-style: preserve-3d; will-change: transform;
+}
+
+/* wake / focus */
+body.v19-focus #bgmMini { opacity: .15; pointer-events: none; }
+body.v19-focus #bgmNp { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  #heroCard .hero-bg, .bgm-hero-bg, #stage.v19-slides #viewCur img,
+  body.v19-playing .bgm-now.big .bgm-cover, #v19Splash .mark { animation: none !important; }
+  #heroCard .hero-cover { transform: none; }
+}
+@media (min-width: 700px) {
+  #heroCard .hero-cover { width: 124px; }
+  #heroCard.hero { min-height: 168px; }
+}
+
+/*V19CSS-END*/
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
 </style>
 </head>
 <body>
+<div id="v19Splash" aria-hidden="true"><div class="mark"><b>L</b></div><small>LUNERA VIEWER</small></div>
 <input id="filePick" type="file" multiple hidden
   accept=".zip,.ZIP,.cbz,.CBZ,.rar,.RAR,.cbr,.CBR,.7z,.cb7,.tar,.tgz,.tbz,.txz,.gz,.bz2,.xz,image/*,video/*,.jpg,.jpeg,.JPG,.JPEG,.png,.PNG,.webp,.WEBP,.gif,.GIF,.bmp,.BMP,.avif,.AVIF,.heic,.HEIC,.heif,.tif,.tiff,.TIFF,.ico,.mp4,.MP4,.mov,.MOV,.m4v,.webm,.mkv,.avi,.wmv,.flv,.mpeg,.mpg,.3gp,.ts">
 <input id="filePickAll" type="file" multiple hidden>
@@ -1799,7 +2001,7 @@ body:has(#screen-video:not(.hidden) #videoChrome.dim) .toast {
       <div id="prefixFix" class="prefix-fix hidden"><span></span><button type="button" id="btnPrefixFix">이름 앞 날짜 빼기</button></div>
       <p class="ex-hint" id="photoHint">사진 앱에서 손가락을 밀어 여러 장을 한 번에 선택할 수 있습니다.</p>
       <div id="storageMeter" class="storage-meter"></div>
-      <div class="app-ver" id="appVer">만화뷰어 v18 · 오프라인</div>
+      <div class="app-ver" id="appVer">만화뷰어 v19 · 오프라인</div>
     </div>
     <div id="exSelectBar" class="ex-select hidden">
       <button type="button" id="btnSelectAll">전체 선택</button>
@@ -1843,6 +2045,9 @@ body:has(#screen-video:not(.hidden) #videoChrome.dim) .toast {
             <li>영상: 화면 왼쪽·오른쪽을 <b>두 번 탭</b>하거나 <b>− / ＋</b> 버튼으로 5·10·15초씩 건너뛰어요. 가운데 <b>다이얼</b>을 천천히 돌리면 한 프레임씩, 빠르게 돌리면 초 단위로 이동합니다. <b>A-B 반복</b>으로 구간 반복, 타임라인 +/− 로 확대해 세밀하게 봅니다.</li>
             <li>영상 <b>편집</b>: 시작점·끝점으로 자르기, A-B 구간 잘라내기, 속도 변경 후 <b>MP4로 내보내기</b>. <b>장면 저장</b>은 지금 화면을 PNG로 저장합니다. 모두 인터넷 없이 됩니다.</li>
             <li>사진 <b>편집</b>: 자르기·회전·밝기/대비/채도/색온도·모자이크·흐림. 원본은 그대로 두고 사본으로 저장합니다.</li>
+          <li><b>이어서 읽기</b>: 마지막으로 보던 쪽과 스크롤 위치를 기억하고, 홈의 큰 카드에서 바로 이어 봅니다. 앨범 카드에는 읽은 만큼 고리가 채워져요.</li>
+          <li>음악 <b>잠들기 타이머</b>(15·30·60분 또는 이 곡 끝)는 끝나기 전 소리를 천천히 줄여 꺼 드려요. 플레이어에서 시각화를 켜면 앨범 아트 색에 맞춰 파형이 움직여요(잠금 화면 재생은 그대로).</li>
+          <li>보기 설정에서 <b>포토북 슬라이드쇼</b>를 시작하면 그림이 살며시 움직이며 넘어가고, 읽는 동안 화면이 꺼지지 않게 유지할 수 있어요. 홈 화면 앱의 바로가기로 이어 읽기·음악·검색을 바로 열 수 있어요.</li>
           </ul>
           <h3 class="warn">알아두면 좋은 제한</h3>
           <ul>
@@ -1856,9 +2061,10 @@ body:has(#screen-video:not(.hidden) #videoChrome.dim) .toast {
       </div>
       <div id="folderEmpty">이 폴더가 비어 있습니다.</div>
       <div id="libTools" class="lib-tools hidden">
-        <div class="lib-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="libSearch" type="search" placeholder="제목 · 시리즈 · #태그 검색" enterkeyhint="search" autocomplete="off" aria-label="서재 검색"><button type="button" id="libSearchClear" class="hidden" aria-label="검색어 지우기">✕</button></div>
+        <div class="lib-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="libSearch" type="search" placeholder="작품 · 곡 · 플레이리스트 검색" enterkeyhint="search" autocomplete="off" aria-label="작품, 곡, 플레이리스트 검색"><button type="button" id="libSearchClear" class="hidden" aria-label="검색어 지우기">✕</button></div>
         <div class="lib-tabs" id="libTabs"><button type="button" class="lib-tab on" data-tab="all">전체</button><button type="button" class="lib-tab" data-tab="series">시리즈별</button><button type="button" class="lib-tab" data-tab="tags">태그별</button><button type="button" id="bmChip" class="bm-chip hidden"><svg viewBox="0 0 24 24"><path d="M12 3.6l2.6 5.3 5.8.85-4.2 4.1 1 5.8L12 16.9l-5.2 2.75 1-5.8-4.2-4.1 5.8-.85z"/></svg>즐겨찾기 컷 <b>0</b></button><button type="button" class="lib-tab hidden" data-tab="secret">🔓 시크릿</button></div>
         <div id="libTagRow" class="lib-tagrow hidden"></div>
+        <div id="qResults" class="hidden"></div>
         <div id="secretBar" class="secret-bar hidden"><b>시크릿 서재</b><button type="button" id="btnSecretSet">설정</button><button type="button" id="btnSecretLock" class="lock">잠그기</button></div>
       </div>
       <div id="heroCard" class="hero hidden"></div>
@@ -4947,7 +5153,7 @@ function applyReaderLook() {
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v18";
+const PWA_CACHE = "mhv-pwa-v19";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
@@ -8831,7 +9037,7 @@ function updateReadProg() {
 }
 
 /* ===== v15: 시리즈·태그/검색, 시크릿 서재(PIN), 자동 넘김, 책갈피 메모 ===== */
-var APP_VER = "v18";
+var APP_VER = "v19";
 var META_KEY = "mhv-albummeta-v1", SECRET_KEY = "mhv-secret-v1", RECENT_KEY = "mhv-recent-v1";
 function v15Load(k, d) { try { const v = JSON.parse(localStorage.getItem(k) || "null"); return v && typeof v === "object" ? v : d; } catch (_) { return d; } }
 function v15Save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} }
@@ -11380,6 +11586,841 @@ function videoBindBgm() {
 
 /* keep the public skip() clamp; keyboard uses the chosen step */
 /*V18JS-END*/
+/* ===== v19: exact resume, rings, theme, sleep, viz, slideshow, search, wake, shortcuts ===== */
+var v19 = {
+  theme: "#d6455a",
+  wake: "off",
+  wakeSentinel: null,
+  sleep: { on: false, mode: "off", endAt: 0, timer: 0, fade: 0, fromVol: 0.8, left: 0 },
+  viz: { on: false, ctx: null, src: null, an: null, raf: 0, failed: false },
+  slides: { on: false, tick: 0, alt: false },
+  go: "",
+};
+
+function v19Reduced() { return !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches); }
+function v19SlideSec() { return [3, 5, 8, 12].includes(reader.slideSec) ? reader.slideSec : 5; }
+function v19Circ(r) { return 2 * Math.PI * r; }
+
+/* ---------- colour from art (local canvas only) ---------- */
+function v19RgbToHex(r, g, b) {
+  return "#" + [r, g, b].map((n) => Math.max(0, Math.min(255, n | 0)).toString(16).padStart(2, "0")).join("");
+}
+function v19HexToRgb(h) {
+  const m = /^#?([0-9a-f]{6})$/i.exec(h || "");
+  if (!m) return [214, 69, 90];
+  const n = parseInt(m[1], 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+function v19RgbToHsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+  let h = 0, s = 0, l = (max + min) / 2;
+  if (d) {
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    h = max === r ? ((g - b) / d + (g < b ? 6 : 0)) : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+    h *= 60;
+  }
+  return [h, s, l];
+}
+function v19HslToRgb(h, s, l) {
+  const a = s * Math.min(l, 1 - l);
+  const f = (n) => { const k = (n + h / 30) % 12; return l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1); };
+  return [Math.round(f(0) * 255), Math.round(f(8) * 255), Math.round(f(4) * 255)];
+}
+function v19TuneAccent(r, g, b) {
+  let [h, s, l] = v19RgbToHsl(r, g, b);
+  if (s < 0.18) { h = 350; s = 0.45; } // grey art → keep crimson language
+  s = Math.max(0.42, Math.min(0.72, s));
+  l = Math.max(0.42, Math.min(0.56, l));
+  return v19RgbToHex.apply(null, v19HslToRgb(h, s, l));
+}
+function v19ExtractColor(src) {
+  return new Promise((resolve) => {
+    if (!src) { resolve(""); return; }
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const c = document.createElement("canvas"); c.width = 32; c.height = 32;
+        const ctx = c.getContext("2d", { willReadFrequently: true });
+        ctx.drawImage(img, 0, 0, 32, 32);
+        const d = ctx.getImageData(0, 0, 32, 32).data;
+        const buckets = new Map();
+        for (let i = 0; i < d.length; i += 4) {
+          const a = d[i + 3]; if (a < 200) continue;
+          const r = d[i], g = d[i + 1], b = d[i + 2];
+          const [h, s, l] = v19RgbToHsl(r, g, b);
+          if (s < 0.12 || l < 0.12 || l > 0.88) continue;
+          const key = Math.round(h / 15) * 15;
+          const prev = buckets.get(key) || { n: 0, r: 0, g: 0, b: 0, w: 0 };
+          const w = s * (1 - Math.abs(l - 0.5) * 1.4);
+          prev.n++; prev.r += r * w; prev.g += g * w; prev.b += b * w; prev.w += w;
+          buckets.set(key, prev);
+        }
+        let best = null;
+        for (const v of buckets.values()) if (!best || v.w > best.w) best = v;
+        if (!best || !best.w) { resolve(""); return; }
+        resolve(v19TuneAccent(best.r / best.w, best.g / best.w, best.b / best.w));
+      } catch (_) { resolve(""); }
+    };
+    img.onerror = () => resolve("");
+    img.src = src;
+  });
+}
+function v19ApplyTheme(hex) {
+  if (!hex) return v19.theme;
+  v19.theme = hex;
+  const [r, g, b] = v19HexToRgb(hex);
+  const root = document.documentElement;
+  root.style.setProperty("--v19-accent", hex);
+  root.style.setProperty("--v19-glow", `rgba(${r},${g},${b},.38)`);
+  root.classList.add("v19-themed");
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute("content", hex);
+  return hex;
+}
+async function v19ThemeFrom(src) {
+  const hex = await v19ExtractColor(src);
+  if (hex) v19ApplyTheme(hex);
+  return hex;
+}
+
+/* ---------- exact resume (page + scroll / pan) ---------- */
+function v19CapturePos() {
+  const rec = { index: reader.index, count: pageCount(), at: Date.now(), fit: reader.fit };
+  if (reader.fit === "webtoon") {
+    const box = $("webtoon");
+    if (box && box.scrollHeight) rec.scroll = box.scrollTop / box.scrollHeight;
+  }
+  if (typeof reader.panY === "number") rec.panY = reader.panY;
+  return rec;
+}
+const _v19saveReaderPos = typeof saveReaderPos === "function" ? saveReaderPos : function () {};
+saveReaderPos = function () {
+  try {
+    const rec = v19CapturePos();
+    localStorage.setItem(storagePageKey(), JSON.stringify(rec));
+    saveLastRead();
+  } catch (_) { _v19saveReaderPos(); }
+};
+function v19RestoreExact() {
+  let rec = null;
+  try { rec = JSON.parse(localStorage.getItem(storagePageKey()) || "null"); } catch (_) {}
+  if (!rec) return null;
+  if (reader.fit === "webtoon" && typeof rec.scroll === "number") {
+    const box = $("webtoon");
+    if (box && box.scrollHeight > box.clientHeight) box.scrollTop = rec.scroll * box.scrollHeight;
+  }
+  if (reader.fit === "width" && typeof rec.panY === "number") {
+    reader.panY = rec.panY;
+    try {
+      const el = $("viewCur");
+      if (el) el.style.transform = `translate(${reader.panX || 0}px,${reader.panY}px) scale(${reader.zoom || 1})`;
+    } catch (_) {}
+  }
+  return rec;
+}
+const _v19openReader = openReader;
+openReader = async function (pages, startIndex, folder, opts) {
+  await _v19openReader(pages, startIndex, folder, opts);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!(opts && opts.fresh)) v19RestoreExact();
+    v19WakeSync();
+  }));
+};
+(function v19BindWebtoonScroll() {
+  const box = $("webtoon"); if (!box) return;
+  let t = 0;
+  box.addEventListener("scroll", () => { if (currentScreen !== "reader") return; clearTimeout(t); t = setTimeout(saveReaderPos, 180); }, { passive: true });
+})();
+
+function v19EtaText(pr) {
+  if (!pr) return "";
+  if (pr.done) return "완독했어요";
+  const left = Math.max(0, pr.count - pr.cur);
+  const sec = left * 8;
+  if (sec < 45) return "남은 시간 1분 안팎";
+  const m = Math.max(1, Math.round(sec / 60));
+  return m >= 60 ? `남은 약 ${Math.round(m / 60)}시간` : `남은 약 ${m}분`;
+}
+function v19RingSvg(frac, size, r) {
+  const c = v19Circ(r), off = c * (1 - Math.max(0, Math.min(1, frac)));
+  return `<svg class="v19-ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle class="bg" cx="${size/2}" cy="${size/2}" r="${r}"/><circle class="fg" cx="${size/2}" cy="${size/2}" r="${r}" style="stroke-dasharray:${c};stroke-dashoffset:${off}"/></svg>`;
+}
+
+const _v19renderHero = renderHero;
+renderHero = function () {
+  _v19renderHero();
+  const box = $("heroCard");
+  if (!box || box.classList.contains("hidden")) return;
+  if (box.querySelector(".hero-ringwrap")) {
+    /* already enhanced this signature? still refresh eta if needed */
+  }
+  const eta = box.querySelector(".hero-eta") || document.createElement("div");
+  if (!eta.className) {
+    eta.className = "hero-eta";
+    const txt = box.querySelector(".hero-txt");
+    if (txt) txt.appendChild(eta);
+  }
+  let rec = null; try { rec = JSON.parse(localStorage.getItem(LAST_KEY) || "null"); } catch (_) {}
+  const album = pickHeroAlbum(rec);
+  const pr = album ? albumProgress(album) : null;
+  eta.textContent = v19EtaText(pr);
+  if (pr && !box.querySelector(".hero-ringwrap")) {
+    const wrap = document.createElement("div");
+    wrap.className = "hero-ringwrap";
+    wrap.innerHTML = v19RingSvg(pr.frac, 56, 24) + `<b>${Math.round(pr.frac * 100)}</b>`;
+    const row = box.querySelector(".hero-row");
+    if (row) row.appendChild(wrap);
+    else box.querySelector(".hero-in") && box.querySelector(".hero-in").appendChild(wrap);
+  }
+  const kick = box.querySelector(".hero-kick");
+  if (kick && !/이어서/.test(kick.textContent)) kick.textContent = pr && pr.done ? "다시 보기" : "이어서 읽기";
+  const go = box.querySelector(".hero-go");
+  if (go) go.style.minWidth = "44px";
+  const coverImg = box.querySelector(".hero-cover img");
+  if (coverImg && coverImg.src) v19ThemeFrom(coverImg.src);
+  v19TiltBind(box.querySelector(".hero-cover"));
+};
+
+const _v19decorate = decorateAlbumCard;
+decorateAlbumCard = function (btn, node, thumb) {
+  _v19decorate(btn, node, thumb);
+  if (!thumb || thumb.querySelector(".book-ring")) return;
+  const pr = albumProgress(node); if (!pr) return;
+  const el = document.createElement("div");
+  el.className = "book-ring";
+  const c = v19Circ(14), off = c * (1 - pr.frac);
+  el.innerHTML = `<svg viewBox="0 0 36 36" aria-hidden="true"><circle class="bg" cx="18" cy="18" r="14"/><circle class="fg" cx="18" cy="18" r="14" style="stroke-dasharray:${c};stroke-dashoffset:${off}"/></svg><b>${pr.done ? "✓" : Math.round(pr.frac * 100)}</b>`;
+  thumb.appendChild(el);
+};
+
+/* ---------- 3D tilt ---------- */
+function v19TiltBind(el) {
+  if (!el || el._v19tilt || v19Reduced()) return;
+  el._v19tilt = true;
+  const reset = () => { el.style.transform = ""; };
+  el.addEventListener("pointermove", (e) => {
+    const r = el.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transform = `perspective(800px) rotateY(${x * 14}deg) rotateX(${-y * 10}deg) scale(1.03)`;
+  });
+  el.addEventListener("pointerleave", reset);
+  el.addEventListener("pointercancel", reset);
+}
+
+/* ---------- unified search ---------- */
+function v19Norm(s) { return String(s || "").toLowerCase().replace(/\s+/g, " ").trim(); }
+function v19Search(q) {
+  q = v19Norm(q);
+  const out = { albums: [], tracks: [], playlists: [], bookmarks: [] };
+  if (!q || q.length < 1) return out;
+  const words = q.split(" ").filter(Boolean);
+  const hit = (...parts) => { const hay = v19Norm(parts.filter(Boolean).join(" ")); return words.every((w) => hay.includes(w)); };
+  try {
+    for (const n of allAlbums(true)) {
+      if (typeof isHiddenNode === "function" && isHiddenNode(n) && libView.tab !== "secret") continue;
+      const m = typeof metaOf === "function" ? metaOf(n) : {};
+      if (hit(n.name, n.path, m.series, (m.tags || []).join(" "))) out.albums.push(n);
+      if (out.albums.length >= 8) break;
+    }
+  } catch (_) {}
+  try {
+    const tracks = (typeof bgmBuiltinTracks === "function" ? bgmBuiltinTracks() : []).concat(typeof bgmLocalTracks === "function" ? bgmLocalTracks() : []);
+    for (const t of tracks) {
+      if (hit(t.title, t.album, t.genre, t.langName, t.mood, (t.tags || []).join(" "))) out.tracks.push(t);
+      if (out.tracks.length >= 8) break;
+    }
+  } catch (_) {}
+  try {
+    const list = (typeof bpl !== "undefined" && Array.isArray(bpl.lists)) ? bpl.lists : [];
+    for (const p of list) {
+      if (p && hit(p.name)) out.playlists.push(p);
+      if (out.playlists.length >= 6) break;
+    }
+  } catch (_) {}
+  try {
+    const bms = (typeof bmList !== "undefined" && Array.isArray(bmList) ? bmList : []);
+    for (const b of bms) {
+      if (hit(b.memo, b.name, b.album, b.folderName)) out.bookmarks.push(b);
+      if (out.bookmarks.length >= 6) break;
+    }
+  } catch (_) {}
+  return out;
+}
+function v19PaintSearch() {
+  const box = $("qResults"); if (!box) return;
+  const q = ($("libSearch") && $("libSearch").value) || (libView && libView.q) || "";
+  const res = v19Search(q);
+  const total = res.albums.length + res.tracks.length + res.playlists.length + res.bookmarks.length;
+  if (!v19Norm(q) || !total) { box.classList.add("hidden"); box.innerHTML = ""; return; }
+  box.classList.remove("hidden");
+  const part = (title, items, render) => {
+    if (!items.length) return "";
+    return `<div class="qg"><div class="qg-h">${title}</div>${items.map(render).join("")}</div>`;
+  };
+  box.innerHTML =
+    part("작품", res.albums, (n, i) => `<button type="button" class="qr" data-k="album" data-i="${i}"><span class="qr-art"></span><span><b></b><small>앨범</small></span></button>`) +
+    part("곡", res.tracks, (t, i) => `<button type="button" class="qr" data-k="track" data-i="${i}"><span class="qr-art"></span><span><b></b><small></small></span></button>`) +
+    part("플레이리스트", res.playlists, (p, i) => `<button type="button" class="qr" data-k="pl" data-i="${i}"><span class="qr-art"></span><span><b></b><small>플레이리스트</small></span></button>`) +
+    part("즐겨찾기", res.bookmarks, (b, i) => `<button type="button" class="qr" data-k="bm" data-i="${i}"><span class="qr-art"></span><span><b></b><small>즐겨찾기 컷</small></span></button>`);
+  const fill = (sel, k, arr, title, sub, art) => {
+    box.querySelectorAll(`button[data-k="${k}"]`).forEach((btn) => {
+      const i = +btn.dataset.i, it = arr[i]; if (!it) return;
+      btn.querySelector("b").textContent = title(it);
+      const sm = btn.querySelector("small"); if (sm && sub) sm.textContent = sub(it) || sm.textContent;
+      const im = btn.querySelector(".qr-art");
+      const src = art && art(it);
+      if (src && im) { if (src.startsWith("#")) im.style.background = src; else { const img = document.createElement("img"); img.className = "qr-art"; img.alt = ""; img.src = src; im.replaceWith(img); } }
+      btn.addEventListener("click", (e) => { e.preventDefault(); v19OpenHit(k, it); });
+    });
+  };
+  fill("album", "album", res.albums, (n) => n.name, () => "앨범");
+  fill("track", "track", res.tracks, (t) => t.title, (t) => t.album || "LUNERA", (t) => t.cover ? (typeof bgmAbs === "function" ? bgmAbs(t.cover) : t.cover) : "");
+  fill("pl", "pl", res.playlists, (p) => p.name, (p) => `${(p.items && p.items.length) || 0}곡`);
+  fill("bm", "bm", res.bookmarks, (b) => b.memo || b.name || "즐겨찾기 컷", (b) => b.album || b.folderName || "컷");
+}
+async function v19OpenHit(k, it) {
+  if (k === "album") {
+    try {
+      const pages = imagesIn(it);
+      if (pages.length) await openReader(pages, undefined, it, { resume: true });
+      else { cwd = it; renderExplorer(); showScreen("explorer"); }
+    } catch (_) {}
+    return;
+  }
+  if (k === "track") {
+    try { await openBgmPlayer(); await bgmPlayTrack(it, [it]); } catch (_) {}
+    return;
+  }
+  if (k === "pl") {
+    try {
+      await openBgmPlayer("playlists");
+      if (typeof bplPlay === "function") bplPlay(it.id);
+      else if (typeof bplGet === "function") {
+        const p = bplGet(it.id) || it;
+        const first = p.items && p.items[0];
+        if (first && typeof bgmPlayTrack === "function") await bgmPlayTrack(first, p.items);
+      }
+    } catch (_) {}
+    return;
+  }
+  if (k === "bm" && typeof openBmPanel === "function") openBmPanel();
+}
+(function v19BindSearch() {
+  const s = $("libSearch"); if (!s) return;
+  s.setAttribute("placeholder", "작품 · 곡 · 플레이리스트 검색");
+  s.setAttribute("aria-label", "작품, 곡, 플레이리스트 검색");
+  s.addEventListener("input", () => { clearTimeout(v19BindSearch.t); v19BindSearch.t = setTimeout(v19PaintSearch, 80); });
+  s.addEventListener("focus", v19PaintSearch);
+})();
+
+/* ---------- sleep timer ---------- */
+function v19SleepClear(keepVol) {
+  clearTimeout(v19.sleep.timer); clearInterval(v19.sleep.fade);
+  v19.sleep.on = false; v19.sleep.mode = "off"; v19.sleep.endAt = 0; v19.sleep.left = 0;
+  if (!keepVol && typeof bgmApplyVolume === "function") bgmApplyVolume();
+  v19PaintSleep();
+}
+function v19SleepStart(spec) {
+  v19SleepClear(true);
+  let ms = 0, mode = "off";
+  if (typeof spec === "number") { ms = spec; mode = "ms"; }
+  else if (spec && typeof spec.ms === "number") { ms = spec.ms; mode = spec.mode || "ms"; v19.sleep.fadeMs = spec.fade || 8000; }
+  else if (spec === "end" || (spec && spec.mode === "end")) { mode = "end"; ms = 0; }
+  else if (typeof spec === "string" && /^\d+$/.test(spec)) { mode = spec; ms = (+spec) * 60 * 1000; }
+  else if (spec === "off" || !spec) { v19PaintSleep(); return; }
+  v19.sleep.mode = mode;
+  v19.sleep.fadeMs = v19.sleep.fadeMs || 8000;
+  v19.sleep.fromVol = (bgmAudio && bgmAudio.volume) || (bgmPrefs && bgmPrefs.volume) || 0.8;
+  if (mode === "end") {
+    v19.sleep.on = true;
+    const d = (bgmAudio && bgmAudio.duration) || 0;
+    const t = (bgmAudio && bgmAudio.currentTime) || 0;
+    v19.sleep.endAt = Date.now() + Math.max(0, (d - t) * 1000);
+    v19.sleep.timer = setInterval(v19SleepTick, 400);
+  } else if (ms > 0) {
+    v19.sleep.on = true;
+    v19.sleep.endAt = Date.now() + ms;
+    v19.sleep.timer = setInterval(v19SleepTick, 250);
+  }
+  v19PaintSleep();
+  if (v19.sleep.on && mode !== "end") toast("잠들기 타이머를 맞춰 두었어요", 1200);
+}
+function v19SleepTick() {
+  if (!v19.sleep.on) return;
+  const left = v19.sleep.endAt - Date.now();
+  v19.sleep.left = Math.max(0, left);
+  const fadeFor = v19.sleep.fadeMs || 8000;
+  if (left <= fadeFor && bgmAudio && !bgmAudio.paused) {
+    const p = Math.max(0, left / fadeFor);
+    bgmAudio.volume = v19.sleep.fromVol * p;
+  }
+  if (left <= 0) {
+    try { if (bgmAudio) bgmAudio.pause(); } catch (_) {}
+    if (typeof bgmApplyVolume === "function") bgmApplyVolume();
+    v19SleepClear();
+    toast("잠들기 타이머가 되어 음악을 멈췄어요", 1600);
+    return;
+  }
+  v19PaintSleep();
+}
+function v19SleepFmt(ms) {
+  const s = Math.max(0, Math.round(ms / 1000));
+  const m = Math.floor(s / 60), r = s % 60;
+  return m + ":" + String(r).padStart(2, "0");
+}
+function v19PaintSleep() {
+  const left = $("bgmSleepLeft");
+  const chip = $("v19SleepChip") || v19EnsureSleepChip();
+  const on = v19.sleep.on;
+  if (left) {
+    left.classList.toggle("hidden", !on);
+    if (on) left.textContent = v19.sleep.mode === "end" ? "이 곡이 끝나면 꺼져요" : ("남은 " + v19SleepFmt(v19.sleep.left || (v19.sleep.endAt - Date.now())));
+  }
+  if (chip) {
+    chip.classList.toggle("hidden", !on);
+    if (on) chip.textContent = v19.sleep.mode === "end" ? "이 곡 끝" : v19SleepFmt(v19.sleep.left || (v19.sleep.endAt - Date.now()));
+  }
+  document.querySelectorAll(".v19-sleep-seg button").forEach((b) => {
+    const v = b.dataset.sleep;
+    b.classList.toggle("on", on && (v === String(v19.sleep.mode) || (v19.sleep.mode === "ms" && v === "off" ? false : v === v19.sleep.mode)));
+    if (!on) b.classList.toggle("on", v === "off");
+  });
+}
+function v19EnsureSleepChip() {
+  const mini = $("bgmMini"); if (!mini) return null;
+  let c = $("v19SleepChip");
+  if (!c) { c = document.createElement("div"); c.id = "v19SleepChip"; c.className = "hidden"; mini.appendChild(c); }
+  return c;
+}
+function v19BindSleepUi(root) {
+  const host = root || document;
+  host.querySelectorAll(".v19-sleep-seg button").forEach((b) => {
+    if (b._v19) return; b._v19 = true;
+    b.addEventListener("click", () => {
+      const v = b.dataset.sleep;
+      if (v === "off") v19SleepClear();
+      else if (v === "end") v19SleepStart("end");
+      else v19SleepStart(v);
+    });
+  });
+}
+if (bgmAudio) {
+  bgmAudio.addEventListener("ended", () => {
+    if (v19.sleep.on && v19.sleep.mode === "end") {
+      if (typeof bgmApplyVolume === "function") bgmApplyVolume();
+      v19SleepClear();
+      toast("이 곡이 끝나 음악을 멈췄어요", 1400);
+    }
+  });
+}
+
+/* ---------- visualizer (opt-in; graph stays connected so iOS background audio keeps working) ---------- */
+function v19VizEnsure() {
+  if (v19.viz.src) return true;
+  if (v19.viz.failed) return false;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC || !bgmAudio) { v19.viz.failed = true; return false; }
+  try {
+    v19.viz.ctx = v19.viz.ctx || new AC();
+    v19.viz.src = v19.viz.ctx.createMediaElementSource(bgmAudio);
+    v19.viz.an = v19.viz.ctx.createAnalyser();
+    v19.viz.an.fftSize = 64;
+    v19.viz.src.connect(v19.viz.an);
+    v19.viz.an.connect(v19.viz.ctx.destination);
+    return true;
+  } catch (e) { v19.viz.failed = true; return false; }
+}
+function v19VizSet(on) {
+  v19.viz.on = !!on;
+  if (bgmPrefs) { bgmPrefs.viz = v19.viz.on; bgmSavePrefs(); }
+  const btn = $("bgmVizBtn"); if (btn) btn.classList.toggle("on", v19.viz.on);
+  const cv = $("bgmVizCv");
+  if (!v19.viz.on) {
+    cancelAnimationFrame(v19.viz.raf); v19.viz.raf = 0;
+    if (cv) cv.classList.remove("show");
+    return false;
+  }
+  if (!v19VizEnsure()) { toast("이 기기에서는 시각화를 켤 수 없어요", 1400); v19.viz.on = false; if (btn) btn.classList.remove("on"); return false; }
+  try { if (v19.viz.ctx && v19.viz.ctx.state === "suspended") v19.viz.ctx.resume(); } catch (_) {}
+  if (cv) cv.classList.add("show");
+  v19VizDraw();
+  return true;
+}
+function v19VizDraw() {
+  cancelAnimationFrame(v19.viz.raf);
+  if (!v19.viz.on || document.hidden) return;
+  const cv = $("bgmVizCv"); if (!cv || !v19.viz.an) return;
+  const ctx = cv.getContext("2d");
+  const step = () => {
+    if (!v19.viz.on || document.hidden) return;
+    const w = cv.width = cv.clientWidth * 2, h = cv.height = cv.clientHeight * 2;
+    const n = v19.viz.an.frequencyBinCount;
+    const data = new Uint8Array(n);
+    v19.viz.an.getByteFrequencyData(data);
+    ctx.clearRect(0, 0, w, h);
+    const [r, g, b] = v19HexToRgb(v19.theme);
+    const bars = 16, gap = 4, bw = (w - gap * (bars - 1)) / bars;
+    for (let i = 0; i < bars; i++) {
+      const v = (data[i + 1] || 0) / 255;
+      const bh = Math.max(4, v * h * 0.92);
+      ctx.fillStyle = `rgba(${r},${g},${b},${0.35 + v * 0.65})`;
+      const x = i * (bw + gap), y = h - bh, rr = Math.min(bw / 2, 6);
+      ctx.beginPath();
+      ctx.moveTo(x, y + rr); ctx.arcTo(x, y, x + bw, y, rr); ctx.arcTo(x + bw, y, x + bw, y + bh, rr);
+      ctx.lineTo(x + bw, h); ctx.lineTo(x, h); ctx.closePath(); ctx.fill();
+    }
+    v19.viz.raf = requestAnimationFrame(step);
+  };
+  v19.viz.raf = requestAnimationFrame(step);
+}
+document.addEventListener("visibilitychange", () => {
+  /* never pause BGM; only pause the drawing loop */
+  if (document.hidden) { cancelAnimationFrame(v19.viz.raf); v19.viz.raf = 0; }
+  else if (v19.viz.on) v19VizDraw();
+  v19WakeSync();
+});
+document.addEventListener("play", (e) => {
+  if (e.target === bgmAudio) document.body.classList.add("v19-playing");
+  const t = bgm && bgm.cur;
+  if (t && t.cover) v19ThemeFrom(typeof bgmAbs === "function" ? bgmAbs(t.cover) : t.cover);
+}, true);
+document.addEventListener("pause", (e) => {
+  if (e.target === bgmAudio && e.target.paused) document.body.classList.remove("v19-playing");
+}, true);
+
+const _v19openBgm = openBgmPlayer;
+openBgmPlayer = async function (tab) {
+  const r = await _v19openBgm(tab);
+  v19EnhanceBgmSheet();
+  return r;
+};
+function v19EnhanceBgmSheet() {
+  const s = $("bgmSheet"); if (!s) return;
+  const hero = s.querySelector(".bgm-hero");
+  if (hero && !$("bgmVizCv")) {
+    const cv = document.createElement("canvas"); cv.id = "bgmVizCv"; cv.setAttribute("aria-hidden", "true");
+    hero.appendChild(cv);
+  }
+  if (!$("bgmExtra")) {
+    const extra = document.createElement("div");
+    extra.id = "bgmExtra"; extra.className = "bgm-extra";
+    extra.innerHTML = `
+      <div class="v19-sleep" id="bgmSleep">
+        <label>잠들기 타이머</label>
+        <div class="seg v19-sleep-seg">
+          <button type="button" data-sleep="off">끄기</button>
+          <button type="button" data-sleep="15">15분</button>
+          <button type="button" data-sleep="30">30분</button>
+          <button type="button" data-sleep="60">60분</button>
+          <button type="button" data-sleep="end">이 곡 끝</button>
+        </div>
+        <b id="bgmSleepLeft" class="hidden"></b>
+      </div>
+      <div class="v19-vizrow"><button type="button" id="bgmVizBtn" aria-pressed="false">시각화</button>
+        <p class="note" style="margin:.4rem 0 0;font-size:11.5px;color:var(--text2)">재생은 그대로 두고, 화면을 보고 있을 때만 파형을 그려요. 잠금 화면 재생에는 영향을 주지 않아요.</p>
+      </div>
+      <label class="bgm-album" id="bgmAutoRow" style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px">
+        <span><b>앨범을 열면 BGM 바로 재생</b><small>지정된 앨범 BGM을 제안 없이 바로 들려 드려요</small></span>
+        <input type="checkbox" id="bgmAutoChk" role="switch">
+      </label>`;
+    const vol = s.querySelector(".bgm-vol");
+    if (vol && vol.parentNode) vol.parentNode.insertBefore(extra, vol.nextSibling);
+    else s.appendChild(extra);
+    const chk = $("bgmAutoChk");
+    if (chk) {
+      chk.checked = !!(bgmPrefs && bgmPrefs.albumAuto);
+      chk.addEventListener("change", () => { bgmPrefs.albumAuto = chk.checked; bgmSavePrefs(); toast(chk.checked ? "앨범을 열면 지정된 BGM을 바로 들려 드려요" : "앨범 BGM은 제안만 띄울게요", 1400); });
+    }
+  }
+  v19BindSleepUi(s);
+  const viz = $("bgmVizBtn");
+  if (viz && !viz._v19) {
+    viz._v19 = true;
+    viz.addEventListener("click", () => { v19VizSet(!v19.viz.on); viz.setAttribute("aria-pressed", v19.viz.on ? "true" : "false"); });
+    viz.classList.toggle("on", !!v19.viz.on);
+  }
+  v19PaintSleep();
+  if (v19.viz.on) v19VizSet(true);
+  const cover = s.querySelector(".bgm-cover img, .bgm-cover");
+  v19TiltBind(s.querySelector(".bgm-cover"));
+  const t = bgm && bgm.cur;
+  if (t && t.cover) v19ThemeFrom(typeof bgmAbs === "function" ? bgmAbs(t.cover) : t.cover);
+}
+
+/* ---------- wake lock ---------- */
+async function v19WakeRequest() {
+  try {
+    if (!("wakeLock" in navigator) || typeof navigator.wakeLock.request !== "function") { v19.wake = "unsupported"; return v19.wake; }
+    if (v19.wakeSentinel) { v19.wake = "held"; return v19.wake; }
+    v19.wakeSentinel = await navigator.wakeLock.request("screen");
+    v19.wake = "held";
+    v19.wakeSentinel.addEventListener("release", () => { v19.wakeSentinel = null; if (v19.wake === "held") v19.wake = "off"; });
+  } catch (_) { v19.wake = "denied"; }
+  return v19.wake;
+}
+function v19WakeRelease() {
+  try { if (v19.wakeSentinel) v19.wakeSentinel.release(); } catch (_) {}
+  v19.wakeSentinel = null;
+  if (v19.wake === "held") v19.wake = "off";
+}
+function v19WakeWanted() {
+  if (v19.slides.on) return true;
+  if (typeof auto !== "undefined" && auto.on) return true;
+  if (reader.wakeRead === false) return false;
+  return currentScreen === "reader" || currentScreen === "video";
+}
+function v19WakeSync() {
+  if (document.hidden) return;
+  if (v19WakeWanted()) v19WakeRequest(); else v19WakeRelease();
+}
+
+/* ---------- slideshow + Ken Burns ---------- */
+function v19SlideNow() { return (v19.slides.sec > 0 ? v19.slides.sec : v19SlideSec()); }
+function v19SlideshowStart(sec) {
+  if (currentScreen !== "reader" || !pageCount()) return false;
+  if (typeof sec === "number" && sec > 0) { v19.slides.sec = sec; if ([3, 5, 8, 12].includes(sec)) reader.slideSec = sec; }
+  else v19.slides.sec = v19SlideSec();
+  v19.slides.on = true;
+  v19.slides.alt = false;
+  $("stage").classList.add("v19-slides");
+  $("stage").classList.toggle("v19-kb2", v19.slides.alt);
+  setReaderUI(false);
+  document.body.classList.add("v19-focus");
+  v19EnsureSlideChip();
+  v19WakeRequest();
+  if (typeof auto !== "undefined" && auto.on) autoStop("btn");
+  v19.slides.prevEffect = reader.turnEffect;
+  reader.turnEffect = "none";
+  clearInterval(v19.slides.tick);
+  v19.slides.tick = setInterval(() => {
+    if (!v19.slides.on) return;
+    const n = typeof readingNext === "function" ? readingNext(reader.index) : reader.index + 1;
+    if (n == null || n < 0 || n >= pageCount()) { v19SlideshowStop("end"); return; }
+    if (typeof cancelFlip === "function") cancelFlip();
+    if (typeof readerGoTo === "function") readerGoTo(n);
+    else goReading(1);
+    v19.slides.alt = !v19.slides.alt;
+    if ($("stage")) $("stage").classList.toggle("v19-kb2", v19.slides.alt);
+  }, Math.max(0.4, v19SlideNow()) * 1000);
+  v19PaintSlideChip();
+  toast("슬라이드쇼를 시작했어요 · 화면을 탭하면 멈춰요", 1400);
+  return true;
+}
+function v19SlideshowStop(reason) {
+  if (!v19.slides.on && !($("stage") && $("stage").classList.contains("v19-slides"))) return;
+  v19.slides.on = false;
+  clearInterval(v19.slides.tick);
+  if (v19.slides.prevEffect) { reader.turnEffect = v19.slides.prevEffect; v19.slides.prevEffect = null; }
+  $("stage").classList.remove("v19-slides", "v19-kb2");
+  document.body.classList.remove("v19-focus");
+  const chip = $("v19SlideChip"); if (chip) chip.classList.add("hidden");
+  v19WakeSync();
+  if (reason === "end") toast("끝까지 왔어요 · 슬라이드쇼를 멈췄어요", 1400);
+}
+function v19EnsureSlideChip() {
+  let c = $("v19SlideChip");
+  if (!c) {
+    c = document.createElement("div"); c.id = "v19SlideChip"; c.className = "hidden";
+    c.innerHTML = "<span>슬라이드쇼</span><button type=\"button\">멈춤</button>";
+    $("screen-reader").appendChild(c);
+    c.querySelector("button").addEventListener("click", (e) => { e.stopPropagation(); v19SlideshowStop("btn"); });
+  }
+  c.classList.remove("hidden");
+  return c;
+}
+function v19PaintSlideChip() {
+  const c = $("v19SlideChip"); if (!c) return;
+  c.classList.toggle("hidden", !v19.slides.on);
+  if (v19.slides.on) c.querySelector("span").textContent = `슬라이드쇼 · ${v19SlideNow()}초`;
+}
+const _v19autoStop = typeof autoStop === "function" ? autoStop : function () {};
+if (typeof autoStop === "function") {
+  autoStop = function (reason) {
+    if (v19.slides.on) {
+      $("stage").classList.remove("v19-slides", "v19-kb2");
+      document.body.classList.remove("v19-focus");
+      const chip = $("v19SlideChip"); if (chip) chip.classList.add("hidden");
+      v19.slides.on = false;
+    }
+    return _v19autoStop(reason);
+  };
+}
+const _v19goReading = goReading;
+goReading = function (delta) {
+  const r = _v19goReading(delta);
+  if (v19.slides.on) {
+    v19.slides.alt = !v19.slides.alt;
+    $("stage").classList.toggle("v19-kb2", v19.slides.alt);
+  }
+  return r;
+};
+
+/* album BGM auto-play: when the preference is on, start instead of only offering */
+const _v19bgmOnAlbumOpen = bgmOnAlbumOpen;
+bgmOnAlbumOpen = async function (f) {
+  await _v19bgmOnAlbumOpen(f);
+  if (!(bgmPrefs && bgmPrefs.albumAuto)) return;
+  try {
+    if (bgmAudio && !bgmAudio.paused && bgm.cur) return;
+    const play = document.querySelector("#bgmOffer .bo-play");
+    if (play && $("bgmOffer") && !$("bgmOffer").classList.contains("hidden")) play.click();
+  } catch (_) {}
+};
+
+/* ---------- splash, shortcuts, settings extras, load prefs ---------- */
+function v19HideSplash() {
+  const el = $("v19Splash"); if (!el) return;
+  el.classList.add("out");
+  setTimeout(() => { if (el.parentNode) el.remove(); }, 700);
+}
+function v19Launch(go) {
+  go = go || v19.go;
+  if (!go) return false;
+  if (go === "continue") {
+    let rec = null; try { rec = JSON.parse(localStorage.getItem(LAST_KEY) || "null"); } catch (_) {}
+    const album = pickHeroAlbum(rec);
+    if (album) { const pages = imagesIn(album); openReader(pages, undefined, album, { resume: true }); return true; }
+    toast("이어서 읽을 작품이 아직 없어요", 1400); return false;
+  }
+  if (go === "music") { openBgmPlayer(); return true; }
+  if (go === "search") {
+    showScreen("explorer"); renderExplorer();
+    const s = $("libSearch"); if (s) { s.focus(); s.scrollIntoView({ block: "center" }); }
+    return true;
+  }
+  return false;
+}
+function v19BindSettings() {
+  /* inject when 보기 설정 opens */
+}
+const _v19showReaderSettings = showReaderSettings;
+showReaderSettings = function () {
+  _v19showReaderSettings();
+  requestAnimationFrame(() => {
+    const body = document.querySelector(".sheet .settings-row") && document.querySelector(".sheet .settings-row").parentNode;
+    if (!body || body.querySelector("#btnSlideStart")) return;
+    const mk = (html) => { const d = document.createElement("div"); d.className = "settings-row"; d.innerHTML = html; return d; };
+    const wake = mk(`<label>읽을 때 화면 켜두기</label><div class="seg"><button type="button" data-v="true">켜기</button><button type="button" data-v="false">끄기</button></div>`);
+    const refW = () => wake.querySelectorAll("button").forEach((b) => b.classList.toggle("on", String(reader.wakeRead !== false) === b.dataset.v));
+    wake.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => { reader.wakeRead = b.dataset.v === "true"; savePrefs(); refW(); v19WakeSync(); }));
+    refW();
+    const ss = mk(`<label>슬라이드쇼 간격</label><div class="seg" id="v19SlideSeg"></div>`);
+    const seg = ss.querySelector(".seg");
+    [3, 5, 8, 12].forEach((n) => {
+      const b = document.createElement("button"); b.type = "button"; b.textContent = n + "초"; b.dataset.v = String(n);
+      b.addEventListener("click", () => { reader.slideSec = n; savePrefs(); ss.querySelectorAll("button").forEach((x) => x.classList.toggle("on", +x.dataset.v === n)); });
+      b.classList.toggle("on", v19SlideSec() === n);
+      seg.appendChild(b);
+    });
+    const go = mk(`<label>포토북 슬라이드쇼</label><button type="button" id="btnSlideStart">슬라이드쇼 시작</button><p class="note">그림을 천천히 살며시 움직이며 넘겨 드려요. 음악은 그대로 두고, 화면이 꺼지지 않게 유지해요.</p>`);
+    go.querySelector("#btnSlideStart").addEventListener("click", () => { closeSheet(); v19SlideshowStart(); });
+    const ver = body.querySelector(".settings-ver");
+    const ref = ver || null;
+    [wake, ss, go].forEach((el) => body.insertBefore(el, ref));
+  });
+};
+
+const _v19savePrefs = savePrefs;
+savePrefs = function () {
+  try {
+    const raw = JSON.parse(localStorage.getItem(PREFS_KEY) || "{}");
+    raw.wakeRead = reader.wakeRead !== false;
+    raw.slideSec = v19SlideSec();
+    localStorage.setItem(PREFS_KEY, JSON.stringify(raw));
+  } catch (_) {}
+  _v19savePrefs();
+  /* merge our keys back in case _v19savePrefs overwrote */
+  try {
+    const raw = JSON.parse(localStorage.getItem(PREFS_KEY) || "{}");
+    raw.wakeRead = reader.wakeRead !== false;
+    raw.slideSec = v19SlideSec();
+    localStorage.setItem(PREFS_KEY, JSON.stringify(raw));
+  } catch (_) {}
+};
+(function v19LoadPrefs() {
+  try {
+    const p = JSON.parse(localStorage.getItem(PREFS_KEY) || "{}");
+    reader.wakeRead = p.wakeRead !== false;
+    if ([3, 5, 8, 12].includes(p.slideSec)) reader.slideSec = p.slideSec;
+    if (bgmPrefs && bgmPrefs.viz) { /* wait for gesture */ }
+  } catch (_) { reader.wakeRead = true; }
+})();
+
+/* close reader stops slideshow */
+const _v19closeReader = closeReader;
+closeReader = function () {
+  v19SlideshowStop("close");
+  saveReaderPos();
+  const r = _v19closeReader();
+  v19WakeSync();
+  renderHero();
+  return r;
+};
+
+(function v19Boot() {
+  try {
+    const u = new URL(location.href);
+    v19.go = u.searchParams.get("go") || "";
+    if (v19.go) history.replaceState(null, "", u.pathname + u.hash);
+  } catch (_) {}
+  v19EnsureSleepChip();
+  const ready = Promise.resolve(window.__libraryReady);
+  ready.then(() => {
+    v19HideSplash();
+    setTimeout(() => v19Launch(v19.go), 80);
+    v19PaintSearch();
+    /* shelf tilt */
+    document.addEventListener("pointerover", (e) => {
+      const card = e.target.closest && e.target.closest("#musicShelf [data-id], #musicShelf .ms-card, #musicShelf button, #grid .kind-dir .thumb");
+      if (card) v19TiltBind(card);
+    }, true);
+  }).catch(() => v19HideSplash());
+  setTimeout(v19HideSplash, 1800);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "s" || e.key === "S") {
+      if (currentScreen === "reader" && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        const tag = (e.target && e.target.tagName) || "";
+        if (/INPUT|TEXTAREA|SELECT/.test(tag) || e.target.isContentEditable) return;
+        e.preventDefault();
+        if (v19.slides.on) v19SlideshowStop("btn"); else v19SlideshowStart();
+      }
+    }
+  });
+})();
+
+/* public test hooks */
+window.__viewer.v19 = {
+  theme: () => v19.theme,
+  extractColor: v19ExtractColor,
+  applyTheme: v19ApplyTheme,
+  themeFrom: v19ThemeFrom,
+  pos: v19CapturePos,
+  restore: v19RestoreExact,
+  lastPos: () => { try { return JSON.parse(localStorage.getItem(storagePageKey()) || "null"); } catch (_) { return null; } },
+  eta: v19EtaText,
+  search: v19Search,
+  paintSearch: v19PaintSearch,
+  sleepStart: v19SleepStart,
+  sleepClear: v19SleepClear,
+  sleepState: () => ({ on: v19.sleep.on, mode: v19.sleep.mode, left: Math.max(0, v19.sleep.endAt - Date.now()), endAt: v19.sleep.endAt }),
+  vizSet: v19VizSet,
+  viz: () => ({ on: v19.viz.on, failed: v19.viz.failed, hooked: !!v19.viz.src }),
+  slideshowStart: v19SlideshowStart,
+  slideshowStop: v19SlideshowStop,
+  slideshow: () => ({ on: v19.slides.on, sec: (typeof v19SlideNow === "function" ? v19SlideNow() : v19SlideSec()), classOn: $("stage") && $("stage").classList.contains("v19-slides") }),
+  wakeRequest: v19WakeRequest,
+  wakeRelease: v19WakeRelease,
+  wake: () => v19.wake,
+  wakeWanted: v19WakeWanted,
+  launch: v19Launch,
+  progress: (n) => albumProgress(n || reader.folder),
+  ringFrac: (pr) => pr && pr.frac,
+  hideSplash: v19HideSplash,
+};
+
+/*V19JS-END*/
 window.addEventListener("pagehide", () => { saveVideoPos(); saveReaderPos(); });
 </script>
 </body>
