@@ -1,5 +1,5 @@
 /* 만화뷰어 service worker: cache-first, versioned, engine precache with progress */
-const CACHE_VERSION = "mhv-pwa-v17";
+const CACHE_VERSION = "mhv-pwa-v18";
 // BGM files live in their own cache that survives app updates (no 19MB re-download per version)
 const BGM_CACHE = "mhv-bgm-v1";
 // Engine files that did not change since the previous version can be copied from the old cache
@@ -167,6 +167,7 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   const url = new URL(event.request.url);
+  if (url.protocol !== "http:" && url.protocol !== "https:") return;
   if (url.origin !== self.location.origin) return;
 
   if (/\/bgm\/[^/]+\.(mp3|jpg)$/i.test(url.pathname)) { event.respondWith(bgmResponse(event)); return; }

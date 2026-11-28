@@ -1561,6 +1561,188 @@ input[type=range]::-webkit-slider-thumb { background: var(--ivory); box-shadow: 
 }
 @media (prefers-reduced-motion: reduce) { .bgm-orb.playing .art { animation: none; } }
 /*V17CSS-END*/
+/*V18CSS-START*/
+/* ===== v18: video skip + one-hand player · UX polish ===== */
+#screen-explorer.has-library #photoHint { display: none; }
+#storageMeter, #appVer { display: inline; }
+#appVer { margin-left: 8px; }
+#storageMeter + #appVer { letter-spacing: .01em; }
+.ex-toolbar { padding-bottom: 4px; }
+
+/* reader chrome: slightly clearer type */
+#pageCounter { font-size: 13px; color: var(--ivory); letter-spacing: .01em; }
+#readerChrome .r-tool span { font-size: 11px; color: var(--text2); }
+#readerChrome .titles h1 { font-size: 15.5px; }
+
+/* BGM volume: tighter, the iOS note sits right under the slider */
+.bgm-vol { padding: 0 6px 2px; gap: 8px; }
+.bgm-vol small { margin-top: -2px; }
+
+/* ===== video player ===== */
+#screen-video { background: #0a090b; }
+#videoEl { background: #0a090b; }
+.v-hit { position: absolute; inset: 0; z-index: 2; }
+.v-skip-layer { position: absolute; inset: 0; z-index: 5; pointer-events: none; overflow: hidden; }
+.v-ripple {
+  position: absolute; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(243,233,218,.45), rgba(214,69,90,.18) 55%, transparent 70%);
+  animation: v18rip .5s var(--ease) forwards;
+}
+@keyframes v18rip { to { transform: scale(22); opacity: 0; } }
+.v-skip-pop {
+  position: absolute; top: 50%; width: 46%; transform: translateY(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  color: var(--ivory); text-shadow: 0 2px 16px rgba(0,0,0,.6);
+  animation: v18pop .18s var(--ease);
+}
+.v-skip-pop.left { left: 0; }
+.v-skip-pop.right { right: 0; }
+.v-skip-pop .ring {
+  width: 74px; height: 74px; border-radius: 50%;
+  background: rgba(18,14,16,.55); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  border: .5px solid rgba(255,240,225,.2); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.45);
+}
+.v-skip-pop svg { width: 22px; height: 22px; stroke: var(--ivory); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.v-skip-pop b { font-size: 15px; font-weight: 780; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+@keyframes v18pop { from { opacity: 0; transform: translateY(-50%) scale(.86); } to { opacity: 1; transform: translateY(-50%); } }
+.v-bgm-resume {
+  position: absolute; z-index: 7; left: 50%; bottom: calc(var(--safe-b) + 18px);
+  transform: translateX(-50%); height: 44px; padding: 0 16px;
+  border-radius: 22px; display: flex; align-items: center; gap: 8px;
+  background: rgba(22,18,22,.9); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+  border: .5px solid var(--gold-line); color: var(--ivory); font-size: 13.5px; font-weight: 700;
+  box-shadow: 0 12px 28px rgba(0,0,0,.45); white-space: nowrap; pointer-events: auto;
+  animation: v17up .25s var(--ease);
+}
+#videoChrome.dim ~ .v-bgm-resume, #screen-video:not(:has(#btnBgmResume:not(.hidden))) .v-bgm-resume { /* placeholder */ }
+#videoChrome.dim + #btnBgmResume { bottom: calc(var(--safe-b) + 18px); }
+#screen-video:has(#videoChrome:not(.dim)) #btnBgmResume { bottom: auto; top: calc(var(--safe-t) + 70px); }
+
+#videoChrome .topbar { background: transparent; border: 0; padding: calc(var(--safe-t) + 6px) calc(var(--safe-r) + 10px) 0 calc(var(--safe-l) + 10px); }
+#videoChrome .topbar-inner {
+  height: 48px; border-radius: 18px; padding: 0 4px; gap: 2px;
+  background: rgba(16,13,16,.66); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+  border: .5px solid var(--hair2); box-shadow: 0 8px 26px rgba(0,0,0,.35);
+}
+#videoChrome .titles h1 { font-size: 15.5px; font-weight: 700; }
+#videoChrome #btnVideoFsTop { color: var(--ivory); }
+
+#videoChrome .vbar {
+  background: linear-gradient(180deg, transparent, rgba(10,8,11,.55) 18px, rgba(14,11,14,.88) 70%);
+  -webkit-backdrop-filter: blur(18px) saturate(130%); backdrop-filter: blur(18px) saturate(130%);
+  border-top: .5px solid var(--hair);
+  padding-top: 14px;
+  max-height: calc(100% - var(--safe-t) - var(--bar-h));
+}
+.v-meta { text-align: center; padding: 0 8px 6px; }
+.v-meta .v-title { color: var(--ivory); font-weight: 720; font-size: 15px; letter-spacing: -.02em; }
+#videoQueueLabel { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.v-scrub { display: flex; align-items: center; gap: 8px; padding: 0 2px; }
+.v-scrub .t0, .v-scrub .t1 { font-size: 12px; font-weight: 650; color: var(--text2); font-variant-numeric: tabular-nums; min-width: 36px; }
+.v-scrub .t1 { text-align: right; }
+.timeline { height: 44px; }
+.tl-zoom button { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,240,225,.08); color: var(--ivory); border: .5px solid var(--hair); }
+.tl-zoom span { color: var(--muted); }
+.v-readout { color: var(--muted); padding: 0 2px 2px; }
+.v-readout #timeLabel { color: var(--text2); font-size: 12px; }
+
+.v-controls { display: flex; flex-direction: column; align-items: stretch; gap: 6px; padding: 2px 0 4px; }
+.v-transport { display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 420px; margin: 0 auto; width: 100%; }
+.v-fine { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.v-skip {
+  position: relative; width: 56px; height: 56px; flex: none; border-radius: 28px;
+  color: var(--ivory); background: rgba(255,240,225,.07); border: .5px solid var(--hair2);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .12s, background var(--dur);
+}
+.v-skip svg.v-skip-ring { width: 28px; height: 28px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.v-skip .v-skip-n { position: absolute; font-size: 11px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.04em; color: var(--ivory); }
+.v-skip:active { transform: scale(.92); background: var(--accent-soft); }
+.v-btn { width: 44px; height: 44px; border-radius: 22px; background: rgba(255,240,225,.07); border: .5px solid var(--hair); display: flex; align-items: center; justify-content: center; color: var(--ivory); }
+.v-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.v-btn.sm { width: 44px; height: 44px; }
+.v-btn:active { transform: scale(.94); background: rgba(255,240,225,.12); }
+.jog { width: 108px; height: 108px; }
+.jog-ring {
+  background:
+    radial-gradient(circle at 50% 50%, transparent 0 40%, #0000 40%),
+    repeating-conic-gradient(from 0deg, rgba(255,240,225,.35) 0deg 1.4deg, transparent 1.4deg 12deg),
+    radial-gradient(circle at 50% 35%, #2a2428, #141114 70%);
+  border: .5px solid var(--hair2); box-shadow: inset 0 2px 10px #000c, 0 4px 16px #0008;
+}
+.jog-ring::after { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.jog-center {
+  width: 58px; height: 58px; margin: -29px 0 0 -29px;
+  background: var(--ivory); color: #17120e; border: 0;
+  box-shadow: 0 8px 20px rgba(0,0,0,.45);
+}
+.jog-center svg { width: 26px; height: 26px; fill: currentColor; stroke: none; }
+#screen-video.playing .jog-center { background: var(--accent-deep); color: var(--accent-ink); }
+.jog-hud { color: var(--gold); }
+
+.v-row { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; padding: 2px 0 4px; }
+.v-chip {
+  height: 44px; min-width: 44px; padding: 0 12px; border-radius: 22px;
+  background: rgba(255,240,225,.07); border: .5px solid var(--hair);
+  font-size: 13px; font-weight: 700; color: var(--text);
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+}
+.v-chip svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.v-chip.on { background: var(--accent-deep); color: var(--accent-ink); border-color: transparent; }
+.v-chip.half { border-color: var(--accent-line); color: var(--accent); }
+.v-chip.v-ico { width: 44px; padding: 0; }
+.v-step { display: flex; padding: 0; border-radius: 22px; background: rgba(255,240,225,.06); border: .5px solid var(--hair); gap: 0; height: 44px; align-items: center; }
+.v-step button {
+  height: 44px; min-width: 52px; padding: 0 14px; border-radius: 22px;
+  font-size: 13.5px; font-weight: 750; color: var(--text2); font-variant-numeric: tabular-nums;
+}
+.v-step button.on { background: var(--ivory); color: #17120e; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
+.v-step button:active { transform: scale(.96); }
+
+.edit-panel { border-top-color: var(--hair); }
+.ep-row label { color: var(--muted); }
+.ep-row .ep-info { color: var(--text2); }
+
+@media (max-width: 430px) {
+  .jog { width: 96px; height: 96px; }
+  .jog-center { width: 52px; height: 52px; margin: -26px 0 0 -26px; }
+  .v-skip { width: 52px; height: 52px; }
+  .v-transport { gap: 8px; }
+}
+@media (max-height: 520px) {
+  .vbar { padding-top: 8px; }
+  .v-meta { display: none; }
+  .jog { width: 84px; height: 84px; }
+  .jog-center { width: 46px; height: 46px; margin: -23px 0 0 -23px; }
+  .v-controls { padding: 0; }
+  .v-fine { display: none; }
+  #screen-video.editing .v-fine { display: flex; }
+  #screen-video.editing #videoEl { height: 30%; }
+}
+#screen-video.editing .v-transport { max-width: 360px; }
+#screen-video.editing .jog { width: 88px; height: 88px; }
+#screen-video.editing .jog-center { width: 46px; height: 46px; margin: -23px 0 0 -23px; }
+@media (min-width: 700px) {
+  .v-transport { max-width: 480px; }
+  .jog { width: 120px; height: 120px; }
+  .jog-center { width: 64px; height: 64px; margin: -32px 0 0 -32px; }
+  .v-skip { width: 58px; height: 58px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v-ripple, .v-skip-pop { animation: none; }
+}
+
+/* toasts: keep Korean phrases intact, stay clear of the video bar */
+.toast { word-break: keep-all; overflow-wrap: break-word; }
+body:has(#screen-video:not(.hidden) #videoChrome:not(.dim)) .toast {
+  bottom: auto !important;
+  top: calc(var(--safe-t) + 118px);
+}
+body:has(#screen-video:not(.hidden) #videoChrome.dim) .toast {
+  bottom: calc(var(--safe-b) + 70px);
+}
+/*V18CSS-END*/
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
@@ -1617,7 +1799,7 @@ input[type=range]::-webkit-slider-thumb { background: var(--ivory); box-shadow: 
       <div id="prefixFix" class="prefix-fix hidden"><span></span><button type="button" id="btnPrefixFix">이름 앞 날짜 빼기</button></div>
       <p class="ex-hint" id="photoHint">사진 앱에서 손가락을 밀어 여러 장을 한 번에 선택할 수 있습니다.</p>
       <div id="storageMeter" class="storage-meter"></div>
-      <div class="app-ver" id="appVer">만화뷰어 v17 · 오프라인</div>
+      <div class="app-ver" id="appVer">만화뷰어 v18 · 오프라인</div>
     </div>
     <div id="exSelectBar" class="ex-select hidden">
       <button type="button" id="btnSelectAll">전체 선택</button>
@@ -1658,7 +1840,7 @@ input[type=range]::-webkit-slider-thumb { background: var(--ivory); box-shadow: 
             <li>두 손가락으로 벌리거나 두 번 탭하면 확대, 확대한 상태에서는 끌어서 이동합니다.</li>
             <li>아래 막대를 끌면 쪽 미리보기가 뜨고, <b>목록</b>에서 썸네일로 바로 이동합니다.</li>
             <li><b>화면/너비/웹툰</b> 맞춤, 배경(검정·흰색·세피아)과 밝기는 <b>보기</b>에서 바꿉니다. 읽던 쪽은 앨범마다 기억합니다.</li>
-            <li>영상: 가운데 <b>다이얼</b>을 천천히 돌리면 한 프레임씩, 빠르게 돌리면 초 단위로 이동합니다. ◀| |▶ 로 한 프레임씩, <b>A-B 반복</b>으로 구간 반복, 타임라인 +/− 로 확대해 세밀하게 봅니다.</li>
+            <li>영상: 화면 왼쪽·오른쪽을 <b>두 번 탭</b>하거나 <b>− / ＋</b> 버튼으로 5·10·15초씩 건너뛰어요. 가운데 <b>다이얼</b>을 천천히 돌리면 한 프레임씩, 빠르게 돌리면 초 단위로 이동합니다. <b>A-B 반복</b>으로 구간 반복, 타임라인 +/− 로 확대해 세밀하게 봅니다.</li>
             <li>영상 <b>편집</b>: 시작점·끝점으로 자르기, A-B 구간 잘라내기, 속도 변경 후 <b>MP4로 내보내기</b>. <b>장면 저장</b>은 지금 화면을 PNG로 저장합니다. 모두 인터넷 없이 됩니다.</li>
             <li>사진 <b>편집</b>: 자르기·회전·밝기/대비/채도/색온도·모자이크·흐림. 원본은 그대로 두고 사본으로 저장합니다.</li>
           </ul>
@@ -1745,6 +1927,9 @@ input[type=range]::-webkit-slider-thumb { background: var(--ivory); box-shadow: 
 
   <section id="screen-video" class="screen hidden" data-screen="video">
     <video id="videoEl" playsinline webkit-playsinline preload="auto"></video>
+    <div id="vHit" class="v-hit" aria-hidden="true"></div>
+    <div id="vSkipLayer" class="v-skip-layer" aria-hidden="true"></div>
+    <button type="button" id="btnBgmResume" class="v-bgm-resume hidden">♪ BGM 이어서 듣기</button>
     <div id="videoChrome">
       <header class="topbar">
         <div class="topbar-inner">
@@ -1755,7 +1940,7 @@ input[type=range]::-webkit-slider-thumb { background: var(--ivory); box-shadow: 
             <div class="crumb" id="videoCrumb">영상</div>
             <h1 id="videoTitle">영상</h1>
           </div>
-          <button type="button" id="btnVideoFs" class="text-btn">전체화면</button>
+          <button type="button" id="btnVideoFsTop" class="icon-btn" aria-label="전체화면"><svg viewBox="0 0 24 24"><path d="M8 5H5v3M16 5h3v3M8 19H5v-3M16 19h3v-3"/></svg></button>
         </div>
       </header>
       <div class="bottombar vbar">
@@ -1763,11 +1948,13 @@ input[type=range]::-webkit-slider-thumb { background: var(--ivory); box-shadow: 
           <div class="v-title" id="videoName"></div>
           <div id="videoQueueLabel"></div>
         </div>
-        <div class="timeline-row">
+        <div class="timeline-row v-scrub">
+          <span class="t0" id="timeNow">0:00</span>
           <div id="timeline" class="timeline" aria-label="타임라인">
             <canvas id="tlCanvas"></canvas>
             <div id="tlPreview" class="tl-preview hidden"><canvas id="tlPrevCanvas" width="256" height="144"></canvas><span id="tlPrevTime"></span></div>
           </div>
+          <span class="t1" id="timeEnd">0:00</span>
           <div class="tl-zoom">
             <button type="button" id="btnTlOut" aria-label="타임라인 축소">−</button>
             <span id="tlZoomLabel">1×</span>
@@ -1775,29 +1962,41 @@ input[type=range]::-webkit-slider-thumb { background: var(--ivory); box-shadow: 
           </div>
         </div>
         <div class="v-readout"><span id="timeLabel">0:00.000 / 0:00</span><span id="frameLabel"></span></div>
-        <div class="v-row">
+        <div class="v-controls">
+          <div class="v-transport">
+            <button type="button" id="btnSkipBack" class="v-skip" aria-label="10초 뒤로"><svg class="v-skip-ring" viewBox="0 0 24 24"><path d="M8.2 7.2A7 7 0 1 0 12 5"/><path d="M7.2 4.6v3.4H10.6"/></svg><span class="v-skip-n">10</span></button>
+            <div id="jogDial" class="jog">
+              <div class="jog-hud" id="jogHud"></div>
+              <div class="jog-ring" id="jogRing" aria-label="조그 다이얼"></div>
+              <button type="button" id="btnPlay" class="jog-center" aria-label="재생">
+                <svg id="icoPlay" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <svg id="icoPause" class="hidden" viewBox="0 0 24 24"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>
+              </button>
+            </div>
+            <button type="button" id="btnSkipFwd" class="v-skip" aria-label="10초 앞으로"><svg class="v-skip-ring" viewBox="0 0 24 24"><path d="M15.8 7.2A7 7 0 1 1 12 5"/><path d="M16.8 4.6v3.4H13.4"/></svg><span class="v-skip-n">10</span></button>
+          </div>
+          <div class="v-fine">
+            <button type="button" id="btnPrevVid" class="v-btn sm" aria-label="이전 영상"><svg viewBox="0 0 24 24"><path d="M6 6v12"/><path d="M18 6.5v11L9.5 12z" fill="currentColor" stroke="none"/></svg></button>
+            <button type="button" id="btnFrameBack" class="v-btn sm" aria-label="한 프레임 뒤로"><svg viewBox="0 0 24 24"><path d="M7 6v12"/><path d="M18 6.8v10.4L10.2 12z" fill="currentColor" stroke="none"/></svg></button>
+            <button type="button" id="btnFrameFwd" class="v-btn sm" aria-label="한 프레임 앞으로"><svg viewBox="0 0 24 24"><path d="M17 6v12"/><path d="M6 6.8v10.4L13.8 12z" fill="currentColor" stroke="none"/></svg></button>
+            <button type="button" id="btnNextVid" class="v-btn sm" aria-label="다음 영상"><svg viewBox="0 0 24 24"><path d="M18 6v12"/><path d="M6 6.5v11L14.5 12z" fill="currentColor" stroke="none"/></svg></button>
+          </div>
+        </div>
+        <div class="v-row v-row-main">
+          <div class="v-step" id="vStep" role="radiogroup" aria-label="건너뛰기 간격">
+            <button type="button" data-step="5" aria-label="5초씩">5초</button>
+            <button type="button" data-step="10" class="on" aria-label="10초씩">10초</button>
+            <button type="button" data-step="15" aria-label="15초씩">15초</button>
+          </div>
           <button type="button" id="btnSpeed" class="v-chip" aria-label="배속">1×</button>
+          <button type="button" id="btnMuteVid" class="v-chip v-ico" aria-label="음소거" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="currentColor" stroke="none"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg></button>
+          <button type="button" id="btnPip" class="v-chip v-ico hidden" aria-label="화면 속 화면"><svg viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><rect x="12" y="11" width="7" height="5.5" rx="1" fill="currentColor" stroke="none"/></svg></button>
+          <button type="button" id="btnVideoFs" class="v-chip v-ico" aria-label="전체화면"><svg viewBox="0 0 24 24"><path d="M8 5H5v3M16 5h3v3M8 19H5v-3M16 19h3v-3"/></svg></button>
+        </div>
+        <div class="v-row v-row-tools">
           <button type="button" id="btnAB" class="v-chip" aria-label="구간 반복">A-B 반복</button>
           <button type="button" id="btnSnap" class="v-chip">장면 저장</button>
           <button type="button" id="btnEdit" class="v-chip">편집</button>
-        </div>
-        <div class="v-controls">
-          <button type="button" id="btnPrevVid" class="v-btn sm" aria-label="이전 영상">
-            <svg viewBox="0 0 24 24"><path d="M6 6v12h2V6H6zm3.5 6l8.5 6V6l-8.5 6z"/></svg>
-          </button>
-          <button type="button" id="btnFrameBack" class="v-btn sm" aria-label="한 프레임 뒤로"><span class="fs">◀|</span></button>
-          <div id="jogDial" class="jog">
-            <div class="jog-hud" id="jogHud"></div>
-            <div class="jog-ring" id="jogRing" aria-label="조그 다이얼"></div>
-            <button type="button" id="btnPlay" class="jog-center" aria-label="재생">
-              <svg id="icoPlay" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-              <svg id="icoPause" class="hidden" viewBox="0 0 24 24"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>
-            </button>
-          </div>
-          <button type="button" id="btnFrameFwd" class="v-btn sm" aria-label="한 프레임 앞으로"><span class="fs">|▶</span></button>
-          <button type="button" id="btnNextVid" class="v-btn sm" aria-label="다음 영상">
-            <svg viewBox="0 0 24 24"><path d="M16 6v12h2V6h-2zM6 18V6l8.5 6L6 18z"/></svg>
-          </button>
         </div>
         <div id="editPanel" class="edit-panel hidden">
           <div class="ep-row">
@@ -3807,6 +4006,8 @@ function renderExplorer() {
   const back = $("btnExBack");
   let items = cwd === homeNode ? childrenOf(cwd) : childrenOf(cwd).sort(cmpIn(cwd));
   const atHome = cwd === homeNode || cwd.id === "home";
+  if ($("photoHint")) $("photoHint").classList.toggle("hidden", !(atHome && childrenOf(cwd).length === 0));
+  if ($("screen-explorer")) $("screen-explorer").classList.toggle("has-library", childrenOf(homeNode).length > 0);
   const lv = libViewItems(items, atHome);
   items = lv.items;
 
@@ -4231,6 +4432,8 @@ function loadPrefs() {
     if (typeof p.bright === "number") reader.bright = Math.max(0.3, Math.min(1, p.bright));
     if (p.speed) videoState.speed = p.speed;
     if (p.jogResume != null) videoState.jogResume = !!p.jogResume;
+    if ([5, 10, 15].includes(p.videoSkip)) videoState.skip = p.videoSkip;
+    if (p.videoMuted != null) videoState.muted = !!p.videoMuted;
     reader.autoNext = p.autoNext !== false;
     reader.topGap = p.topGap !== false;
     reader.progLine = p.progLine !== false;
@@ -4259,6 +4462,8 @@ function savePrefs() {
       bright: reader.bright,
       speed: videoState.speed,
       jogResume: videoState.jogResume,
+      videoSkip: videoState.skip,
+      videoMuted: !!videoState.muted,
     }));
   } catch (_) {}
 }
@@ -4742,7 +4947,7 @@ function applyReaderLook() {
 }
 
 /* ========== Book page curl ========== */
-const PWA_CACHE = "mhv-pwa-v17";
+const PWA_CACHE = "mhv-pwa-v18";
 const TURN_EFFECTS = ["curl", "slide", "none"];
 
 const flip = {
@@ -5919,6 +6124,9 @@ const videoState = {
   a: null,
   b: null,
   edit: null,
+  skip: 10,
+  muted: false,
+  switching: false,
 };
 
 const videoEl = $("videoEl");
@@ -5978,6 +6186,9 @@ function updateSeekUi() {
   const fps = fpsDet.fps;
   $("timeLabel").textContent = `${fmtPrecise(t)} / ${fmtTime(d)}`;
   $("frameLabel").textContent = `프레임 ${Math.floor(t * fps + 1e-3)} · ${Math.round(fps * 100) / 100}fps${fpsDet.detected ? "" : "(추정)"}`;
+  const n0 = $("timeNow"), n1 = $("timeEnd");
+  if (n0) n0.textContent = (typeof videoFmtShort === "function" ? videoFmtShort : fmtTime)(t);
+  if (n1) n1.textContent = (typeof videoFmtShort === "function" ? videoFmtShort : fmtTime)(d);
   drawTimeline();
 }
 
@@ -6001,6 +6212,7 @@ async function loadQueueItem(i, autoplay) {
   saveVideoPos();
   videoState.index = i;
   const item = videoState.queue[i];
+  videoState.switching = true;
   showLoading("영상을 여는 중…");
   try {
     let url = await nodeUrl(item, "vd:");
@@ -6017,6 +6229,7 @@ async function loadQueueItem(i, autoplay) {
       videoEl.playbackRate = videoState.speed;
     });
     videoEl.pause();
+    videoEl.muted = !!videoState.muted;
     let ok = await tryLoad(url);
     if (!ok) {
       try {
@@ -6043,12 +6256,14 @@ async function loadQueueItem(i, autoplay) {
   } catch (err) {
     toast("영상을 재생할 수 없습니다.");
   } finally {
+    videoState.switching = false;
     hideLoading();
+    try { videoPaintBgmChip(); } catch (_) {}
   }
 }
 
 function openVideoQueue(list, startIndex, source) {
-  const available = (list || []).filter((n) => n && (n.file || ((n.archive || n.zip) && n.zipEntry)));
+  const available = (list || []).filter((n) => n && (n.file || n.storeId || ((n.archive || n.zip) && n.zipEntry)));
   if (!available.length) {
     toast("재생할 영상이 없습니다. 파일을 다시 선택해 주세요.");
     return;
@@ -6067,10 +6282,13 @@ function openVideoQueue(list, startIndex, source) {
 
 function closeVideo() {
   saveVideoPos();
+  videoState.switching = true;
   videoEl.pause();
   videoEl.removeAttribute("src");
   videoEl.load();
   revokeAllUrls("vd:");
+  try { bgmReleaseVideo("close"); } catch (_) {}
+  videoState.switching = false;
   showScreen("explorer");
   renderExplorer();
 }
@@ -6087,10 +6305,7 @@ function prevVideo() {
   if (videoState.index > 0) loadQueueItem(videoState.index - 1, true);
 }
 
-videoEl.addEventListener("click", (e) => {
-  e.preventDefault();
-  setVideoUI(!videoState.ui, true);
-});
+videoEl.addEventListener("click", (e) => { e.preventDefault(); });
 videoEl.addEventListener("play", () => { updatePlayIcon(); setVideoUI(true, true); });
 videoEl.addEventListener("pause", () => { updatePlayIcon(); saveVideoPos(); setVideoUI(true); });
 videoEl.addEventListener("timeupdate", () => { updateSeekUi(); });
@@ -6098,7 +6313,7 @@ videoEl.addEventListener("durationchange", updateSeekUi);
 videoEl.addEventListener("ended", () => {
   saveVideoPos();
   if (videoState.index + 1 < videoState.queue.length) nextVideo();
-  else { toast("재생이 끝났습니다."); setVideoUI(true); }
+  else { toast("재생이 끝났습니다."); setVideoUI(true); try { bgmReleaseVideo("ended"); } catch (_) {} }
 });
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) saveVideoPos();
@@ -6153,6 +6368,14 @@ function openSpeedSheet() {
       bs.forEach((b) => b.addEventListener("click", () => { videoState.jogResume = b.dataset.v === "1"; savePrefs(); ref(); }));
       ref();
       body.appendChild(r2);
+      const r3 = document.createElement("div");
+      r3.className = "settings-row";
+      r3.innerHTML = '<label>영상 재생 시 BGM</label><div class="seg" id="vBgmMode"><button type="button" data-v="pause">잠시 멈춤</button><button type="button" data-v="duck">소리만 줄이기</button><button type="button" data-v="keep">그대로 두기</button></div><p class="note">기본은 영상을 보는 동안 BGM을 잠시 멈추고, 영상이 끝나거나 나가면 이어서 들려 드려요. 멈추는 중에는 ‘BGM 이어서 듣기’로 바로 재개할 수 있어요.</p>';
+      const mb = r3.querySelectorAll("button");
+      const mref = () => mb.forEach((b) => b.classList.toggle("on", b.dataset.v === (bgmPrefs.videoMode || "pause")));
+      mb.forEach((b) => b.addEventListener("click", () => { bgmPrefs.videoMode = b.dataset.v; bgmSavePrefs(); mref(); }));
+      mref();
+      body.appendChild(r3);
     }
   });
 }
@@ -8608,7 +8831,7 @@ function updateReadProg() {
 }
 
 /* ===== v15: 시리즈·태그/검색, 시크릿 서재(PIN), 자동 넘김, 책갈피 메모 ===== */
-var APP_VER = "v17";
+var APP_VER = "v18";
 var META_KEY = "mhv-albummeta-v1", SECRET_KEY = "mhv-secret-v1", RECENT_KEY = "mhv-recent-v1";
 function v15Load(k, d) { try { const v = JSON.parse(localStorage.getItem(k) || "null"); return v && typeof v === "object" ? v : d; } catch (_) { return d; } }
 function v15Save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} }
@@ -9123,6 +9346,7 @@ if (!bgmPrefs.albums) bgmPrefs.albums = {};
 if (!["all", "one", "shuffle"].includes(bgmPrefs.repeat)) bgmPrefs.repeat = "all";
 if (["all", "ko", "ja", "en"].includes(bgmPrefs.lang)) bgm.ui.lang = bgmPrefs.lang;
 if (typeof bgmPrefs.volume !== "number") bgmPrefs.volume = 0.8;
+if (!["pause", "duck", "keep"].includes(bgmPrefs.videoMode)) bgmPrefs.videoMode = "pause";
 function bgmSavePrefs() { v15Save(BGM_PREF_KEY, bgmPrefs); }
 function bgmFmt(s) { s = Math.max(0, Math.floor(s || 0)); return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); }
 function bgmAbs(u) { try { return new URL(u, location.href).href; } catch (_) { return u; } }
@@ -9344,7 +9568,7 @@ bgmAudio.addEventListener("timeupdate", () => { bgmPaintTime(); const n = Date.n
 bgmAudio.addEventListener("ended", () => { bgm.endedCount = (bgm.endedCount || 0) + 1; if (bgmPrefs.repeat === "one") { bgmAudio.currentTime = 0; bgmAudio.play().catch(() => {}); } else bgmStep(1, true); });
 bgmAudio.addEventListener("error", () => { if (!bgm.cur) return; toast(bgm.cur.kind === "lunera" ? "스트리밍을 불러오지 못했어요 · 온라인 상태를 확인해 주세요" : "이 곡을 재생할 수 없어요", 1800); bgmUpdateIndicators(); bgmPaint(); });
 // never clash with the video player: a video starting pauses the BGM
-document.addEventListener("play", (e) => { if (e.target && e.target !== bgmAudio && e.target.tagName === "VIDEO" && !bgmAudio.paused) { bgmAudio.pause(); toast("영상을 재생해서 BGM을 잠시 멈췄어요", 1400); } }, true);
+document.addEventListener("play", (e) => { if (e.target && e.target !== bgmAudio && e.target.tagName === "VIDEO") { try { bgmHoldVideo(); } catch (_) {} } }, true);
 // built-ins cached on first play (the service worker also does this)
 bgmAudio.addEventListener("playing", () => { const t = bgm.cur; if (t && t.kind === "builtin" && !bgm.cached.has(t.id) && window.caches) caches.open(BGM_CACHE).then((c) => c.match(bgmAbs(t.src)).then((h) => h || fetch(bgmAbs(t.src)).then((r) => r.ok && c.put(bgmAbs(t.src), r)))).then(() => { bgm.cached.add(t.id); bgmPaint(); }).catch(() => {}); });
 
@@ -9858,12 +10082,12 @@ window.addEventListener("keydown", (e) => {
   } else if (currentScreen === "video") {
     const k = e.key;
     if (k === " " || k === "k" || k === "K") { e.preventDefault(); togglePlay(); }
-    else if (k === "ArrowRight") { e.preventDefault(); if (e.shiftKey) nextVideo(); else skip(5); }
-    else if (k === "ArrowLeft") { e.preventDefault(); if (e.shiftKey) prevVideo(); else skip(-5); }
+    else if (k === "ArrowRight") { e.preventDefault(); if (e.shiftKey) nextVideo(); else skip(videoSkipStep()); }
+    else if (k === "ArrowLeft") { e.preventDefault(); if (e.shiftKey) prevVideo(); else skip(-videoSkipStep()); }
     else if (k === "." || k === ">") frameStep(1);
     else if (k === "," || k === "<") frameStep(-1);
-    else if (k === "j" || k === "J") skip(-10);
-    else if (k === "l" || k === "L") skip(10);
+    else if (k === "j" || k === "J") skip(-videoSkipStep());
+    else if (k === "l" || k === "L") skip(videoSkipStep());
     else if (k === "a" || k === "A") toggleAB();
     else if (k === "i" || k === "I") { if (!videoState.edit.open) toggleEditPanel(); setInPoint(); }
     else if (k === "o" || k === "O") { if (!videoState.edit.open) toggleEditPanel(); setOutPoint(); }
@@ -10081,6 +10305,8 @@ window.__viewer = {
     speed: videoState.speed,
     name: videoState.queue[videoState.index] && videoState.queue[videoState.index].name,
     source: videoState.source,
+    skip: videoState.skip || 10,
+    muted: !!videoEl.muted,
   }),
   playlist: () => playlist.map((p) => ({ name: p.name, path: p.path, linked: !!resolvePlaylistNode(p) })),
   async openName(name) {
@@ -10968,6 +11194,192 @@ function renderMusicShelf() {
   bgmOrbInit();
 })();
 /*V17JS-END*/
+/*V18JS-START*/
+/* ===== v18: 영상 건너뛰기 · 더블탭 · 커스텀 컨트롤 · BGM 연동 ===== */
+var V18_IC = {
+  skipBack: '<svg class="v-skip-ring" viewBox="0 0 24 24"><path d="M8.2 7.2A7 7 0 1 0 12 5"/><path d="M7.2 4.6v3.4H10.6"/></svg>',
+  skipFwd: '<svg class="v-skip-ring" viewBox="0 0 24 24"><path d="M15.8 7.2A7 7 0 1 1 12 5"/><path d="M16.8 4.6v3.4H13.4"/></svg>',
+  prev: '<svg viewBox="0 0 24 24"><path d="M6 6v12"/><path d="M18 6.5v11L9.5 12z" fill="currentColor" stroke="none"/></svg>',
+  next: '<svg viewBox="0 0 24 24"><path d="M18 6v12"/><path d="M6 6.5v11L14.5 12z" fill="currentColor" stroke="none"/></svg>',
+  frameBack: '<svg viewBox="0 0 24 24"><path d="M7 6v12"/><path d="M18 6.8v10.4L10.2 12z" fill="currentColor" stroke="none"/></svg>',
+  frameFwd: '<svg viewBox="0 0 24 24"><path d="M17 6v12"/><path d="M6 6.8v10.4L13.8 12z" fill="currentColor" stroke="none"/></svg>',
+  mute: '<svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="currentColor" stroke="none"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>',
+  vol: '<svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" fill="currentColor" stroke="none"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>',
+  fs: '<svg viewBox="0 0 24 24"><path d="M8 5H5v3M16 5h3v3M8 19H5v-3M16 19h3v-3"/></svg>',
+  pip: '<svg viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><rect x="12" y="11" width="7" height="5.5" rx="1" fill="currentColor" stroke="none"/></svg>',
+};
+
+if (![5, 10, 15].includes(videoState.skip)) videoState.skip = 10;
+if (typeof videoState.muted !== "boolean") videoState.muted = false;
+videoEl.muted = !!videoState.muted;
+if (!["pause", "duck", "keep"].includes(bgmPrefs.videoMode)) bgmPrefs.videoMode = "pause";
+
+function videoSkipStep() { return [5, 10, 15].includes(videoState.skip) ? videoState.skip : 10; }
+function videoFmtShort(t) {
+  t = Math.max(0, Math.floor(t || 0));
+  const h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), s = t % 60;
+  return h ? `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}` : `${m}:${String(s).padStart(2, "0")}`;
+}
+function videoApplyMute() {
+  videoEl.muted = !!videoState.muted;
+  const b = $("btnMuteVid"); if (!b) return;
+  b.innerHTML = videoState.muted ? V18_IC.mute : V18_IC.vol;
+  b.classList.toggle("on", !!videoState.muted);
+  b.setAttribute("aria-label", videoState.muted ? "소리 켜기" : "음소거");
+  b.setAttribute("aria-pressed", videoState.muted ? "true" : "false");
+}
+function videoToggleMute() { videoState.muted = !videoState.muted; videoApplyMute(); savePrefs(); }
+function videoPaintSkip() {
+  const n = videoSkipStep();
+  document.querySelectorAll(".v-skip-n").forEach((el) => { el.textContent = String(n); });
+  const back = $("btnSkipBack"), fwd = $("btnSkipFwd");
+  if (back) back.setAttribute("aria-label", n + "초 뒤로");
+  if (fwd) fwd.setAttribute("aria-label", n + "초 앞으로");
+  document.querySelectorAll("#vStep button").forEach((b) => b.classList.toggle("on", +b.dataset.step === n));
+}
+function videoSetSkip(n) {
+  n = +n; if (![5, 10, 15].includes(n)) return;
+  videoState.skip = n; savePrefs(); videoPaintSkip();
+}
+function videoSkipBy(dir, ev) {
+  const step = videoSkipStep(), sec = dir * step;
+  skip(sec);
+  if (ev && ev.clientX != null) videoSkipOverlay(dir, step, ev.clientX, ev.clientY, false);
+  return step;
+}
+function videoCanPip() {
+  try {
+    if (document.pictureInPictureEnabled && videoEl.requestPictureInPicture) return true;
+    if (typeof videoEl.webkitSupportsPresentationMode === "function" && videoEl.webkitSupportsPresentationMode("picture-in-picture")) return true;
+  } catch (_) {}
+  return false;
+}
+async function togglePip() {
+  try {
+    if (document.pictureInPictureElement) { await document.exitPictureInPicture(); return; }
+    if (videoEl.webkitPresentationMode === "picture-in-picture" && videoEl.webkitSetPresentationMode) { videoEl.webkitSetPresentationMode("inline"); return; }
+    if (videoEl.webkitSetPresentationMode && videoEl.webkitSupportsPresentationMode && videoEl.webkitSupportsPresentationMode("picture-in-picture")) {
+      videoEl.webkitSetPresentationMode("picture-in-picture"); return;
+    }
+    if (videoEl.requestPictureInPicture) { await videoEl.requestPictureInPicture(); return; }
+  } catch (e) { toast("화면 속 화면을 열 수 없어요", 1400); }
+}
+function videoPaintPip() {
+  const b = $("btnPip"); if (!b) return;
+  const on = !!(document.pictureInPictureElement === videoEl || videoEl.webkitPresentationMode === "picture-in-picture");
+  b.classList.toggle("hidden", !videoCanPip() && !on);
+  b.classList.toggle("on", on);
+}
+
+/* ---------- double-tap skip (YouTube-style, cumulative) ---------- */
+var vTap = { t: 0, side: "", acc: 0, timer: 0, hide: 0 };
+function videoSide(x) {
+  const r = ($("vHit") || videoEl).getBoundingClientRect();
+  return x < r.left + r.width / 2 ? "left" : "right";
+}
+function videoSkipOverlay(dir, amount, x, y, ripple) {
+  const layer = $("vSkipLayer"); if (!layer) return;
+  if (ripple && x != null) {
+    const r = layer.getBoundingClientRect();
+    const d = document.createElement("i"); d.className = "v-ripple";
+    d.style.left = (x - r.left) + "px"; d.style.top = (y - r.top) + "px";
+    layer.appendChild(d); setTimeout(() => d.remove(), 520);
+  }
+  let pop = layer.querySelector(".v-skip-pop");
+  if (!pop) { pop = document.createElement("div"); pop.className = "v-skip-pop"; layer.appendChild(pop); }
+  pop.className = "v-skip-pop " + (dir < 0 ? "left" : "right");
+  pop.innerHTML = `<div class="ring">${dir < 0 ? V18_IC.skipBack : V18_IC.skipFwd}<b></b></div>`;
+  pop.querySelector("b").textContent = (dir < 0 ? "−" : "+") + amount + "초";
+  const n = pop.querySelector(".v-skip-n"); if (n) n.remove();
+  clearTimeout(vTap.hide);
+  vTap.hide = setTimeout(() => { if (pop.parentNode) pop.remove(); vTap.acc = 0; vTap.side = ""; }, 700);
+}
+function videoOnTap(x, y) {
+  const now = performance.now(), side = videoSide(x), dir = side === "left" ? -1 : 1;
+  if (vTap.side === side && now - vTap.t < 400) {
+    clearTimeout(vTap.timer); vTap.timer = 0;
+    vTap.t = now;
+    vTap.acc += videoSkipStep();
+    skip(dir * videoSkipStep());
+    videoSkipOverlay(dir, vTap.acc, x, y, true);
+    setVideoUI(videoState.ui, true);
+    return "skip";
+  }
+  vTap.t = now; vTap.side = side; vTap.acc = 0;
+  clearTimeout(vTap.timer);
+  vTap.timer = setTimeout(() => { vTap.timer = 0; vTap.side = ""; setVideoUI(!videoState.ui, true); }, 280);
+  return "wait";
+}
+(function videoBindHit() {
+  const hit = $("vHit"); if (!hit) return;
+  let sx = 0, sy = 0, moved = false, pid = 0;
+  hit.addEventListener("pointerdown", (e) => { if (e.button) return; pid = e.pointerId; sx = e.clientX; sy = e.clientY; moved = false; });
+  hit.addEventListener("pointermove", (e) => { if (e.pointerId === pid && Math.hypot(e.clientX - sx, e.clientY - sy) > 12) moved = true; });
+  hit.addEventListener("pointerup", (e) => {
+    if (e.pointerId !== pid) return; pid = 0;
+    if (moved) return;
+    videoOnTap(e.clientX, e.clientY);
+  });
+  hit.addEventListener("pointercancel", () => { pid = 0; });
+})();
+
+/* ---------- BGM while a video plays ---------- */
+function bgmHoldVideo() {
+  const mode = bgmPrefs.videoMode || "pause";
+  if (mode === "keep" || !bgm.cur) return;
+  if (mode === "duck") {
+    if (!bgm.heldByVideo) bgm.heldByVideo = { type: "duck", vol: bgmAudio.volume };
+    bgmAudio.volume = Math.min(bgmAudio.volume, 0.12);
+    return;
+  }
+  if (!bgmAudio.paused) {
+    bgm.heldByVideo = { type: "pause" };
+    bgmAudio.pause();
+    toast("영상을 재생해서 BGM을 잠시 멈췄어요", 1400);
+  } else if (bgm.heldByVideo && bgm.heldByVideo.type === "pause") {
+    /* already held */
+  }
+}
+function bgmReleaseVideo(why) {
+  const h = bgm.heldByVideo; if (!h) { videoPaintBgmChip(); return; }
+  bgm.heldByVideo = null;
+  videoPaintBgmChip();
+  if (h.type === "duck") { bgmApplyVolume(); return; }
+  if (h.type === "pause" && bgm.cur) {
+    bgmAudio.play().catch(() => {});
+    if (why !== "silent") toast("BGM을 이어서 들려 드려요", 1200);
+  }
+}
+function videoPaintBgmChip() {
+  const b = $("btnBgmResume"); if (!b) return;
+  const show = !!(bgm.heldByVideo && bgm.heldByVideo.type === "pause" && currentScreen === "video" && videoEl.paused && !videoState.switching);
+  b.classList.toggle("hidden", !show);
+}
+function videoBindBgm() {
+  const b = $("btnBgmResume");
+  if (b && !b._bound) { b._bound = true; b.addEventListener("click", (e) => { e.stopPropagation(); bgmReleaseVideo("offer"); }); }
+}
+
+/* ---------- wiring ---------- */
+(function v18BindVideo() {
+  const back = $("btnSkipBack"), fwd = $("btnSkipFwd");
+  if (back) back.addEventListener("click", (e) => { e.stopPropagation(); videoSkipBy(-1); setVideoUI(true, true); });
+  if (fwd) fwd.addEventListener("click", (e) => { e.stopPropagation(); videoSkipBy(1); setVideoUI(true, true); });
+  document.querySelectorAll("#vStep button").forEach((b) => b.addEventListener("click", (e) => { e.stopPropagation(); videoSetSkip(b.dataset.step); setVideoUI(true, true); }));
+  const mu = $("btnMuteVid"); if (mu) mu.addEventListener("click", (e) => { e.stopPropagation(); videoToggleMute(); setVideoUI(true, true); });
+  const pip = $("btnPip"); if (pip) pip.addEventListener("click", (e) => { e.stopPropagation(); togglePip(); setVideoUI(true, true); });
+  const fsTop = $("btnVideoFsTop"); if (fsTop) fsTop.addEventListener("click", (e) => { e.stopPropagation(); toggleVideoFullscreen(); });
+  videoEl.addEventListener("enterpictureinpicture", videoPaintPip);
+  videoEl.addEventListener("leavepictureinpicture", videoPaintPip);
+  videoEl.addEventListener("webkitpresentationmodechanged", videoPaintPip);
+  videoEl.addEventListener("volumechange", () => { if (videoEl.muted !== videoState.muted) { videoState.muted = !!videoEl.muted; videoApplyMute(); } });
+  videoEl.addEventListener("play", () => { $("screen-video").classList.add("playing"); videoPaintBgmChip(); });
+  videoEl.addEventListener("pause", () => { $("screen-video").classList.remove("playing"); setTimeout(videoPaintBgmChip, 60); });
+  videoPaintSkip(); videoApplyMute(); videoPaintPip(); videoBindBgm();
+})();
+
+/* keep the public skip() clamp; keyboard uses the chosen step */
+/*V18JS-END*/
 window.addEventListener("pagehide", () => { saveVideoPos(); saveReaderPos(); });
 </script>
 </body>
